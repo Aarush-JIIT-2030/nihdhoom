@@ -168,6 +168,31 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
                 </div>
               </div>
 
+              {/* Visual Machinery & Farmer Strip */}
+              <div className="rounded-xl overflow-hidden border border-slate-800 relative bg-slate-900">
+                <img 
+                  src="/images/baling_fleet.jpg" 
+                  alt="Assigned Baler in Sangrur Field" 
+                  className="w-full h-24 object-cover object-center"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+                <div className="absolute bottom-2 left-2.5 right-2.5 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <img 
+                      src="/images/farmer_gurpreet.jpg" 
+                      alt="Gurpreet Singh" 
+                      className="w-7 h-7 rounded-full border border-emerald-400 object-cover"
+                    />
+                    <span className="text-xs font-bold text-white drop-shadow">
+                      {currentField.farmer_name}
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/80 text-slate-950 font-extrabold">
+                    Ready For Baler
+                  </span>
+                </div>
+              </div>
+
               {/* Farmer contact & Navigate buttons */}
               <div className="flex gap-2">
                 <a

@@ -122,10 +122,10 @@ export const JudgesQnAPanel: React.FC = () => {
                   "Causes 50-75% of Delhi smog across Nov-Jan"
                 </td>
                 <td className="py-2.5 px-3 font-mono">
-                  Peak single-day: ~46% • Season avg: 9-18% • Dec/Jan: ~0%
+                  Peak single-day: ~46% • Season avg: 9% (2024), 16% (2023), 18% (2022) • Dec/Jan: ~0% (Local sources dominate)
                 </td>
                 <td className="py-2.5 px-3 text-emerald-300">
-                  "Parali is the sharpest, most attributable 40-day spike driver, and the worst health burden falls on Punjab residents standing next to the field."
+                  "Parali is the sharpest, most attributable 40-day spike driver (Oct 10–Nov 20), and the worst health burden falls on Punjab &amp; Haryana residents standing next to the field, not Delhi."
                 </td>
               </tr>
               <tr>
@@ -133,10 +133,32 @@ export const JudgesQnAPanel: React.FC = () => {
                   "Farmers burn because nobody pays them"
                 </td>
                 <td className="py-2.5 px-3 font-mono">
-                  Real constraint: 15-day wheat sowing deadline. Reliability beats rate.
+                  Real constraint: 10–20 days between paddy harvest and wheat sowing. Miss it and wheat yield drops 1–1.5 q/acre/week.
                 </td>
                 <td className="py-2.5 px-3 text-emerald-300">
-                  "We sell a slot clearance guarantee with teeth: backed by an automatic ₹4,500 UPI late penalty."
+                  "Reliability beats rate. Every time. We sell a slot clearance guarantee with teeth: backed by an automatic ₹4,500 UPI default penalty."
+                </td>
+              </tr>
+              <tr>
+                <td className="py-2.5 px-3 text-red-400 font-semibold">
+                  "Just give more CRM subsidies to buy more balers"
+                </td>
+                <td className="py-2.5 px-3 font-mono">
+                  CAQM &amp; Punjab Govt have already disbursed ₹395 Cr (2025) and allocated ₹576 Cr (2026), creating 1.25 lakh machines (50-80% subsidized) that sit idle in village CHCs.
+                </td>
+                <td className="py-2.5 px-3 text-emerald-300">
+                  "Don't buy balers. Route the idle ones. We build a dispatch network unlocking stranded public CRM infrastructure at ₹0 capex."
+                </td>
+              </tr>
+              <tr>
+                <td className="py-2.5 px-3 text-red-400 font-semibold">
+                  "Satellite FIRMS counts dropped 53% in 2025 (5,114 vs 10,909 in 2024), problem is solved"
+                </td>
+                <td className="py-2.5 px-3 font-mono">
+                  FIRMS polar satellites pass 10:30 AM–1:30 PM. Farmers shifted burns to late afternoon/evening, leaving burnt area stubbornly high despite lower count.
+                </td>
+                <td className="py-2.5 px-3 text-emerald-300">
+                  "Simple fire counts fail. Nirdhoom combines FIRMS active thermal points with Sentinel-2 NDVI burn-scar and polygon clearance receipts for auditable proof."
                 </td>
               </tr>
             </tbody>
