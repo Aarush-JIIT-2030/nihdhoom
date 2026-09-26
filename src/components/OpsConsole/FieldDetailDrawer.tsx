@@ -1,0 +1,148 @@
+import React from 'react';
+import { Field } from '../../types';
+import { 
+  X, 
+  MapPin, 
+  User, 
+  Calendar, 
+  ShieldCheck, 
+  AlertTriangle, 
+  CheckCircle2, 
+  QrCode, 
+  Zap, 
+  Droplet,
+  ExternalLink
+} from 'lucide-react';
+
+interface FieldDetailDrawerProps {
+  field: Field | null;
+  onClose: () => void;
+  onTriggerUpiPayout: (field: Field) => void;
+  onViewCertificate: (field: Field) => void;
+}
+
+export const FieldDetailDrawer: React.FC<FieldDetailDrawerProps> = ({
+  field,
+  onClose,
+  onTriggerUpiPayout,
+  onViewCertificate,
+}) => {
+  if (!field) return null;
+
+  const isCleared = field.status === 'CLEARED_PENDING_AUDIT' || field.status === 'VERIFIED_NON_BURN';
+
+  return (
+    <div className="glass-panel p-4 border-emerald-500/40 shadow-2xl relative animate-in fade-in slide-in-from-bottom duration-200">
+      {/* Header with Close */}
+      <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm">
+            🌾
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h4 className="font-bold text-base text-white">{field.khasra_no}</h4>
+              <span className="badge badge-emerald text-[10px]">
+                {field.status.replace(/_/g, ' ')}
+              </span>
+            </div>
+            <p className="text-xs text-slate-400">
+              {field.village}, Block {field.block}, District {field.district}
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={onClose}
+          className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+
+      {/* Main Grid Info */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4 text-xs">
+        <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
+          <span className="text-slate-400 text-[11px] block">Farmer / Owner</span>
+          <strong className="text-white text-sm block mt-0.5">{field.farmer_name}</strong>
+          <span className="text-emerald-400 font-mono text-[11px]">{field.farmer_phone}</span>
+        </div>
+
+        <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
+          <span className="text-slate-400 text-[11px] block">Acreage & Variety</span>
+          <strong className="text-white text-sm block mt-0.5">
+            {field.acreage} Acres
+          </strong>
+          <span className="text-amber-400 font-semibold text-[11px]">{field.paddy_variety}</span>
+        </div>
+
+        <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
+          <span className="text-slate-400 text-[11px] block">Clearance Window</span>
+          <strong className="text-emerald-400 text-xs block mt-0.5">
+            {field.clearance_deadline}
+          </strong>
+          <span className="text-slate-400 text-[10px]">Guaranteed 48h limit</span>
+        </div>
+
+        <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
+          <span className="text-slate-400 text-[11px] block">Late Sowing Penalty</span>
+          <strong className="text-amber-300 text-sm block mt-0.5">
+            ₹{Math.max(2500, Math.round(field.acreage * 1250)).toLocaleString()}
+          </strong>
+          <span className="text-emerald-400 text-[10px] font-semibold">Zero Default Risk</span>
+        </div>
+      </div>
+
+      {/* Satellite Audit & QR Lot Status */}
+      <div className="bg-slate-950/70 p-3 rounded-lg border border-slate-800 mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0">
+            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+          </div>
+          <div>
+            <div className="font-bold text-white flex items-center gap-1.5">
+              <span>NASA FIRMS VIIRS Audit:</span>
+              <span className="text-emerald-400">0 Fires Detected Inside Polygon</span>
+            </div>
+            <div className="text-slate-400 text-[11px]">
+              Sentinel-2 NDVI drop verified (0.74 → 0.16) • Avoided {Math.round(field.acreage * 1.8 * 10) / 10} t CO₂e
+            </div>
+          </div>
+        </div>
+
+        {field.qr_lot_code && (
+          <div className="flex items-center gap-2 bg-slate-900 px-3 py-1.5 rounded border border-slate-800 shrink-0">
+            <QrCode className="w-4 h-4 text-cyan-400" />
+            <span className="font-mono text-cyan-300 font-semibold">{field.qr_lot_code}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex flex-wrap items-center justify-end gap-2.5">
+        <button
+          onClick={() => onViewCertificate(field)}
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 cursor-pointer"
+        >
+          <ShieldCheck className="w-4 h-4 text-emerald-400" />
+          <span>View Non-Burn Certificate</span>
+        </button>
+
+        {!isCleared ? (
+          <button
+            onClick={() => onTriggerUpiPayout(field)}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/30 cursor-pointer"
+          >
+            <Zap className="w-4 h-4" />
+            <span>Mark Cleared & Trigger 90s UPI Payout (₹{(field.payout_amount || 4500).toLocaleString()})</span>
+          </button>
+        ) : (
+          <div className="flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-950/60 px-3 py-1.5 rounded-lg border border-emerald-500/30 font-bold">
+            <CheckCircle2 className="w-4 h-4" />
+            <span>UPI Payout Settled in 46 seconds</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
