@@ -258,6 +258,40 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
             </div>
           </div>
         </div>
+
+        {/* Full-Width Interactive 3D Geospatial Digital Twin Banner */}
+        <div 
+          onClick={() => onNavigateTab('DIGITAL_TWIN_3D')}
+          className="relative z-10 mt-4 rounded-2xl overflow-hidden border border-emerald-500/40 group bg-gradient-to-r from-emerald-950/70 via-slate-900/90 to-teal-950/70 p-4 max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 cursor-pointer hover:border-emerald-400 transition-all shadow-xl hover:shadow-emerald-500/20"
+        >
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-emerald-500 to-cyan-400 p-0.5 shrink-0 flex items-center justify-center shadow-lg shadow-emerald-500/30">
+              <div className="w-full h-full bg-[#03060f] rounded-[10px] flex items-center justify-center">
+                <Globe className="w-6 h-6 text-emerald-400 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300" />
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-base font-bold text-white font-['Outfit']">
+                  Interactive 3D Geospatial Digital Twin
+                </span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono font-bold border border-emerald-500/40">
+                  Three.js WebGL
+                </span>
+              </div>
+              <p className="text-xs text-slate-300 mt-0.5 leading-relaxed">
+                Orbiting NOAA-20 satellite with active radar scan cone, real-time thermal fire anomalies, and 3D verified field beacons across Sangrur.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-600/30">
+              <span>Launch 3D Twin</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </span>
+          </div>
+        </div>
       </section>
 
       {/* INFINITE MARQUEE TELEMETRY TICKER */}

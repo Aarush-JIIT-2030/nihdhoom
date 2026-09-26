@@ -62,10 +62,17 @@ export const FieldDetailDrawer: React.FC<FieldDetailDrawerProps> = ({
 
       {/* Main Grid Info */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4 text-xs">
-        <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
-          <span className="text-slate-400 text-[11px] block">Farmer / Owner</span>
-          <strong className="text-white text-sm block mt-0.5">{field.farmer_name}</strong>
-          <span className="text-emerald-400 font-mono text-[11px]">{field.farmer_phone}</span>
+        <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800 flex items-center gap-2.5">
+          <img 
+            src="/images/farmer_gurpreet.jpg" 
+            alt={field.farmer_name} 
+            className="w-10 h-10 rounded-full border border-emerald-500/50 object-cover shrink-0"
+          />
+          <div className="min-w-0">
+            <span className="text-slate-400 text-[10px] block">Farmer / Owner</span>
+            <strong className="text-white text-xs block truncate">{field.farmer_name}</strong>
+            <span className="text-emerald-400 font-mono text-[10px]">{field.farmer_phone}</span>
+          </div>
         </div>
 
         <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">

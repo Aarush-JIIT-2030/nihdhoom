@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Moon, Sun } from 'lucide-react';
+import { Moon, Sun, Wheat } from 'lucide-react';
 
 const STORAGE_KEY = 'nirdhoom-theme';
+export type ThemeMode = 'dark' | 'kisan' | 'light';
 
 export const ThemeToggle: React.FC = () => {
-  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
-    if (typeof window === 'undefined') return 'dark';
+  const [theme, setTheme] = useState<ThemeMode>(() => {
+    if (typeof window === 'undefined') return 'kisan';
     try {
-      const stored = window.localStorage.getItem(STORAGE_KEY);
-      if (stored === 'light' || stored === 'dark') return stored;
+      const stored = window.localStorage.getItem(STORAGE_KEY) as ThemeMode;
+      if (stored === 'light' || stored === 'dark' || stored === 'kisan') return stored;
     } catch {
       // ignore storage error
     }
-    return 'dark';
+    return 'kisan';
   });
 
   useEffect(() => {
@@ -24,24 +25,48 @@ export const ThemeToggle: React.FC = () => {
     }
     const meta = document.querySelector('meta[name="theme-color"]');
     if (meta) {
-      meta.setAttribute('content', theme === 'dark' ? '#03060f' : '#f4f9f7');
+      const colorMap: Record<ThemeMode, string> = {
+        kisan: '#0d130a',
+        dark: '#03060f',
+        light: '#f5f8f3',
+      };
+      meta.setAttribute('content', colorMap[theme]);
     }
   }, [theme]);
 
-  const toggle = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'));
+  const cycleTheme = () => {
+    setTheme((current) => {
+      if (current === 'kisan') return 'dark';
+      if (current === 'dark') return 'light';
+      return 'kisan';
+    });
+  };
 
   return (
     <button
       type="button"
-      onClick={toggle}
-      className="p-1.5 rounded-lg border border-slate-700/60 bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-emerald-400 transition-all cursor-pointer shadow-sm flex items-center justify-center"
-      title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+      onClick={cycleTheme}
+      className="px-2.5 py-1.5 rounded-lg border border-amber-500/40 bg-slate-900/90 hover:bg-slate-800 text-amber-300 transition-all cursor-pointer shadow-sm flex items-center gap-1.5 text-xs font-bold font-mono"
+      title={`Current Theme: ${theme.toUpperCase()} (Click to Cycle: Kisan Vibe → Night Sky → Daylight)`}
       aria-label="Toggle theme"
     >
-      {theme === 'dark' ? (
-        <Sun className="w-4 h-4 text-amber-400 animate-pulse" />
-      ) : (
-        <Moon className="w-4 h-4 text-emerald-600" />
+      {theme === 'kisan' && (
+        <>
+          <Wheat className="w-3.5 h-3.5 text-amber-400 animate-bounce" />
+          <span className="hidden sm:inline text-amber-300 font-semibold">Kisan Gold</span>
+        </>
+      )}
+      {theme === 'dark' && (
+        <>
+          <Moon className="w-3.5 h-3.5 text-cyan-400" />
+          <span className="hidden sm:inline text-cyan-300 font-semibold">Night Sky</span>
+        </>
+      )}
+      {theme === 'light' && (
+        <>
+          <Sun className="w-3.5 h-3.5 text-emerald-600" />
+          <span className="hidden sm:inline text-emerald-700 font-semibold">Daylight</span>
+        </>
       )}
     </button>
   );

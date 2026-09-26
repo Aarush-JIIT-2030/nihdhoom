@@ -149,7 +149,14 @@ export const UpiSettlementModal: React.FC<UpiSettlementModalProps> = ({
         <div className="bg-slate-950/60 rounded-xl p-3.5 border border-slate-800/80 text-xs flex flex-col gap-2">
           <div className="flex justify-between items-center text-slate-400">
             <span>Recipient Farmer:</span>
-            <strong className="text-white font-medium">{field.farmer_name}</strong>
+            <div className="flex items-center gap-2">
+              <img 
+                src="/images/farmer_gurpreet.jpg" 
+                alt={field.farmer_name} 
+                className="w-5 h-5 rounded-full border border-emerald-400 object-cover" 
+              />
+              <strong className="text-white font-medium">{field.farmer_name}</strong>
+            </div>
           </div>
           <div className="flex justify-between items-center text-slate-400">
             <span>UPI ID (Instant VPA):</span>

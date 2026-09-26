@@ -139,21 +139,36 @@ export const HarvestForecast: React.FC = () => {
           </div>
         </div>
 
-        {/* Machine Pre-Positioning Dispatch Alert */}
-        <div className="p-3.5 rounded-xl bg-slate-950/80 border border-cyan-500/30 flex items-start gap-3 text-xs">
-          <Truck className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
-          <div>
-            <div className="font-bold text-white text-sm">
-              Automated Fleet Pre-Positioning Advisory ({formattedDate})
+        {/* PAU Ludhiana Agronomic Advisory with Real Farm Photograph */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-3 mt-1">
+          <div className="md:col-span-8 p-3.5 rounded-xl bg-slate-950/80 border border-cyan-500/30 flex items-start gap-3 text-xs">
+            <Truck className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
+            <div>
+              <div className="font-bold text-white text-sm">
+                Automated Fleet Pre-Positioning Advisory ({formattedDate})
+              </div>
+              <p className="text-slate-300 mt-0.5 leading-relaxed">
+                NDVI curves indicate <strong>{currentBlock.name}</strong> will see an influx of{' '}
+                <strong className="text-cyan-300">
+                  {Math.round(currentBlock.totalAcres * (selectedDayIndex < 15 ? 0.04 : 0.08))} acres/day
+                </strong>{' '}
+                over the next 72 hours. Recommended to pre-position{' '}
+                <strong className="text-emerald-400">{currentBlock.recommendedBalerCount} Balers</strong> from nearby CHCs to avoid delay penalties.
+              </p>
             </div>
-            <p className="text-slate-300 mt-0.5 leading-relaxed">
-              NDVI curves indicate <strong>{currentBlock.name}</strong> will see an influx of{' '}
-              <strong className="text-cyan-300">
-                {Math.round(currentBlock.totalAcres * (selectedDayIndex < 15 ? 0.04 : 0.08))} acres/day
-              </strong>{' '}
-              over the next 72 hours. Recommended to pre-position{' '}
-              <strong className="text-emerald-400">{currentBlock.recommendedBalerCount} Balers</strong> from nearby CHCs to avoid delay penalties.
-            </p>
+          </div>
+
+          <div className="md:col-span-4 rounded-xl overflow-hidden border border-amber-500/30 relative bg-slate-950 min-h-[90px]">
+            <img 
+              src="/images/punjab_farm_hero.jpg" 
+              alt="PAU PR-126 Golden Harvest" 
+              className="w-full h-full object-cover object-center max-h-24"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+            <div className="absolute bottom-1.5 left-2.5 right-2.5 flex items-center justify-between text-[10px] font-mono">
+              <span className="text-amber-300 font-bold">PAU LUDHIANA ADVISORY</span>
+              <span className="text-emerald-400 font-semibold">PR-126 ~93 Days</span>
+            </div>
           </div>
         </div>
       </div>
