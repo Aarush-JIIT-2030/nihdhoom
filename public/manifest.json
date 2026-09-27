@@ -1,7 +1,7 @@
 {
   "name": "NIRDHOOM – Parali Dispatch Network",
   "short_name": "Nirdhoom",
-  "description": "Punjab's subsidised crop residue machinery dispatch and satellite verification network. Zero-burn guaranteed, UPI settled in under 90 seconds.",
+  "description": "A farmer-first network for crop-residue clearance, machinery coordination, verification and residue offtake in Punjab. Availability and payments depend on connected services.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#03060f",
@@ -25,7 +25,11 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["agriculture", "business", "productivity"],
+  "categories": [
+    "agriculture",
+    "business",
+    "productivity"
+  ],
   "lang": "pa",
   "dir": "ltr",
   "shortcuts": [
@@ -34,14 +38,24 @@
       "short_name": "Ops Map",
       "description": "Open the VRP dispatch and GIS map console",
       "url": "/?tab=OPS_CONSOLE",
-      "icons": [{ "src": "/favicon.ico", "sizes": "48x48" }]
+      "icons": [
+        {
+          "src": "/favicon.ico",
+          "sizes": "48x48"
+        }
+      ]
     },
     {
       "name": "Field Operator PWA",
       "short_name": "Field App",
       "description": "Open the field baler operator mobile interface",
       "url": "/?tab=BALER_OPERATOR",
-      "icons": [{ "src": "/favicon.ico", "sizes": "48x48" }]
+      "icons": [
+        {
+          "src": "/favicon.ico",
+          "sizes": "48x48"
+        }
+      ]
     }
   ]
 }
