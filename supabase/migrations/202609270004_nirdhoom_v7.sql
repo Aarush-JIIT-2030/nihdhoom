@@ -166,20 +166,30 @@ $$;
 create or replace function public.accept_buyer_offer(p_offer_id uuid)
 returns public.buyer_offers
 language plpgsql
-security invoker
+security definer
 set search_path = public
-as $$
-declare o public.buyer_offers%rowtype; role_name text;
+as $
+declare
+  o public.buyer_offers%rowtype;
+  role_name text;
+  updated_lot_id uuid;
 begin
   select role into role_name from public.profiles where id=auth.uid();
   if role_name not in ('buyer','dispatcher','admin') then raise exception 'Buyer/dispatcher role required'; end if;
   select * into o from public.buyer_offers where id=p_offer_id and status='OPEN' for update;
   if not found then raise exception 'Offer is no longer open'; end if;
+  if role_name='buyer' and not exists(
+    select 1 from public.buyers b where b.id=o.buyer_id and b.profile_id=auth.uid()
+  ) then raise exception 'Offer does not belong to the current buyer'; end if;
+  update public.residue_lots
+    set assigned_buyer_id=o.buyer_id,status='ALLOCATED',updated_at=now()
+    where id=o.lot_id and status in ('AVAILABLE','OPEN')
+    returning id into updated_lot_id;
+  if updated_lot_id is null then raise exception 'Residue lot is no longer available'; end if;
   update public.buyer_offers set status='ACCEPTED' where id=p_offer_id returning * into o;
-  update public.residue_lots set assigned_buyer_id=o.buyer_id,status='ALLOCATED',updated_at=now() where id=o.lot_id and status in ('AVAILABLE','OPEN');
   return o;
 end;
-$$;
+$;
 
 grant execute on function public.reserve_clearance_booking(uuid,date,numeric,numeric,date,numeric,text,jsonb) to authenticated;
 grant execute on function public.transition_job(uuid,text,jsonb) to authenticated;
