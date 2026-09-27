@@ -1,8 +1,10 @@
 from datetime import datetime, timezone
 from math import asin, cos, radians, sin, sqrt
+import hmac
+import os
 from typing import Any
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Header, HTTPException
 from ortools.constraint_solver import pywrapcp, routing_enums_pb2
 
 app = FastAPI(title="NIRDHOOM OR-Tools Dispatch", version="1.0.0")
@@ -36,7 +38,11 @@ def health():
 
 
 @app.post("/solve")
-def solve(payload: dict[str, Any]):
+def solve(payload: dict[str, Any], authorization: str | None = Header(default=None)):
+    expected = os.environ.get("DISPATCH_SERVICE_TOKEN", "")
+    supplied = authorization.removeprefix("Bearer ").strip() if authorization else ""
+    if not expected or not supplied or not hmac.compare_digest(supplied, expected):
+        raise HTTPException(status_code=401, detail="Unauthorized")
     fields = payload.get("fields") or []
     machines = [m for m in payload.get("machines") or [] if m.get("status") != "OFFLINE"]
     if not fields or not machines:
