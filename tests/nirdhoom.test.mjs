@@ -29,3 +29,9 @@ test('production migrations contain RLS and PostGIS',()=>{
   assert.match(sql,/storage\.objects/);
   assert.match(v7,/sha256/);
 });
+
+test('research desk exposes sourced five-season Punjab fire-count series',()=>{
+  const main=read('src/main.jsx');
+  for(const token of ["year:'2021',count:71304","year:'2022',count:49922","year:'2023',count:36663","year:'2024',count:10909","year:'2025',count:5114","FIVE-SEASON CONTEXT","15 Sep–30 Nov"]) assert.ok(main.includes(token),`missing research data token: ${token}`);
+  assert.match(main,/research-chart/);
+});
