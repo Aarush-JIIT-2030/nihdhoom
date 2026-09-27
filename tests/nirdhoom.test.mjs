@@ -82,3 +82,20 @@ test('self-created profiles are restricted to farmer role',()=>{
   const sql=read('supabase/migrations/202609270001_nirdhoom_core.sql');
   assert.match(sql,/profile owner insert[^;]*role = 'farmer'/s);
 });
+
+
+test('dispatch solver output is validated before being returned',()=>{
+  const source=read('api/dispatch.ts');
+  assert.match(source,/function validSolverPlan/);
+  assert.match(source,/validSolverPlan\(plan, fields, machines\)/);
+  assert.match(source,/seenFields\.has\(id\)/);
+  assert.match(source,/seenMachines\.has\(route\.machine_id\)/);
+  assert.match(source,/acres > machine\.capacity_acres_day/);
+});
+
+test('assistant bounds user input and upstream requests',()=>{
+  const source=read('api/assistant.ts');
+  assert.match(source,/question\.length>2000/);
+  assert.match(source,/AbortSignal\.timeout\(8000\)/);
+  assert.match(source,/AbortSignal\.timeout\(12000\)/);
+});
