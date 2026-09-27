@@ -129,3 +129,13 @@ test('Vercel config includes the IVR function runtime',()=>{
   const config=JSON.parse(read('vercel.json'));
   assert.equal(config.functions['api/notify/ivr.ts'].runtime,'nodejs24.x');
 });
+
+test('payment initiation fails closed and validates request before provider setup',()=>{
+  const source=read('api/payments/initiate.ts');
+  assert.match(source,/AbortSignal\.timeout\(8000\)/);
+  assert.match(source,/UUID\.test\(bookingId\)/);
+  assert.match(source,/amount > 100000000/);
+  assert.match(source,/res\.status\(501\)/);
+  assert.match(source,/No money movement was attempted/);
+  assert.doesNotMatch(source,/status:\s*'PAID'/);
+});
