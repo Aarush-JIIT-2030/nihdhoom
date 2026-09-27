@@ -62,3 +62,15 @@ test('buyer offer acceptance cannot allocate an unavailable lot or accept anothe
   assert.match(fn,/if updated_lot_id is null then raise exception/);
   assert.ok(fn.indexOf('if updated_lot_id is null') < fn.indexOf('set status=\'ACCEPTED\''));
 });
+
+
+test('demo UPI handoff is visibly non-settling and does not mutate payment state',()=>{
+  const main=read('src/main.jsx');
+  const payment=main.slice(main.indexOf('function Payments('),main.indexOf('function Research'));
+  assert.match(payment,/DEMO ONLY · UPI INTENT TEST/);
+  assert.match(payment,/upi:\/\/pay\?/);
+  assert.match(payment,/Finish UI test/);
+  assert.match(payment,/No payment confirmation was received/);
+  assert.match(payment,/No payment status was changed/);
+  assert.doesNotMatch(payment,/\.from\(['"]payments['"]\)\.update/);
+});
