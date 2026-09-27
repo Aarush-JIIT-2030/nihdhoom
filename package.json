@@ -1,0 +1,31 @@
+{
+  "name": "nirdhoom-field-network",
+  "private": true,
+  "version": "1.2.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "audit": "node scripts_validate.mjs",
+    "syntaxcheck": "tsc --noEmit --jsx react-jsx --moduleResolution bundler --module ESNext --target ES2022 --allowJs --checkJs false --noResolve src/main.jsx api/assistant.ts",
+    "test": "node --test tests/*.test.mjs",
+    "e2e": "playwright test"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "5.0.4",
+    "vite": "7.1.7",
+    "typescript": "5.9.2",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "lucide-react": "0.468.0",
+    "@supabase/supabase-js": "2.57.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.55.0",
+    "@types/node": "24.3.0"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}
