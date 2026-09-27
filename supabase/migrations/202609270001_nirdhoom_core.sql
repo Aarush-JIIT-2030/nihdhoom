@@ -136,7 +136,7 @@ alter table public.notifications enable row level security;
 alter table public.ai_conversations enable row level security;
 
 create policy "profile owner select" on public.profiles for select to authenticated using ((select auth.uid()) = id);
-create policy "profile owner insert" on public.profiles for insert to authenticated with check ((select auth.uid()) = id);
+create policy "profile owner insert" on public.profiles for insert to authenticated with check ((select auth.uid()) = id and role = 'farmer');
 create policy "profile owner update" on public.profiles for update to authenticated using ((select auth.uid()) = id) with check ((select auth.uid()) = id);
 
 create policy "farmer reads own fields" on public.fields for select to authenticated using ((select auth.uid()) = owner_id);
