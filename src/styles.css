@@ -28,3 +28,15 @@
 
 /* Research desk: compact, readable source cards */
 .research-sources{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}.research-source{display:flex;flex-direction:column;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:12px;padding:16px;background:var(--surface, #fffef9)}.research-source h3{font:700 14px Manrope;margin:10px 0 6px}.research-source p{font-size:12px;line-height:1.6;color:var(--muted);margin:0 0 8px}.research-source small{font-size:10px;color:var(--muted)}.research-source>a{display:inline-flex;align-items:center;gap:6px;color:var(--green);font-size:11px;font-weight:700;text-decoration:none;align-self:flex-start}.research-source>a:hover{text-decoration:underline}@media(max-width:700px){.research-sources{grid-template-columns:1fr}.research-source{padding:14px}}
+
+
+/* Research desk: compact, readable historical data visualization */
+.research-chart{margin:18px 0 4px;padding:16px 16px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface,#fff)}
+.research-bars{height:220px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(8px,3vw,28px);align-items:end;padding:8px 4px 0}
+.research-bar{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:end;min-width:0;gap:7px}
+.research-bar>b{font-size:clamp(9px,1.5vw,12px);font-weight:700;color:var(--ink);white-space:nowrap}
+.research-bar-track{height:160px;width:min(100%,54px);display:flex;align-items:end;justify-content:center;border-bottom:1px solid var(--line);background:linear-gradient(to top,transparent 24%,var(--line) 24.5%,transparent 25%,transparent 49%,var(--line) 49.5%,transparent 50%,transparent 74%,var(--line) 74.5%,transparent 75%)}
+.research-bar-track span{display:block;width:70%;min-height:3px;border-radius:6px 6px 0 0;background:var(--green,#56734f)}
+.research-bar>strong{font-size:12px;color:var(--muted)}
+.research-chart>small{display:block;margin-top:10px;font-size:10px}
+@media(max-width:560px){.research-chart{padding:12px 8px}.research-bars{height:190px;gap:5px}.research-bar-track{height:130px}.research-bar>b{font-size:9px}}
