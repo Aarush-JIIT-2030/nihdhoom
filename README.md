@@ -96,6 +96,10 @@ The farmer role is the default. Dispatcher/verifier/operator/admin role assignme
 - Monitoring, rate limiting, alerting and audit retention
 - Privacy policy, terms, consent records and data-retention policy
 
+## Research and public data
+
+The website includes a research desk with sourced Punjab crop-residue figures and limitations. The research notes, source links, date windows, and product implications are maintained in `docs/PUNJAB-CROP-RESIDUE-RESEARCH.md`. Public figures are reference context only; they are not NIRDHOOM operating results or live availability data.
+
 ## Data provenance
 
 The demo field/machine/buyer records are derived from the supplied NIRDHOOM HTML source. They are intentionally labelled as demo/prototype data in the UI. Do not present them as live operational measurements until the underlying systems are connected and verified.
