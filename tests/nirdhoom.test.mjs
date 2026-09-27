@@ -108,3 +108,24 @@ test('assistant requires auth for provider-backed AI and does not trust failed p
   assert.match(source,/field\?\.dbId\?\{\}:\(field\|\|\{\}\)/);
   assert.match(source,/openai-demo-context/);
 });
+
+
+test('job completion requires stored field evidence and V7 RPCs are not public',()=>{
+  const sql=read('supabase/migrations/202609270004_nirdhoom_v7.sql');
+  const transition=sql.slice(sql.indexOf('create or replace function public.transition_job'),sql.indexOf('create or replace function public.record_verification_review'));
+  assert.match(transition,/p_next_status='COMPLETED' and not exists/);
+  assert.match(transition,/e\.storage_path is not null/);
+  assert.match(sql,/revoke all on function public\.transition_job\(uuid,text,jsonb\) from public, anon/);
+  assert.match(sql,/grant execute on function public\.transition_job\(uuid,text,jsonb\) to authenticated/);
+});
+
+test('booking RPC checks quoted amount against registered acreage',()=>{
+  const sql=read('supabase/migrations/202609270004_nirdhoom_v7.sql');
+  assert.match(sql,/round\(p_rate_per_acre \* f\.acres, 2\)/);
+  assert.match(sql,/Field acreage must be verified before booking/);
+});
+
+test('Vercel config includes the IVR function runtime',()=>{
+  const config=JSON.parse(read('vercel.json'));
+  assert.equal(config.functions['api/notify/ivr.ts'].runtime,'nodejs24.x');
+});
