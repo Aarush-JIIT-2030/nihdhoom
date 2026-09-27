@@ -183,3 +183,25 @@ A pilot should not be called production-ready until:
 ## Known blockers that cannot be completed from repository code alone
 
 Live payments, real machine GPS, verified cadastral data, real buyer contracts, production messaging, field-device testing and pilot guarantees require provider credentials, partner agreements, actual devices/data and operational decisions. Keep these clearly marked as unconfigured until verified. Never replace missing integration evidence with simulated success.
+## Repository review addendum — 2026-09-28
+
+This addendum records additional source-level changes made after the V7 checklist. It is not a claim that the application has passed a complete production audit.
+
+### Changes committed
+- The service worker now excludes /api/ requests, requests carrying an Authorization header, POST requests and cross-origin requests from caching. It uses a versioned app-shell cache and network-first behavior for eligible shell/static resources.
+- The OR-Tools HTTP service now requires a configured shared bearer token and compares it with a constant-time comparison. The Vercel dispatch adapter forwards the server-only token when configured.
+- Payment initiation validates the request object, booking UUID and bounded positive amount, and continues to fail closed rather than claiming a payout was initiated.
+- Structural tests were added for the service-worker privacy boundary, optimizer authentication and payment fail-closed behavior.
+
+### Additional issues found that still require correction or verification
+- The booking RPC's quote values must be derived from trusted server-side pricing and capacity, not accepted as caller-supplied authority. The UI's quote endpoint currently produces an estimate and does not reserve real machine capacity. Do not present its date as a contractual guarantee.
+- The OR-Tools service is now authenticated, but it still needs deployment, secret provisioning, realistic travel-time/shift constraints, robust request validation, and integration tests. The heuristic fallback is not a production scheduling guarantee.
+- The webhook adapter still needs provider-specific signature formats, merchant/account validation, amount/currency matching, replay protection, idempotent event storage and out-of-order reconciliation before live payouts.
+- The UI and schema contain a broad feature surface, but several capabilities remain data-model/UI foundations rather than complete workflows (including offline synchronization, buyer settlement, satellite ingestion and carbon accounting).
+- The two application entry paths (src/main.jsx and src/main.tsx/src/App.tsx) remain a maintenance risk. The Vite entry is src/main.jsx; the TSX application is not automatically part of that runtime.
+- The repository includes large generated HTML/ZIP artifacts and duplicate image assets. Confirm which are release deliverables before keeping them in source control.
+- SQL migrations have not been executed against a fresh PostgreSQL/Supabase instance in this session. Static checks cannot establish that all policies, grants, triggers and functions execute correctly or enforce the intended access matrix.
+- No live NIRDHOOM Supabase project is connected. Do not apply migrations to the unrelated JYC project.
+
+### Verification boundary
+The source tree and key active application, API, service, PWA, test, configuration and migration files were inspected through the repository connection. This was not a literal review of every byte in binary assets or generated archives, and no local dependency install, browser session, disposable database, provider sandbox or real Android-device test was run as part of this addendum. Check GitHub Actions on the latest commit before treating the changes as green.
