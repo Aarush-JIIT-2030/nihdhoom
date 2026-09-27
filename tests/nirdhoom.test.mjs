@@ -35,3 +35,17 @@ test('research desk exposes sourced five-season Punjab fire-count series',()=>{
   for(const token of ["year:'2021',count:71304","year:'2022',count:49922","year:'2023',count:36663","year:'2024',count:10909","year:'2025',count:5114","FIVE-SEASON CONTEXT","15 Sep–30 Nov"]) assert.ok(main.includes(token),`missing research data token: ${token}`);
   assert.match(main,/research-chart/);
 });
+
+
+test('outbound farmer messaging endpoints require dispatcher authentication and bound requests',()=>{
+  for (const path of ['api/notify/whatsapp.ts','api/notify/ivr.ts']) {
+    const source=read(path);
+    assert.match(source,/verifyDispatcher\(req\)/,path+' must authenticate dispatchers');
+    assert.match(source,/validPhone\(to\)/,path+' must validate destination');
+    assert.match(source,/AbortSignal\.timeout\(10000\)/,path+' must bound provider requests');
+  }
+  const whatsapp=read('api/notify/whatsapp.ts');
+  const ivr=read('api/notify/ivr.ts');
+  assert.match(whatsapp,/text\.length > 4096/);
+  assert.match(ivr,/message\.length > 2000/);
+});
