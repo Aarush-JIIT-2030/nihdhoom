@@ -27,6 +27,7 @@ import { Marquee } from '../Animated/Marquee';
 import { AnimatedBeam } from '../Animated/AnimatedBeam';
 import { BentoGrid } from '../Animated/BentoGrid';
 import { LiveKPIDashboard } from '../LiveKPIDashboard';
+import { ImpactStats } from './ImpactStats';
 import { ActiveTab } from '../Header';
 
 interface AgenticLandingProps {
@@ -332,6 +333,11 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
         />
       </section>
 
+      {/* SECTION 2.5: IMPACT STATISTICS, FARMER TESTIMONIALS & CIRCULAR ECONOMY */}
+      <section>
+        <ImpactStats onNavigateTab={(tab) => onNavigateTab(tab as ActiveTab)} />
+      </section>
+
       {/* SECTION 3: AUTONOMOUS AGENTIC PIPELINE (ANIMATED BEAM) */}
       <section>
         <AnimatedBeam onSelectNode={(id) => {
@@ -344,10 +350,14 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
         }} />
       </section>
 
+
       {/* SECTION 4: THE 5 STRATEGIC WEDGES (BENTO GRID) */}
       <section>
         <BentoGrid onNavigateTab={(tab) => onNavigateTab(tab as ActiveTab)} />
       </section>
+
+      {/* SECTION 4.5: REAL GROUND DATA, FARMER VOICES & CAQM SATELLITE AUDITS */}
+      <ImpactStats />
 
       {/* SECTION 5: 1-CLICK OPERATIONAL SURFACES CATALOGUE */}
       <section className="rounded-3xl border border-slate-800 bg-slate-950/70 p-6 sm:p-8 backdrop-blur-xl">

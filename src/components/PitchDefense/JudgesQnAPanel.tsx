@@ -53,6 +53,30 @@ const JUDGE_QUESTIONS: JudgeQnA[] = [
       'Paddy straw sales to CBG barely cover baling and diesel. The reframe worth saying out loud: parali collection is the hook that gets us a verified, geo-tagged, financially-connected farmer network in Punjab for free. The real business is selling certified seeds, discounted fertilizer, and diesel via our credit wallet margin, plus monetising auditable carbon credits ($18/tCO2e) via our NASA FIRMS verification layer.',
     tag: 'BUSINESS_MODEL',
   },
+  {
+    id: 'q5',
+    question: 'With fires down 93% (76,929 in 2020 to 5,114 in 2025), is the problem solved?',
+    shortAnswer: 'Fire counts dropped, but burnt area has not proportionally. Farmers shifted to burning outside satellite windows.',
+    detailedDefense:
+      'CAQM recorded 5,114 fire incidents in 2025 (down from 10,909 in 2024 and 76,929 in 2020). However, experts note that farmers shifted burns to late afternoon/evening hours, evading VIIRS polar satellite overpass times (10:30 AM to 1:30 PM). Burnt area has declined more gradually. Punjab now deploys drone surveillance in hotspot districts. Nirdhoom multi-layer verification (FIRMS thermal + Sentinel-2 NDVI burn-scar + polygon clearance receipts) catches what satellite counts alone miss.',
+    tag: 'COMPETITION',
+  },
+  {
+    id: 'q6',
+    question: 'What about the new Rs 5K-30K environmental penalties and Red Entry system?',
+    shortAnswer: 'Penalties create demand for our service. We are the compliance escape valve.',
+    detailedDefense:
+      'The 2026 CAQM rules impose Environmental Compensation of Rs 5,000 (under 2 ac), Rs 10,000 (2-5 ac), Rs 30,000 (over 5 ac) plus a Red Entry in land revenue records that bars agricultural loans for 15-30 months. This punitive framework creates massive demand for a reliable, affordable clearance service. Nirdhoom guaranteed slot at Rs 1,350-1,450/ac is dramatically cheaper than a Rs 30,000 fine plus loan freeze. We are the compliance escape valve.',
+    tag: 'BUSINESS_MODEL',
+  },
+  {
+    id: 'q7',
+    question: 'How do you ensure machines actually reach small and marginal farmers?',
+    shortAnswer: '50% of Punjab farmers have under 2 acres. Our per-acre pricing democratises machine access.',
+    detailedDefense:
+      'Many farmers own small tractors (25-30 BHP), while effective CRM machinery often requires 50 HP tractors and weighs over 13 quintals. Individual machine ownership makes no economic sense for small holders. Our dispatch network matches the right machine to the right tractor at the right time. CHCs exist precisely for this but lack digital scheduling. We fix the last-mile coordination problem that keeps public machinery stranded.',
+    tag: 'ASSET_STRATEGY',
+  },
 ];
 
 export const JudgesQnAPanel: React.FC = () => {
