@@ -121,7 +121,7 @@ test('job completion requires stored field evidence and V7 RPCs are not public',
 
 test('booking RPC checks quoted amount against registered acreage',()=>{
   const sql=read('supabase/migrations/202609270004_nirdhoom_v7.sql');
-  assert.match(sql,/round\(p_rate_per_acre \* f\.acres, 2\)/);
+  assert.match(sql,/round\(p_rate_per_acre \* f\.acreage, 2\)/);
   assert.match(sql,/Field acreage must be verified before booking/);
 });
 
