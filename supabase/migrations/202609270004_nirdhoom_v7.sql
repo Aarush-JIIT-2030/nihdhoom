@@ -178,6 +178,13 @@ begin
     allowed := (j.status='ASSIGNED' and p_next_status='ARRIVED') or (j.status='ARRIVED' and p_next_status='BALING') or (j.status='BALING' and p_next_status='PROOF_PENDING') or (j.status='PROOF_PENDING' and p_next_status='COMPLETED') or (p_next_status in ('FAILED','CANCELLED') and j.status not in ('COMPLETED','FAILED','CANCELLED'));
   end if;
   if not allowed then raise exception 'Invalid job transition'; end if;
+  if p_next_status='COMPLETED' and not exists(
+    select 1 from public.evidence_assets e
+    where e.booking_id=j.booking_id and e.field_id=(select field_id from public.bookings where id=j.booking_id)
+      and e.kind in ('field_photo','bale_photo','weighment')
+      and e.storage_path is not null and length(trim(e.storage_path))>0
+  ) then raise exception 'Field photo, bale photo, or weighment evidence is required before completion'; end if;
+  if p_metadata is not null and jsonb_typeof(p_metadata)<>'object' then raise exception 'Transition metadata must be an object'; end if;
   update public.jobs set status=p_next_status,actual_arrived_at=case when p_next_status='ARRIVED' then now() else actual_arrived_at end,actual_completed_at=case when p_next_status='COMPLETED' then now() else actual_completed_at end,last_transition_at=now(),route_metadata=coalesce(route_metadata,'{}'::jsonb)||coalesce(p_metadata,'{}'::jsonb),updated_at=now() where id=p_job_id returning * into j;
   update public.bookings set status=case when p_next_status='COMPLETED' then 'CLEARED_PENDING_AUDIT' when p_next_status='CANCELLED' then 'CANCELLED' else status end,updated_at=now() where id=j.booking_id;
   update public.fields f set status=case when p_next_status='ARRIVED' then 'ON_THE_WAY' when p_next_status='BALING' then 'BALING_IN_PROGRESS' when p_next_status='COMPLETED' then 'CLEARED_PENDING_AUDIT' when p_next_status='CANCELLED' then 'CANCELLED' else f.status end,updated_at=now() where f.id=(select field_id from public.bookings where id=j.booking_id);
@@ -268,6 +275,18 @@ grant insert on public.buyer_offers to authenticated;
 
 
 -- Explicit execute grants for the single authoritative V7 RPC definitions.
+grant execute on function public.reserve_clearance_booking(uuid,date,numeric,numeric,date,numeric,text,jsonb) to authenticated;
+grant execute on function public.transition_job(uuid,text,jsonb) to authenticated;
+grant execute on function public.record_verification_review(uuid,text,numeric,jsonb) to authenticated;
+grant execute on function public.accept_buyer_offer(uuid) to authenticated;
+
+-- Do not leave security-definer RPCs executable by anonymous or PUBLIC roles.
+revoke all on function public.cancel_clearance_booking(uuid) from public, anon;
+revoke all on function public.reserve_clearance_booking(uuid,date,numeric,numeric,date,numeric,text,jsonb) from public, anon;
+revoke all on function public.transition_job(uuid,text,jsonb) from public, anon;
+revoke all on function public.record_verification_review(uuid,text,numeric,jsonb) from public, anon;
+revoke all on function public.accept_buyer_offer(uuid) from public, anon;
+grant execute on function public.cancel_clearance_booking(uuid) to authenticated;
 grant execute on function public.reserve_clearance_booking(uuid,date,numeric,numeric,date,numeric,text,jsonb) to authenticated;
 grant execute on function public.transition_job(uuid,text,jsonb) to authenticated;
 grant execute on function public.record_verification_review(uuid,text,numeric,jsonb) to authenticated;
