@@ -52,3 +52,17 @@ The release states that 2025 was 53% lower than 2024, 86% lower than 2023, 90% l
 - Recheck official scheme terms and season counts before each harvest season.
 - Do not infer district-level demand or machine availability from state totals.
 - This note is a research baseline, not agronomic advice, a legal interpretation, or a commercial feasibility study.
+
+## 2026 preparedness context (published information)
+
+CAQM's 16 February 2026 release describes a statutory direction for coordinated state action plans to prevent wheat-stubble burning during the 2026 harvesting season. It reports 10,207 fire events in Punjab during 1 April–31 May 2025 under the stated ISRO/IARI protocol. This is the **wheat** season and must not be combined with the paddy-season series above.
+
+Punjab's 2026 state action plan describes 10,500 field functionaries appointed in 2025 and a 1,700-person Parali Protection Force, with plans to increase field personnel and continue block-level deployment in 2026. These are plan/reported staffing figures, not NIRDHOOM personnel or service capacity.
+
+A September 2026 *Indian Express* report says Punjab planned approximately 1.25 lakh operational CRM machines for the upcoming season and reported that about 67,000 of the 1.65 lakh machines distributed since 2018 had passed their five-year lifespan and were considered non-functional. It also reports about 22,000 new machines being added in 2026. These are reported state preparedness figures; do not use them as a live machine inventory or as evidence that any village has a machine available.
+
+### Additional sources
+- CAQM / PIB, 16 Feb 2026, *CAQM issues comprehensive Statutory Direction regarding implementation of Action Plans for Elimination of Wheat Stubble Burning in 2026*: https://www.pib.gov.in/PressReleasePage.aspx?PRID=2228743&lang=1&reg=3
+- Punjab 2026 state action plan, including field-functionary and Parali Protection Force information: https://caqm.nic.in/WriteReadData/LINKS/Punjab%20State%20action%20plan%20%281%29e4a64b10-7638-490f-9ae8-8c09ce27082f.pdf
+- *The Indian Express*, September 2026, *Record paddy area, ageing CRM fleet: Punjab readies 1.25 lakh machines for stubble season*: https://indianexpress.com/article/cities/chandigarh/record-paddy-area-ageing-crm-fleet-punjab-readies-1-25-lakh-machines-for-stubble-season-10888644/
+
