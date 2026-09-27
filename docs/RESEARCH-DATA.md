@@ -6,6 +6,21 @@ This note separates public-sector observations from NIRDHOOM product assumptions
 
 ## Public data points
 
+### Punjab farm-fire count series
+
+CAQM's 1 December 2025 season-end release reports these counts for the 15 September–30 November monitoring window:
+
+| Season | Reported fire counts |
+|---|---:|
+| 2021 | 71,304 |
+| 2022 | 49,922 |
+| 2023 | 36,663 |
+| 2024 | 10,909 |
+| 2025 | 5,114 |
+
+The release states that 2025 was 53% lower than 2024, 86% lower than 2023, 90% lower than 2022, and 93% lower than 2021. These are protocol- and period-specific counts, not a live incident feed or a direct measure of NIRDHOOM outcomes.
+
+
 | Measure | Reported value | Period / scope | Source and interpretation |
 |---|---:|---|---|
 | Punjab farm-fire incidents | 5,114 | 15 Sep–30 Nov 2025 | CAQM's season-end release, published by PIB on 1 Dec 2025. The release reports this as 53% lower than 2024, 86% lower than 2023, 90% lower than 2022, and 93% lower than 2021. Counts are protocol- and period-specific. |
