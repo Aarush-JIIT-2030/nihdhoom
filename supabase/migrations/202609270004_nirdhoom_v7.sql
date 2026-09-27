@@ -4,6 +4,9 @@
 create extension if not exists pgcrypto;
 create extension if not exists postgis with schema extensions;
 
+alter table public.buyers add column if not exists profile_id uuid references public.profiles(id) on delete set null;
+create unique index if not exists buyers_profile_id_unique on public.buyers(profile_id) where profile_id is not null;
+
 -- Make the production geometry authoritative when supplied, while preserving the farmer-declared acreage.
 alter table public.fields add column if not exists geometry_area_acres numeric(10,3);
 alter table public.fields add column if not exists geometry_verified_at timestamptz;
@@ -86,7 +89,14 @@ begin
     raise exception 'Active farmer consent is required before booking';
   end if;
   if p_requested_date < current_date then raise exception 'Requested date is in the past'; end if;
-  if p_rate_per_acre <= 0 or p_quoted_amount <= 0 then raise exception 'Invalid quote'; end if;
+  if p_requested_date > current_date + 90 then raise exception 'Requested date is outside the booking window'; end if;
+  if p_rate_per_acre is null or p_quoted_amount is null or p_rate_per_acre <= 0 or p_quoted_amount <= 0
+     or p_rate_per_acre > 100000 or p_quoted_amount > 100000000 then raise exception 'Invalid quote'; end if;
+  if p_guaranteed_by_date is null or p_guaranteed_by_date < p_requested_date
+     or p_guaranteed_by_date > p_requested_date + 30 then raise exception 'Invalid guarantee date'; end if;
+  if p_penalty_amount is null or p_penalty_amount < 0 or p_penalty_amount > p_quoted_amount then raise exception 'Invalid penalty amount'; end if;
+  if p_pricing_band is null or length(trim(p_pricing_band))=0 or length(p_pricing_band)>80 then raise exception 'Invalid pricing band'; end if;
+  if p_quote_metadata is not null and jsonb_typeof(p_quote_metadata)<>'object' then raise exception 'Quote metadata must be an object'; end if;
   insert into public.bookings(field_id,requested_date,rate_per_acre,quoted_amount,guaranteed_by_date,penalty_amount,pricing_band,quote_metadata,status,accepted_at)
   values(p_field_id,p_requested_date,p_rate_per_acre,p_quoted_amount,p_guaranteed_by_date,p_penalty_amount,p_pricing_band,coalesce(p_quote_metadata,'{}'::jsonb),'BOOKED',now())
   returning * into b;
@@ -96,105 +106,6 @@ exception when unique_violation then
   raise exception 'This field already has an active booking for that date';
 end;
 $$;
-
--- Controlled job transitions. Browser clients cannot move a job to an arbitrary state.
-create or replace function public.transition_job(
-  p_job_id uuid,
-  p_next_status text,
-  p_metadata jsonb default '{}'::jsonb
-)
-returns public.jobs
-language plpgsql
-security invoker
-set search_path = public
-as $$
-declare
-  j public.jobs%rowtype;
-  role_name text;
-  allowed boolean := false;
-begin
-  select * into j from public.jobs where id=p_job_id for update;
-  if not found then raise exception 'Job not found'; end if;
-  select role into role_name from public.profiles where id=auth.uid();
-  if j.operator_id=auth.uid() or role_name in ('dispatcher','admin') then
-    allowed := (j.status='ASSIGNED' and p_next_status='ARRIVED')
-      or (j.status='ARRIVED' and p_next_status='BALING')
-      or (j.status='BALING' and p_next_status='PROOF_PENDING')
-      or (j.status='PROOF_PENDING' and p_next_status='COMPLETED')
-      or (p_next_status in ('FAILED','CANCELLED') and j.status not in ('COMPLETED','FAILED','CANCELLED'));
-  end if;
-  if not allowed then raise exception 'Invalid job transition'; end if;
-  update public.jobs
-  set status=p_next_status,
-      actual_arrived_at=case when p_next_status='ARRIVED' then now() else actual_arrived_at end,
-      actual_completed_at=case when p_next_status='COMPLETED' then now() else actual_completed_at end,
-      last_transition_at=now(),
-      route_metadata=coalesce(route_metadata,'{}'::jsonb)||coalesce(p_metadata,'{}'::jsonb),
-      updated_at=now()
-  where id=p_job_id
-  returning * into j;
-  update public.bookings set status=case when p_next_status='COMPLETED' then 'CLEARED_PENDING_AUDIT' when p_next_status='CANCELLED' then 'CANCELLED' else status end, updated_at=now() where id=j.booking_id;
-  update public.fields f set status=case when p_next_status='ARRIVED' then 'ON_THE_WAY' when p_next_status='BALING' then 'BALING_IN_PROGRESS' when p_next_status='COMPLETED' then 'CLEARED_PENDING_AUDIT' when p_next_status='CANCELLED' then 'CANCELLED' else f.status end, updated_at=now() where f.id=(select field_id from public.bookings where id=j.booking_id);
-  return j;
-end;
-$$;
-
--- A verifier can record a review decision, preserving the inputs used for the decision.
-create or replace function public.record_verification_review(
-  p_field_id uuid,
-  p_result text,
-  p_confidence numeric,
-  p_metadata jsonb default '{}'::jsonb
-)
-returns public.verification_events
-language plpgsql
-security invoker
-set search_path = public
-as $$
-declare v public.verification_events%rowtype; role_name text;
-begin
-  select role into role_name from public.profiles where id=auth.uid();
-  if role_name not in ('verifier','dispatcher','admin') then raise exception 'Verifier role required'; end if;
-  insert into public.verification_events(field_id,method,result,confidence,metadata)
-  values(p_field_id,'field_evidence_plus_firms',p_result,p_confidence,coalesce(p_metadata,'{}'::jsonb)) returning * into v;
-  if p_result='VERIFIED_NON_BURN' then update public.fields set status='VERIFIED_NON_BURN',updated_at=now() where id=p_field_id; end if;
-  return v;
-end;
-$$;
-
--- Buyer offer acceptance atomically claims the lot and prevents two buyers from winning the same lot.
-create or replace function public.accept_buyer_offer(p_offer_id uuid)
-returns public.buyer_offers
-language plpgsql
-security definer
-set search_path = public
-as $
-declare
-  o public.buyer_offers%rowtype;
-  role_name text;
-  updated_lot_id uuid;
-begin
-  select role into role_name from public.profiles where id=auth.uid();
-  if role_name not in ('buyer','dispatcher','admin') then raise exception 'Buyer/dispatcher role required'; end if;
-  select * into o from public.buyer_offers where id=p_offer_id and status='OPEN' for update;
-  if not found then raise exception 'Offer is no longer open'; end if;
-  if role_name='buyer' and not exists(
-    select 1 from public.buyers b where b.id=o.buyer_id and b.profile_id=auth.uid()
-  ) then raise exception 'Offer does not belong to the current buyer'; end if;
-  update public.residue_lots
-    set assigned_buyer_id=o.buyer_id,status='ALLOCATED',updated_at=now()
-    where id=o.lot_id and status in ('AVAILABLE','OPEN')
-    returning id into updated_lot_id;
-  if updated_lot_id is null then raise exception 'Residue lot is no longer available'; end if;
-  update public.buyer_offers set status='ACCEPTED' where id=p_offer_id returning * into o;
-  return o;
-end;
-$;
-
-grant execute on function public.reserve_clearance_booking(uuid,date,numeric,numeric,date,numeric,text,jsonb) to authenticated;
-grant execute on function public.transition_job(uuid,text,jsonb) to authenticated;
-grant execute on function public.record_verification_review(uuid,text,numeric,jsonb) to authenticated;
-grant execute on function public.accept_buyer_offer(uuid) to authenticated;
 
 -- V7 role-specific writes.
 drop policy if exists "farmer creates own fields" on public.fields;
@@ -289,7 +200,19 @@ declare v public.verification_events%rowtype; role_name text;
 begin
   select role into role_name from public.profiles where id=auth.uid();
   if role_name not in ('verifier','dispatcher','admin') then raise exception 'Verifier role required'; end if;
-  insert into public.verification_events(field_id,method,result,confidence,metadata) values(p_field_id,'field_evidence_plus_firms',p_result,p_confidence,coalesce(p_metadata,'{}'::jsonb)) returning * into v;
+  if p_result not in ('VERIFIED_NON_BURN','BURN_DETECTED','INCONCLUSIVE','REQUIRES_FIELD_REVIEW') then raise exception 'Unsupported verification result'; end if;
+  if p_confidence is null or p_confidence < 0 or p_confidence > 100 then raise exception 'Confidence must be between 0 and 100'; end if;
+  if p_metadata is not null and jsonb_typeof(p_metadata)<>'object' then raise exception 'Verification metadata must be an object'; end if;
+  if not exists(select 1 from public.fields f where f.id=p_field_id) then raise exception 'Field not found'; end if;
+  if p_result='VERIFIED_NON_BURN' and not exists(
+    select 1 from public.evidence_assets e
+    join public.bookings b on b.id=e.booking_id
+    join public.jobs j on j.booking_id=b.id
+    where e.field_id=p_field_id and j.status='COMPLETED'
+      and e.kind in ('field_photo','bale_photo','weighment')
+  ) then raise exception 'Completed-job field evidence is required before verification'; end if;
+  insert into public.verification_events(field_id,method,result,confidence,metadata)
+  values(p_field_id,'field_evidence_plus_firms',p_result,p_confidence,coalesce(p_metadata,'{}'::jsonb)) returning * into v;
   if p_result='VERIFIED_NON_BURN' then update public.fields set status='VERIFIED_NON_BURN',updated_at=now() where id=p_field_id; end if;
   return v;
 end;
@@ -301,14 +224,20 @@ language plpgsql
 security definer
 set search_path = public
 as $$
-declare o public.buyer_offers%rowtype; role_name text;
+declare o public.buyer_offers%rowtype; role_name text; updated_lot_id uuid;
 begin
   select role into role_name from public.profiles where id=auth.uid();
   if role_name not in ('buyer','dispatcher','admin') then raise exception 'Buyer/dispatcher role required'; end if;
-  select * into o from public.buyer_offers where id=p_offer_id and status='OPEN' for update;
-  if not found then raise exception 'Offer is no longer open'; end if;
+  select * into o from public.buyer_offers where id=p_offer_id and status='OPEN' and (valid_until is null or valid_until > now()) for update;
+  if not found then raise exception 'Offer is no longer open or has expired'; end if;
+  if role_name='buyer' and not exists(select 1 from public.buyers b where b.id=o.buyer_id and b.profile_id=auth.uid() and b.active) then
+    raise exception 'Offer does not belong to the current buyer';
+  end if;
+  update public.residue_lots set assigned_buyer_id=o.buyer_id,status='ALLOCATED',updated_at=now()
+  where id=o.lot_id and status in ('AVAILABLE','OPEN') and (quantity_tonnes is null or quantity_tonnes >= o.quantity_tonnes)
+  returning id into updated_lot_id;
+  if updated_lot_id is null then raise exception 'Residue lot is no longer available or has insufficient quantity'; end if;
   update public.buyer_offers set status='ACCEPTED' where id=p_offer_id returning * into o;
-  update public.residue_lots set assigned_buyer_id=o.buyer_id,status='ALLOCATED',updated_at=now() where id=o.lot_id and status in ('AVAILABLE','OPEN');
   return o;
 end;
 $$;
@@ -336,3 +265,10 @@ create policy "buyer creates offer" on public.buyer_offers for insert to authent
   exists(select 1 from public.profiles p where p.id=auth.uid() and p.role in ('buyer','dispatcher','admin'))
 );
 grant insert on public.buyer_offers to authenticated;
+
+
+-- Explicit execute grants for the single authoritative V7 RPC definitions.
+grant execute on function public.reserve_clearance_booking(uuid,date,numeric,numeric,date,numeric,text,jsonb) to authenticated;
+grant execute on function public.transition_job(uuid,text,jsonb) to authenticated;
+grant execute on function public.record_verification_review(uuid,text,numeric,jsonb) to authenticated;
+grant execute on function public.accept_buyer_offer(uuid) to authenticated;
