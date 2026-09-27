@@ -21,9 +21,13 @@ const sha256File = async file => { if(!globalThis.crypto?.subtle) return null; c
 
 function normalizeGeometry(g) {
   if (!Array.isArray(g) || g.length < 3) return null;
-  if (g.every(p => Number.isFinite(Number(p.lat)) && Number.isFinite(Number(p.lng)))) return g.map(p => ({ lat: Number(p.lat), lng: Number(p.lng) }));
-  if (g.every(p => Number.isFinite(Number(p.x)) && Number.isFinite(Number(p.y)))) return null;
-  return null;
+  if (!g.every(p => Number.isFinite(Number(p?.lat)) && Number.isFinite(Number(p?.lng)))) return null;
+  const points = g.map(p => ({ lat: Number(p.lat), lng: Number(p.lng) }));
+  // Reject malformed coordinates before they reach maps or PostGIS.
+  if (points.some(p => p.lat < -90 || p.lat > 90 || p.lng < -180 || p.lng > 180)) return null;
+  const distinct = new Set(points.map(p => `${p.lat.toFixed(7)},${p.lng.toFixed(7)}`));
+  if (distinct.size < 3) return null;
+  return points;
 }
 function normalizeField(f) {
   return {
