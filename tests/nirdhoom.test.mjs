@@ -51,18 +51,20 @@ test('outbound farmer messaging endpoints require dispatcher authentication and 
 });
 
 
-test('buyer offer acceptance cannot allocate an unavailable lot or accept another buyer offer',()=>{
+test('V7 migration has one valid buyer acceptance function with atomic lot claim',()=>{
   const sql=read('supabase/migrations/202609270004_nirdhoom_v7.sql');
-  const start=sql.indexOf('create or replace function public.accept_buyer_offer');
+  const definitions=[...sql.matchAll(/create or replace function public\\.accept_buyer_offer/g)];
+  assert.equal(definitions.length,1,'must have one authoritative definition');
+  const start=definitions[0].index;
   const end=sql.indexOf('$$;',start)+3;
   const fn=sql.slice(start,end);
   assert.match(fn,/security definer/i);
-  assert.match(fn,/b\.profile_id=auth\.uid\(\)/);
-  assert.match(fn,/where id=o\.lot_id and status in \('AVAILABLE','OPEN'\)/);
+  assert.match(fn,/b\\.profile_id=auth\\.uid\\(\\)/);
+  assert.match(fn,/returning id into updated_lot_id/);
   assert.match(fn,/if updated_lot_id is null then raise exception/);
-  assert.ok(fn.indexOf('if updated_lot_id is null') < fn.indexOf('set status=\'ACCEPTED\''));
+  assert.ok(fn.indexOf('if updated_lot_id is null') < fn.indexOf("set status='ACCEPTED'"));
+  assert.doesNotMatch(sql,/as \\$\\s*declare[\\s\\S]{0,120}accept_buyer_offer/);
 });
-
 
 test('demo UPI handoff is visibly non-settling and does not mutate payment state',()=>{
   const main=read('src/main.jsx');
@@ -73,4 +75,10 @@ test('demo UPI handoff is visibly non-settling and does not mutate payment state
   assert.match(payment,/No payment confirmation was received/);
   assert.match(payment,/No payment status was changed/);
   assert.doesNotMatch(payment,/\.from\(['"]payments['"]\)\.update/);
+});
+
+
+test('self-created profiles are restricted to farmer role',()=>{
+  const sql=read('supabase/migrations/202609270001_nirdhoom_core.sql');
+  assert.match(sql,/profile owner insert[^;]*role = 'farmer'/s);
 });
