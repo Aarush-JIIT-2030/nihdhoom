@@ -92,6 +92,9 @@ begin
   if p_requested_date > current_date + 90 then raise exception 'Requested date is outside the booking window'; end if;
   if p_rate_per_acre is null or p_quoted_amount is null or p_rate_per_acre <= 0 or p_quoted_amount <= 0
      or p_rate_per_acre > 100000 or p_quoted_amount > 100000000 then raise exception 'Invalid quote'; end if;
+  if round(p_rate_per_acre * f.acreage, 2) <> round(p_quoted_amount, 2) then
+    raise exception 'Quoted amount does not match registered field acreage';
+  end if;
   if p_guaranteed_by_date is null or p_guaranteed_by_date < p_requested_date
      or p_guaranteed_by_date > p_requested_date + 30 then raise exception 'Invalid guarantee date'; end if;
   if p_penalty_amount is null or p_penalty_amount < 0 or p_penalty_amount > p_quoted_amount then raise exception 'Invalid penalty amount'; end if;
