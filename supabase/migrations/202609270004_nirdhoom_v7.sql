@@ -76,9 +76,9 @@ create or replace function public.reserve_clearance_booking(
 )
 returns public.bookings
 language plpgsql
-security invoker
+security definer
 set search_path = public
-as $$
+as $
 declare
   f public.fields%rowtype;
   b public.bookings%rowtype;
