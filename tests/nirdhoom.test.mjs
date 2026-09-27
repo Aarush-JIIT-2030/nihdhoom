@@ -99,3 +99,12 @@ test('assistant bounds user input and upstream requests',()=>{
   assert.match(source,/AbortSignal\.timeout\(8000\)/);
   assert.match(source,/AbortSignal\.timeout\(12000\)/);
 });
+
+
+test('assistant requires auth for provider-backed AI and does not trust failed private lookups',()=>{
+  const source=read('api/assistant.ts');
+  assert.match(source,/Boolean\(process\.env\.OPENAI_API_KEY\)/);
+  assert.match(source,/Boolean\(field\?\.dbId\)/);
+  assert.match(source,/field\?\.dbId\?\{\}:\(field\|\|\{\}\)/);
+  assert.match(source,/openai-demo-context/);
+});
