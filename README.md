@@ -151,13 +151,13 @@ The attached **Parali: The Reframe** brief is now reflected directly in the code
 
 ### Production deployment sequence
 1. Create a **dedicated NIRDHOOM Supabase project**; do not reuse another project.
-2. Enable PostGIS in a dedicated extension schema, then run migrations `001`, `002`, `003` in order.
+2. Enable PostGIS in a dedicated extension schema, then run migrations `001`, `002`, `003`, and `004` in order.
 3. Configure phone authentication/SMS in Supabase and test the OTP flow.
 4. Configure the `evidence` Storage bucket policies from migration `003`.
 5. Connect a verified cadastral/Khasra source and mark `boundary_source=cadastral` only after verification.
 6. Deploy the OR-Tools service and set `DISPATCH_SERVICE_URL`.
 7. Request a NASA FIRMS MAP_KEY and set `FIRMS_MAP_KEY` server-side.
-8. Connect a payout provider in sandbox first; route provider webhooks to the payment webhook endpoint and reconcile them in a privileged backend function.
+8. Connect a payout provider in sandbox first; implement its exact signature scheme using the raw request bytes before routing webhooks to the endpoint. The generic webhook currently fails closed unless the platform supplies `req.rawBody`; provider-specific event validation and sandbox reconciliation remain required.
 9. Configure WhatsApp Cloud API credentials and a separate IVR provider before advertising voice support.
 10. Add Sentinel-2/Bhuvan credentials and calibrate harvest forecasts against local agronomic observations.
 11. Add monitoring, rate limits, retry queues, audit retention, privacy policy and consent/revocation handling.
