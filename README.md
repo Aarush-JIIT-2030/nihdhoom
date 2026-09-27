@@ -219,3 +219,7 @@ npm run e2e
 ```
 
 Do not enable live payout until the provider adapter and webhook reconciliation have been tested in sandbox. Do not label a self-drawn polygon as cadastral. Do not issue a carbon claim solely from a missing FIRMS detection.
+
+## Demo UPI handoff (testing only)
+
+The Payments surface includes a demo-only UPI intent handoff using the test UPI ID entered in the UI. It can open a compatible UPI app and copy the ID. The local “Finish UI test” action only changes UI state; it does not create a payment record, mark a transfer as paid, or verify a bank transaction. A UPI app can still initiate a real transfer if the user explicitly confirms one, so do not confirm a payment during UI testing. The demo ID is client-visible by design and must be replaced or removed before public launch. This is not a merchant checkout or payout integration.
