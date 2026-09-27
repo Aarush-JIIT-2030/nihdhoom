@@ -9,6 +9,7 @@
     "api/dispatch.ts": {"runtime":"nodejs24.x"},
     "api/firms.ts": {"runtime":"nodejs24.x"},
     "api/payments/webhook.ts": {"runtime":"nodejs24.x"},
-    "api/notify/whatsapp.ts": {"runtime":"nodejs24.x"}
+    "api/notify/whatsapp.ts": {"runtime":"nodejs24.x"},
+    "api/notify/ivr.ts": {"runtime":"nodejs24.x"}
   }
 }
