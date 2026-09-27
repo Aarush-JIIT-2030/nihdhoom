@@ -60,6 +60,36 @@ function fallback(fields: Point[], machines: Machine[]) {
   };
 }
 
+function validSolverPlan(plan: any, fields: Point[], machines: Machine[]) {
+  if (!plan || typeof plan !== 'object' || !Array.isArray(plan.routes) ||
+      !Array.isArray(plan.unassigned) || plan.routes.length > machines.length) return false;
+  const fieldIds = new Set(fields.map(f => f.id));
+  const machineIds = new Set(machines.map(m => m.id));
+  const seenFields = new Set<string>();
+  const seenMachines = new Set<string>();
+  for (const route of plan.routes) {
+    if (!route || typeof route.machine_id !== 'string' || !machineIds.has(route.machine_id) ||
+        seenMachines.has(route.machine_id) || !Array.isArray(route.stops) ||
+        !Number.isFinite(Number(route.total_acres)) || Number(route.total_acres) < 0) return false;
+    seenMachines.add(route.machine_id);
+    let acres = 0;
+    for (const id of route.stops) {
+      if (typeof id !== 'string' || !fieldIds.has(id) || seenFields.has(id)) return false;
+      seenFields.add(id);
+      acres += Number(fields.find(f => f.id === id)?.acres || 0);
+    }
+    const machine = machines.find(m => m.id === route.machine_id)!;
+    if (acres > machine.capacity_acres_day || Number(route.total_acres) > machine.capacity_acres_day ||
+        Math.abs(acres - Number(route.total_acres)) > 0.05) return false;
+  }
+  const unassigned = new Set<string>();
+  for (const id of plan.unassigned) {
+    if (typeof id !== 'string' || !fieldIds.has(id) || seenFields.has(id) || unassigned.has(id)) return false;
+    unassigned.add(id);
+  }
+  return seenFields.size + unassigned.size === fieldIds.size;
+}
+
 async function verifyRole(req: any, roles: string[]) {
   const auth = String(req.headers?.authorization || '');
   const token = auth.startsWith('Bearer ') ? auth.slice(7).trim() : '';
@@ -134,7 +164,11 @@ export default async function handler(req: any, res: any) {
         body: JSON.stringify({ fields, machines }),
         signal: AbortSignal.timeout(10000),
       });
-      if (response.ok) return res.status(200).json(await response.json());
+      if (response.ok) {
+        const plan = await response.json();
+        if (validSolverPlan(plan, fields, machines)) return res.status(200).json(plan);
+        // Never expose malformed or internally inconsistent solver assignments.
+      }
     } catch {
       // Fall back to the local planner, but clearly label its limitations.
     }
