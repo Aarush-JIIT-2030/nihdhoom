@@ -172,6 +172,10 @@ Sources:
 
 These figures are contextual research, not NIRDHOOM performance metrics. Satellite fire detections are not field-clearance certificates; field-level claims require independent evidence and a documented verification process.
 
+## Research baseline
+
+The website includes a dated Research view, and `docs/RESEARCH-DATA.md` records the public sources, geography, reporting windows, and limitations behind its context data. State-level counts and scheme figures must not be presented as live NIRDHOOM results, local machine availability, or guaranteed farmer payouts. Refresh policy and product implications are documented in that file.
+
 ## V7 — close the operational loop
 
 V7 intentionally stops expanding visual dashboard scope. The primary transaction is now:
