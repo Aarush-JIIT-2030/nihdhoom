@@ -1,4 +1,4 @@
-# NIRDHOOM — Field-First V4
+# NIRDHOOM — Field-First Network (V7)
 
 A farmer-first crop-residue clearance and offtake product rebuilt from the supplied NIRDHOOM source material and earlier project requirements.
 
@@ -60,13 +60,7 @@ npm run audit
 npm run syntaxcheck
 ```
 
-The environment used to prepare this ZIP could not complete `npm install` within the available network timeout, so a Vite production build was not falsely marked as verified. Run `npm install` and then:
-
-```bash
-npm run build
-```
-
-Commit the generated `package-lock.json` before production deployment.
+The repository contains a Vite app launched from `src/main.jsx`; `src/main.tsx` and `src/App.tsx` are a separate TypeScript app and are not the current browser entry point. The production build runs Vite, while `npm run syntaxcheck` checks the TypeScript project. Keep `package.json` and `package-lock.json` synchronized: run `npm install` after dependency changes and commit the resulting lockfile. A successful local build and CI run are required before deployment.
 
 ## AI
 
