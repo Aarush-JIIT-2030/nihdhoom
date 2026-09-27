@@ -139,3 +139,20 @@ test('payment initiation fails closed and validates request before provider setu
   assert.match(source,/No money movement was attempted/);
   assert.doesNotMatch(source,/status:\s*'PAID'/);
 });
+
+test('service worker never caches API or authenticated responses',()=>{
+  const sw=read('public/sw.js');
+  assert.match(sw,/url\.pathname\.startsWith\('\/api\/'\)/);
+  assert.match(sw,/request\.headers\.has\('authorization'\)/);
+  assert.match(sw,/response\.ok && response\.type === 'basic'/);
+  assert.match(sw,/nirdhoom-shell-v5/);
+});
+
+test('OR-Tools dispatch endpoint requires configured shared-secret authentication',()=>{
+  const service=read('services/dispatch-ortools/main.py');
+  const api=read('api/dispatch.ts');
+  assert.match(service,/DISPATCH_SERVICE_TOKEN/);
+  assert.match(service,/hmac\.compare_digest/);
+  assert.match(service,/status_code=401/);
+  assert.match(api,/DISPATCH_SERVICE_TOKEN/);
+});
