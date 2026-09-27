@@ -49,3 +49,16 @@ test('outbound farmer messaging endpoints require dispatcher authentication and 
   assert.match(whatsapp,/text\.length > 4096/);
   assert.match(ivr,/message\.length > 2000/);
 });
+
+
+test('buyer offer acceptance cannot allocate an unavailable lot or accept another buyer offer',()=>{
+  const sql=read('supabase/migrations/202609270004_nirdhoom_v7.sql');
+  const start=sql.indexOf('create or replace function public.accept_buyer_offer');
+  const end=sql.indexOf('$$;',start)+3;
+  const fn=sql.slice(start,end);
+  assert.match(fn,/security definer/i);
+  assert.match(fn,/b\.profile_id=auth\.uid\(\)/);
+  assert.match(fn,/where id=o\.lot_id and status in \('AVAILABLE','OPEN'\)/);
+  assert.match(fn,/if updated_lot_id is null then raise exception/);
+  assert.ok(fn.indexOf('if updated_lot_id is null') < fn.indexOf('set status=\'ACCEPTED\''));
+});
