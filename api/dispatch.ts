@@ -160,7 +160,7 @@ export default async function handler(req: any, res: any) {
     try {
       const response = await fetch(process.env.DISPATCH_SERVICE_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...(process.env.DISPATCH_SERVICE_TOKEN ? { Authorization: `Bearer ${process.env.DISPATCH_SERVICE_TOKEN}` } : {}) },
         body: JSON.stringify({ fields, machines }),
         signal: AbortSignal.timeout(10000),
       });
