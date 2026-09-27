@@ -155,6 +155,23 @@ The attached **Parali: The Reframe** brief is now reflected directly in the code
 11. Add monitoring, rate limits, retry queues, audit retention, privacy policy and consent/revocation handling.
 12. Run `npm install && npm run syntaxcheck && npm run audit && npm run build` in CI before Vercel deploy.
 
+
+## Public research integrated into the app
+
+The Research view presents a small, sourced evidence panel and explicitly separates public state-level statistics from NIRDHOOM demo records. Current reference points include:
+
+- **Punjab farm-fire incidents, 15 September–30 November 2025:** 5,114, a 53% reduction from 2024 as reported by the Commission for Air Quality Management (CAQM) through the Press Information Bureau on 1 December 2025.
+- **2026 CRM fleet context:** a September 2026 report described a plan for approximately 1.25 lakh operational machines and noted that around 67,000 of 1.65 lakh machines distributed since 2018 had exceeded a five-year lifespan. This is a reported plan/assessment, not a live fleet inventory.
+- **Residue pathways:** ICAR’s 2021 review discusses pellets for power generation, biogas/CBG, alcohol production and composting, while noting that choices depend on technical feasibility and economics.
+
+Sources:
+- CAQM / PIB, *Paddy Harvesting Season 2025 concludes with significant Reduction in Farm Fire Incidents across Punjab and Haryana* (1 Dec 2025): https://www.pib.gov.in/PressReleasePage.aspx?PRID=2197201&lang=1&reg=3
+- The Indian Express, *Record paddy area, ageing CRM fleet: Punjab readies 1.25 lakh machines for stubble season* (September 2026): https://indianexpress.com/article/cities/chandigarh/record-paddy-area-ageing-crm-fleet-punjab-readies-1-25-lakh-machines-for-stubble-season-10888644/
+- ICAR, *Ex-situ Crop Residue Management Options* (2021): https://www.icar.org.in/sites/default/files/2022-06/Ex-Situ-Crop-Residue-Management.pdf
+- PIB, crop-residue management scheme reply (2025): https://www.pib.gov.in/PressReleasePage.aspx?PRID=2112397&lang=2&reg=48
+
+These figures are contextual research, not NIRDHOOM performance metrics. Satellite fire detections are not field-clearance certificates; field-level claims require independent evidence and a documented verification process.
+
 ## V7 — close the operational loop
 
 V7 intentionally stops expanding visual dashboard scope. The primary transaction is now:
