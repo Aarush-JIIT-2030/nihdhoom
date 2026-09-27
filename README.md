@@ -78,6 +78,10 @@ The Sathi UI calls `/api/assistant`. With `OPENAI_API_KEY` configured on the ser
 
 The farmer role is the default. Dispatcher/verifier/operator/admin role assignment must be performed through an authorized backend/admin process; the profile trigger prevents a user from promoting their own role.
 
+## Pilot readiness
+
+The consolidated implementation checklist, including P0/P1/P2 work, automated test requirements, operational dependencies and release exit criteria, is maintained in [`docs/FINAL-PILOT-READINESS.md`](docs/FINAL-PILOT-READINESS.md). Treat unconnected services as unconfigured; do not represent demo data, indicative quotes, heuristic dispatch or placeholder payment flows as live operations.
+
 ## Production integrations still required
 
 - Phone OTP / WhatsApp onboarding and consent
