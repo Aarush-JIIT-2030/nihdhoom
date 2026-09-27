@@ -88,6 +88,9 @@ begin
   if coalesce(f.consent_id::text,'') = '' and not exists(select 1 from public.consents c where c.profile_id=auth.uid() and c.consent_type='farmer_network' and c.revoked_at is null) then
     raise exception 'Active farmer consent is required before booking';
   end if;
+  if f.boundary is null or not coalesce(f.boundary_verified,false) then
+    raise exception 'Field acreage must be verified before booking';
+  end if;
   if p_requested_date < current_date then raise exception 'Requested date is in the past'; end if;
   if p_requested_date > current_date + 90 then raise exception 'Requested date is outside the booking window'; end if;
   if p_rate_per_acre is null or p_quoted_amount is null or p_rate_per_acre <= 0 or p_quoted_amount <= 0
