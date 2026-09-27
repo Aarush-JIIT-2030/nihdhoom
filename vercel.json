@@ -1,0 +1,14 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "functions": {
+    "api/assistant.ts": {"runtime":"nodejs24.x"},
+    "api/quote.ts": {"runtime":"nodejs24.x"},
+    "api/dispatch.ts": {"runtime":"nodejs24.x"},
+    "api/firms.ts": {"runtime":"nodejs24.x"},
+    "api/payments/webhook.ts": {"runtime":"nodejs24.x"},
+    "api/notify/whatsapp.ts": {"runtime":"nodejs24.x"}
+  }
+}

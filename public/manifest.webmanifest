@@ -1,0 +1,10 @@
+{
+  "name":"NIRDHOOM – Parali Reframe",
+  "short_name":"NIRDHOOM",
+  "start_url":"/",
+  "display":"standalone",
+  "background_color":"#f7f6ef",
+  "theme_color":"#2f6b3b",
+  "description":"Farmer-first crop residue clearance, dispatch, verification and offtake network.",
+  "icons":[{"src":"/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
