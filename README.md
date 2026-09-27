@@ -64,7 +64,7 @@ The repository contains a Vite app launched from `src/main.jsx`; `src/main.tsx` 
 
 ## AI
 
-The Sathi UI calls `/api/assistant`. With `OPENAI_API_KEY` configured on the server, the function uses the OpenAI Responses API with `gpt-5.6-luna` by default; otherwise it falls back to a deterministic safe response. The API key is never sent to the browser. For production, set `REQUIRE_AUTH_FOR_AI=true` and configure Supabase URL/publishable key on the server so the function verifies the user session.
+The Sathi UI calls `/api/assistant`. With `OPENAI_API_KEY` configured on the server, the function uses the configured model (default `gpt-5.6-luna`); otherwise it falls back to a deterministic demo response. Provider-backed AI and private-field context require a verified Supabase session. The API key is never sent to the browser.
 
 ## Supabase
 
@@ -121,7 +121,7 @@ Project images in `public/images/` came from earlier NIRDHOOM project assets in 
 
 ## Production sequence
 1. Create a dedicated NIRDHOOM Supabase project (do not reuse unrelated projects).
-2. Run both migrations in order.
+2. Run migrations 001, 002, 003, and 004 in order.
 3. Seed only approved demo/network data.
 4. Configure `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, and server-side `OPENAI_API_KEY`.
 5. Enable `REQUIRE_AUTH_FOR_AI=true` after auth is configured.
