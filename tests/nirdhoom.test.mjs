@@ -184,3 +184,11 @@ test('V7 booking RPC uses a matching named dollar-quote delimiter',()=>{
   assert.match(fn,/\$booking\$;\s*$/);
   assert.doesNotMatch(fn,/as \$\s*declare/);
 });
+
+test('payment webhook binds configured provider and prevents stale status downgrades',()=>{
+  const source=read('api/payments/webhook.ts');
+  assert.match(source,/provider !== configuredProvider/);
+  assert.match(source,/status=in\.\(PENDING,PROCESSING,FAILED,PAID\)/);
+  assert.match(source,/status=in\.\(PAID,REFUNDED\)/);
+  assert.match(source,/status=in\.\(PENDING,PROCESSING,FAILED\)/);
+});
