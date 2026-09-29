@@ -86,7 +86,7 @@ export default async function handler(req: any, res: any) {
   // adapter must normalize its own event semantics before reaching this endpoint.
   const terminalGuard = status === 'PAID'
     ? '&status=in.(PENDING,PROCESSING,FAILED,PAID)'
-    : '&status=in.(PENDING,PROCESSING,FAILED)';
+    : status === 'REFUNDED' ? '&status=in.(PAID,REFUNDED)' : '&status=in.(PENDING,PROCESSING,FAILED)';
   const reconciled = await supabaseWrite(
     'payments', update,
     `?provider_reference=eq.${encodeURIComponent(reference)}&provider=eq.${encodeURIComponent(provider)}${terminalGuard}`,
