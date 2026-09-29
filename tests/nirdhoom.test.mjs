@@ -173,3 +173,14 @@ test('README language switcher, translations, and hero asset stay available',()=
     assert.match(doc,/npm run dev/);
   }
 });
+
+test('V7 booking RPC uses a matching named dollar-quote delimiter',()=>{
+  const sql=read('supabase/migrations/202609270004_nirdhoom_v7.sql');
+  const start=sql.indexOf('create or replace function public.reserve_clearance_booking');
+  const end=sql.indexOf('-- V7 role-specific writes',start);
+  assert.ok(start>=0 && end>start);
+  const fn=sql.slice(start,end);
+  assert.match(fn,/as \$booking\$\s*declare/);
+  assert.match(fn,/\$booking\$;\s*$/);
+  assert.doesNotMatch(fn,/as \$\s*declare/);
+});
