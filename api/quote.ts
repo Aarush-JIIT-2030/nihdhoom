@@ -56,11 +56,13 @@ export default async function handler(req: any, res: any) {
   const distanceFactor = hasLat ? 1 : 1.05;
   const rate = Math.round(clamp(1500 * harvestUrgency * dayPenalty * distanceFactor, 1000, 3200) / 10) * 10;
   const guaranteed = requested || new Date(Date.now() + 48 * 3600 * 1000).toISOString().slice(0, 10);
-  const penalty = Math.round(Math.max(2500, acres * 2500));
+  const quotedAmount = Math.round(rate * acres * 100) / 100;
+  // Keep the estimate compatible with the booking RPC's penalty <= quote invariant.
+  const penalty = Math.round(Math.min(quotedAmount, Math.max(2500, acres * 2500)) * 100) / 100;
 
   return res.status(200).json({
     rate_per_acre: rate,
-    quoted_amount: Math.round(rate * acres),
+    quoted_amount: quotedAmount,
     guaranteed_by_date: guaranteed,
     penalty_amount: penalty,
     pricing_band: harvestUrgency >= 1.2 ? 'urgent' : harvestUrgency >= 1 ? 'standard' : 'early-booking',
