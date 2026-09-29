@@ -215,6 +215,6 @@ test('non-payment release scope keeps real payment integration explicitly exclud
   assert.match(scope,/Validate geometry server-side/);
   assert.match(scope,/Compute integrity hashes from trusted uploaded bytes/);
   assert.match(scope,/human review and dispute path/);
-  assert.match(workflow,/npm ci --no-audit --no-fund/);
+  assert.match(workflow,/npm install --no-audit --no-fund/);
   assert.match(workflow,/permissions:\s+contents: read/);
 });
