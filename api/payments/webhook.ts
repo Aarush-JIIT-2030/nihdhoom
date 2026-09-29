@@ -57,7 +57,11 @@ export default async function handler(req: any, res: any) {
     return res.status(400).json({ error: 'Webhook payload must be an object' });
   }
   const provider = String(body.provider || '').trim();
+  const configuredProvider = String(process.env.PAYMENT_PROVIDER || '').trim();
   const reference = String(body.provider_reference || body.id || '').trim();
+  if (!configuredProvider || provider !== configuredProvider) {
+    return res.status(400).json({ error: 'Webhook provider does not match the configured payment provider' });
+  }
   const event = String(body.status || body.event || '').toLowerCase();
   const statusMap: Record<string, string> = {
     processed: 'PAID', success: 'PAID', paid: 'PAID',
@@ -78,8 +82,14 @@ export default async function handler(req: any, res: any) {
   };
   if (status === 'PAID') update.settled_at = new Date().toISOString();
   if (status === 'FAILED') update.failure_reason = String(body.failure_reason || 'Provider reported failure').slice(0, 500);
+  // Never let a delayed retry downgrade a settled/refunded payment. A provider
+  // adapter must normalize its own event semantics before reaching this endpoint.
+  const terminalGuard = status === 'PAID'
+    ? '&status=in.(PENDING,PROCESSING,FAILED,PAID)'
+    : '&status=in.(PENDING,PROCESSING,FAILED)';
   const reconciled = await supabaseWrite(
-    'payments', update, `?provider_reference=eq.${encodeURIComponent(reference)}&provider=eq.${encodeURIComponent(provider)}`,
+    'payments', update,
+    `?provider_reference=eq.${encodeURIComponent(reference)}&provider=eq.${encodeURIComponent(provider)}${terminalGuard}`,
   );
   if (!reconciled) return res.status(503).json({ error: 'Payment reconciliation failed; retry delivery' });
   return res.status(200).json({ ok: true, provider, status, provider_reference: reference, reconciled: true });
