@@ -13,10 +13,17 @@ jobs:
         with:
           node-version: 24
           cache: npm
-      - run: npm install --no-audit --no-fund
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: services/dispatch-ortools/requirements.txt
+      - run: npm ci --no-audit --no-fund
       - run: npm run syntaxcheck
       - run: npm run audit
       - run: npm test
       - run: npm run build
+      - name: Check dispatch service Python syntax
+        run: python -m compileall -q services/dispatch-ortools
       - run: npx playwright install --with-deps chromium
       - run: npm run e2e
