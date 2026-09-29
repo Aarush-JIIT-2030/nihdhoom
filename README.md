@@ -1,5 +1,9 @@
 # NIRDHOOM — Field-First Network (V7)
 
+<p align="center"><a href="README.md"><b>English</b></a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a></p>
+
+<p align="center"><img src="public/images/punjab_farm_hero.jpg" alt="Punjab agricultural fields — NIRDHOOM" width="100%"></p>
+
 A farmer-first crop-residue clearance and offtake product rebuilt from the supplied NIRDHOOM source material and earlier project requirements.
 
 ## What is in this build
