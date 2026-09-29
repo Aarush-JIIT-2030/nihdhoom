@@ -51,6 +51,8 @@ const lucideBlock=main.match(/import\s*\{([^}]*)\}\s*from\s*'lucide-react'/)?.[1
 const imported=lucideBlock.split(',').map(x=>x.trim()).filter(Boolean);
 for(const name of imported){const clean=name.split(/\s+as\s+/)[0].trim();const occurrences=(main.match(new RegExp(`\\b${clean.replace(/[.*+?^${}()|[\\]\\]/g,'\\$&')}\\b`,'g'))||[]).length;if(occurrences<2)errors.push(`unused Lucide import: ${clean}`)}
 const localComponents=new Set([...main.matchAll(/function\s+([A-Z][A-Za-z0-9_]*)\s*\(/g)].map(m=>m[1]));
+// Include default-imported React components in the JSX symbol scan.
+for (const match of main.matchAll(/import\s+([A-Z][A-Za-z0-9_]*)\s+from\s+['"][^'"]+['"]/g)) localComponents.add(match[1]);
 const jsxTags=new Set([...main.matchAll(/<([A-Z][A-Za-z0-9_]*)\b/g)].map(m=>m[1]));
 const lucideSet=new Set(imported.map(x=>x.split(/\s+as\s+/)[0].trim()));
 for(const tag of jsxTags)if(!localComponents.has(tag)&&!lucideSet.has(tag)&&tag!=='React')errors.push(`undefined JSX component: ${tag}`);
