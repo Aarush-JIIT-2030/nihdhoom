@@ -78,7 +78,7 @@ returns public.bookings
 language plpgsql
 security definer
 set search_path = public
-as $
+as $booking$
 declare
   f public.fields%rowtype;
   b public.bookings%rowtype;
@@ -110,10 +110,8 @@ begin
   return b;
 exception when unique_violation then
   raise exception 'This field already has an active booking for that date';
-end;
-$$;
-
--- V7 role-specific writes.
+end; 
+$booking$;-- V7 role-specific writes.
 drop policy if exists "farmer creates own fields" on public.fields;
 create policy "farmer creates own fields with consent" on public.fields for insert to authenticated with check (
   owner_id=auth.uid() and exists(select 1 from public.consents c where c.profile_id=auth.uid() and c.consent_type='farmer_network' and c.revoked_at is null)
