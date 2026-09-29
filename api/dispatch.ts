@@ -156,7 +156,7 @@ export default async function handler(req: any, res: any) {
     machineIds.add(machine.id);
   }
 
-  if (process.env.DISPATCH_SERVICE_URL) {
+  if (process.env.DISPATCH_SERVICE_URL && process.env.DISPATCH_SERVICE_TOKEN) {
     try {
       const response = await fetch(process.env.DISPATCH_SERVICE_URL, {
         method: 'POST',
