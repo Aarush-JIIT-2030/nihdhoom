@@ -206,3 +206,15 @@ test('quote estimate rounds to cents and caps penalty at quoted amount',()=>{
   assert.match(source,/quoted_amount: quotedAmount/);
   assert.match(source,/quote_status: 'ESTIMATE_NOT_A_BOOKING'/);
 });
+
+
+test('non-payment release scope keeps real payment integration explicitly excluded',()=>{
+  const scope=read('docs/NON-PAYMENT-RELEASE-SCOPE.md');
+  const workflow=read('.github/workflows/ci.yml');
+  assert.match(scope,/No live payment integration is part of this scope/);
+  assert.match(scope,/Validate geometry server-side/);
+  assert.match(scope,/Compute integrity hashes from trusted uploaded bytes/);
+  assert.match(scope,/human review and dispute path/);
+  assert.match(workflow,/npm ci --no-audit --no-fund/);
+  assert.match(workflow,/permissions:\s+contents: read/);
+});
