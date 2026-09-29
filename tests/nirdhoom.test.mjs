@@ -198,3 +198,11 @@ test('dispatch optimizer is never called without its shared-secret token',()=>{
   assert.match(source,/if \\(process\\.env\\.DISPATCH_SERVICE_URL && process\\.env\\.DISPATCH_SERVICE_TOKEN\\)/);
   assert.match(source,/Authorization:.*DISPATCH_SERVICE_TOKEN/);
 });
+
+test('quote estimate rounds to cents and caps penalty at quoted amount',()=>{
+  const source=read('api/quote.ts');
+  assert.match(source,/const quotedAmount = Math\.round\(rate \* acres \* 100\) \/ 100/);
+  assert.match(source,/Math\.min\(quotedAmount, Math\.max\(2500, acres \* 2500\)\)/);
+  assert.match(source,/quoted_amount: quotedAmount/);
+  assert.match(source,/quote_status: 'ESTIMATE_NOT_A_BOOKING'/);
+});
