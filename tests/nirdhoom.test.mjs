@@ -156,3 +156,21 @@ test('OR-Tools dispatch endpoint requires configured shared-secret authenticatio
   assert.match(service,/status_code=401/);
   assert.match(api,/DISPATCH_SERVICE_TOKEN/);
 });
+
+test('README language switcher, translations, and hero asset stay available',()=>{
+  const root=read('README.md');
+  const hindi=read('README.hi.md');
+  const punjabi=read('README.pa.md');
+  assert.match(root,/README\.hi\.md/);
+  assert.match(root,/README\.pa\.md/);
+  assert.match(root,/public\/images\/punjab_farm_hero\.jpg/);
+  assert.ok(fs.existsSync(`${root}/public/images/punjab_farm_hero.jpg`));
+  for(const [name,doc] of [['Hindi',hindi],['Punjabi',punjabi]]){
+    assert.match(doc,/README\.md/,`${name} README must link to English`);
+    assert.match(doc,/README\.hi\.md/);
+    assert.match(doc,/README\.pa\.md/);
+    assert.match(doc,/public\/images\/punjab_farm_hero\.jpg/);
+    assert.match(doc,/V7/);
+    assert.match(doc,/npm run dev/);
+  }
+});
