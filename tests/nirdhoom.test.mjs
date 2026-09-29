@@ -192,3 +192,9 @@ test('payment webhook binds configured provider and prevents stale status downgr
   assert.match(source,/status=in\.\(PAID,REFUNDED\)/);
   assert.match(source,/status=in\.\(PENDING,PROCESSING,FAILED\)/);
 });
+
+test('dispatch optimizer is never called without its shared-secret token',()=>{
+  const source=read('api/dispatch.ts');
+  assert.match(source,/if \\(process\\.env\\.DISPATCH_SERVICE_URL && process\\.env\\.DISPATCH_SERVICE_TOKEN\\)/);
+  assert.match(source,/Authorization:.*DISPATCH_SERVICE_TOKEN/);
+});
