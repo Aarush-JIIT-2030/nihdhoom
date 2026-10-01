@@ -19,6 +19,11 @@ NIRDHOOM (also referred to in the project materials as **Parali: The Reframe**) 
 
 > **Project status:** prototype / integration foundation. This repository is not evidence of an operating service or a completed field pilot. Demo records, indicative quotes, heuristic dispatch, and payment UI must not be represented as live operations, confirmed service commitments, or verified outcomes.
 
+
+## Connected backend
+
+The dedicated NIRDHOOM Supabase project and deployed database state are documented in [`docs/CONNECTED-SUPABASE.md`](docs/CONNECTED-SUPABASE.md). Payments remain deliberately non-live in the current release scope.
+
 ## Contents
 
 - [What the product is intended to do](#what-the-product-is-intended-to-do)
