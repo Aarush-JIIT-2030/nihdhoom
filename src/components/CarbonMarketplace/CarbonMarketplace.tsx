@@ -168,7 +168,7 @@ export const CarbonMarketplace: React.FC = () => {
                 <span className="badge badge-emerald text-xs">Verra · Gold Standard · ART</span>
               </div>
               <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
-                Nirdhoom's verified zero-burn records create institutional carbon credits tradeable on the voluntary carbon market. View live pricing, compare registries, and simulate a credit purchase.
+                Illustrative carbon-market interface using demo listings. Registry status, pricing, issuance and retirement are not connected to a live registry.
               </p>
             </div>
           </div>
@@ -264,7 +264,7 @@ export const CarbonMarketplace: React.FC = () => {
         <div className="lg:col-span-7 flex flex-col gap-2.5">
           <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
             <Layers className="w-3.5 h-3.5 text-emerald-400" />
-            Live Registry Listings
+            Illustrative Registry Listings
           </h4>
           {MARKET_LISTINGS.map((listing) => {
             const isSelected = selectedListing?.id === listing.id;
@@ -373,13 +373,13 @@ export const CarbonMarketplace: React.FC = () => {
 
               <div className="bg-emerald-950/40 border border-emerald-500/30 p-3 rounded-lg">
                 <div className="flex justify-between text-xs mb-1">
-                  <span className="text-slate-400">Total Cost:</span>
+                  <span className="text-slate-400">Simulated Cost:</span>
                   <span className="font-extrabold text-emerald-400 font-mono text-base">
                     {fx(selectedListing.priceUsd * purchaseQty)}
                   </span>
                 </div>
                 <div className="flex justify-between text-xs">
-                  <span className="text-slate-400">CO₂ Offset:</span>
+                  <span className="text-slate-400">Illustrative CO₂e:</span>
                   <span className="font-bold text-white">{purchaseQty} tCO₂e retired</span>
                 </div>
                 <div className="flex justify-between text-xs mt-1">
@@ -398,9 +398,9 @@ export const CarbonMarketplace: React.FC = () => {
                 </button>
               ) : (
                 <div className="p-3 bg-emerald-950/70 border border-emerald-500/50 rounded-xl text-xs text-center">
-                  <div className="text-lg font-black text-emerald-400 font-['Outfit']">✓ Credits Retired!</div>
+                  <div className="text-lg font-black text-emerald-400 font-['Outfit']">✓ Simulation Complete</div>
                   <p className="text-emerald-300 mt-1">
-                    {purchaseQty} tCO₂e retired on {selectedListing.registry} registry. Certificate #NRD-{Date.now().toString().slice(-6)} issued.
+                    {purchaseQty} Demo retirement only. No registry transaction or certificate was issued.
                   </p>
                   <button
                     onClick={() => setPurchaseConfirmed(false)}
@@ -418,7 +418,7 @@ export const CarbonMarketplace: React.FC = () => {
             <div className="flex items-center gap-2 border-b border-slate-800 pb-2.5">
               <Building2 className="w-4 h-4 text-cyan-400" />
               <h4 className="font-bold text-sm text-white">Corporate Buyers Queue</h4>
-              <span className="badge badge-cyan text-[9px] ml-auto">LIVE BIDS</span>
+              <span className="badge badge-amber text-[9px] ml-auto">DEMO BIDS</span>
             </div>
             <div className="flex flex-col gap-2">
               {BUYERS_QUEUE.map((b, i) => (
