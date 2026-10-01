@@ -1,5 +1,18 @@
 declare const process: { env: Record<string, string | undefined> };
 
+async function requireConfiguredAuth(req: any) {
+  const auth = String(req.headers?.authorization || '');
+  const token = auth.startsWith('Bearer ') ? auth.slice(7).trim() : '';
+  if (!token || !process.env.SUPABASE_URL || !process.env.SUPABASE_PUBLISHABLE_KEY) return false;
+  try {
+    const response = await fetch(`${process.env.SUPABASE_URL}/auth/v1/user`, {
+      headers: { apikey: process.env.SUPABASE_PUBLISHABLE_KEY, Authorization: `Bearer ${token}` },
+      signal: AbortSignal.timeout(8000),
+    });
+    return response.ok;
+  } catch { return false; }
+}
+
 const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n));
 const isIsoDate = (value: unknown): value is string => {
   if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
@@ -12,6 +25,8 @@ export default async function handler(req: any, res: any) {
     res.setHeader?.('Allow', 'POST');
     return res.status(405).json({ error: 'Method not allowed' });
   }
+
+  if (!(await requireConfiguredAuth(req))) return res.status(401).json({ error: 'Authentication required' });
 
   const body = req.body;
   if (!body || typeof body !== 'object' || Array.isArray(body)) {
