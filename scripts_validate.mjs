@@ -58,7 +58,7 @@ const checks = [
   ['no duplicate entrypoint', !exists('src/main.tsx')],
   ['no committed monolithic bundle', !exists('nirdhoom-app.html')],
   ['no committed build archive', !exists('nirdhoom-final.zip')],
-  ['Node 24 runtime', pkg.engines?.node?.includes('24') && read('vercel.json').includes('nodejs24.x')],
+  ['Node 24 runtime', pkg.engines?.node?.includes('24') && !read('vercel.json').includes('functions')],
   ['lockfile present', lock.includes('"lockfileVersion": 3')],
   ['Supabase RLS', /enable row level security/i.test(read('supabase/migrations/202609270002_nirdhoom_production.sql'))],
   ['server-owned booking RPC', v71.includes('reserve_clearance_booking_v2') && v71.includes('server_authoritative')],
@@ -83,7 +83,7 @@ const checks = [
   ['payment remains non-money-moving', read('api/payments/initiate.ts').includes('status(501)') && read('api/payments/initiate.ts').includes('No money movement was attempted')],
   ['CI tests actual build', ci.includes('npm run syntaxcheck') && ci.includes('npm run audit') && ci.includes('npm test') && ci.includes('npm run build')],
   ['demo data is opt-in', controller.includes("VITE_NIRDHOOM_DEMO_MODE === 'true'") && controller.includes('DEMO_MODE ? INITIAL_FIELDS : []') && envExample.includes('VITE_NIRDHOOM_DEMO_MODE=false')],
-  ['live data loader exists', controller.includes("supabase.from('fields')") && controller.includes("supabase.from('machines')") && controller.includes('Loading live Supabase') === false],
+  ['live data loader exists', controller.includes("client.from('fields')") && controller.includes("client.from('machines')") && controller.includes('setLoadingLiveData(false)')],
 ];
 
 for (const [name, ok] of checks) if (!ok) errors.push(`failed check: ${name}`);
