@@ -29,6 +29,7 @@ const required = [
   'supabase/migrations/202610010005_nirdhoom_booking_integrity.sql',
   'supabase/migrations/202610010006_nirdhoom_verification_and_settlement_integrity.sql',
   'supabase/migrations/202610010007_nirdhoom_operational_integrity.sql',
+  'supabase/migrations/202610020008_nirdhoom_client_write_integrity.sql',
   '.github/workflows/ci.yml',
 ];
 
@@ -46,6 +47,7 @@ const v7 = read('supabase/migrations/202609270004_nirdhoom_v7.sql');
 const v71 = read('supabase/migrations/202610010005_nirdhoom_booking_integrity.sql');
 const v72 = read('supabase/migrations/202610010006_nirdhoom_verification_and_settlement_integrity.sql');
 const v73 = read('supabase/migrations/202610010007_nirdhoom_operational_integrity.sql');
+const v75 = read('supabase/migrations/202610020008_nirdhoom_client_write_integrity.sql');
 
 const checks = [
   ['modular React entrypoint', entry.includes("import { App } from './App.tsx'") && entry.includes("import './index.css'")],
@@ -66,6 +68,11 @@ const checks = [
   ['evidence ownership trigger', v73.includes('validate_evidence_asset') && v73.includes('Evidence storage path must belong to its creator')],
   ['FIRMS client insert revoked', v73.includes('revoke insert on public.firms_observations from authenticated')],
   ['operator evidence policy', v73.includes('operator inserts linked evidence') && v73.includes('created_by=auth.uid()')],
+  ['direct booking writes revoked', v75.includes('revoke insert, update, delete on public.bookings from authenticated') && v75.includes('reserve_clearance_booking_v2')],
+  ['farmer field tampering guard', v75.includes('prevent_farmer_field_tampering') && v75.includes('Protected field attributes must be changed through an authorized workflow')],
+  ['demo payment disclosure', read('src/components/FieldOperator/UpiSettlementModal.tsx').includes('no money movement')],
+  ['demo onboarding disclosure', read('src/components/FarmerOnboarding/FarmerOnboarding.tsx').includes('Demo only')],
+  ['demo carbon disclosure', read('src/components/CarbonMarketplace/CarbonMarketplace.tsx').includes('Illustrative carbon-market interface')],
   ['API auth boundary', /verifyDispatcher\(req\)/.test(read('api/notify/whatsapp.ts')) && /verifyDispatcher\(req\)/.test(read('api/notify/ivr.ts'))],
   ['dispatch solver secret', read('api/dispatch.ts').includes('DISPATCH_SERVICE_TOKEN')],
   ['payment remains non-money-moving', read('api/payments/initiate.ts').includes('status(501)') && read('api/payments/initiate.ts').includes('No money movement was attempted')],
