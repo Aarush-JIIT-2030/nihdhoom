@@ -29,7 +29,7 @@ function normalizeField(f) {
     machine: f.machine || f.machine_id || '', lat: Number(f.center_lat ?? f.lat ?? 30.2285),
     lng: Number(f.center_lng ?? f.lng ?? 75.8214), verified: Boolean(f.verified ?? f.status === 'VERIFIED_NON_BURN'),
     geometry: normalizeGeometry(f.geometry || (Array.isArray(f.boundary_geojson?.coordinates?.[0]) ? f.boundary_geojson.coordinates[0].slice(0,-1).map(([lng,lat]) => ({lat,lng})) : null)),
-    boundarySource: f.boundary_source || 'demo', boundaryVerified: Boolean(f.boundary_verified)
+    boundarySource: f.boundary_source || 'demo', boundaryVerified: Boolean(f.boundary_verified), geometryAreaAcres: Number(f.geometry_area_acres ?? 0)
   };
 }
 
