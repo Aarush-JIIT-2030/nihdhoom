@@ -75,3 +75,17 @@ test('audit script validates the actual shipped entrypoint', () => {
   assert.match(source, /no committed monolithic bundle/);
   assert.match(source, /server-owned booking RPC/);
 });
+
+
+test('V7.5 blocks direct booking writes and farmer field tampering', () => {
+  const sql = read('supabase/migrations/202610020008_nirdhoom_client_write_integrity.sql');
+  assert.match(sql, /revoke insert, update, delete on public\.bookings from authenticated/);
+  assert.match(sql, /prevent_farmer_field_tampering/);
+  assert.match(sql, /Protected field attributes must be changed through an authorized workflow/);
+});
+
+test('simulation surfaces do not claim real transactions', () => {
+  assert.match(read('src/components/FieldOperator/UpiSettlementModal.tsx'), /no money movement/i);
+  assert.match(read('src/components/FarmerOnboarding/FarmerOnboarding.tsx'), /Demo only/);
+  assert.match(read('src/components/CarbonMarketplace/CarbonMarketplace.tsx'), /Illustrative carbon-market interface/);
+});
