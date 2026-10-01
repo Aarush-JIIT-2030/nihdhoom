@@ -119,10 +119,21 @@ test('job completion requires stored field evidence and V7 RPCs are not public',
   assert.match(sql,/grant execute on function public\.transition_job\(uuid,text,jsonb\) to authenticated/);
 });
 
-test('booking RPC checks quoted amount against registered acreage',()=>{
-  const sql=read('supabase/migrations/202609270004_nirdhoom_v7.sql');
-  assert.match(sql,/round\(p_rate_per_acre \* f\.acreage, 2\)/);
+test('booking RPC uses verified geometry acreage and blocks unverified fields',()=>{
+  const sql=read('supabase/migrations/202610010002_verified_area_booking.sql');
+  assert.match(sql,/billable_acres := f\.geometry_area_acres/);
+  assert.match(sql,/round\(p_rate_per_acre \* billable_acres, 2\)/);
   assert.match(sql,/Field acreage must be verified before booking/);
+  assert.match(sql,/Quoted amount does not match verified field acreage/);
+});
+
+test('geometry verification only promotes authoritative sources',()=>{
+  const sql=read('supabase/migrations/202610010001_field_geometry_verification.sql');
+  assert.match(sql,/role_name not in \('verifier','dispatcher','admin'\)/);
+  assert.match(sql,/p_source not in \('cadastral','farmer_registry','imported'\)/);
+  assert.match(sql,/ST_IsValid/);
+  assert.match(sql,/geometry_verified_by=auth\.uid\(\)/);
+  assert.match(sql,/FIELD_GEOMETRY_VERIFIED/);
 });
 
 test('Vercel config includes the IVR function runtime',()=>{
