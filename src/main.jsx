@@ -109,17 +109,19 @@ function App() {
   };
 
   const getQuote = async (field, date) => {
+    const billableAcres = Number(field.geometryAreaAcres || field.acres || 0);
     const daysToHarvest = field.harvest ? Math.round((new Date(`${field.harvest}T00:00:00`) - new Date(`${today()}T00:00:00`)) / 86400000) : 14;
     try {
-      const r = await fetch('/api/quote', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ field: { acres: field.acres, harvest: field.harvest, block: field.block, lat: field.lat, lng: field.lng }, requested_date: date, days_to_harvest: daysToHarvest }) });
+      const r = await fetch('/api/quote', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ field: { acres: billableAcres, harvest: field.harvest, block: field.block, lat: field.lat, lng: field.lng }, requested_date: date, days_to_harvest: daysToHarvest }) });
       if (r.ok) return await r.json();
     } catch (_) { /* deterministic fallback below */ }
     const early = Math.max(0, Math.min(21, daysToHarvest));
     const urgency = early <= 3 ? 1.28 : early <= 7 ? 1.12 : 0.96;
     const capacity = date ? (new Date(date).getDay() === 0 ? 1.14 : 1) : 1;
     const rate = Math.round(1500 * urgency * capacity / 10) * 10;
+    const quotedAcres = billableAcres || Number(field.acres || 0);
     const guaranteed = date || addDays(today(), 2);
-    return { rate_per_acre: rate, quoted_amount: Math.round(rate * field.acres), guaranteed_by_date: guaranteed, penalty_amount: Math.round(Math.max(2500, field.acres * 2500)), pricing_band: urgency > 1.15 ? 'urgent' : urgency > 1 ? 'standard' : 'early-booking', reason_codes: ['days_to_harvest','capacity_window'] };
+    return { rate_per_acre: rate, quoted_amount: Math.round(rate * quotedAcres), guaranteed_by_date: guaranteed, penalty_amount: Math.round(Math.max(2500, field.acres * 2500)), pricing_band: urgency > 1.15 ? 'urgent' : urgency > 1 ? 'standard' : 'early-booking', reason_codes: ['days_to_harvest','capacity_window'] };
   };
 
   const book = async (date, providedQuote) => {
