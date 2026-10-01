@@ -322,11 +322,30 @@ export function App() {
 
         {/* TAB 4: FIELD BALER OPERATOR PWA */}
         {activeTab === 'BALER_OPERATOR' && (
-          <BalerPWA
-            fields={fields}
-            activeMachine={machines[0]}
-            onJobCompleted={(fId, amt) => handleUpdateFieldStatus(fId, 'CLEARED_PENDING_AUDIT', amt)}
-          />
+          machines[0] ? (
+            <BalerPWA
+              fields={fields}
+              activeMachine={machines[0]}
+              onJobCompleted={(fId, amt) => handleUpdateFieldStatus(fId, 'CLEARED_PENDING_AUDIT', amt)}
+            />
+          ) : (
+            <div className="glass-panel p-6 max-w-3xl mx-auto">
+              <h2 className="text-lg font-extrabold text-white">Field Operator PWA</h2>
+              <p className="text-sm text-slate-300 mt-2">
+                No live machine is assigned yet. Connect an operator machine record before starting field operations.
+              </p>
+              <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div className="rounded-lg border border-slate-800 bg-slate-950/70 p-3">
+                  <span className="text-slate-500 block">Live fields</span>
+                  <strong className="text-white">{fields.length}</strong>
+                </div>
+                <div className="rounded-lg border border-slate-800 bg-slate-950/70 p-3">
+                  <span className="text-slate-500 block">Assigned machines</span>
+                  <strong className="text-white">{machines.length}</strong>
+                </div>
+              </div>
+            </div>
+          )
         )}
 
         {/* TAB 5: NASA FIRMS SATELLITE AUDIT (The Money Shot) */}
