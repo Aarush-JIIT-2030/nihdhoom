@@ -27,13 +27,15 @@ export function useAppController() {
     }
 
     let active = true;
+    const client = supabase;
+    if (!client) { setLoadingLiveData(false); return; }
     const load = async () => {
       setLoadingLiveData(true);
       setLiveDataError(null);
       const [{ data: fieldRows, error: fieldError }, { data: machineRows, error: machineError }] =
         await Promise.all([
-          supabase.from('fields').select('id,external_id,owner_id,khasra_no,village,block,district,acreage,crop,variety,expected_harvest_date,clearance_deadline,status,moisture_pct,center_lat,center_lng,geometry,boundary_geojson,boundary_source,boundary_verified,geometry_area_acres'),
-          supabase.from('machines').select('id,external_id,name,machine_type,owner_name,operator_name,operator_phone,status,capacity_acres_day,fuel_pct,current_lat,current_lng,operator_user_id'),
+          client.from('fields').select('id,external_id,owner_id,khasra_no,village,block,district,acreage,crop,variety,expected_harvest_date,clearance_deadline,status,moisture_pct,center_lat,center_lng,geometry,boundary_geojson,boundary_source,boundary_verified,geometry_area_acres'),
+          client.from('machines').select('id,external_id,name,machine_type,owner_name,operator_name,operator_phone,status,capacity_acres_day,fuel_pct,current_lat,current_lng,operator_user_id'),
         ]);
 
       if (!active) return;
@@ -48,6 +50,7 @@ export function useAppController() {
 
       const normalizedFields: Field[] = (fieldRows || []).map(normalizeField).map((f) => ({
         ...f,
+        acreage: f.acres,
         farmer_id: String((fieldRows || []).find((row) => row.id === f.dbId)?.owner_id || ''),
         farmer_name: '',
         farmer_phone: '',
