@@ -48,6 +48,8 @@ const v71 = read('supabase/migrations/202610010005_nirdhoom_booking_integrity.sq
 const v72 = read('supabase/migrations/202610010006_nirdhoom_verification_and_settlement_integrity.sql');
 const v73 = read('supabase/migrations/202610010007_nirdhoom_operational_integrity.sql');
 const v75 = read('supabase/migrations/202610020008_nirdhoom_client_write_integrity.sql');
+const controller = read('src/state/useAppController.ts');
+const envExample = read('.env.example');
 
 const checks = [
   ['modular React entrypoint', entry.includes("import { App } from './App.tsx'") && entry.includes("import './index.css'")],
@@ -77,6 +79,8 @@ const checks = [
   ['dispatch solver secret', read('api/dispatch.ts').includes('DISPATCH_SERVICE_TOKEN')],
   ['payment remains non-money-moving', read('api/payments/initiate.ts').includes('status(501)') && read('api/payments/initiate.ts').includes('No money movement was attempted')],
   ['CI tests actual build', ci.includes('npm run syntaxcheck') && ci.includes('npm run audit') && ci.includes('npm test') && ci.includes('npm run build')],
+  ['demo data is opt-in', controller.includes("VITE_NIRDHOOM_DEMO_MODE === 'true'") && controller.includes('DEMO_MODE ? INITIAL_FIELDS : []') && envExample.includes('VITE_NIRDHOOM_DEMO_MODE=false')],
+  ['live data loader exists', controller.includes("supabase.from('fields')") && controller.includes("supabase.from('machines')") && controller.includes('Loading live Supabase') === false],
 ];
 
 for (const [name, ok] of checks) if (!ok) errors.push(`failed check: ${name}`);
@@ -86,4 +90,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log(`NIRDHOOM V7.4 audit passed: ${required.length} required files, ${checks.length} architecture/security checks.`);
+console.log(`NIRDHOOM V7.5 audit passed: ${required.length} required files, ${checks.length} architecture/security checks.`);
