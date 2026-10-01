@@ -8,10 +8,12 @@ async function readLiveField(base:string, token:string, fieldId:string){
 
 export default async function handler(req:any,res:any){
   if(req.method!=='POST')return res.status(405).json({error:'Method not allowed'});
+  res.setHeader?.('Cache-Control','no-store');
   const body=typeof req.body==='object'&&req.body&&!Array.isArray(req.body)?req.body:{};const{question,field}=body;
   if(!question||typeof question!=='string'||question.length>2000)return res.status(400).json({error:'question is required and must be at most 2000 characters'});
   const auth=String(req.headers?.authorization||'');const token=auth.startsWith('Bearer ')?auth.slice(7):'';
-  const authRequired=process.env.REQUIRE_AUTH_FOR_AI==='true'||Boolean(process.env.OPENAI_API_KEY)||Boolean(field?.dbId);\n  if(authRequired){
+  const authRequired=process.env.REQUIRE_AUTH_FOR_AI==='true'||Boolean(process.env.OPENAI_API_KEY)||Boolean(field?.dbId);
+  if(authRequired){
     if(!token||!process.env.SUPABASE_URL||!process.env.SUPABASE_PUBLISHABLE_KEY)return res.status(401).json({error:'Authentication required'});
     try{const verify=await fetch(`${process.env.SUPABASE_URL}/auth/v1/user`,{headers:{apikey:process.env.SUPABASE_PUBLISHABLE_KEY,Authorization:`Bearer ${token}`},signal:AbortSignal.timeout(8000)});if(!verify.ok)return res.status(401).json({error:'Invalid session'})}catch{return res.status(401).json({error:'Authentication check failed'})}
   }
