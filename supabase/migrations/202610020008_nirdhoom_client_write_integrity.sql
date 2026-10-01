@@ -30,9 +30,6 @@ begin
        or new.boundary_source is distinct from old.boundary_source
        or new.boundary_verified is distinct from old.boundary_verified
        or new.boundary is distinct from old.boundary
-       or new.geometry_verified_at is distinct from old.geometry_verified_at
-       or new.geometry_verified_by is distinct from old.geometry_verified_by
-       or new.verified_area_acres is distinct from old.verified_area_acres
        then
       raise exception 'Protected field attributes must be changed through an authorized workflow';
     end if;
