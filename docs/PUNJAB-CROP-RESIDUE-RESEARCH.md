@@ -37,3 +37,41 @@
 - Scheme descriptions are time-sensitive and do not guarantee that an individual farmer or operator qualifies.
 - Do not use external images unless the repository records a suitable license/permission and attribution. Existing project photographs should also have their provenance checked before public launch.
 - Review this note before each harvest season and replace dated figures only after checking the original source.
+
+
+## Additional research review — 1 October 2026
+
+### Communication and adoption
+A June 2026 CEEW study reports that 63% of surveyed respondents said they had not received CRM-related information when needed; 86% had not heard of the Unnat Kisan application, and 78% had not attended CRM training. CEEW describes its 102-farmer survey across four Punjab districts as non-representative, supplemented by focus groups and consultations. Treat these as findings from that study, not estimates for all Punjab farmers.
+
+**Product implications to test:** task-timed opt-in reminders; assisted onboarding and phone support; farmer-tested Punjabi/Hindi language; and short, staged forms that request only information needed for the next action.
+
+Source: [CEEW, How Can Crop Residue Management Communication Drive Behaviour Change? (June 2026)](https://www.ceew.in/publications/how-can-crop-residue-management-communication-drive-Behaviour-change)
+
+### Satellite fire counts and evidence
+An August 2026 peer-reviewed study in the *International Journal of Applied Earth Observation and Geoinformation* analyzes cloud cover and satellite overpass timing as limitations in active-fire detection counts in northwest India. A 2025 study evaluates Sentinel-1 radar as a complement to Sentinel-2 optical imagery for burnt-area mapping in Punjab, while noting limitations including rainfall effects and district-level variation.
+
+**Product implications:** store sensor/source, observation time, processing version, geometry, and quality metadata; present detections as observations rather than field-level verdicts; retain human review and a dispute path. Radar/optical fusion should be a separately validated future capability, not a claimed current feature.
+
+Sources:
+- [Misra et al., 2026, satellite fire-detection limitations](https://www.sciencedirect.com/science/article/pii/S1569843226003341)
+- [Sentinel-1 and Sentinel-2 burnt-area mapping study (2025)](https://www.sciencedirect.com/science/article/abs/pii/S2352938525000679)
+
+### Interface and accessibility
+W3C's forms guidance recommends short forms, explicit labels, grouped controls, and clear instructions. Its mobile accessibility guidance covers touch input, small screens, varied input methods, and bright-light settings.
+
+**Product implications:** make the next action obvious; use persistent labels and inline validation; provide clear error/retry states; ensure large touch targets, visible focus, readable contrast, and reduced-motion support; test outdoors and on low-end Android devices and slow networks.
+
+Sources:
+- [W3C WAI Forms Tutorial](https://www.w3.org/WAI/tutorials/forms/)
+- [W3C WAI Mobile Accessibility](https://www.w3.org/WAI/standards-guidelines/mobile/)
+
+### Research-to-roadmap summary
+| Finding / limitation | Product response | Validation |
+|---|---|---|
+| CRM information may not reach farmers when needed | Opt-in, task-timed reminders and assisted onboarding | Farmer interviews and task-completion tests |
+| Satellite counts depend on sensor timing and cloud conditions | Separate detection records from field verification | Compare alerts with documented field reviews |
+| Ex-situ pathways depend on logistics and buyer conditions | Capture lot quality, custody, delivery, and acceptance | Validate with operators and actual buyers |
+| Mobile use includes small screens, touch, and bright sunlight | Short forms, large controls, readable states, offline-safe flows | Real-device outdoor usability tests |
+
+These sources support design hypotheses and safeguards; they do not establish NIRDHOOM impact, demand, or adoption.
