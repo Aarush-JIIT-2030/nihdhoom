@@ -48,7 +48,7 @@ begin
   v_rate := round(greatest(1000, least(3200, 1500*v_urgency*v_day_factor))/10)*10;
   v_amount := round(v_rate*f.acreage, 2);
   v_guaranteed := p_requested_date;
-  v_penalty := greatest(2500, f.acreage*2500);
+  v_penalty := least(v_amount, greatest(2500, f.acreage*2500));
   v_band := case when v_urgency >= 1.2 then 'urgent' when v_urgency >= 1 then 'standard' else 'early-booking' end;
 
   insert into public.bookings(
