@@ -48,6 +48,9 @@ export function App() {
     fieldForUpiModal,
     setFieldForUpiModal,
     handleUpdateFieldStatus,
+    demoMode,
+    loadingLiveData,
+    liveDataError,
   } = useAppController();
 
   const handleSelectField = (field: Field) => {
@@ -65,6 +68,9 @@ export function App() {
         setActiveTab={setActiveTab}
         openPitchDrawer={() => setIsPitchDrawerOpen(true)}
       />
+
+      {!demoMode && loadingLiveData && <div className="mx-auto w-full max-w-7xl px-4 pt-2 text-xs text-cyan-300">Loading live Supabase operational records…</div>}
+      {!demoMode && liveDataError && <div className="mx-auto w-full max-w-7xl px-4 pt-2 text-xs text-amber-300">Live data unavailable: {liveDataError}</div>}
 
       {/* Main Content Area */}
       <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-4 py-4 relative z-10">
