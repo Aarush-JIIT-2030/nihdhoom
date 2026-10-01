@@ -92,10 +92,10 @@ export const UpiSettlementModal: React.FC<UpiSettlementModalProps> = ({
             </div>
             <div>
               <h3 className="font-extrabold text-base text-white tracking-tight">
-                90-Second Instant UPI Farmgate Settle
+                Payment Simulation — no money movement
               </h3>
               <p className="text-xs text-slate-400">
-                Wedge 3: Pay per acre, not per tonne • Zero weight dispute
+                Demo only • provider integration is intentionally disabled
               </p>
             </div>
           </div>
@@ -120,13 +120,13 @@ export const UpiSettlementModal: React.FC<UpiSettlementModalProps> = ({
             <div className="flex flex-col items-center gap-2">
               <div className="flex items-center gap-2 text-amber-400 text-xs font-semibold">
                 <Clock className="w-4 h-4 animate-spin" />
-                <span>NPCI / RazorpayX Payout Gateway Dispatching...</span>
+                <span>Simulated payout workflow...</span>
               </div>
               <div className="text-4xl font-extrabold text-white font-mono tracking-tight">
                 00:{secondsRemaining.toString().padStart(2, '0')}
               </div>
               <p className="text-xs text-slate-400">
-                Settle SLA: Guaranteed under 90 seconds from field clearance
+                No real payment request is sent. This is a UI simulation.
               </p>
             </div>
           ) : (
@@ -135,11 +135,11 @@ export const UpiSettlementModal: React.FC<UpiSettlementModalProps> = ({
                 <CheckCircle2 className="w-7 h-7" />
               </div>
               <div className="text-2xl font-black text-emerald-400 font-['Outfit']">
-                ₹{amount.toLocaleString()} CREDITED OVER UPI
+                SIMULATED: ₹{amount.toLocaleString()}
               </div>
               <div className="text-xs text-slate-300 flex items-center gap-1.5">
                 <Volume2 className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Soundbox Voice Alert Broadcasted to Farmer</span>
+                <span>Demo soundbox event — no receipt was sent</span>
               </div>
             </div>
           )}
@@ -168,7 +168,7 @@ export const UpiSettlementModal: React.FC<UpiSettlementModalProps> = ({
           </div>
           <div className="flex justify-between items-center text-slate-400">
             <span>Locked Rate / Acre:</span>
-            <span className="font-mono text-emerald-400">₹{Math.round(amount / field.acreage)} / acre</span>
+            <span className="font-mono text-emerald-400">₹{Math.round(amount / field.acreage)} / acre (demo)</span>
           </div>
           <div className="flex justify-between items-center text-slate-400">
             <span>Bale Lot Tag ID:</span>
@@ -176,23 +176,23 @@ export const UpiSettlementModal: React.FC<UpiSettlementModalProps> = ({
           </div>
         </div>
 
-        {/* Live NPCI API Trace */}
+        {/* Simulated API Trace */}
         <div className="bg-black/60 rounded-lg p-2.5 font-mono text-[10px] text-slate-400 flex flex-col gap-1 border border-slate-800">
           <div className="flex items-center gap-1.5 text-emerald-400 font-bold">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-            <span>API Pipeline Trace (RazorpayX Webhook):</span>
+            <span>DEMO TRACE — no provider call:</span>
           </div>
           <div className={apiStep >= 1 ? 'text-slate-300' : 'text-slate-600'}>
-            [10:44:12] POST /api/v1/payouts/instant → Status: 200 OK
+            [demo] payout request → simulated
           </div>
           <div className={apiStep >= 2 ? 'text-slate-300' : 'text-slate-600'}>
             [10:44:15] ST_Contains polygon GPS geofence verified (Khasra 412/1)
           </div>
           <div className={apiStep >= 3 ? 'text-slate-300' : 'text-slate-600'}>
-            [10:44:21] NPCI Core Banking Route: HDFC Bank → SBI (RRN: 261013892144)
+            [demo] banking route → simulated (no RRN)
           </div>
           <div className={apiStep >= 4 ? 'text-emerald-400 font-bold' : 'text-slate-600'}>
-            [10:44:26] WhatsApp Receipt Delivered + Soundbox Announcement Triggered
+            [demo] receipt + soundbox → simulated
           </div>
         </div>
 
