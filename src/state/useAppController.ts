@@ -3,12 +3,14 @@ import { ActiveTab } from '../components/Header';
 import { INITIAL_FIELDS, INITIAL_MACHINES, MOCK_FIRMS_FIRE_EVENTS } from '../data/mockData';
 import { Field, Machine, BurnEvent, LatLng } from '../types';
 
+const DEMO_MODE = import.meta.env.VITE_NIRDHOOM_DEMO_MODE === 'true';
+
 export function useAppController() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('OVERVIEW');
-  const [fields, setFields] = useState<Field[]>(INITIAL_FIELDS);
-  const [machines] = useState<Machine[]>(INITIAL_MACHINES);
-  const [fireEvents] = useState<BurnEvent[]>(MOCK_FIRMS_FIRE_EVENTS);
-  const [selectedField, setSelectedField] = useState<Field | null>(INITIAL_FIELDS[0]);
+  const [fields, setFields] = useState<Field[]>(DEMO_MODE ? INITIAL_FIELDS : []);
+  const [machines] = useState<Machine[]>(DEMO_MODE ? INITIAL_MACHINES : []);
+  const [fireEvents] = useState<BurnEvent[]>(DEMO_MODE ? MOCK_FIRMS_FIRE_EVENTS : []);
+  const [selectedField, setSelectedField] = useState<Field | null>(DEMO_MODE ? INITIAL_FIELDS[0] : null);
   const [activeRoutePolyline, setActiveRoutePolyline] = useState<LatLng[]>([]);
   const [isPitchDrawerOpen, setIsPitchDrawerOpen] = useState(false);
   const [certificateField, setCertificateField] = useState<Field | null>(null);
@@ -36,6 +38,7 @@ export function useAppController() {
   };
 
   return {
+    demoMode: DEMO_MODE,
     activeTab,
     setActiveTab,
     fields,
