@@ -55,4 +55,7 @@ for each row execute function public.prevent_farmer_field_tampering();
 -- The authoritative RPC is the only authenticated client path for booking creation.
 grant execute on function public.reserve_clearance_booking_v2(uuid,date) to authenticated;
 
+-- Defense in depth: do not leave the legacy server-authoritative function executable to clients.
+revoke all on function public.reserve_clearance_booking(uuid,date,numeric,numeric,date,numeric,text,jsonb) from public, anon, authenticated;
+
 -- Keep the estimate endpoint mathematically consistent with the booking invariant.
