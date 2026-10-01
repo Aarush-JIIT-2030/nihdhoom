@@ -18,6 +18,8 @@ The dedicated NIRDHOOM Supabase project is provisioned in ap-south-1 and the pro
 5. 202609270004_nirdhoom_v7
 6. 20261001_nirdhoom_database_hygiene
 7. 20261001_nirdhoom_rls_initplan_fix
+8. field_geometry_verification
+9. verified_area_booking
 
 The split V6 deployment exists because the original PostGIS expression-index statement was rejected by PostgreSQL syntax validation. The repository migration has been corrected to the equivalent parenthesized expression.
 
@@ -26,7 +28,7 @@ The split V6 deployment exists because the original PostGIS expression-index sta
 - 27 public tables
 - RLS enabled on the NIRDHOOM public tables
 - 43 public RLS policies after hygiene consolidation
-- 5 authoritative V7 RPCs
+- 5 authoritative V7 RPCs plus field geometry verification
 - private evidence Storage bucket
 - PostGIS 3.3 installed
 - no application rows are seeded; live farmer/operator identities must come through Auth
@@ -57,7 +59,8 @@ Do not put service-role, provider, or AI secrets in VITE_* variables.
 The database is connected, but these cannot be honestly marked live until credentials/data exist:
 
 - Supabase SMS provider configuration and real OTP delivery
-- authoritative cadastral/Khasra source
+- authoritative cadastral/Khasra source and import workflow
+- real verifier/operator accounts for end-to-end RLS and RPC tests
 - real machine/operator records and device GPS
 - production OR-Tools service
 - FIRMS MAP key and scheduled ingestion
