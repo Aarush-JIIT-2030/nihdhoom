@@ -69,7 +69,7 @@ const checks = [
   ['FIRMS client insert revoked', v73.includes('revoke insert on public.firms_observations from authenticated')],
   ['operator evidence policy', v73.includes('operator inserts linked evidence') && v73.includes('created_by=auth.uid()')],
   ['direct booking writes revoked', v75.includes('revoke insert, update, delete on public.bookings from authenticated') && v75.includes('reserve_clearance_booking_v2')],
-  ['farmer field tampering guard', v75.includes('prevent_farmer_field_tampering') && v75.includes('Protected field attributes must be changed through an authorized workflow')],
+  ['farmer field tampering guard', v75.includes('prevent_farmer_field_tampering') && v75.includes('Protected field attributes must be changed through an authorized workflow') && v75.includes('New farmer fields must begin in REGISTERED state with unverified boundaries')],
   ['demo payment disclosure', read('src/components/FieldOperator/UpiSettlementModal.tsx').includes('no money movement')],
   ['demo onboarding disclosure', read('src/components/FarmerOnboarding/FarmerOnboarding.tsx').includes('Demo only')],
   ['demo carbon disclosure', read('src/components/CarbonMarketplace/CarbonMarketplace.tsx').includes('Illustrative carbon-market interface')],
