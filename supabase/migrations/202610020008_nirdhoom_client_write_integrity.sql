@@ -17,7 +17,16 @@ declare
 begin
   select role into actor_role from public.profiles where id=auth.uid();
 
-  if actor_role='farmer' and old.owner_id=auth.uid() then
+  if actor_role='farmer' and TG_OP='INSERT' and new.owner_id=auth.uid() then
+    if coalesce(new.status,'REGISTERED') <> 'REGISTERED'
+       or new.clearance_deadline is not null
+       or new.boundary_verified
+       then
+      raise exception 'New farmer fields must begin in REGISTERED state with unverified boundaries';
+    end if;
+  end if;
+
+  if actor_role='farmer' and TG_OP='UPDATE' and old.owner_id=auth.uid() then
     if new.owner_id is distinct from old.owner_id
        or new.khasra_no is distinct from old.khasra_no
        or new.acreage is distinct from old.acreage
@@ -40,7 +49,7 @@ $$;
 
 drop trigger if exists prevent_farmer_field_tampering on public.fields;
 create trigger prevent_farmer_field_tampering
-before update on public.fields
+before insert or update on public.fields
 for each row execute function public.prevent_farmer_field_tampering();
 
 -- The authoritative RPC is the only authenticated client path for booking creation.
