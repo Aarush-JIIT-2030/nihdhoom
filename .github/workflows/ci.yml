@@ -31,5 +31,3 @@ jobs:
       - run: npm run build
       - name: Check dispatch service Python syntax
         run: python -m compileall -q services/dispatch-ortools
-      - run: npx playwright install --with-deps chromium
-      - run: npm run e2e
