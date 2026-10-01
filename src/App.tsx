@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Header, ActiveTab } from './components/Header';
 import { DemoWalkthrough } from './components/DemoWalkthrough';
 import { LiveKPIDashboard } from './components/LiveKPIDashboard';
@@ -25,49 +25,31 @@ import { ParticleField } from './components/Effects/ParticleField';
 import { AgenticLanding } from './components/Landing/AgenticLanding';
 
 
-import { 
-  INITIAL_FIELDS, 
-  INITIAL_MACHINES, 
-  MOCK_FIRMS_FIRE_EVENTS, 
-  INITIAL_STORAGE_YARDS, 
-  INITIAL_BUYERS 
-} from './data/mockData';
-import { Field, Machine, BurnEvent, LatLng } from './types';
+import { INITIAL_STORAGE_YARDS, INITIAL_BUYERS } from './data/mockData';
+import { Field } from './types';
+import { useAppController } from './state/useAppController';
 import { generateNonBurnCertificate } from './utils/spatialVerification';
 import { Globe, Box, Map, Sparkles, ShieldCheck, Zap, UserCheck, Leaf } from 'lucide-react';
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<ActiveTab>('OVERVIEW');
-  const [fields, setFields] = useState<Field[]>(INITIAL_FIELDS);
-  const [machines, setMachines] = useState<Machine[]>(INITIAL_MACHINES);
-  const [fireEvents] = useState<BurnEvent[]>(MOCK_FIRMS_FIRE_EVENTS);
-
-  const [selectedField, setSelectedField] = useState<Field | null>(fields[0]);
-  const [activeRoutePolyline, setActiveRoutePolyline] = useState<LatLng[]>([]);
-  const [isPitchDrawerOpen, setIsPitchDrawerOpen] = useState(false);
-  const [certificateField, setCertificateField] = useState<Field | null>(null);
-  const [fieldForUpiModal, setFieldForUpiModal] = useState<Field | null>(null);
-
-  // Update field state across the application
-  const handleUpdateFieldStatus = (
-    fieldId: string,
-    newStatus: Field['status'],
-    payoutAmt?: number
-  ) => {
-    setFields((prev) =>
-      prev.map((f) => {
-        if (f.id === fieldId) {
-          return {
-            ...f,
-            status: newStatus,
-            payout_amount: payoutAmt || f.payout_amount,
-            is_verified_non_burn: newStatus === 'CLEARED_PENDING_AUDIT' || newStatus === 'VERIFIED_NON_BURN',
-          };
-        }
-        return f;
-      })
-    );
-  };
+  const {
+    activeTab,
+    setActiveTab,
+    fields,
+    machines,
+    fireEvents,
+    selectedField,
+    setSelectedField,
+    activeRoutePolyline,
+    setActiveRoutePolyline,
+    isPitchDrawerOpen,
+    setIsPitchDrawerOpen,
+    certificateField,
+    setCertificateField,
+    fieldForUpiModal,
+    setFieldForUpiModal,
+    handleUpdateFieldStatus,
+  } = useAppController();
 
   const handleSelectField = (field: Field) => {
     setSelectedField(field);
