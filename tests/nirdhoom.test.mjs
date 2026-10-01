@@ -100,3 +100,19 @@ test('demo operational data is opt-in and production starts empty', () => {
   assert.match(controller, /DEMO_MODE \? MOCK_FIRMS_FIRE_EVENTS : \[\]/);
   assert.match(read('.env.example'), /VITE_NIRDHOOM_DEMO_MODE=false/);
 });
+
+
+test('live dashboard KPIs are derived from current records', () => {
+  const app = read('src/App.tsx');
+  assert.match(app, /const acresScheduled = fields\.reduce/);
+  assert.match(app, /const totalPayoutInr = fields\.reduce/);
+  assert.match(app, /acresScheduled=\{acresScheduled\}/);
+  assert.doesNotMatch(app, /acresScheduled=\{88\.4\}/);
+  assert.doesNotMatch(app, /totalPayoutInr=\{128150\}/);
+});
+
+test('live field normalization does not invent Punjab coordinates', () => {
+  const domain = read('src/lib/domain.js');
+  assert.match(domain, /f\.center_lat \?\? f\.lat \?\? 0/);
+  assert.match(domain, /f\.center_lng \?\? f\.lng \?\? 0/);
+});
