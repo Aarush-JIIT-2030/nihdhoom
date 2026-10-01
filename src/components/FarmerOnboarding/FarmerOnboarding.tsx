@@ -23,11 +23,11 @@ type KYCStep = 'PHONE' | 'OTP' | 'AADHAAR' | 'FACE_SCAN' | 'BANK' | 'LAND_RECORD
 const STEPS: { id: KYCStep; label: string; sublabel: string; icon: React.FC<{ className?: string }> }[] = [
   { id: 'PHONE', label: 'Mobile Verification', sublabel: 'Enter registered mobile', icon: Phone },
   { id: 'OTP', label: 'OTP Confirm', sublabel: '6-digit SMS code', icon: Smartphone },
-  { id: 'AADHAAR', label: 'Aadhaar eKYC', sublabel: 'Digilocker consent flow', icon: Fingerprint },
-  { id: 'FACE_SCAN', label: 'Live Selfie Match', sublabel: 'Aadhaar photo match', icon: Camera },
-  { id: 'BANK', label: 'UPI / Bank Link', sublabel: 'Penny drop verification', icon: Landmark },
-  { id: 'LAND_RECORDS', label: 'Land Records', sublabel: 'Fasal Bima Khasra link', icon: Wheat },
-  { id: 'DONE', label: 'Farmer Registered!', sublabel: 'Ready for dispatch', icon: CheckCircle2 },
+  { id: 'AADHAAR', label: 'Identity verification (demo)', sublabel: 'Demo only — no external identity API', icon: Fingerprint },
+  { id: 'FACE_SCAN', label: 'Selfie match (demo)', sublabel: 'Demo state — no biometric processing', icon: Camera },
+  { id: 'BANK', label: 'Bank link (demo)', sublabel: 'Demo state — no bank verification', icon: Landmark },
+  { id: 'LAND_RECORDS', label: 'Land records (demo)', sublabel: 'Demo state — no registry lookup', icon: Wheat },
+  { id: 'DONE', label: 'Demo profile created', sublabel: 'Not registered in a live system', icon: CheckCircle2 },
 ];
 
 const STEP_ORDER: KYCStep[] = ['PHONE', 'OTP', 'AADHAAR', 'FACE_SCAN', 'BANK', 'LAND_RECORDS', 'DONE'];
