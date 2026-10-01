@@ -1,4 +1,3 @@
-import React from 'react';
 import { Header, ActiveTab } from './components/Header';
 import { DemoWalkthrough } from './components/DemoWalkthrough';
 import { LiveKPIDashboard } from './components/LiveKPIDashboard';
@@ -124,7 +123,7 @@ export function App() {
                   </h2>
                 </div>
                 <p className="text-xs text-slate-300 mt-0.5">
-                  Real-time Three.js spatial model of Punjab Malwa hotspot, orbiting NASA VIIRS satellite with radar cone, 3D volcanic fire plumes, and emerald customer polygons.
+                  Interactive Three.js spatial model of the Punjab Malwa hotspot using demo field, satellite, and fire-event data.
                 </p>
               </div>
 
@@ -164,7 +163,7 @@ export function App() {
                     {fields.length} Polygons (20.7 ac)
                   </div>
                   <p className="text-[11px] text-slate-400 mt-1">
-                    Zero thermal intersection inside protective domes
+                    Illustrative thermal intersection check
                   </p>
                 </div>
               </CardTilt3D>
@@ -179,7 +178,7 @@ export function App() {
                     {fireEvents.length} Points (442 K)
                   </div>
                   <p className="text-[11px] text-slate-400 mt-1">
-                    Detected outside customer boundaries in buffer zone
+                    Demo fire events shown outside customer boundaries
                   </p>
                 </div>
               </CardTilt3D>
@@ -191,10 +190,10 @@ export function App() {
                     <Globe className="w-4 h-4 text-cyan-400" />
                   </div>
                   <div className="text-xl font-extrabold text-cyan-300 font-mono">
-                    NOAA-20 VIIRS 375m
+                    VIIRS 375m — Demo
                   </div>
                   <p className="text-[11px] text-slate-400 mt-1">
-                    824 km Sun-synchronous orbit • 3h data freshness
+                    Illustrative satellite metadata • demo freshness
                   </p>
                 </div>
               </CardTilt3D>
@@ -210,11 +209,11 @@ export function App() {
                 <div className="flex items-center gap-2">
                   <Box className="w-5 h-5 text-cyan-400" />
                   <h2 className="font-extrabold text-lg text-white font-['Outfit']">
-                    3D Subsidised Baler Machinery Twin
+                    3D Baler Machinery Twin — Demo
                   </h2>
                 </div>
                 <p className="text-xs text-slate-300 mt-0.5">
-                  Wedge 1 Asset Strategy: Route Punjab's 50-80% subsidised CRM machinery. Interactive 3D component CAD model with rotating pickup reel and dual moisture telemetry probe.
+                  Wedge 1 Asset Strategy: Interactive 3D machinery model for the field-operations prototype.
                 </p>
               </div>
 
@@ -248,7 +247,7 @@ export function App() {
                   Central Ops & VRP Dispatch Console
                 </h2>
                 <p className="text-xs text-slate-400">
-                  Live GIS monitoring of Sangrur cluster, idle CRM machinery allocation, and NASA FIRMS active fire anomalies
+                  GIS operations prototype for a Sangrur cluster using demo machinery and FIRMS-style event data
                 </p>
               </div>
 
@@ -261,7 +260,7 @@ export function App() {
                   <span>View in 3D</span>
                 </button>
                 <span className="badge badge-emerald text-xs">
-                  GPS Live Feed
+                  Demo GPS feed
                 </span>
                 <span className="text-xs text-slate-400">
                   {fields.length} Farms • {machines.length} Balers
@@ -392,7 +391,7 @@ export function App() {
           </div>
 
           <div className="text-slate-500 text-[11px] text-center">
-            3D Digital Twin • OR-Tools Dispatch • NASA FIRMS 0-Burn Audit • &lt;90s UPI Settlement • Carbon Marketplace
+            3D Digital Twin • Dispatch Simulation • Satellite Audit Prototype • Payment Simulation • Carbon Marketplace Demo
           </div>
 
           <button
