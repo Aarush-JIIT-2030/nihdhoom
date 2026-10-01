@@ -46,6 +46,7 @@ export default async function handler(req: any, res: any) {
   const key = process.env.FIRMS_MAP_KEY;
   if (!key) return res.status(503).json({ error: 'FIRMS_MAP_KEY is not configured' });
 
+  res.setHeader?.('Cache-Control', 'no-store');
   const body = req.body;
   const field = body?.field;
   if (!field || typeof field !== 'object' || !validPoint(field)) {
