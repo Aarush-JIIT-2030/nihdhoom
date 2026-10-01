@@ -130,10 +130,12 @@ export default async function handler(req: any, res: any) {
   if (!auth.ok) return res.status(auth.status).json({ error: auth.error });
 
   const body = req.body;
+  res.setHeader?.('Cache-Control', 'no-store');
   if (!body || typeof body !== 'object' || Array.isArray(body)) {
     return res.status(400).json({ error: 'A JSON object is required' });
   }
   const { fields, machines } = body;
+  if (fields.length === 0 || machines.length === 0) return res.status(400).json({ error: 'At least one field and one machine are required' });
   if (!Array.isArray(fields) || !Array.isArray(machines) || fields.length > 500 || machines.length > 100) {
     return res.status(400).json({ error: 'fields (max 500) and machines (max 100) arrays are required' });
   }
