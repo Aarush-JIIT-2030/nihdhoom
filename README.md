@@ -1,229 +1,343 @@
-# NIRDHOOM — Field-First Network (V7)
+# NIRDHOOM — Field-First Crop-Residue Network
 
-<p align="center"><a href="README.md"><b>English</b></a> · <a href="README.hi.md">हिन्दी</a> · <a href="README.pa.md">ਪੰਜਾਬੀ</a></p>
+<p align="center">
+  <a href="README.md"><b>English</b></a> ·
+  <a href="README.hi.md">हिन्दी</a> ·
+  <a href="README.pa.md">ਪੰਜਾਬੀ</a>
+</p>
 
-<p align="center"><img src="public/images/punjab_farm_hero.jpg" alt="Punjab agricultural fields — NIRDHOOM" width="100%"></p>
+<p align="center">
+  <img src="public/images/punjab_farm_hero.jpg" alt="Agricultural fields in Punjab" width="100%">
+</p>
 
-A farmer-first crop-residue clearance and offtake product rebuilt from the supplied NIRDHOOM source material and earlier project requirements.
+<p align="center">
+  <b>Field → service → evidence → residue → buyer</b><br>
+  A farmer-first platform concept for coordinating crop-residue management.
+</p>
 
-## What is in this build
+NIRDHOOM (also referred to in the project materials as **Parali: The Reframe**) is a field-first web application for coordinating farmers, field records, machinery operators, dispatch, verification, and residue offtake. The V7 direction prioritizes the operational chain over adding more dashboard surfaces.
 
-### Farmer surface
-- Home / next action
-- My Fields
-- Real OpenStreetMap basemap with source-derived field polygons where available
-- Field-boundary drawing prototype
-- Clearance booking
-- Clearance timeline
-- Machine/operator contact
-- Weather advisory for the selected field
-- Residue-market pathways
-- Impact view
-- NIRDHOOM Sathi context UI
-- Passwordless Supabase sign-in foundation
-- PWA shell / offline app-shell foundation
+> **Project status:** prototype / integration foundation. This repository is not evidence of an operating service or a completed field pilot. Demo records, indicative quotes, heuristic dispatch, and payment UI must not be represented as live operations, confirmed service commitments, or verified outcomes.
 
-### Network surfaces
-- Operator job flow: assigned → arrived → baling → proof → complete
-- Dispatch: deadline queue + fleet view
-- Verification: field/evidence/remote-sensing audit model
-- Carbon: evidence-chain model without premature credit claims
+## Contents
 
-### Backend model
-- Profiles and roles
-- Fields / geometry
-- Machines
-- Bookings
-- Field events
-- Machine GPS history
-- Evidence assets
-- Verification events
-- Residue lots
-- Buyers / buyer offers
-- Payments
-- Notifications
-- Weather snapshots
-- AI conversations
-- Audit log
-- RLS + least-privilege grants
-- Role-escalation protection
+- [What the product is intended to do](#what-the-product-is-intended-to-do)
+- [Current implementation](#current-implementation)
+- [Workflow and architecture](#workflow-and-architecture)
+- [Research findings and product implications](#research-findings-and-product-implications)
+- [Technology stack](#technology-stack)
+- [Run locally](#run-locally)
+- [Environment configuration](#environment-configuration)
+- [Database setup](#database-setup)
+- [Validation and tests](#validation-and-tests)
+- [Deployment notes](#deployment-notes)
+- [Known limitations and release boundary](#known-limitations-and-release-boundary)
+- [Repository guide](#repository-guide)
+- [Research and references](#research-and-references)
+- [Contributing](#contributing)
+
+## What the product is intended to do
+
+NIRDHOOM is designed around the practical steps involved in managing crop residue, rather than treating residue management as a single map or dashboard problem.
+
+- **Farmers:** register or select a field, understand available management pathways, request service, and track a booking.
+- **Operators:** receive assigned work, report job progress, and attach field evidence.
+- **Dispatchers:** review work and machinery capacity, assign jobs, and handle exceptions.
+- **Verifiers:** review evidence and record a traceable decision.
+- **Residue buyers / network partners:** express demand and coordinate collection or offtake, subject to verified commercial terms.
+
+The intended chain is:
+
+`Field → consent → quote → booking → dispatch → operator job → GPS/evidence → residue lot → buyer offer → verification`
+
+This is a target workflow, not a claim that every step is currently connected to a live provider or field operation.
+
+## Current implementation
+
+The repository currently contains the following product surfaces and foundations:
+
+| Area | Present in repository | Important qualification |
+|---|---|---|
+| Farmer experience | Field view, booking flow, timeline, weather/context and residue pathways | Data may be demo or indicative; live service capacity is not established |
+| Field mapping | OpenStreetMap basemap and field-boundary drawing prototype | A drawn polygon is not authoritative cadastral/Khasra geometry |
+| Operator workflow | Assigned-job stages and proof/evidence concepts | Device, GPS freshness, upload, and offline behavior need field validation |
+| Dispatch | Queue/fleet surface and API hook | Heuristic fallback is not a confirmed optimized route |
+| Verification | Evidence and remote-sensing audit model | Satellite signals are supporting evidence, not field-level proof by themselves |
+| Residue network | Lots, buyers, offers and related schema/UI | Seeded buyers/offers are not contracts or confirmed offtake |
+| Sathi assistant | Assistant UI and server route | Provider-backed and authenticated field context depend on configuration |
+| Supabase | SQL migrations, roles, RLS policies and RPC foundations | Must be tested on a dedicated NIRDHOOM project before real data is used |
+| PWA | Manifest, service worker and app-shell foundation | Not proof of complete offline transaction synchronization |
+| Payments | Demo-only payment surface / ledger concepts | **Real payment or payout integration is explicitly out of scope** |
+
+The implementation and pilot gates are tracked separately so that a UI or schema should not be mistaken for an operationally verified capability.
+
+## Workflow and architecture
+
+### Application entry points
+
+- The active browser application is launched from `index.html` and `src/main.jsx`.
+- `src/main.tsx` and `src/App.tsx` are a separate TypeScript application path and are not the current browser entry point.
+- API routes live under `api/`.
+- Database migrations live under `supabase/migrations/`.
+- The Python dispatch service foundation lives under `services/dispatch-ortools/`.
+
+### High-level request flow
+
+1. The browser renders the Vite/React application.
+2. The user interacts with the relevant product surface.
+3. Supabase is the intended persistence/authentication layer for configured features.
+4. Server routes under `api/` mediate selected external services and privileged operations.
+5. Evidence, status changes, and verification should remain attributable to an actor and timestamp.
+6. Operational claims should be derived from auditable records—not from static demo cards or public state-level statistics.
+
+### Trust boundaries
+
+- Browser environment variables must contain only browser-safe values.
+- Supabase service-role keys, AI keys, and other provider secrets belong only in server-side environment configuration.
+- Role assignment must be performed through an authorized process; a user must not be able to grant themselves privileged access.
+- Treat external service output as untrusted input and validate it before it changes operational state.
+- Keep farmer data, evidence objects, and authenticated API responses private; avoid indiscriminate caching.
+
+## Research findings and product implications
+
+Research is maintained in the repository so that product assumptions can be reviewed against dated public evidence. The figures below are **context only**; they are not NIRDHOOM performance, live inventory, or forecasts.
+
+### Punjab paddy-season fire counts
+
+The CAQM/PIB season-end release reports the following Punjab fire-event counts for the **15 September–30 November** monitoring window:
+
+| Season | Reported fire-event count |
+|---|---:|
+| 2021 | 71,304 |
+| 2022 | 49,922 |
+| 2023 | 36,663 |
+| 2024 | 10,909 |
+| 2025 | 5,114 |
+
+The 2025 release describes the count as 53% lower than 2024. These are protocol-based fire-event counts for a specified season window; they are not tonnes of residue burned, proof of field-level service coverage, or outcomes attributable to NIRDHOOM. See the [CAQM/PIB season-end release](https://www.pib.gov.in/PressReleasePage.aspx?PRID=2197201&lang=1&reg=3).
+
+### Machinery and service capacity
+
+A September 2026 *Indian Express* report described Punjab's plan for approximately **1.25 lakh operational CRM machines** for the season and discussed ageing equipment. This is a reported preparedness plan, not a live inventory and not evidence that a particular machine is available for a booking. The product therefore needs separate machine states such as registered, operational, available, assigned, and unavailable—with timestamps and a source. See the [September 2026 report](https://indianexpress.com/article/cities/chandigarh/record-paddy-area-ageing-crm-fleet-punjab-readies-1-25-lakh-machines-for-stubble-season-10888644/).
+
+### In-situ and ex-situ pathways
+
+Government crop-residue guidance distinguishes in-situ management (retaining, incorporating, mulching, or decomposing residue in the field) from ex-situ management (baling and transporting residue for use elsewhere). The guidance describes a need to match options with locally appropriate solutions and supply-chain infrastructure. This supports keeping in-field operations distinct from collection, storage, transport, and buyer acceptance in the product model. See the [Crop Residue Management Operational Guidelines 2024](https://agrimachinery.nic.in/Files/Guidelines/Guidelines_CRM2024.pdf).
+
+### Remote sensing is one evidence layer
+
+Government reporting describes operational satellite detection of active fire locations and assessment of burn scars under a defined protocol. A satellite observation should therefore be stored with its source, observation time, geometry, and limitations. A missing detection does **not** establish that no burning occurred, and a fire point alone does not establish that a specific field was responsible. See the [PIB parliamentary reply on detection of stubble burning, 5 February 2026](https://www.pib.gov.in/PressReleasePage.aspx?PRID=2223752&lang=2&reg=48).
+
+### What the research means for the product
+
+1. **Availability is a time-bound operational fact.** Do not infer it from total machine counts.
+2. **A guaranteed date requires a real capacity reservation.** A displayed estimate is not a service guarantee.
+3. **In-situ and ex-situ services have different logistics.** Ex-situ workflows need handling, storage, transport, quality, and buyer acceptance.
+4. **Verification must be layered.** Field-boundary provenance, operator evidence, GPS metadata, satellite observations, and human review answer different questions.
+5. **Impact metrics need a denominator and period.** Public state-level changes must not be attributed to the product.
+6. **Commercial pathways require real counterparties.** A buyer listing is not a contract, and a residue lot is not sold until quantity, quality, price, delivery, and acceptance terms are established.
+
+More detailed source notes, caveats, and refresh guidance are in [docs/PUNJAB-CROP-RESIDUE-RESEARCH.md](docs/PUNJAB-CROP-RESIDUE-RESEARCH.md) and [docs/RESEARCH-DATA.md](docs/RESEARCH-DATA.md).
+
+## Technology stack
+
+| Layer | Technologies |
+|---|---|
+| Web application | React 19, Vite 8, JavaScript/JSX |
+| Secondary app path / type checking | TypeScript |
+| Styling | CSS, Tailwind Vite plugin |
+| Mapping | Leaflet, OpenStreetMap |
+| Backend and authentication | Supabase, PostgreSQL, PostGIS, Row Level Security |
+| Server routes | TypeScript / Node-compatible API routes |
+| Dispatch service foundation | Python, OR-Tools |
+| Assistant integration | Server-side provider adapter |
+| Browser testing | Playwright |
+| Static checks | TypeScript build check and repository audit script |
+| PWA | Web app manifest and service worker |
+
+Versions and commands are defined in `package.json`. The repository requires Node.js 24 or later.
 
 ## Run locally
 
-Use Node.js 24.x.
+### Prerequisites
+
+- Node.js 24+
+- npm
+- Git
+
+### Install and start
 
 ```bash
+git clone https://github.com/coolbandariya/nihdhoom.git
+cd nihdhoom
 npm install
 npm run dev
 ```
 
-For a static code check without installing the dependency tree:
+Vite prints the local development URL in the terminal.
+
+### Available scripts
+
+| Command | Purpose |
+|---|---|
+| `npm run dev` | Start the Vite development server |
+| `npm run build` | Create the production frontend build |
+| `npm run preview` | Preview the built frontend locally |
+| `npm run audit` | Run the repository's static validation/audit script |
+| `npm run syntaxcheck` | Run the TypeScript project build check |
+| `npm test` | Run Node test files matching `tests/*.test.mjs` |
+| `npm run e2e` | Run Playwright browser tests |
+
+A command existing in `package.json` does not mean its tests have passed. Run the commands against your current checkout and inspect the results.
+
+## Environment configuration
+
+Start from the example file:
 
 ```bash
-npm run audit
-npm run syntaxcheck
+cp .env.example .env.local
 ```
 
-The repository contains a Vite app launched from `src/main.jsx`; `src/main.tsx` and `src/App.tsx` are a separate TypeScript app and are not the current browser entry point. The production build runs Vite, while `npm run syntaxcheck` checks the TypeScript project. Keep `package.json` and `package-lock.json` synchronized: run `npm install` after dependency changes and commit the resulting lockfile. A successful local build and CI run are required before deployment.
+On Windows PowerShell:
 
-## AI
+```powershell
+Copy-Item .env.example .env.local
+```
 
-The Sathi UI calls `/api/assistant`. With `OPENAI_API_KEY` configured on the server, the function uses the configured model (default `gpt-5.6-luna`); otherwise it falls back to a deterministic demo response. Provider-backed AI and private-field context require a verified Supabase session. The API key is never sent to the browser.
+Configure only the values needed for the feature you are testing.
 
-## Supabase
+| Variable | Where it belongs | Notes |
+|---|---|---|
+| `VITE_SUPABASE_URL` | Browser build | URL of the dedicated NIRDHOOM Supabase project |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Browser build | Browser-safe publishable/anon key only |
+| `OPENAI_API_KEY` | Server only | Optional provider-backed Sathi; never expose to browser |
+| `SUPABASE_SERVICE_ROLE_KEY` | Server only | Privileged server operations only; never expose to browser |
+| `FIRMS_MAP_KEY` | Server only | NASA FIRMS integration credential, if enabled |
+| `REQUIRE_AUTH_FOR_FIRMS` | Server only | Set to `true` when requiring authenticated access |
+| `DISPATCH_SERVICE_URL` | Server only | URL of a separately deployed dispatch service, if configured |
+| WhatsApp / IVR variables | Server only | Configure only after provider setup and consent flow are verified |
 
-1. Create a Supabase project.
-2. Run `supabase/migrations/202609270001_nirdhoom_core.sql`.
-3. Run `supabase/migrations/202609270002_nirdhoom_production.sql`.
-4. Optionally run `supabase/seed.sql` for demo fleet/buyer records.
-5. Copy `.env.example` to `.env.local`.
-6. Add only `VITE_SUPABASE_URL` and the browser-safe publishable key.
-7. Never expose a service-role or secret key in the browser.
+See `.env.example` for the repository's current variable names. Never commit `.env.local`, tokens, private keys, or real farmer data.
 
-The farmer role is the default. Dispatcher/verifier/operator/admin role assignment must be performed through an authorized backend/admin process; the profile trigger prevents a user from promoting their own role.
+## Database setup
 
-## Pilot readiness
+**Do not point this repository at an unrelated Supabase project.** Create a dedicated NIRDHOOM project and verify its project URL before applying migrations.
 
-The consolidated implementation checklist, including P0/P1/P2 work, automated test requirements, operational dependencies and release exit criteria, is maintained in [`docs/FINAL-PILOT-READINESS.md`](docs/FINAL-PILOT-READINESS.md). Treat unconnected services as unconfigured; do not represent demo data, indicative quotes, heuristic dispatch or placeholder payment flows as live operations.
+Apply migrations in chronological order:
 
-## Production integrations still required
+1. `supabase/migrations/202609270001_nirdhoom_core.sql`
+2. `supabase/migrations/202609270002_nirdhoom_production.sql`
+3. `supabase/migrations/202609270003_nirdhoom_v6.sql`
+4. `supabase/migrations/202609270004_nirdhoom_v7.sql`
 
-- Phone OTP / WhatsApp onboarding and consent
-- Verified cadastral/Khasra workflow and real field polygon source
-- Live machine GPS device integration
-- Dispatch optimizer / OR-Tools service
-- Booking rules and real service-area capacity
-- Payment provider + webhook reconciliation
-- Supabase Storage evidence uploads
-- Remote-sensing ingestion and audit pipeline
-- Buyer contracts, offers and settlement
-- Production AI provider with authenticated data access
-- SMS / WhatsApp / push notifications
-- True offline operator sync queue
-- Automated unit, integration, RLS and end-to-end tests
-- Monitoring, rate limiting, alerting and audit retention
-- Privacy policy, terms, consent records and data-retention policy
+Then configure the required authentication and storage settings documented by the migrations. Use `supabase/seed.sql` only for an explicitly identified demo environment.
 
-## Research and public data
+Before using real records, verify migrations on a fresh project and test RLS with separate accounts for each role. Do not treat successful SQL application alone as proof of correct authorization.
 
-The website includes a research desk with sourced Punjab crop-residue figures and limitations. The research notes, source links, date windows, and product implications are maintained in `docs/PUNJAB-CROP-RESIDUE-RESEARCH.md`. Public figures are reference context only; they are not NIRDHOOM operating results or live availability data.
+## Validation and tests
 
-## Data provenance
-
-The demo field/machine/buyer records are derived from the supplied NIRDHOOM HTML source. They are intentionally labelled as demo/prototype data in the UI. Do not present them as live operational measurements until the underlying systems are connected and verified.
-
-Project images in `public/images/` came from earlier NIRDHOOM project assets in the working materials. Verify source/licensing/permission before public launch.
-
-## V5 additions
-- Payment-trail surface with explicit non-settlement language
-- Notification center and read-state persistence
-- Role-aware operational surface navigation
-- Operator offline job/proof queue using localStorage
-- Online/offline status indicator
-- Hardened field-event RLS: farmers cannot fabricate operational events from the browser
-- Booking writes `fields.status = BOOKED` when connected
-
-## Production sequence
-1. Create a dedicated NIRDHOOM Supabase project (do not reuse unrelated projects).
-2. Run migrations 001, 002, 003, and 004 in order.
-3. Seed only approved demo/network data.
-4. Configure `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, and server-side `OPENAI_API_KEY`.
-5. Enable `REQUIRE_AUTH_FOR_AI=true` after auth is configured.
-6. Add a real payment provider/webhook and real object storage before showing settlement.
-7. Add verified cadastral/field geometry through an authorized integration.
-8. Add operator GPS + evidence upload and server-side event creation.
-9. Run `npm install`, `npm run syntaxcheck`, `npm run audit`, `npm run build` in CI.
-
-## V6 — PDF-to-production pass
-
-The attached **Parali: The Reframe** brief is now reflected directly in the codebase. See `PDF-FEATURE-MATRIX.md` for page-by-page coverage and `LINE-BY-LINE-AUDIT.md` for the executable-source audit.
-
-### New production foundations
-- Phone OTP + explicit farmer consent record.
-- PostGIS field polygon alongside GeoJSON provenance.
-- Dynamic per-acre quote with guarantee date, penalty basis and pricing band.
-- Job state machine and operator field-event logging.
-- Browser machine GPS capture with RLS-gated inserts.
-- Supabase Storage evidence bucket + linked evidence records.
-- FIRMS server adapter using a secret MAP_KEY.
-- Dispatch API with a production OR-Tools service hook and safe fallback.
-- Buyer contracts, storage yards, dispatch records and credits wallet schema.
-- Harvest forecast and soil-report schema.
-- Signed payment webhook foundation.
-- WhatsApp Cloud API server adapter.
-- Sathi can ground answers in the authenticated live field record.
-
-### Production deployment sequence
-1. Create a **dedicated NIRDHOOM Supabase project**; do not reuse another project.
-2. Enable PostGIS in a dedicated extension schema, then run migrations `001`, `002`, `003`, and `004` in order.
-3. Configure phone authentication/SMS in Supabase and test the OTP flow.
-4. Configure the `evidence` Storage bucket policies from migration `003`.
-5. Connect a verified cadastral/Khasra source and mark `boundary_source=cadastral` only after verification.
-6. Deploy the OR-Tools service and set `DISPATCH_SERVICE_URL`.
-7. Request a NASA FIRMS MAP_KEY and set `FIRMS_MAP_KEY` server-side.
-8. Connect a payout provider in sandbox first; implement its exact signature scheme using the raw request bytes before routing webhooks to the endpoint. The generic webhook currently fails closed unless the platform supplies `req.rawBody`; provider-specific event validation and sandbox reconciliation remain required.
-9. Configure WhatsApp Cloud API credentials and a separate IVR provider before advertising voice support.
-10. Add Sentinel-2/Bhuvan credentials and calibrate harvest forecasts against local agronomic observations.
-11. Add monitoring, rate limits, retry queues, audit retention, privacy policy and consent/revocation handling.
-12. Run `npm install && npm run syntaxcheck && npm run audit && npm run build` in CI before Vercel deploy.
-
-
-## Public research integrated into the app
-
-The Research view presents a small, sourced evidence panel and explicitly separates public state-level statistics from NIRDHOOM demo records. Current reference points include:
-
-- **Punjab farm-fire incidents, 15 September–30 November 2025:** 5,114, a 53% reduction from 2024 as reported by the Commission for Air Quality Management (CAQM) through the Press Information Bureau on 1 December 2025.
-- **2026 CRM fleet context:** a September 2026 report described a plan for approximately 1.25 lakh operational machines and noted that around 67,000 of 1.65 lakh machines distributed since 2018 had exceeded a five-year lifespan. This is a reported plan/assessment, not a live fleet inventory.
-- **Residue pathways:** ICAR’s 2021 review discusses pellets for power generation, biogas/CBG, alcohol production and composting, while noting that choices depend on technical feasibility and economics.
-
-Sources:
-- CAQM / PIB, *Paddy Harvesting Season 2025 concludes with significant Reduction in Farm Fire Incidents across Punjab and Haryana* (1 Dec 2025): https://www.pib.gov.in/PressReleasePage.aspx?PRID=2197201&lang=1&reg=3
-- The Indian Express, *Record paddy area, ageing CRM fleet: Punjab readies 1.25 lakh machines for stubble season* (September 2026): https://indianexpress.com/article/cities/chandigarh/record-paddy-area-ageing-crm-fleet-punjab-readies-1-25-lakh-machines-for-stubble-season-10888644/
-- ICAR, *Ex-situ Crop Residue Management Options* (2021): https://www.icar.org.in/sites/default/files/2022-06/Ex-Situ-Crop-Residue-Management.pdf
-- PIB, crop-residue management scheme reply (2025): https://www.pib.gov.in/PressReleasePage.aspx?PRID=2112397&lang=2&reg=48
-
-These figures are contextual research, not NIRDHOOM performance metrics. Satellite fire detections are not field-clearance certificates; field-level claims require independent evidence and a documented verification process.
-
-## Research baseline
-
-The website includes a dated Research view, and `docs/RESEARCH-DATA.md` records the public sources, geography, reporting windows, and limitations behind its context data. State-level counts and scheme figures must not be presented as live NIRDHOOM results, local machine availability, or guaranteed farmer payouts. Refresh policy and product implications are documented in that file.
-
-## V7 — close the operational loop
-
-V7 intentionally stops expanding visual dashboard scope. The primary transaction is now:
-
-`Field → consent → quote → guaranteed booking → OR-Tools dispatch → job → GPS → evidence → QR residue lot → buyer offer → verification → payment ledger`
-
-### V7 database sequence
-
-Run these migrations in order:
-
-1. `202609270001_nirdhoom_core.sql`
-2. `202609270002_nirdhoom_production.sql`
-3. `202609270003_nirdhoom_v6.sql`
-4. `202609270004_nirdhoom_v7.sql`
-
-### V7 environment additions
-
-- `SUPABASE_SERVICE_ROLE_KEY` — server only, required for webhook reconciliation.
-- `REQUIRE_AUTH_FOR_FIRMS=true` — recommended before enabling FIRMS in production.
-- `PAYMENT_PROVIDER` / `PAYMENT_PROVIDER_API_URL` — provider adapter configuration.
-- `PAYMENT_WEBHOOK_SECRET` — signed webhook verification.
-- Existing FIRMS, dispatch, WhatsApp, IVR and AI variables remain server-side.
-
-### V7 production checks
+Run the repository checks:
 
 ```bash
 npm install
 npm run syntaxcheck
-npm run test
 npm run audit
+npm test
 npm run build
 npm run e2e
 ```
 
-Do not enable live payout until the provider adapter and webhook reconciliation have been tested in sandbox. Do not label a self-drawn polygon as cadastral. Do not issue a carbon claim solely from a missing FIRMS detection.
+The Python dispatch service also has a syntax check:
 
-## Demo UPI handoff (testing only)
+```bash
+python -m compileall -q services/dispatch-ortools
+```
 
-The Payments surface includes a demo-only UPI intent handoff using the test UPI ID entered in the UI. It can open a compatible UPI app and copy the ID. The local “Finish UI test” action only changes UI state; it does not create a payment record, mark a transfer as paid, or verify a bank transaction. A UPI app can still initiate a real transfer if the user explicitly confirms one, so do not confirm a payment during UI testing. The demo ID is client-visible by design and must be replaced or removed before public launch. This is not a merchant checkout or payout integration.
+For a release, record the commit SHA and CI run, and verify that all required checks completed successfully. A static audit or successful frontend build does not replace RLS, provider, device, or field-pilot tests.
+
+## Deployment notes
+
+The intended frontend deployment target is Vercel, but deployment should happen only after the production build and release checks pass.
+
+1. Create and verify the dedicated NIRDHOOM Supabase project.
+2. Apply and test migrations in order.
+3. Configure environment variables separately for preview and production.
+4. Deploy the frontend and required server routes.
+5. Deploy the dispatch service separately if the application is configured to call it.
+6. Test authentication, booking, field-scoped access, evidence handling, and failure states in the deployed environment.
+7. Keep demo data disabled or visibly labelled in any public deployment.
+
+Do not assume that a Vercel deployment automatically deploys the Python dispatch service or configures Supabase providers.
+
+## Known limitations and release boundary
+
+The repository is a prototype/integration foundation. The following still require implementation, configuration, or verification before a controlled pilot:
+
+- Real phone OTP onboarding, farmer consent, and consent withdrawal.
+- Authoritative cadastral/Khasra boundary source and field-level provenance.
+- Production GPS/device validation and stale-location handling.
+- Private evidence upload, server-side content validation, and trusted hashing.
+- Dispatch service deployment and validation of returned assignments.
+- Real service-area capacity, booking concurrency, cancellation, and escalation rules.
+- Buyer identity, binding offers/contracts, lot quality, custody, and acceptance workflow.
+- Remote-sensing ingestion and human verification/appeal workflow.
+- Reliable offline queue synchronization on real devices.
+- API rate limits, request validation, observability, alerting, backups, and retention.
+- Accessibility and low-end Android field testing.
+- Production privacy policy, terms, consent records, and operational support procedures.
+
+### Payment scope
+
+**Real payment/payout integration is intentionally excluded from the current scope.** Payment screens or ledger concepts are demonstration-only. Do not add provider credentials or describe a UI action as settlement. See [docs/NON-PAYMENT-RELEASE-SCOPE.md](docs/NON-PAYMENT-RELEASE-SCOPE.md).
+
+### Pilot readiness
+
+Use [docs/FINAL-PILOT-READINESS.md](docs/FINAL-PILOT-READINESS.md) as the detailed checklist. A checkbox should be marked complete only when supported by a test result, environment verification, or operational sign-off.
+
+## Repository guide
+
+| Path | Description |
+|---|---|
+| `src/main.jsx` | Active React application entry |
+| `src/components/` | Extracted UI components |
+| `src/lib/` | Shared domain helpers |
+| `api/` | Server-side API routes |
+| `services/dispatch-ortools/` | Python dispatch service foundation |
+| `supabase/migrations/` | Database schema, policies, and RPC migrations |
+| `supabase/seed.sql` | Demo seed data |
+| `public/` | Static assets, icons, manifest, and service worker |
+| `e2e/` | Playwright browser tests |
+| `scripts_validate.mjs` | Repository audit script |
+| `docs/PUNJAB-CROP-RESIDUE-RESEARCH.md` | Research notes and product implications |
+| `docs/RESEARCH-DATA.md` | Dated public data, source scope, and caveats |
+| `docs/FINAL-PILOT-READINESS.md` | Consolidated pilot checklist |
+| `docs/NON-PAYMENT-RELEASE-SCOPE.md` | Explicit non-payment release boundary |
+| `LINE-BY-LINE-AUDIT.md` | Repository audit notes |
+| `PDF-FEATURE-MATRIX.md` | Feature mapping to supplied brief |
+
+## Research and references
+
+The research files are the maintained reference for figures and their limitations. Key primary/public sources include:
+
+- [Government of India, Crop Residue Management Operational Guidelines 2024](https://agrimachinery.nic.in/Files/Guidelines/Guidelines_CRM2024.pdf) — in-situ/ex-situ management and scheme framework.
+- [PIB / CAQM, 2025 paddy-season fire-count release](https://www.pib.gov.in/PressReleasePage.aspx?PRID=2197201&lang=1&reg=3) — Punjab and Haryana season-end figures and comparison period.
+- [PIB, parliamentary reply on satellite detection of stubble burning, 5 February 2026](https://www.pib.gov.in/PressReleasePage.aspx?PRID=2223752&lang=2&reg=48) — monitoring protocol and operational detection context.
+- [PIB, 2026 wheat-stubble action-plan direction](https://www.pib.gov.in/PressReleasePage.aspx?PRID=2228743&lang=1&reg=1) — wheat-season preparedness; do not mix with the paddy-season series.
+- [CAQM Annual Report 2024–25](https://caqm.nic.in/WriteReadData/LINKS/7bb814e6-844c-48b9-91cc-aa1909f9a7d8.pdf) — historical crop-residue context.
+- [Punjab Energy Development Agency — Biomass Power Projects](https://www.peda.gov.in/biomass-power-projects.php) — agency-published biomass context.
+- [The Indian Express, September 2026, Punjab CRM fleet preparedness](https://indianexpress.com/article/cities/chandigarh/record-paddy-area-ageing-crm-fleet-punjab-readies-1-25-lakh-machines-for-stubble-season-10888644/) — reported plan and ageing-fleet context; not a live inventory.
+
+**Research limitations:** Public figures may be estimates, plans, or protocol-specific observations. Always preserve geography, measurement period, publication date, and source. Do not infer district-level availability or attribute state-level changes to NIRDHOOM. Recheck time-sensitive figures before using them in a live product.
+
+## Contributing
+
+1. Create a branch for a focused change.
+2. Keep demo and live data paths clearly separated.
+3. Do not add secrets or identifiable farmer data to commits, screenshots, fixtures, or logs.
+4. Update the relevant research or operational documentation when changing a product assumption.
+5. Run the applicable checks and report any that could not be run.
+6. For schema changes, include migration and authorization tests; do not silently edit an already-applied migration in a deployed environment.
+
+---
+
+**Project principle:** Make the field-to-residue chain traceable, keep claims proportional to evidence, and distinguish a working prototype from a verified service.
