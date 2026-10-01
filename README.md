@@ -81,7 +81,7 @@ The implementation and pilot gates are tracked separately so that a UI or schema
 ### Application entry points
 
 - The active browser application is launched from `index.html` and `src/main.jsx`.
-- `src/main.tsx` and `src/App.tsx` are a separate TypeScript application path and are not the current browser entry point.
+- `src/main.jsx` mounts the modular `src/App.tsx`; the duplicate `src/main.tsx` entrypoint has been removed.
 - API routes live under `api/`.
 - Database migrations live under `supabase/migrations/`.
 - The Python dispatch service foundation lives under `services/dispatch-ortools/`.
@@ -230,10 +230,7 @@ See `.env.example` for the repository's current variable names. Never commit `.e
 
 Apply migrations in chronological order:
 
-1. `supabase/migrations/202609270001_nirdhoom_core.sql`
-2. `supabase/migrations/202609270002_nirdhoom_production.sql`
-3. `supabase/migrations/202609270003_nirdhoom_v6.sql`
-4. `supabase/migrations/202609270004_nirdhoom_v7.sql`
+Apply every migration in `supabase/migrations/` in filename order, including the V7.1–V7.5 integrity and database-hygiene migrations. Do not skip the later security migrations.
 
 Then configure the required authentication and storage settings documented by the migrations. Use `supabase/seed.sql` only for an explicitly identified demo environment.
 
@@ -288,6 +285,7 @@ The repository is a prototype/integration foundation. The following still requir
 - Remote-sensing ingestion and human verification/appeal workflow.
 - Reliable offline queue synchronization on real devices.
 - API rate limits, request validation, observability, alerting, backups, and retention.
+- Live Supabase records are now read by the app when demo mode is disabled; write workflows still require the authenticated RPC/operator paths and must be validated against the deployed project.
 - Accessibility and low-end Android field testing.
 - Production privacy policy, terms, consent records, and operational support procedures.
 
