@@ -61,12 +61,12 @@ export const Header: React.FC<HeaderProps> = ({
                 <span className="font-black text-lg tracking-tight text-white font-['Outfit']">
                   NIRDHOOM
                 </span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/40">
-                  Parali Reframe
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 font-bold border border-amber-500/40">
+                  DEMO / SIMULATION
                 </span>
               </div>
               <p className="text-[11px] text-slate-400 hidden sm:block">
-                Subsidised Machinery Dispatch & 3D Satellite Verification Network
+                Field operations prototype • simulated data unless marked live
               </p>
             </div>
           </div>
@@ -94,18 +94,18 @@ export const Header: React.FC<HeaderProps> = ({
           <span className="text-slate-700">|</span>
           <div className="flex items-center gap-1 text-slate-300">
             <span className="text-slate-500">Idle CRM:</span>
-            <span className="text-emerald-300 font-mono font-bold">4 Balers / 88 ac</span>
+            <span className="text-emerald-300 font-mono font-bold">Demo dataset</span>
           </div>
           <span className="text-slate-700">|</span>
           <div className="flex items-center gap-1 text-slate-300">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="text-slate-500">VIIRS 375m:</span>
-            <span className="text-emerald-400 font-bold">0 Burns</span>
+            <span className="text-slate-500">VIIRS:</span>
+            <span className="text-amber-300 font-bold">Demo screen</span>
           </div>
           <span className="text-slate-700">|</span>
           <div className="flex items-center gap-1 text-amber-400">
             <Zap className="w-3.5 h-3.5" />
-            <span>UPI &lt;90s SLA</span>
+            <span>Payments disabled</span>
           </div>
         </div>
 
