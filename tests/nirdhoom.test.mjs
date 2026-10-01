@@ -112,7 +112,7 @@ test('live dashboard KPIs are derived from current records', () => {
 });
 
 test('live field normalization does not invent Punjab coordinates', () => {
-  const domain = read('src/lib/domain.js');
+  const domain = read('src/lib/domain.ts');
   assert.match(domain, /f\.center_lat \?\? f\.lat \?\? 0/);
   assert.match(domain, /f\.center_lng \?\? f\.lng \?\? 0/);
 });
