@@ -53,6 +53,10 @@ export function App() {
     liveDataError,
   } = useAppController();
 
+  const acresScheduled = fields.reduce((sum, field) => sum + (Number(field.acreage) || 0), 0);
+  const totalPayoutInr = fields.reduce((sum, field) => sum + (Number(field.payout_amount) || 0), 0);
+  const verifiedCount = fields.filter((field) => field.is_verified_non_burn || field.status === 'VERIFIED_NON_BURN').length;
+
   const handleSelectField = (field: Field) => {
     setSelectedField(field);
   };
@@ -79,10 +83,10 @@ export function App() {
           <AgenticLanding
             onNavigateTab={(tab) => setActiveTab(tab)}
             openPitchDrawer={() => setIsPitchDrawerOpen(true)}
-            acresScheduled={88.4}
-            totalPayoutInr={128150}
-            co2Avoided={72.6}
-            firmsZeroBurnCount={fields.filter(f => f.is_verified_non_burn || f.status === 'VERIFIED_NON_BURN').length || fields.length}
+            acresScheduled={acresScheduled}
+            totalPayoutInr={totalPayoutInr}
+            co2Avoided={0}
+            firmsZeroBurnCount={verifiedCount}
             activeMachines={machines.length}
             fireEventsOutsideCount={fireEvents.length}
           />
@@ -100,10 +104,10 @@ export function App() {
         {activeTab === 'DEMO_RUNNER' && (
           <div className="flex flex-col gap-2">
             <LiveKPIDashboard
-              acresScheduled={88.4}
-              totalPayoutInr={128150}
-              co2Avoided={72.6}
-              firmsZeroBurnCount={fields.filter(f => f.is_verified_non_burn || f.status === 'VERIFIED_NON_BURN').length || fields.length}
+              acresScheduled={acresScheduled}
+              totalPayoutInr={totalPayoutInr}
+              co2Avoided={0}
+              firmsZeroBurnCount={verifiedCount}
               activeMachines={machines.length}
               fireEventsOutsideCount={fireEvents.length}
             />
