@@ -82,6 +82,7 @@ test('V7.5 blocks direct booking writes and farmer field tampering', () => {
   assert.match(sql, /revoke insert, update, delete on public\.bookings from authenticated/);
   assert.match(sql, /prevent_farmer_field_tampering/);
   assert.match(sql, /Protected field attributes must be changed through an authorized workflow/);
+  assert.match(sql, /New farmer fields must begin in REGISTERED state with unverified boundaries/);
 });
 
 test('simulation surfaces do not claim real transactions', () => {
