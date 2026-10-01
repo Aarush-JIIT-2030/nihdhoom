@@ -43,3 +43,29 @@
 /* Demo-only UPI handoff: never represents a settled payment. */
 .demo-upi-panel{margin-top:16px}.demo-heading{display:flex;align-items:center;justify-content:space-between;gap:10px}.demo-badge{font-size:9px;font-weight:800;color:#856321;background:#f5efdc;border-radius:999px;padding:7px 10px}.demo-upi-panel h2{font:800 20px Manrope;margin:12px 0 5px}.demo-upi-panel>p{font-size:12px;color:var(--muted);line-height:1.55;max-width:620px}.demo-upi-label{display:block;font-size:11px;font-weight:800;margin:16px 0 6px}.demo-upi-row{display:flex;gap:8px}.demo-upi-row input{min-width:0;flex:1;border:1px solid var(--line);border-radius:10px;padding:11px 12px;background:var(--surface);color:var(--text);font:600 13px 'DM Sans'}.demo-upi-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.demo-upi-link{display:inline-flex;align-items:center;gap:8px;text-decoration:none}.demo-state{margin-top:12px;padding:10px 12px;border-radius:10px;background:var(--green2);font-size:11px;line-height:1.5}.demo-warning{display:block;color:var(--muted);font-size:10px;line-height:1.5;margin-top:9px}
 @media(max-width:560px){.demo-upi-row{align-items:stretch}.demo-upi-row input{width:100%}.demo-upi-actions>*{flex:1;justify-content:center}}
+
+
+/* V8 usability and saffron design layer */
+:root{--saffron:#e88924;--saffron-deep:#b85d0b;--saffron-soft:#fff0d9;--saffron-line:#efc58d;--focus-ring:0 0 0 3px #e8892444}
+:where(button,a,input,select,textarea,[tabindex]):focus-visible{outline:3px solid var(--saffron);outline-offset:3px}
+.primary{background:var(--saffron-deep);border-color:var(--saffron-deep);color:#fff}.primary:hover{background:#984b08;border-color:#984b08}
+.top-actions .sathi{background:var(--saffron-deep);border-color:var(--saffron-deep)}
+.top nav button:hover,.top nav button.active{background:var(--saffron-soft);color:var(--saffron-deep)}
+.mark{background:var(--saffron-deep)}.hero h1 em,.eyebrow{color:var(--saffron-deep)}.text-btn,.research-source>a{color:var(--saffron-deep)}
+.action-card,.panel,.buyer,.metric,.research-source{transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+.action-card:hover,.buyer:hover,.research-source:hover{transform:translateY(-2px);border-color:var(--saffron-line);box-shadow:0 10px 28px #8c4c1012}
+.primary:focus-visible,.secondary:focus-visible,.top-actions button:focus-visible{box-shadow:var(--focus-ring)}
+.panel input:focus,.panel select:focus,.demo-upi-row input:focus{border-color:var(--saffron);box-shadow:var(--focus-ring)}
+.pill,.live,.tag,.field-icon{background:var(--saffron-soft);color:var(--saffron-deep)}
+.status-dot[data-status=BALING_IN_PROGRESS]{background:var(--saffron)}
+.field-row:hover,.field-row.selected{border-color:var(--saffron-line);background:#fff9ef}
+.login-hint{background:var(--saffron-soft);border-color:var(--saffron-line)}.login-hint button{color:var(--saffron-deep)}
+.photo-band{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:24px 0}
+.photo-band>div{position:relative;overflow:hidden;border-radius:14px;background:#e8e1d3;min-width:0}
+.photo-band img{display:block;width:100%;height:158px;object-fit:cover;transition:transform .35s ease}
+.photo-band>div:hover img{transform:scale(1.04)}
+.photo-band>div:after{content:'';position:absolute;inset:35% 0 0;background:linear-gradient(transparent,#171b16b8);pointer-events:none}
+.photo-band span{position:absolute;z-index:1;left:12px;bottom:11px;color:white;font-size:11px;font-weight:800;text-shadow:0 1px 5px #0008}
+@media(max-width:760px){.photo-band{grid-template-columns:repeat(2,minmax(0,1fr))}.photo-band img{height:140px}}
+@media(max-width:560px){.photo-band{gap:8px}.photo-band img{height:118px}.photo-band span{font-size:10px;left:9px;bottom:8px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
