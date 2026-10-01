@@ -90,3 +90,13 @@ test('simulation surfaces do not claim real transactions', () => {
   assert.match(read('src/components/FarmerOnboarding/FarmerOnboarding.tsx'), /Demo only/);
   assert.match(read('src/components/CarbonMarketplace/CarbonMarketplace.tsx'), /Illustrative carbon-market interface/);
 });
+
+
+test('demo operational data is opt-in and production starts empty', () => {
+  const controller = read('src/state/useAppController.ts');
+  assert.match(controller, /VITE_NIRDHOOM_DEMO_MODE === 'true'/);
+  assert.match(controller, /DEMO_MODE \? INITIAL_FIELDS : \[\]/);
+  assert.match(controller, /DEMO_MODE \? INITIAL_MACHINES : \[\]/);
+  assert.match(controller, /DEMO_MODE \? MOCK_FIRMS_FIRE_EVENTS : \[\]/);
+  assert.match(read('.env.example'), /VITE_NIRDHOOM_DEMO_MODE=false/);
+});
