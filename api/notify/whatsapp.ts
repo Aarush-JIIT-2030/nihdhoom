@@ -39,7 +39,7 @@ export default async function handler(req: any, res: any) {
     return res.status(400).json({ error: 'A valid international phone number and message (1–4096 characters) are required' });
   }
   try {
-    const response = await fetch(`https://graph.facebook.com/v23.0/${encodeURIComponent(phoneId)}/messages`, {
+    const response = await fetch(`https://graph.facebook.com/${process.env.WHATSAPP_GRAPH_API_VERSION || 'v24.0'}/${encodeURIComponent(phoneId)}/messages`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ messaging_product: 'whatsapp', to, type: 'text', text: { body: text.trim() } }),

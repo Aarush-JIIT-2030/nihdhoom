@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { supabase } from '../../lib/supabase';
 import {
   UserCheck,
   Phone,
@@ -31,6 +32,7 @@ const STEPS: { id: KYCStep; label: string; sublabel: string; icon: React.FC<{ cl
 ];
 
 const STEP_ORDER: KYCStep[] = ['PHONE', 'OTP', 'AADHAAR', 'FACE_SCAN', 'BANK', 'LAND_RECORDS', 'DONE'];
+const DEMO_MODE = import.meta.env.VITE_NIRDHOOM_DEMO_MODE === 'true';
 
 export const FarmerOnboarding: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<KYCStep>('PHONE');
@@ -46,6 +48,7 @@ export const FarmerOnboarding: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [faceScanned, setFaceScanned] = useState(false);
   const [bankVerified, setBankVerified] = useState(false);
+  const [otpError, setOtpError] = useState('');
 
   const stepIndex = STEP_ORDER.indexOf(currentStep);
 
@@ -58,11 +61,65 @@ export const FarmerOnboarding: React.FC = () => {
     }, 900);
   };
 
+  const normalizedPhone = phone ? `+91${phone}` : '';
+
+  const sendLiveOtp = async () => {
+    if (DEMO_MODE) return advance();
+    if (!supabase) {
+      setOtpError('Live authentication is not configured.');
+      return;
+    }
+    setLoading(true);
+    setOtpError('');
+    const { error } = await supabase.auth.signInWithOtp({
+      phone: normalizedPhone,
+      options: { shouldCreateUser: true },
+    });
+    setLoading(false);
+    if (error) {
+      setOtpError(error.message || 'Unable to send OTP.');
+      return;
+    }
+    setCurrentStep('OTP');
+  };
+
+  const verifyLiveOtp = async () => {
+    if (DEMO_MODE) return advance();
+    if (!supabase) {
+      setOtpError('Live authentication is not configured.');
+      return;
+    }
+    setLoading(true);
+    setOtpError('');
+    const { data, error } = await supabase.auth.verifyOtp({
+      phone: normalizedPhone,
+      token: otp,
+      type: 'sms',
+    });
+    if (error || !data.user) {
+      setLoading(false);
+      setOtpError(error?.message || 'OTP verification failed.');
+      return;
+    }
+    const { error: profileError } = await supabase.from('profiles').upsert({
+      id: data.user.id,
+      full_name: name,
+      phone: normalizedPhone,
+      village,
+    }, { onConflict: 'id' });
+    setLoading(false);
+    if (profileError) {
+      setOtpError(profileError.message || 'Verified, but farmer profile could not be saved.');
+      return;
+    }
+    setCurrentStep('AADHAAR');
+  };
+
   const reset = () => {
     setCurrentStep('PHONE');
     setPhone(''); setOtp(''); setAadhaarNo(''); setName(''); setVillage('');
     setBlock(''); setUpiId(''); setKhasra(''); setAcreage('');
-    setFaceScanned(false); setBankVerified(false);
+    setFaceScanned(false); setBankVerified(false); setOtpError('');
   };
 
   const isComplete = (step: KYCStep) => STEP_ORDER.indexOf(step) < stepIndex;
@@ -81,10 +138,10 @@ export const FarmerOnboarding: React.FC = () => {
               <h3 className="font-extrabold text-lg text-white font-['Outfit']">
                 Farmer KYC & Onboarding Flow
               </h3>
-              <span className="badge badge-emerald text-xs">Aadhaar eKYC</span>
+              <span className="badge badge-emerald text-xs">{DEMO_MODE ? 'Simulation' : 'Live phone OTP + KYC demo'}</span>
             </div>
             <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
-              A fully digital zero-paper onboarding: mobile OTP → Aadhaar Digilocker → live selfie → UPI penny-drop → Fasal Bima land record link. Farmers are registered in under 4 minutes.
+              Mobile OTP is connected to Supabase Auth in live mode. Identity, biometric, bank and cadastral steps remain explicit demo/adapter states until their authorized providers are connected.
             </p>
           </div>
         </div>
@@ -144,7 +201,7 @@ export const FarmerOnboarding: React.FC = () => {
                   <h4 className="font-bold text-sm text-white">Step 1: Mobile Number Verification</h4>
                 </div>
                 <p className="text-xs text-slate-400 leading-relaxed">
-                  Enter the farmer's registered mobile number. An OTP will be dispatched via SMS and WhatsApp. No app download required.
+                  Enter the farmer's mobile number. In live mode, Supabase Auth sends a real SMS OTP; demo mode uses a local test code.
                 </p>
                 <div className="flex flex-col gap-3">
                   <div>
@@ -196,12 +253,12 @@ export const FarmerOnboarding: React.FC = () => {
                   </div>
                 </div>
                 <button
-                  onClick={advance}
+                  onClick={sendLiveOtp}
                   disabled={!phone || phone.length < 10 || !name || loading}
                   className="mt-auto w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow transition-all"
                 >
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                  Send OTP via SMS + WhatsApp
+                  {DEMO_MODE ? 'Send Demo OTP' : 'Send OTP via SMS'}
                 </button>
               </>
             )}
@@ -213,9 +270,11 @@ export const FarmerOnboarding: React.FC = () => {
                   <h4 className="font-bold text-sm text-white">Step 2: OTP Verification</h4>
                 </div>
                 <div className="p-3 bg-slate-900/80 rounded-lg border border-slate-800 text-xs text-slate-300">
-                  OTP sent to <strong className="text-white">+91 {phone}</strong> via SMS & WhatsApp.
-                  <br/>
-                  <span className="text-emerald-400 font-semibold">Demo OTP: 8 4 2 6 1 3</span>
+                  OTP sent to <strong className="text-white">+91 {phone}</strong> via SMS.
+                  {DEMO_MODE && <>
+                    <br/>
+                    <span className="text-emerald-400 font-semibold">Demo OTP: 8 4 2 6 1 3</span>
+                  </>}
                 </div>
                 <div>
                   <label className="text-xs text-slate-400 block mb-2">Enter 6-digit OTP</label>
@@ -243,13 +302,14 @@ export const FarmerOnboarding: React.FC = () => {
                   </div>
                 </div>
                 <button
-                  onClick={advance}
-                  disabled={otp !== '842613' || loading}
+                  onClick={verifyLiveOtp}
+                  disabled={(DEMO_MODE ? otp !== '842613' : otp.length !== 6) || loading}
                   className="mt-auto w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow transition-all"
                 >
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
-                  Verify OTP & Continue
+                  {DEMO_MODE ? 'Verify Demo OTP & Continue' : 'Verify OTP & Continue'}
                 </button>
+                {otpError && <div className="text-xs text-red-300 bg-red-950/30 border border-red-500/30 rounded-lg p-2">{otpError}</div>}
               </>
             )}
 
