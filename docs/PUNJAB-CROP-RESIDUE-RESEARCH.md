@@ -42,7 +42,7 @@
 ## Additional research review — 1 October 2026
 
 ### Communication and adoption
-A June 2026 CEEW study reports that 63% of surveyed respondents said they had not received CRM-related information when needed; 86% had not heard of the Unnat Kisan application, and 78% had not attended CRM training. CEEW describes its 102-farmer survey across four Punjab districts as non-representative, supplemented by focus groups and consultations. Treat these as findings from that study, not estimates for all Punjab farmers.
+A June 2026 CEEW study reports that 63% of surveyed respondents said they had not received CRM-related information when needed; 86% had not heard of the Unnat Kisan application, and 78% were unaware of CRM training schedules. CEEW describes its 102-farmer survey across four Punjab districts as non-representative, supplemented by focus groups and consultations. Treat these as findings from that study, not estimates for all Punjab farmers.
 
 **Product implications to test:** task-timed opt-in reminders; assisted onboarding and phone support; farmer-tested Punjabi/Hindi language; and short, staged forms that request only information needed for the next action.
 
