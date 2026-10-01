@@ -4,10 +4,10 @@ This document is the consolidated implementation checklist for taking the curren
 
 ## Current repository facts
 
-- The active Vite browser entry is `src/main.jsx`.
-- `src/main.tsx` and `src/App.tsx` are a separate, currently inactive application path.
+- The active Vite browser entry is `src/main.jsx`, which mounts the modular `src/App.tsx` application.
+- The duplicate `src/main.tsx` entrypoint has been removed.
 - The repository contains API routes for assistant, quote, dispatch, FIRMS, payment initiation/webhook, WhatsApp and IVR.
-- The database contains sequential migrations 001–004; the later migrations add operational tables and transactional functions.
+- The database contains the sequential core migrations plus V7.1–V7.5 integrity migrations; the later migrations add operational tables, transactional functions and client-write protections.
 - The payment initiation route is intentionally a stub and returns 501 when a provider adapter would be needed. Do not describe payouts as live.
 - The dispatch route has a local heuristic fallback. It is not equivalent to a validated OR-Tools optimizer.
 - Demo field, machine and buyer records are not live operational data.
@@ -21,8 +21,8 @@ This document is the consolidated implementation checklist for taking the curren
 - [ ] Confirm Node.js version consistency across local development, CI and Vercel.
 - [ ] Run syntax/type checks, static audit, unit tests, production build and browser tests on the final commit.
 - [ ] Inspect and resolve all CI failures; retain run links in the release notes.
-- [ ] Decide whether the inactive TSX app is to be removed, archived or migrated to; avoid maintaining two competing app implementations.
-- [ ] Review large generated/archive files and decide whether they belong in Git or release artifacts.
+- [x] The inactive duplicate TSX entrypoint was removed; `src/App.tsx` is the active application mounted by `src/main.jsx`.
+- [x] The obsolete monolithic HTML bundle and committed ZIP archive were removed.
 
 ### 2. Database and access control
 - [ ] Apply migrations 001, 002, 003 and 004 in order to a fresh dedicated Supabase project.
@@ -205,3 +205,16 @@ This addendum records additional source-level changes made after the V7 checklis
 
 ### Verification boundary
 The source tree and key active application, API, service, PWA, test, configuration and migration files were inspected through the repository connection. This was not a literal review of every byte in binary assets or generated archives, and no local dependency install, browser session, disposable database, provider sandbox or real Android-device test was run as part of this addendum. Check GitHub Actions on the latest commit before treating the changes as green.
+
+## V7.5 source audit update — 2026-10-02
+
+The latest source audit found and corrected additional trust-boundary issues:
+
+- Authenticated clients can no longer directly insert, update or delete bookings; booking creation is routed through the server-authoritative booking RPC.
+- Farmer field updates now have a database trigger preventing changes to protected identity, acreage, status, deadline and geometry attributes through the generic update path.
+- The authoritative booking penalty is capped at the quoted amount so small fields cannot produce an internally inconsistent penalty.
+- The UI explicitly labels the payout, onboarding and carbon-market surfaces as simulations; no simulated success is presented as a real provider transaction.
+- The duplicate non-canonical PWA manifest was removed; `manifest.webmanifest` is the canonical manifest referenced by `index.html`.
+- The environment template no longer contains a project-specific Supabase URL.
+
+The repository still requires a real Supabase migration run, role-by-role RLS testing, real provider/device testing and operational partner validation before a live pilot.
