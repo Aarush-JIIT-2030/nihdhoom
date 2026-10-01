@@ -149,7 +149,7 @@ create table if not exists public.firms_observations (
   created_at timestamptz not null default now(),
   unique(source,sensor,latitude,longitude,acquired_at)
 );
-create index if not exists firms_observations_geo_idx on public.firms_observations using gist(extensions.ST_SetSRID(extensions.ST_MakePoint(longitude,latitude),4326)::extensions.geography);
+create index if not exists firms_observations_geo_idx on public.firms_observations using gist((extensions.ST_SetSRID(extensions.ST_MakePoint(longitude,latitude),4326)::extensions.geography));
 
 create table if not exists public.soil_reports (
   id uuid primary key default gen_random_uuid(),
