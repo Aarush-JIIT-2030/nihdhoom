@@ -26,8 +26,8 @@ function normalizeField(f) {
     harvest: f.expected_harvest_date || f.harvest || '', deadline: f.clearance_deadline || f.deadline || '',
     status: f.status || 'REGISTERED', village: f.village || '', block: f.block || '', district: f.district || '',
     moisture: Number(f.moisture_pct ?? f.moisture ?? 0), payout: Number(f.payout ?? 0),
-    machine: f.machine || f.machine_id || '', lat: Number(f.center_lat ?? f.lat ?? 30.2285),
-    lng: Number(f.center_lng ?? f.lng ?? 75.8214), verified: Boolean(f.verified ?? f.status === 'VERIFIED_NON_BURN'),
+    machine: f.machine || f.machine_id || '', lat: Number(f.center_lat ?? f.lat ?? 0),
+    lng: Number(f.center_lng ?? f.lng ?? 0), verified: Boolean(f.verified ?? f.status === 'VERIFIED_NON_BURN'),
     geometry: normalizeGeometry(f.geometry || (Array.isArray(f.boundary_geojson?.coordinates?.[0]) ? f.boundary_geojson.coordinates[0].slice(0,-1).map(([lng,lat]) => ({lat,lng})) : null)),
     boundarySource: f.boundary_source || 'demo', boundaryVerified: Boolean(f.boundary_verified), geometryAreaAcres: Number(f.geometry_area_acres ?? 0)
   };
