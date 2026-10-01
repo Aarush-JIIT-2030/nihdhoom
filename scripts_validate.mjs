@@ -30,6 +30,7 @@ const required = [
   'supabase/migrations/202610010006_nirdhoom_verification_and_settlement_integrity.sql',
   'supabase/migrations/202610010007_nirdhoom_operational_integrity.sql',
   'supabase/migrations/202610020008_nirdhoom_client_write_integrity.sql',
+  'supabase/migrations/202610020009_nirdhoom_security_advisor_cleanup.sql',
   '.github/workflows/ci.yml',
 ];
 
@@ -48,6 +49,7 @@ const v71 = read('supabase/migrations/202610010005_nirdhoom_booking_integrity.sq
 const v72 = read('supabase/migrations/202610010006_nirdhoom_verification_and_settlement_integrity.sql');
 const v73 = read('supabase/migrations/202610010007_nirdhoom_operational_integrity.sql');
 const v75 = read('supabase/migrations/202610020008_nirdhoom_client_write_integrity.sql');
+const v76 = read('supabase/migrations/202610020009_nirdhoom_security_advisor_cleanup.sql');
 const controller = read('src/state/useAppController.ts');
 const envExample = read('.env.example');
 
@@ -72,6 +74,7 @@ const checks = [
   ['operator evidence policy', v73.includes('operator inserts linked evidence') && v73.includes('created_by=auth.uid()')],
   ['direct booking writes revoked', v75.includes('revoke insert, update, delete on public.bookings from authenticated') && v75.includes('reserve_clearance_booking_v2')],
   ['farmer field tampering guard', v75.includes('prevent_farmer_field_tampering') && v75.includes('Protected field attributes must be changed through an authorized workflow') && v75.includes('New farmer fields must begin in REGISTERED state with unverified boundaries')],
+  ['security advisor cleanup', v76.includes('revoke all on function public.prevent_farmer_field_tampering()') && v76.includes('drop index if exists public.buyers_profile_unique_idx') && v76.includes('(select auth.uid())')],
   ['demo payment disclosure', read('src/components/FieldOperator/UpiSettlementModal.tsx').includes('no money movement')],
   ['demo onboarding disclosure', read('src/components/FarmerOnboarding/FarmerOnboarding.tsx').includes('Demo only')],
   ['demo carbon disclosure', read('src/components/CarbonMarketplace/CarbonMarketplace.tsx').includes('Illustrative carbon-market interface')],
