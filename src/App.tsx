@@ -24,7 +24,6 @@ import { ParticleField } from './components/Effects/ParticleField';
 import { CommandCenter } from './components/CommandCenter/CommandCenter';
 import { ResiduePooling } from './components/ResiduePooling/ResiduePooling';
 import { ImpactResearch } from './components/ImpactResearch/ImpactResearch';
-import { SimulationGate } from './components/SimulationGate';
 
 
 import { INITIAL_STORAGE_YARDS, INITIAL_BUYERS } from './data/mockData';
@@ -105,7 +104,7 @@ export function App() {
         )}
 
         {/* TAB 0: AGENTIC AI MULTI-AGENT SWARM */}
-        {activeTab === 'AGENTIC_CONSOLE' && (\n          <SimulationGate demoMode={demoMode} title="Agentic swarm walkthrough">
+        {activeTab === 'AGENTIC_CONSOLE' && (
           <AgenticCommandCenter
             onTriggerDemoBeat={(_beat) => setActiveTab('DEMO_RUNNER')}
             onNavigateTab={(tab) => setActiveTab(tab as ActiveTab)}
@@ -113,7 +112,7 @@ export function App() {
         )}
 
         {/* TAB 1: 4-BEAT DEMO WALKTHROUGH */}
-        {activeTab === 'DEMO_RUNNER' && (\n          <SimulationGate demoMode={demoMode} title="4-beat demo walkthrough">
+        {activeTab === 'DEMO_RUNNER' && (
           <div className="flex flex-col gap-2">
             <LiveKPIDashboard
               acresScheduled={acresScheduled}
@@ -134,7 +133,7 @@ export function App() {
         )}
 
         {/* TAB: 3D DIGITAL TWIN (HOLOGRAPHIC SATELLITE & HOTSPOT SCAN) */}
-        {activeTab === 'DIGITAL_TWIN_3D' && (\n          <SimulationGate demoMode={demoMode} title="3D digital twin simulation">
+        {activeTab === 'DIGITAL_TWIN_3D' && (
           <div className="flex flex-col gap-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-slate-900/60 p-4 rounded-xl border border-emerald-500/30">
               <div>
@@ -224,7 +223,7 @@ export function App() {
         )}
 
         {/* TAB: 3D BALER MACHINERY TWIN */}
-        {activeTab === 'MACHINERY_3D' && (\n          <SimulationGate demoMode={demoMode} title="3D machinery simulation">
+        {activeTab === 'MACHINERY_3D' && (
           <div className="flex flex-col gap-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-slate-900/60 p-4 rounded-xl border border-cyan-500/30">
               <div>
@@ -372,7 +371,7 @@ export function App() {
         )}
 
         {/* TAB 6: MULTI-OFFTAKE AUCTION & HARVEST FORECAST */}
-        {activeTab === 'OFFTAKE_AUCTION' && (\n          <SimulationGate demoMode={demoMode} title="Offtake auction simulation">
+        {activeTab === 'OFFTAKE_AUCTION' && (
           <div className="flex flex-col gap-8">
             <MultiOfftakeAuction />
             <HarvestForecast />
@@ -380,7 +379,7 @@ export function App() {
         )}
 
         {/* TAB: CARBON CREDIT MARKETPLACE */}
-        {activeTab === 'CARBON_MARKET' && (\n          <SimulationGate demoMode={demoMode} title="Carbon marketplace simulation">
+        {activeTab === 'CARBON_MARKET' && (
           <CarbonMarketplace />
         )}
 
@@ -390,7 +389,7 @@ export function App() {
         )}
 
         {/* TAB 7: JUDGE DEFENSE & UNIT ECONOMICS */}
-        {activeTab === 'JUDGE_DEFENSE' && (\n          <SimulationGate demoMode={demoMode} title="Judge defense walkthrough">
+        {activeTab === 'JUDGE_DEFENSE' && (
           <JudgesQnAPanel />
         )}
       </main>
