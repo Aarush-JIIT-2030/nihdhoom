@@ -73,6 +73,7 @@ export function App() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         openPitchDrawer={() => setIsPitchDrawerOpen(true)}
+        demoMode={demoMode}
       />
 
       {!demoMode && loadingLiveData && <div className="mx-auto w-full max-w-7xl px-4 pt-2 text-xs text-cyan-300">Loading live Supabase operational records…</div>}
@@ -303,6 +304,7 @@ export function App() {
 
                 {selectedField && (
                   <FieldDetailDrawer
+                    demoMode={demoMode}
                     field={selectedField}
                     onClose={() => setSelectedField(null)}
                     onTriggerUpiPayout={(f) => setFieldForUpiModal(f)}
@@ -336,6 +338,7 @@ export function App() {
             <BalerPWA
               fields={fields}
               activeMachine={machines[0]}
+              demoMode={demoMode}
               onJobCompleted={(fId, amt) => handleUpdateFieldStatus(fId, 'CLEARED_PENDING_AUDIT', amt)}
             />
           ) : (
