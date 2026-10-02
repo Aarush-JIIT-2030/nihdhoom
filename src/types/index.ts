@@ -193,4 +193,5 @@ export interface NonBurnCertificate {
   sha256_hash: string;
   issued_at: string;
   verra_vm0042_eligible: boolean;
+  certificate_status: 'ILLUSTRATIVE_DEMO' | 'VERIFIED_INTERNAL';
 }
