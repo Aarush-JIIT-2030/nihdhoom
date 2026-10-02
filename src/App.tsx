@@ -126,6 +126,7 @@ export function App() {
               fields={fields}
               machines={machines}
               fireEvents={fireEvents}
+              demoMode={demoMode}
               onUpdateFieldStatus={handleUpdateFieldStatus}
               onViewCertificateModal={(f) => setCertificateField(f)}
             />
