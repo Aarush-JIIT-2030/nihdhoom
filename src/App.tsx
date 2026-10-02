@@ -422,7 +422,7 @@ export function App() {
       />
 
       {/* Live Agentic Telemetry Toast Stream */}
-      <AgenticTelemetryToast onNavigateTab={(tab) => setActiveTab(tab as ActiveTab)} />
+      <AgenticTelemetryToast demoMode={demoMode} onNavigateTab={(tab) => setActiveTab(tab as ActiveTab)} />
 
       {/* Modern Footer */}
       <footer className="mt-auto border-t border-emerald-500/15 bg-slate-950/95 py-5 text-center text-xs text-slate-400">
