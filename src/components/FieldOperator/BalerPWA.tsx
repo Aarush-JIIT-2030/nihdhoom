@@ -195,7 +195,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
             In rural Punjab, network connectivity in the middle of a 20-acre paddy field is notoriously spotty. The Baler Operator PWA runs offline-first with IndexedDB caching and GPS geofencing. 
           </p>
           <div className="mt-3 bg-slate-950/70 p-2.5 rounded-lg border border-emerald-500/20 text-xs text-slate-300">
-            <strong>The field workflow should capture GPS, job state, quantity and evidence. Payment remains intentionally disabled in this release.
+            <strong>The field workflow should capture GPS, job state, quantity and evidence. Payment remains intentionally disabled in this release.</strong>
           </div>
         </div>
 
