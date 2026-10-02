@@ -52,7 +52,8 @@ This scope explicitly excludes integrating a real payment or payout provider. Th
 - [ ] Label seeded buyers, prices, and contracts as demo data.
 
 ### Reliability, accessibility, and release
-- [ ] Run clean npm ci, syntax/type checks, static audit, unit tests, production build, and Playwright tests on the release commit.
+- [ ] Run clean npm install/CI, syntax/type checks, static audit, unit tests, production build and dispatch-service tests on the release commit.
+- [ ] Browser E2E testing is intentionally not part of the current release.
 - [ ] Test API timeouts, provider failures, malformed payloads, and safe error responses.
 - [ ] Verify service-worker updates and ensure authenticated/API responses are not cached.
 - [ ] Test keyboard navigation, screen-reader labels, contrast, reduced motion, and low-end Android layouts.
