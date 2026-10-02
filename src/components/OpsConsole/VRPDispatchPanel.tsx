@@ -128,7 +128,7 @@ export const VRPDispatchPanel: React.FC<VRPDispatchPanelProps> = ({
           ) : (
             <>
               <Play className="w-4 h-4 fill-current" />
-              <span>{optimizerResult?.source === 'server-ortools' ? 'Re-run live OR-Tools plan' : 'Run dispatch planner'}</span>
+              <span>{optimizerResult?.source === 'server-ortools' ? 'Re-run live OR-Tools plan' : optimizerResult?.source === 'server-fallback' ? 'Re-run server fallback' : 'Run dispatch planner'}</span>
             </>
           )}
         </button>
