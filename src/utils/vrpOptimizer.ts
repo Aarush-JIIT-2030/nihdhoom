@@ -20,7 +20,7 @@ export interface VRPDispatchResult {
   totalPenaltyPrevented: number;
   fleetUtilizationPct: number;
   solverExecutionTimeMs: number;
-  source: 'local-heuristic' | 'server-ortools';
+  source: 'local-heuristic' | 'server-ortools' | 'server-fallback';
   unassignedFieldIds: string[];
 }
 
@@ -135,7 +135,7 @@ export function runVRPOptimizer(fields: Field[], machines: Machine[]): VRPDispat
 
 
 export function fromServerDispatchPlan(
-  plan: { routes?: Array<{ machine_id: string; stops: string[]; total_acres: number }>; unassigned?: string[] },
+  plan: { routes?: Array<{ machine_id: string; stops: string[]; total_acres: number }>; unassigned?: string[]; unassigned_field_ids?: string[] },
   fields: Field[],
   machines: Machine[],
   executionTimeMs: number,
@@ -180,7 +180,7 @@ export function fromServerDispatchPlan(
     totalPenaltyPrevented: 0,
     fleetUtilizationPct: totalCapacity > 0 ? Math.round((totalAcresScheduled / totalCapacity) * 100) : 0,
     solverExecutionTimeMs: executionTimeMs,
-    source: 'server-ortools',
-    unassignedFieldIds: plan.unassigned || [],
+    source: plan.unassigned ? 'server-ortools' : 'server-fallback',
+    unassignedFieldIds: plan.unassigned ?? plan.unassigned_field_ids ?? [],
   };
 }
