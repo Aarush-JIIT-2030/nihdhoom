@@ -23,40 +23,38 @@ export function isPointInPolygon(point: LatLng, polygon: LatLng[]): boolean {
  * Executes ST_Contains spatial audit across registered customer fields against NASA FIRMS VIIRS fire points
  */
 export function executeFirmsAudit(fields: Field[], fireEvents: BurnEvent[]) {
+  const hasRemoteSensingData = fireEvents.length > 0;
+
   const auditResults = fields.map((field) => {
-    // Check if any active fire occurred within the field polygon
     const intersectingFires = fireEvents.filter((fire) =>
+      Array.isArray(field.geometry) && field.geometry.length >= 3 &&
       isPointInPolygon(fire.firms_point, field.geometry)
     );
 
-    const isNonBurnVerified = intersectingFires.length === 0;
-
+    const auditPassed = hasRemoteSensingData && intersectingFires.length === 0;
     return {
       fieldId: field.id,
       khasraNo: field.khasra_no,
       village: field.village,
       acreage: field.acreage,
-      status: isNonBurnVerified ? 'VERIFIED_NON_BURN' : 'BURN_DETECTED_ANOMALY',
+      status: !hasRemoteSensingData
+        ? 'NOT_ASSESSED'
+        : auditPassed
+          ? 'NO_FIRE_DETECTED_IN_PROVIDED_OBSERVATIONS'
+          : 'FIRE_DETECTED_ANOMALY',
       firesInsideCount: intersectingFires.length,
       neighboringFiresNearby: fireEvents.length,
-      auditPassed: isNonBurnVerified,
+      auditPassed,
     };
   });
 
-  const totalRegisteredAcres = fields.reduce((acc, f) => acc + f.acreage, 0);
+  const totalRegisteredAcres = fields.reduce((acc, f) => acc + Number(f.acreage || 0), 0);
   const cleanAcres = auditResults
     .filter((r) => r.auditPassed)
-    .reduce((acc, r) => acc + r.acreage, 0);
-  const complianceRate = Math.round((cleanAcres / totalRegisteredAcres) * 100);
-
-  // Carbon and air emissions avoided:
-  // 1 acre paddy generates ~2.2 tonnes straw.
-  // Open burning emits ~1.8 tonnes CO2e, 12 kg PM2.5, 3.2 kg Methane per acre (PAU & ICAR emissions factors).
-  const co2eAvoided = Math.round(cleanAcres * 1.8 * 10) / 10;
-  const pm25Prevented = Math.round(cleanAcres * 12.0);
-  const methanePrevented = Math.round(cleanAcres * 3.2 * 10) / 10;
-  // Carbon price @ $18 / tonne CO2e (~INR 1,500 / tCO2e)
-  const carbonCreditValueInr = Math.round(co2eAvoided * 1500);
+    .reduce((acc, r) => acc + Number(r.acreage || 0), 0);
+  const complianceRate = hasRemoteSensingData && totalRegisteredAcres > 0
+    ? Math.round((cleanAcres / totalRegisteredAcres) * 100)
+    : 0;
 
   return {
     auditResults,
@@ -65,10 +63,12 @@ export function executeFirmsAudit(fields: Field[], fireEvents: BurnEvent[]) {
     firesInRegisteredFields: auditResults.reduce((acc, r) => acc + r.firesInsideCount, 0),
     firesInSurroundingBuffer: fireEvents.length,
     complianceRate,
-    co2eAvoided,
-    pm25Prevented,
-    methanePrevented,
-    carbonCreditValueInr,
+    co2eAvoided: 0,
+    pm25Prevented: 0,
+    methanePrevented: 0,
+    carbonCreditValueInr: 0,
+    dataAvailability: hasRemoteSensingData ? 'OBSERVATIONS_PRESENT' : 'NO_OBSERVATIONS',
+    limitation: 'Remote-sensing observations are supporting evidence, not absolute proof of field-level non-burning. Impact and registry claims require a versioned methodology and complete operational evidence.',
   };
 }
 
@@ -76,23 +76,8 @@ export function executeFirmsAudit(fields: Field[], fireEvents: BurnEvent[]) {
  * Generates an institutional Verra VM0042-compliant Non-Burn Certificate
  */
 export function generateNonBurnCertificate(field: Field): NonBurnCertificate {
-  const co2e = Math.round(field.acreage * 1.8 * 10) / 10;
-  const pm25 = Math.round(field.acreage * 12);
-  const ch4 = Math.round(field.acreage * 3.2 * 10) / 10;
-  const inrValue = Math.round(co2e * 1500);
-
-  // Simulated cryptographic hash (SHA-256 pattern)
-  const rawString = `${field.id}:${field.khasra_no}:${field.center.lat},${field.center.lng}:${field.acreage}:${Date.now()}`;
-  let hashVal = 0;
-  for (let i = 0; i < rawString.length; i++) {
-    hashVal = (hashVal << 5) - hashVal + rawString.charCodeAt(i);
-    hashVal |= 0;
-  }
-  const hex = Math.abs(hashVal).toString(16).padStart(8, '0');
-  const sha256 = `0x9e7a4b${hex}d83f1c840289ab72d03914a87265ef09bc31`;
-
   return {
-    certificate_id: `CERT-PUNJAB-2026-${field.id}`,
+    certificate_id: `DEMO-VERIFY-${field.id}`,
     field_id: field.id,
     farmer_name: field.farmer_name,
     khasra_no: field.khasra_no,
@@ -101,22 +86,23 @@ export function generateNonBurnCertificate(field: Field): NonBurnCertificate {
     district: field.district,
     acreage: field.acreage,
     paddy_variety: field.paddy_variety,
-    clearance_timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' IST',
-    firms_audit_pass: true,
+    clearance_timestamp: new Date().toISOString(),
+    firms_audit_pass: false,
     firms_fires_detected_in_polygon: 0,
-    firms_buffer_meters: 50,
-    ndvi_pre_harvest: 0.74,
-    ndvi_post_clearance: 0.16, // Proves mechanical crop removal without soot/ash thermal flare
-    co2e_avoided_tonnes: co2e,
-    pm25_prevented_kg: pm25,
-    methane_prevented_kg: ch4,
-    carbon_credit_value_inr: inrValue,
-    sha256_hash: sha256,
+    firms_buffer_meters: 0,
+    ndvi_pre_harvest: 0,
+    ndvi_post_clearance: 0,
+    co2e_avoided_tonnes: 0,
+    pm25_prevented_kg: 0,
+    methane_prevented_kg: 0,
+    carbon_credit_value_inr: 0,
+    sha256_hash: 'NOT_A_CRYPTOGRAPHIC_CERTIFICATE',
     issued_at: new Date().toLocaleDateString('en-IN', {
       day: 'numeric',
       month: 'long',
       year: 'numeric',
     }),
-    verra_vm0042_eligible: true,
+    verra_vm0042_eligible: false,
+    certificate_status: 'ILLUSTRATIVE_DEMO',
   };
 }
