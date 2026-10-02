@@ -163,7 +163,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
                 </div>
 
                 <div className="text-right">
-                  <span className="text-[10px] text-slate-400 block">Settle Payout</span>
+                  <span className="text-[10px] text-slate-400 block">{demoMode ? 'Demo quote' : 'Server quote'}</span>
                   <span className="text-base font-extrabold text-emerald-400 font-mono">
                     ₹{(currentField.payout_amount || 5075).toLocaleString()}
                   </span>
@@ -190,7 +190,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
                     </span>
                   </div>
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/80 text-slate-950 font-extrabold">
-                    Ready For Baler
+                    {demoMode ? 'Demo assignment' : 'Live assignment'}
                   </span>
                 </div>
               </div>
@@ -205,7 +205,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
                   <span>Call Farmer</span>
                 </a>
                 <button
-                  onClick={() => alert(`Starting GPS route navigation to field [${currentField.center.lat}, ${currentField.center.lng}]`)}
+                  onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${currentField.center.lat},${currentField.center.lng}`, '_blank', 'noopener,noreferrer')}
                   className="flex-1 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer shadow"
                 >
                   <Navigation className="w-3.5 h-3.5" />
@@ -218,7 +218,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
                 <div className="flex justify-between items-center">
                   <span className="text-slate-400 flex items-center gap-1">
                     <Droplet className="w-3.5 h-3.5 text-cyan-400" />
-                    <span>Moisture Probe Sensor:</span>
+                    <span>{demoMode ? 'Demo moisture control:' : 'Moisture sensor:'}</span>
                   </span>
                   <strong className={`font-mono ${moistureValue > 20 ? 'text-red-400' : 'text-emerald-400'}`}>
                     {moistureValue}% {moistureValue <= 20 ? '(Optimal)' : '(High Moisture Alert!)'}
@@ -231,19 +231,20 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
                   step="0.5"
                   value={moistureValue}
                   onChange={(e) => setMoistureValue(Number(e.target.value))}
+                  disabled={!demoMode}
                   className="w-full accent-cyan-400 cursor-pointer"
                 />
 
                 <div className="flex justify-between items-center pt-1 border-t border-slate-800 text-[11px]">
-                  <span className="text-slate-400">Straw Yield (Round Bales):</span>
+                  <span className="text-slate-400">{demoMode ? 'Estimated straw yield:' : 'Straw quantity:'}</span>
                   <strong className="text-white font-mono">{balesCount} Bales (~{Math.round(currentField.acreage * 2.2 * 10) / 10} Tonnes)</strong>
                 </div>
 
                 <div className="flex justify-between items-center text-[11px]">
-                  <span className="text-slate-400">QR Lot Code Generated:</span>
+                  <span className="text-slate-400">QR lot:</span>
                   <span className="font-mono text-cyan-300 font-bold flex items-center gap-1">
                     <QrCode className="w-3 h-3" />
-                    {currentField.qr_lot_code || 'PB-SGR-26-LOT-0101'}
+                    {demoMode ? (currentField.qr_lot_code || 'DEMO-LOT') : (currentField.qr_lot_code || 'Not assigned')}
                   </span>
                 </div>
               </div>
@@ -251,11 +252,12 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
               {/* Completion action: payment is never triggered from the browser */}
               {!isJobFinished ? (
                 <button
-                  onClick={() => setShowUpiModal(true)}
-                  className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-extrabold text-xs shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95"
+                  onClick={() => demoMode && setShowUpiModal(true)}
+                  disabled={!demoMode}
+                  className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 disabled:from-slate-800 disabled:to-slate-800 disabled:text-slate-500 text-white font-extrabold text-xs shadow-lg shadow-emerald-600/30 disabled:shadow-none flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95"
                 >
                   <Zap className="w-4 h-4 fill-current text-amber-300" />
-                  <span>Mark Cleared & Fire &lt;90s UPI Payout</span>
+                  <span>{demoMode ? 'Simulate field completion' : 'Complete via authorized server workflow'}</span>
                 </button>
               ) : (
                 <div className="p-2.5 rounded-xl bg-emerald-950/70 border border-emerald-500/50 text-emerald-300 text-xs font-bold text-center flex items-center justify-center gap-2">
