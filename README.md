@@ -53,7 +53,7 @@ NIRDHOOM is designed around the practical steps involved in managing crop residu
 
 The intended chain is:
 
-`Field → consent → quote → booking → dispatch → operator job → GPS/evidence → residue lot → buyer offer → verification`
+`Field → consent → quote → booking → dispatch → operator GPS/evidence → verified residue lot → buyer demand/pool → offtake → verification/impact`
 
 This is a target workflow, not a claim that every step is currently connected to a live provider or field operation.
 
@@ -65,10 +65,10 @@ The repository currently contains the following product surfaces and foundations
 |---|---|---|
 | Farmer experience | Field view, booking flow, timeline, weather/context and residue pathways | Data may be demo or indicative; live service capacity is not established |
 | Field mapping | OpenStreetMap basemap and field-boundary drawing prototype | A drawn polygon is not authoritative cadastral/Khasra geometry |
-| Operator workflow | Assigned-job stages and proof/evidence concepts | Device, GPS freshness, upload, and offline behavior need field validation |
-| Dispatch | Queue/fleet surface and API hook | Heuristic fallback is not a confirmed optimized route |
+| Operator workflow | Assigned jobs, device GPS telemetry, private evidence upload, SHA-256 hashing and offline evidence queue | Live provider/RLS behavior still requires field-pilot validation |
+| Dispatch | Authenticated `/api/dispatch` + vehicle-specific OR-Tools service + local heuristic fallback | Solver output still requires human review before execution |
 | Verification | Evidence and remote-sensing audit model | Satellite signals are supporting evidence, not field-level proof by themselves |
-| Residue network | Lots, buyers, offers and related schema/UI | Seeded buyers/offers are not contracts or confirmed offtake |
+| Residue network | Verified-lot deal pools, buyer demand, offers and related schema/UI | Buyer demand is not a contract until commercial terms are executed |
 | Sathi assistant | Assistant UI and server route | Provider-backed and authenticated field context depend on configuration |
 | Supabase | SQL migrations, roles, RLS policies and RPC foundations | Must be tested on a dedicated NIRDHOOM project before real data is used |
 | PWA | Manifest, service worker and app-shell foundation | Not proof of complete offline transaction synchronization |
@@ -245,8 +245,11 @@ npm run syntaxcheck
 npm run audit
 npm test
 npm run build
-npm run e2e
 ```
+
+The Python dispatch service also has a unit-test suite and should be checked with `python -m unittest test_main.py -v` after installing `services/dispatch-ortools/requirements.txt`.
+
+The current release deliberately does not include a browser E2E harness.
 
 The Python dispatch service also has a syntax check:
 
