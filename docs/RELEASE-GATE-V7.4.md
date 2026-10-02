@@ -1,4 +1,4 @@
-# NIRDHOOM V7.4 Release Gate
+# NIRDHOOM Release Gate
 
 V7.4 is a repository-hardening release. It does not claim that external production services are connected merely because adapters exist.
 
@@ -31,7 +31,7 @@ V7.4 is a repository-hardening release. It does not claim that external producti
 7. Connect WhatsApp/IVR providers and test consent/rate limits.
 8. Calibrate harvest/weather intelligence against real field observations.
 9. Complete privacy, consent, retention and incident-response review.
-10. Run the full GitHub Actions pipeline, including the production Vite build and Playwright smoke suite.
+10. Run CI, then conduct a supervised end-to-end field pilot.
 
 ## Payment scope
 
