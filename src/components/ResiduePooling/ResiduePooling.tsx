@@ -74,7 +74,7 @@ export function ResiduePooling({ fields, demoMode }: Props) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <section className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
-          <h2 className="font-bold text-white">Verified / available supply</h2>
+          <h2 className="font-bold text-white">Field-derived supply (pooling requires verified lots)</h2>
           <div className="mt-3 space-y-2">
             {localSupply.length === 0 ? <p className="text-sm text-slate-500">No field supply records yet.</p> : localSupply.map(s => (
               <div key={s.fieldId} className="flex items-center justify-between rounded-lg border border-slate-800 p-3">
