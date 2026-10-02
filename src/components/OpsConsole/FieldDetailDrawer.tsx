@@ -96,7 +96,7 @@ export const FieldDetailDrawer: React.FC<FieldDetailDrawerProps> = ({
         <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
           <span className="text-slate-400 text-[11px] block">Late Sowing Penalty</span>
           <strong className="text-amber-300 text-sm block mt-0.5">
-            ₹{Math.max(2500, Math.round(field.acreage * 1250)).toLocaleString()}
+            {demoMode ? `₹${Math.max(2500, Math.round(field.acreage * 1250)).toLocaleString()}` : '—'}
           </strong>
           <span className="text-emerald-400 text-[10px] font-semibold">{demoMode ? 'Simulation only' : 'Server-enforced booking terms'}</span>
         </div>
@@ -111,7 +111,7 @@ export const FieldDetailDrawer: React.FC<FieldDetailDrawerProps> = ({
           <div>
             <div className="font-bold text-white flex items-center gap-1.5">
               <span>Remote-sensing audit:</span>
-              <span className="text-emerald-400">0 Fires Detected Inside Polygon</span>
+              <span className="text-emerald-400">{demoMode ? '0 synthetic fires' : 'Awaiting provider observations'}</span>
             </div>
             <div className="text-slate-400 text-[11px]">
               {demoMode ? 'Illustrative FIRMS / NDVI values shown for the prototype' : 'No remote-sensing conclusion is shown until verified observations are attached'}
@@ -134,7 +134,7 @@ export const FieldDetailDrawer: React.FC<FieldDetailDrawerProps> = ({
           className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 cursor-pointer"
         >
           <ShieldCheck className="w-4 h-4 text-emerald-400" />
-          <span>View Non-Burn Certificate</span>
+          <span>{demoMode ? 'View demo verification record' : 'View verification record'}</span>
         </button>
 
         {!isCleared && demoMode ? (
