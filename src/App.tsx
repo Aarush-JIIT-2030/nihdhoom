@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Header, ActiveTab } from './components/Header';
 import { DemoWalkthrough } from './components/DemoWalkthrough';
 import { LiveKPIDashboard } from './components/LiveKPIDashboard';
@@ -58,6 +59,20 @@ export function App() {
   const acresScheduled = fields.reduce((sum, field) => sum + (Number(field.acreage) || 0), 0);
   const totalPayoutInr = fields.reduce((sum, field) => sum + (Number(field.payout_amount) || 0), 0);
   const verifiedCount = fields.filter((field) => field.is_verified_non_burn || field.status === 'VERIFIED_NON_BURN').length;
+
+  useEffect(() => {
+    const demoOnlyTabs: ActiveTab[] = [
+      'AGENTIC_CONSOLE',
+      'DEMO_RUNNER',
+      'DIGITAL_TWIN_3D',
+      'MACHINERY_3D',
+      'FARMER_SURFACE',
+      'OFFTAKE_AUCTION',
+      'CARBON_MARKET',
+      'JUDGE_DEFENSE',
+    ];
+    if (!demoMode && demoOnlyTabs.includes(activeTab)) setActiveTab('OVERVIEW');
+  }, [activeTab, demoMode, setActiveTab]);
 
   const handleSelectField = (field: Field) => {
     setSelectedField(field);
