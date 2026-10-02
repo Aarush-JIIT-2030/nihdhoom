@@ -86,6 +86,7 @@ const checks = [
   ['residue pooling execution restricted', v78.includes('revoke execute on function public.join_residue_pool') && v78.includes('revoke execute on function public.create_residue_pool')],
   ['pool requires verified residue', v79.includes("l.status in ('VERIFIED','VERIFIED_NON_BURN')") && v79.includes('status=case when current_tonnes+p_quantity_tonnes >= target_tonnes then \'MATCHED\'')],
   ['demo payment disclosure', read('src/components/FieldOperator/UpiSettlementModal.tsx').includes('no money movement')],
+  ['live payment webhook disabled', read('api/payments/webhook.ts').includes('status(501)') && read('api/payments/initiate.ts').includes('501')],
   ['demo onboarding disclosure', read('src/components/FarmerOnboarding/FarmerOnboarding.tsx').includes('Demo only')],
   ['demo carbon disclosure', read('src/components/CarbonMarketplace/CarbonMarketplace.tsx').includes('Illustrative carbon-market interface')],
   ['API auth boundary', /verifyDispatcher\(req\)/.test(read('api/notify/whatsapp.ts')) && /verifyDispatcher\(req\)/.test(read('api/notify/ivr.ts'))],
