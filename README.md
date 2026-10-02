@@ -229,7 +229,7 @@ See `.env.example` for the repository's current variable names. Never commit `.e
 
 Apply migrations in chronological order:
 
-Apply every migration in `supabase/migrations/` in filename order, including the V7.1–V7.5 integrity and database-hygiene migrations. Do not skip the later security migrations.
+Apply every migration in `supabase/migrations/` in filename order, including the booking/verification/security migrations and the residue-pooling migrations. Do not skip the later security migrations.
 
 Then configure the required authentication and storage settings documented by the migrations. Use `supabase/seed.sql` only for an explicitly identified demo environment.
 
