@@ -39,7 +39,8 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
   const [offlineSyncActive, setOfflineSyncActive] = useState(typeof navigator !== 'undefined' ? navigator.onLine : true);
 
   useEffect(() => {
-    if (demoMode || !supabase || typeof navigator === 'undefined' || !navigator.geolocation) return;
+    const client = supabase;
+    if (demoMode || !client || typeof navigator === 'undefined' || !navigator.geolocation) return;
     let cancelled = false;
 
     const syncGps = async (position: GeolocationPosition) => {
@@ -53,11 +54,11 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
       if (Date.now() - lastGpsWrite.current < 15000) return;
       lastGpsWrite.current = Date.now();
 
-      const { data } = await supabase.auth.getSession();
+      const { data } = await client.auth.getSession();
       const user = data.session?.user;
       if (!user) return;
 
-      await supabase.from('machine_locations').insert({
+      await client.from('machine_locations').insert({
         machine_id: activeMachine.id,
         latitude: next.lat,
         longitude: next.lng,
@@ -107,7 +108,12 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
       return;
     }
 
-    const { data } = await supabase?.auth.getSession() || { data: { session: null } };
+    const client = supabase;
+    if (!client) {
+      setEvidenceMessage('Live Supabase is not configured. Evidence was not uploaded.');
+      return;
+    }
+    const { data } = await client.auth.getSession();
     const user = data.session?.user;
     if (!user) {
       setEvidenceMessage('Sign in as the assigned operator before uploading evidence.');
@@ -132,7 +138,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
 
     const id = crypto.randomUUID();
     const path = `${user.id}/${currentField.id}/${id}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
-    const upload = await supabase.storage.from('evidence').upload(path, file, { contentType: file.type, upsert: false });
+    const upload = await client.storage.from('evidence').upload(path, file, { contentType: file.type, upsert: false });
     if (upload.error) {
       await queueEvidence({
         fieldId: currentField.id,
@@ -152,7 +158,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
     const bytes = await file.arrayBuffer();
     const digest = await crypto.subtle.digest('SHA-256', bytes);
     const hash = Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('');
-    const { error } = await supabase.from('evidence_assets').insert({
+    const { error } = await client.from('evidence_assets').insert({
       field_id: currentField.id,
       kind: 'field_photo',
       storage_path: path,
