@@ -75,7 +75,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
         <div className="mt-4 rounded-xl overflow-hidden border border-emerald-500/30 relative max-h-56 bg-slate-950">
           <img 
             src="/images/satellite_firms.jpg" 
-            alt="NASA FIRMS VIIRS 375m Satellite Thermal Layer - Zero Customer Fires"
+            alt="Remote-sensing evidence illustration"
             className="w-full h-52 object-cover object-center"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
@@ -85,7 +85,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
                 NASA FIRMS S-NPP / NOAA-20 VIIRS 375m NRT SENSOR
               </span>
               <p className="text-xs font-bold text-white mt-1">
-                PostGIS ST_Contains Polygon Match: 0/5 Customer Fields Contained Active Fire Points
+                {auditReport.dataAvailability === 'NO_OBSERVATIONS' ? 'No remote-sensing observations are currently available for field screening' : `Matched ${auditReport.cleanFieldsCount} field(s) without a detected fire point in the supplied observations`}
               </p>
             </div>
             <div className="text-right hidden sm:block">
@@ -136,7 +136,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
             <span className="text-xs text-slate-400 font-normal">t CO₂e</span>
           </div>
           <p className="text-[11px] text-cyan-400/90 mt-1 font-semibold">
-            + {auditReport.pm25Prevented} kg PM2.5 prevented
+            + {auditReport.pm25Prevented === 0 ? 'Not calculated' : `${auditReport.pm25Prevented} kg PM2.5 prevented`}
           </p>
         </div>
 
@@ -146,7 +146,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
             <Award className="w-4 h-4 text-amber-400" />
           </div>
           <div className="text-2xl font-extrabold text-amber-300 font-mono">
-            ₹{auditReport.carbonCreditValueInr.toLocaleString()}
+            {auditReport.carbonCreditValueInr === 0 ? '—' : `₹${auditReport.carbonCreditValueInr.toLocaleString()}`}
           </div>
           <p className="text-[11px] text-amber-400/90 mt-1 font-semibold">
             Methodology not configured
@@ -198,7 +198,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
                     <td className="py-3 px-3">
                       <div className="flex items-center gap-1.5 text-emerald-400 font-bold">
                         <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>0 Fires</span>
+                        <span>{auditReport.dataAvailability === 'NO_OBSERVATIONS' ? 'Not assessed' : `${auditReport.auditResults.find((result) => result.fieldId === field.id)?.firesInsideCount ?? 0} fire point(s)`}</span>
                       </div>
                     </td>
                     <td className="py-3 px-3">
@@ -237,28 +237,28 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
           <div className="bg-slate-900/90 p-3 rounded-lg border border-slate-800">
             <div className="text-emerald-400 font-bold mb-1">1. Registered Polygons</div>
             <p className="text-slate-400 text-[11px]">
-              Centimeter-accurate field boundaries drawn pre-harvest. No vague village approximations.
+              Field boundaries carry a source and verification state; manually drawn geometry is not treated as authoritative cadastral truth.
             </p>
           </div>
 
           <div className="bg-slate-900/90 p-3 rounded-lg border border-slate-800">
             <div className="text-emerald-400 font-bold mb-1">2. NASA FIRMS VIIRS</div>
             <p className="text-slate-400 text-[11px]">
-              375m spatial resolution active thermal fire points polled nightly from NOAA-20 & Suomi-NPP satellites.
+              Remote-sensing observations are stored with provider/time metadata and interpreted as supporting evidence, not absolute proof.
             </p>
           </div>
 
           <div className="bg-slate-900/90 p-3 rounded-lg border border-slate-800">
             <div className="text-emerald-400 font-bold mb-1">3. Weighment Receipts</div>
             <p className="text-slate-400 text-[11px]">
-              QR tagged straw lots checked at storage depots with moisture & silica quality specs.
+              Evidence assets and residue lots link quantity, custody and quality information when those records exist.
             </p>
           </div>
 
           <div className="bg-slate-900/90 p-3 rounded-lg border border-slate-800">
             <div className="text-emerald-400 font-bold mb-1">4. UPI Payout Ledger</div>
             <p className="text-slate-400 text-[11px]">
-              Indisputable proof that money was settled directly to the farmer within 90s of clearance.
+              Payment is intentionally out of scope; production workflow state is audited without claiming money movement.
             </p>
           </div>
         </div>
