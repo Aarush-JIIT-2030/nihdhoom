@@ -317,10 +317,10 @@ export const FarmerOnboarding: React.FC = () => {
               <>
                 <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
                   <Fingerprint className="w-4 h-4 text-emerald-400" />
-                  <h4 className="font-bold text-sm text-white">Step 3: Aadhaar eKYC via Digilocker</h4>
+                  <h4 className="font-bold text-sm text-white">Step 3: Identity-provider adapter (demo)</h4>
                 </div>
                 <div className="p-3 bg-amber-950/30 border border-amber-500/30 rounded-lg text-xs text-amber-200">
-                  <strong>Consent required:</strong> "I authorize Nirdhoom to fetch my Aadhaar-linked demographic details from UIDAI for KYC verification under PMFBY framework."
+                  <strong>Demo consent screen:</strong> No UIDAI/Digilocker request is made by this prototype.
                 </div>
                 <div>
                   <label className="text-xs text-slate-400 block mb-1">Aadhaar Number (12-digit)</label>
@@ -338,7 +338,7 @@ export const FarmerOnboarding: React.FC = () => {
                 </div>
                 <div className="flex items-start gap-2 text-xs text-slate-400 bg-slate-900/60 p-3 rounded-lg border border-slate-800">
                   <Shield className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span>Aadhaar data is tokenised. Only the last 4 digits + demographic match is stored. Raw UID is never persisted per UIDAI guidelines.</span>
+                  <span>Live identity verification requires an authorized identity provider. This prototype does not process or store a real Aadhaar number.</span>
                 </div>
                 <button
                   onClick={advance}
@@ -355,9 +355,9 @@ export const FarmerOnboarding: React.FC = () => {
               <>
                 <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
                   <Camera className="w-4 h-4 text-cyan-400" />
-                  <h4 className="font-bold text-sm text-white">Step 4: Live Selfie Face Match</h4>
+                  <h4 className="font-bold text-sm text-white">Step 4: Biometric provider adapter (demo)</h4>
                 </div>
-                <p className="text-xs text-slate-400">AI liveness detection ensures no photo spoofing. The selfie is matched against the Aadhaar UIDAI photo using a cosine similarity threshold of ≥ 0.82.</p>
+                <p className="text-xs text-slate-400">Demo-only biometric state. No face image is uploaded, matched, or scored by NIRDHOOM.</p>
                 
                 {!faceScanned ? (
                   <div
@@ -391,8 +391,8 @@ export const FarmerOnboarding: React.FC = () => {
                       </div>
                     </div>
                     <div className="text-center text-xs">
-                      <div className="font-bold text-emerald-400 text-sm">Face Match: 98.4% Confidence ✓</div>
-                      <div className="text-slate-300 mt-0.5">UIDAI Demographic &amp; Iris/Photo Match Verified</div>
+                      <div className="font-bold text-emerald-400 text-sm">Demo biometric state ✓</div>
+                      <div className="text-slate-300 mt-0.5">No external identity match was performed</div>
                       <span className="inline-block mt-1 text-[10px] px-2 py-0.5 rounded bg-emerald-900/60 text-emerald-300 font-mono">
                         Liveness: Active Pulse Detected
                       </span>
@@ -417,7 +417,7 @@ export const FarmerOnboarding: React.FC = () => {
                   <Landmark className="w-4 h-4 text-amber-400" />
                   <h4 className="font-bold text-sm text-white">Step 5: UPI / Bank Account Linking</h4>
                 </div>
-                <p className="text-xs text-slate-400">Enter UPI VPA or bank account. A ₹1 penny-drop is fired via RazorpayX to verify account ownership, then reversed within 60s.</p>
+                <p className="text-xs text-slate-400">Bank-linking is a provider integration step. This prototype does not initiate a penny drop or move money.</p>
                 <div className="flex flex-col gap-3">
                   <div>
                     <label className="text-xs text-slate-400 block mb-1">UPI ID (Preferred)</label>
@@ -519,7 +519,7 @@ export const FarmerOnboarding: React.FC = () => {
                   <div className="text-2xl font-black text-emerald-400 font-['Outfit']">ਗੁਰਪ੍ਰੀਤ ਸਿੰਘ ਰਜਿਸਟਰ ਹੋ ਗਏ!</div>
                   <p className="text-white font-bold mt-1">{name || 'Gurpreet Singh Brar'} is now registered on Nirdhoom!</p>
                   <p className="text-xs text-slate-300 mt-1 max-w-sm">
-                    Verified Punjab Farmer Profile · WhatsApp IVR Enrolled · UPI Linked · Khasra {khasra || '412/1-2'} ({acreage || '3.5'} ac) Mapped
+                    Demo profile created · OTP verified · Khasra {khasra || '412/1-2'} ({acreage || '3.5'} ac) Mapped
                   </p>
                 </div>
 
