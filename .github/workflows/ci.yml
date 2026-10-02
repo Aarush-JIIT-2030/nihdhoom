@@ -29,5 +29,10 @@ jobs:
       - run: npm run audit
       - run: npm test
       - run: npm run build
+      - name: Install dispatch service dependencies
+        run: python -m pip install -r services/dispatch-ortools/requirements.txt
       - name: Check dispatch service Python syntax
         run: python -m compileall -q services/dispatch-ortools
+      - name: Test dispatch service
+        working-directory: services/dispatch-ortools
+        run: python -m unittest test_main.py -v
