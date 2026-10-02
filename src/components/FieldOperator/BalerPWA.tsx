@@ -20,12 +20,14 @@ import { UpiSettlementModal } from './UpiSettlementModal';
 interface BalerPWAProps {
   fields: Field[];
   activeMachine: Machine;
+  demoMode: boolean;
   onJobCompleted: (fieldId: string, amount: number) => void;
 }
 
 export const BalerPWA: React.FC<BalerPWAProps> = ({
   fields,
   activeMachine,
+  demoMode,
   onJobCompleted,
 }) => {
   const [selectedFieldId, setSelectedFieldId] = useState<string>(fields[0]?.id || 'FIELD-101');
@@ -45,14 +47,14 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
           <div className="flex items-center gap-2 mb-2">
             <Sparkles className="w-5 h-5 text-emerald-400" />
             <h3 className="font-bold text-base text-white">
-              Beat 3: Field Operator PWA & Instant UPI Settlement
+              Field Operator PWA • Evidence & Job Completion
             </h3>
           </div>
           <p className="text-xs text-slate-300 leading-relaxed">
             In rural Punjab, network connectivity in the middle of a 20-acre paddy field is notoriously spotty. The Baler Operator PWA runs offline-first with IndexedDB caching and GPS geofencing. 
           </p>
           <div className="mt-3 bg-slate-950/70 p-2.5 rounded-lg border border-emerald-500/20 text-xs text-slate-300">
-            <strong>The Trust Breakthrough:</strong> Weight disputes at the farmgate kill traditional baling models. Nirdhoom verifies the field polygon via GPS, locks per-acre pricing, and fires a guaranteed UPI settlement in under 90 seconds!
+            <strong>The field workflow should capture GPS, job state, quantity and evidence. Payment remains intentionally disabled in this release.
           </div>
         </div>
 
@@ -95,7 +97,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
             <div className="device-notch"></div>
             <div className="flex items-center gap-1.5 text-xs">
               <Wifi className="w-3 h-3 text-emerald-400" />
-              <span>PWA Offline Sync</span>
+              <span>{demoMode ? 'PWA Simulation' : 'PWA / device sync'}</span>
             </div>
           </div>
 
@@ -246,7 +248,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
                 </div>
               </div>
 
-              {/* Big Action: Trigger UPI Settlement */}
+              {/* Completion action: payment is never triggered from the browser */}
               {!isJobFinished ? (
                 <button
                   onClick={() => setShowUpiModal(true)}
@@ -258,7 +260,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
               ) : (
                 <div className="p-2.5 rounded-xl bg-emerald-950/70 border border-emerald-500/50 text-emerald-300 text-xs font-bold text-center flex items-center justify-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  <span>Job Cleared • UPI Paid & Recorded in Ledger</span>
+                  <span>{demoMode ? 'Demo job completed locally • no payment made' : 'Live completion is controlled by the server workflow'}</span>
                 </div>
               )}
             </div>
