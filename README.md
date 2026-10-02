@@ -156,7 +156,7 @@ More detailed source notes, caveats, and refresh guidance are in [docs/PUNJAB-CR
 | Server routes | TypeScript / Node-compatible API routes |
 | Dispatch service foundation | Python, OR-Tools |
 | Assistant integration | Server-side provider adapter |
-| Browser testing | Playwright |
+| Browser testing | Not part of the current release; CI runs type, audit, unit, build and dispatch-service checks |
 | Static checks | TypeScript build check and repository audit script |
 | PWA | Web app manifest and service worker |
 
@@ -191,7 +191,6 @@ Vite prints the local development URL in the terminal.
 | `npm run audit` | Run the repository's static validation/audit script |
 | `npm run syntaxcheck` | Run the TypeScript project build check |
 | `npm test` | Run Node test files matching `tests/*.test.mjs` |
-| `npm run e2e` | Run Playwright browser tests |
 
 A command existing in `package.json` does not mean its tests have passed. Run the commands against your current checkout and inspect the results.
 
@@ -309,7 +308,7 @@ Use [docs/FINAL-PILOT-READINESS.md](docs/FINAL-PILOT-READINESS.md) as the detail
 | `supabase/migrations/` | Database schema, policies, and RPC migrations |
 | `supabase/seed.sql` | Demo seed data |
 | `public/` | Static assets, icons, manifest, and service worker |
-| `e2e/` | Playwright browser tests |
+| `e2e/` | browser E2E testing browser tests |
 | `scripts_validate.mjs` | Repository audit script |
 | `docs/PUNJAB-CROP-RESIDUE-RESEARCH.md` | Research notes and product implications |
 | `docs/RESEARCH-DATA.md` | Dated public data, source scope, and caveats |
