@@ -366,6 +366,7 @@ export function App() {
           <SatelliteAudit
             fields={fields}
             fireEvents={fireEvents}
+            demoMode={demoMode}
           />
         )}
 
