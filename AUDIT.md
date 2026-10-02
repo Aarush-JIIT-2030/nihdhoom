@@ -1,4 +1,4 @@
-# NIRDHOOM V4 code audit
+# NIRDHOOM production hardening audit
 
 ## Scope
 
@@ -85,9 +85,9 @@ A production Vite build could not be run in the preparation environment because 
 - Added FIRMS API adapter with polygon matching; it remains supporting evidence rather than absolute non-burn proof.
 - Added buyer contracts, storage yards, QR residue lots, credits wallet, harvest forecasts and soil reports.
 - Added payment webhook foundation, WhatsApp Cloud API adapter and IVR provider adapter.
-- Added live-record Sathi grounding, Node smoke tests, Playwright E2E test and GitHub Actions CI.
+- Added live-record Sathi grounding, Node tests and GitHub Actions CI.
 - `npm test` passes 3/3.
 - `npm run syntaxcheck` passes.
 - `npm run audit` passes 27 feature/security checks.
 - TypeScript parser passes all 8 JS/TS source files.
-- Full dependency installation / Vite build / Playwright browser run could not be executed here because `npm install` timed out. CI is configured to perform those steps.
+- The current release intentionally has no browser E2E harness; CI covers type, audit, unit, build and dispatch-service checks.

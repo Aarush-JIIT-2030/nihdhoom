@@ -17,11 +17,13 @@ import {
 
 interface SatelliteAuditProps {
   fields: Field[];
+  demoMode: boolean;
   fireEvents: BurnEvent[];
 }
 
 export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
   fields,
+  demoMode,
   fireEvents,
 }) => {
   const auditReport = executeFirmsAudit(fields, fireEvents);
@@ -46,21 +48,21 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-extrabold text-lg text-white font-['Outfit']">
-                  Beat 4: The Money Shot — NASA FIRMS Verification Layer
+                  Verification & Evidence Layer
                 </h3>
                 <span className="badge badge-emerald text-xs">
-                  Zero In-Polygon Fires
+                  {demoMode ? 'Synthetic observation demo' : auditReport.dataAvailability === 'NO_OBSERVATIONS' ? 'Awaiting observations' : 'Observation review'}
                 </span>
               </div>
               <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
-                We combine registered field polygons with NASA FIRMS VIIRS active fire data to mathematically prove that our contracted acres did NOT burn, while surrounding unregistered farms lit up. This transforms parali logistics into high-margin institutional carbon credits.
+                We intersect registered field polygons with available remote-sensing observations and operational evidence. A missing detection is not absolute proof of no burning, and impact or registry claims remain gated by methodology and verification.
               </p>
             </div>
           </div>
 
           <div className="bg-slate-900/90 border border-emerald-500/40 px-4 py-3 rounded-xl flex items-center gap-3 shrink-0">
             <div>
-              <span className="text-[10px] text-slate-400 uppercase font-bold block">Compliance Score</span>
+              <span className="text-[10px] text-slate-400 uppercase font-bold block">Observation coverage</span>
               <div className="text-2xl font-black text-emerald-400 font-mono">
                 {auditReport.complianceRate}%
               </div>
@@ -73,7 +75,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
         <div className="mt-4 rounded-xl overflow-hidden border border-emerald-500/30 relative max-h-56 bg-slate-950">
           <img 
             src="/images/satellite_firms.jpg" 
-            alt="NASA FIRMS VIIRS 375m Satellite Thermal Layer - Zero Customer Fires"
+            alt="Remote-sensing evidence illustration"
             className="w-full h-52 object-cover object-center"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
@@ -83,12 +85,12 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
                 NASA FIRMS S-NPP / NOAA-20 VIIRS 375m NRT SENSOR
               </span>
               <p className="text-xs font-bold text-white mt-1">
-                PostGIS ST_Contains Polygon Match: 0/5 Customer Fields Contained Active Fire Points
+                {auditReport.dataAvailability === 'NO_OBSERVATIONS' ? 'No remote-sensing observations are currently available for field screening' : `Matched ${auditReport.cleanFieldsCount} field(s) without a detected fire point in the supplied observations`}
               </p>
             </div>
             <div className="text-right hidden sm:block">
-              <span className="text-xs font-mono text-emerald-400 font-bold block">100% Non-Burn Proof</span>
-              <span className="text-[10px] text-slate-400">Verra VM0042 Compliant</span>
+              <span className="text-xs font-mono text-emerald-400 font-bold block">{demoMode ? 'Synthetic demo only' : auditReport.dataAvailability === 'NO_OBSERVATIONS' ? 'No observation proof' : 'Not a registry certificate'}</span>
+              <span className="text-[10px] text-slate-400">No registry issuance</span>
             </div>
           </div>
         </div>
@@ -106,7 +108,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
             <span className="text-xs text-emerald-300 font-normal">Fires (0%)</span>
           </div>
           <p className="text-[11px] text-emerald-400/90 mt-1 font-semibold">
-            All {auditReport.totalFieldsAudited} polygons pristine
+            No-fire observations do not equal absolute non-burn proof
           </p>
         </div>
 
@@ -120,7 +122,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
             <span className="text-xs text-slate-400 font-normal">Thermal Points</span>
           </div>
           <p className="text-[11px] text-red-400/90 mt-1 font-semibold">
-            Peak temp: 461 Kelvin (Unregistered)
+            {demoMode ? 'Synthetic demo observations' : 'Only provider-returned observations are shown'}
           </p>
         </div>
 
@@ -134,7 +136,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
             <span className="text-xs text-slate-400 font-normal">t CO₂e</span>
           </div>
           <p className="text-[11px] text-cyan-400/90 mt-1 font-semibold">
-            + {auditReport.pm25Prevented} kg PM2.5 prevented
+            + {auditReport.pm25Prevented === 0 ? 'Not calculated' : `${auditReport.pm25Prevented} kg PM2.5 prevented`}
           </p>
         </div>
 
@@ -144,10 +146,10 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
             <Award className="w-4 h-4 text-amber-400" />
           </div>
           <div className="text-2xl font-extrabold text-amber-300 font-mono">
-            ₹{auditReport.carbonCreditValueInr.toLocaleString()}
+            {auditReport.carbonCreditValueInr === 0 ? '—' : `₹${auditReport.carbonCreditValueInr.toLocaleString()}`}
           </div>
           <p className="text-[11px] text-amber-400/90 mt-1 font-semibold">
-            Verra VM0042 Registry Ready
+            Methodology not configured
           </p>
         </div>
       </div>
@@ -162,7 +164,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
             </h4>
           </div>
           <span className="text-xs text-slate-400">
-            Nightly NASA VIIRS NOAA-20 & Suomi-NPP Sync
+            {demoMode ? 'Synthetic observation stream' : 'Provider observations only when configured'}
           </span>
         </div>
 
@@ -174,7 +176,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
                 <th className="py-2.5 px-3">Farmer & Village</th>
                 <th className="py-2.5 px-3">Acreage</th>
                 <th className="py-2.5 px-3">FIRMS Fires In Polygon</th>
-                <th className="py-2.5 px-3">Sentinel-2 NDVI Drop</th>
+                <th className="py-2.5 px-3">Operational / remote-sensing evidence</th>
                 <th className="py-2.5 px-3">Audit Outcome</th>
                 <th className="py-2.5 px-3 text-right">Certificate</th>
               </tr>
@@ -196,16 +198,16 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
                     <td className="py-3 px-3">
                       <div className="flex items-center gap-1.5 text-emerald-400 font-bold">
                         <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>0 Fires</span>
+                        <span>{auditReport.dataAvailability === 'NO_OBSERVATIONS' ? 'Not assessed' : `${auditReport.auditResults.find((result) => result.fieldId === field.id)?.firesInsideCount ?? 0} fire point(s)`}</span>
                       </div>
                     </td>
                     <td className="py-3 px-3">
-                      <span className="font-mono text-cyan-300">0.74 → 0.16</span>
-                      <span className="text-[10px] text-slate-500 block">Mechanical clean</span>
+                      <span className="font-mono text-cyan-300">{demoMode ? 'Illustrative' : 'Not available'}</span>
+                      <span className="text-[10px] text-slate-500 block">{demoMode ? 'Synthetic demo value' : 'Awaiting evidence'}</span>
                     </td>
                     <td className="py-3 px-3">
                       <span className="badge badge-emerald text-[10px]">
-                        VERIFIED 100% NON-BURN
+                        {demoMode ? 'DEMO / ILLUSTRATIVE' : field.status === 'VERIFIED_NON_BURN' ? 'INTERNAL VERIFIED' : 'NOT VERIFIED'}
                       </span>
                     </td>
                     <td className="py-3 px-3 text-right">
@@ -213,7 +215,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
                         onClick={() => handleOpenCertificate(field.id)}
                         className="px-2.5 py-1 rounded bg-slate-800 hover:bg-emerald-600 hover:text-white text-emerald-300 text-xs font-semibold border border-slate-700 transition-all cursor-pointer"
                       >
-                        View Certificate
+                        View verification record
                       </button>
                     </td>
                   </tr>
@@ -235,28 +237,28 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
           <div className="bg-slate-900/90 p-3 rounded-lg border border-slate-800">
             <div className="text-emerald-400 font-bold mb-1">1. Registered Polygons</div>
             <p className="text-slate-400 text-[11px]">
-              Centimeter-accurate field boundaries drawn pre-harvest. No vague village approximations.
+              Field boundaries carry a source and verification state; manually drawn geometry is not treated as authoritative cadastral truth.
             </p>
           </div>
 
           <div className="bg-slate-900/90 p-3 rounded-lg border border-slate-800">
             <div className="text-emerald-400 font-bold mb-1">2. NASA FIRMS VIIRS</div>
             <p className="text-slate-400 text-[11px]">
-              375m spatial resolution active thermal fire points polled nightly from NOAA-20 & Suomi-NPP satellites.
+              Remote-sensing observations are stored with provider/time metadata and interpreted as supporting evidence, not absolute proof.
             </p>
           </div>
 
           <div className="bg-slate-900/90 p-3 rounded-lg border border-slate-800">
             <div className="text-emerald-400 font-bold mb-1">3. Weighment Receipts</div>
             <p className="text-slate-400 text-[11px]">
-              QR tagged straw lots checked at storage depots with moisture & silica quality specs.
+              Evidence assets and residue lots link quantity, custody and quality information when those records exist.
             </p>
           </div>
 
           <div className="bg-slate-900/90 p-3 rounded-lg border border-slate-800">
             <div className="text-emerald-400 font-bold mb-1">4. UPI Payout Ledger</div>
             <p className="text-slate-400 text-[11px]">
-              Indisputable proof that money was settled directly to the farmer within 90s of clearance.
+              Payment is intentionally out of scope; production workflow state is audited without claiming money movement.
             </p>
           </div>
         </div>

@@ -116,3 +116,31 @@ test('live field normalization does not invent Punjab coordinates', () => {
   assert.match(domain, /f\.center_lat \?\? f\.lat \?\? 0/);
   assert.match(domain, /f\.center_lng \?\? f\.lng \?\? 0/);
 });
+
+
+test('residue pooling is backed by verified lots and authenticated RPCs', () => {
+  const schema = read('supabase/migrations/202610020010_nirdhoom_residue_pooling_and_research.sql');
+  const security = read('supabase/migrations/202610020011_nirdhoom_residue_pooling_security_and_indexes.sql');
+  const gate = read('supabase/migrations/202610020012_nirdhoom_residue_pool_verification_gate.sql');
+  assert.match(schema, /buyer_demands/);
+  assert.match(schema, /residue_pool_members/);
+  assert.match(security, /revoke execute on function public\.join_residue_pool/);
+  assert.match(gate, /VERIFIED_NON_BURN/);
+});
+
+test('operator PWA has real GPS and offline evidence primitives', () => {
+  const source = read('src/components/FieldOperator/BalerPWA.tsx');
+  const queue = read('src/lib/offlineEvidenceQueue.ts');
+  assert.match(source, /navigator\.geolocation\.watchPosition/);
+  assert.match(source, /storage\.from\('evidence'\)/);
+  assert.match(source, /evidence_assets/);
+  assert.match(queue, /indexedDB/);
+  assert.match(queue, /SHA-256/);
+});
+
+test('verification UI cannot mint a registry-grade carbon certificate', () => {
+  const source = read('src/utils/spatialVerification.ts');
+  assert.match(source, /certificate_status: 'ILLUSTRATIVE_DEMO'/);
+  assert.match(source, /verra_vm0042_eligible: false/);
+  assert.match(source, /NOT_A_CRYPTOGRAPHIC_CERTIFICATE/);
+});

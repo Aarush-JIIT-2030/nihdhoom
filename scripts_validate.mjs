@@ -31,6 +31,9 @@ const required = [
   'supabase/migrations/202610010007_nirdhoom_operational_integrity.sql',
   'supabase/migrations/202610020008_nirdhoom_client_write_integrity.sql',
   'supabase/migrations/202610020009_nirdhoom_security_advisor_cleanup.sql',
+  'supabase/migrations/202610020010_nirdhoom_residue_pooling_and_research.sql',
+  'supabase/migrations/202610020011_nirdhoom_residue_pooling_security_and_indexes.sql',
+  'supabase/migrations/202610020012_nirdhoom_residue_pool_verification_gate.sql',
   '.github/workflows/ci.yml',
 ];
 
@@ -50,6 +53,9 @@ const v72 = read('supabase/migrations/202610010006_nirdhoom_verification_and_set
 const v73 = read('supabase/migrations/202610010007_nirdhoom_operational_integrity.sql');
 const v75 = read('supabase/migrations/202610020008_nirdhoom_client_write_integrity.sql');
 const v76 = read('supabase/migrations/202610020009_nirdhoom_security_advisor_cleanup.sql');
+const v77 = read('supabase/migrations/202610020010_nirdhoom_residue_pooling_and_research.sql');
+const v78 = read('supabase/migrations/202610020011_nirdhoom_residue_pooling_security_and_indexes.sql');
+const v79 = read('supabase/migrations/202610020012_nirdhoom_residue_pool_verification_gate.sql');
 const controller = read('src/state/useAppController.ts');
 const envExample = read('.env.example');
 
@@ -58,6 +64,7 @@ const checks = [
   ['no duplicate entrypoint', !exists('src/main.tsx')],
   ['no committed monolithic bundle', !exists('nirdhoom-app.html')],
   ['no committed build archive', !exists('nirdhoom-final.zip')],
+  ['no stale legacy data module', !exists('src/lib/data.js')],
   ['Node 24 runtime', pkg.engines?.node?.includes('24') && !read('vercel.json').includes('functions')],
   ['lockfile present', lock.includes('"lockfileVersion": 3')],
   ['Supabase RLS', /enable row level security/i.test(read('supabase/migrations/202609270002_nirdhoom_production.sql'))],
@@ -75,7 +82,11 @@ const checks = [
   ['direct booking writes revoked', v75.includes('revoke insert, update, delete on public.bookings from authenticated') && v75.includes('reserve_clearance_booking_v2')],
   ['farmer field tampering guard', v75.includes('prevent_farmer_field_tampering') && v75.includes('Protected field attributes must be changed through an authorized workflow') && v75.includes('New farmer fields must begin in REGISTERED state with unverified boundaries')],
   ['security advisor cleanup', v76.includes('revoke all on function public.prevent_farmer_field_tampering()') && v76.includes('drop index if exists public.buyers_profile_unique_idx') && v76.includes('(select auth.uid())')],
+  ['residue pooling schema', v77.includes('buyer_demands') && v77.includes('residue_pool_members') && v77.includes('impact_methodologies')],
+  ['residue pooling execution restricted', v78.includes('revoke execute on function public.join_residue_pool') && v78.includes('revoke execute on function public.create_residue_pool')],
+  ['pool requires verified residue', v79.includes("l.status in ('VERIFIED','VERIFIED_NON_BURN')") && v79.includes('status=case when current_tonnes+p_quantity_tonnes >= target_tonnes then \'MATCHED\'')],
   ['demo payment disclosure', read('src/components/FieldOperator/UpiSettlementModal.tsx').includes('no money movement')],
+  ['live payment webhook disabled', read('api/payments/webhook.ts').includes('status(501)') && read('api/payments/initiate.ts').includes('501')],
   ['demo onboarding disclosure', read('src/components/FarmerOnboarding/FarmerOnboarding.tsx').includes('Demo only')],
   ['demo carbon disclosure', read('src/components/CarbonMarketplace/CarbonMarketplace.tsx').includes('Illustrative carbon-market interface')],
   ['API auth boundary', /verifyDispatcher\(req\)/.test(read('api/notify/whatsapp.ts')) && /verifyDispatcher\(req\)/.test(read('api/notify/ivr.ts'))],
@@ -84,6 +95,10 @@ const checks = [
   ['CI tests actual build', ci.includes('npm run syntaxcheck') && ci.includes('npm run audit') && ci.includes('npm test') && ci.includes('npm run build')],
   ['demo data is opt-in', controller.includes("VITE_NIRDHOOM_DEMO_MODE === 'true'") && controller.includes('DEMO_MODE ? INITIAL_FIELDS : []') && envExample.includes('VITE_NIRDHOOM_DEMO_MODE=false')],
   ['live data loader exists', controller.includes("client.from('fields')") && controller.includes("client.from('machines')") && controller.includes('setLoadingLiveData(false)')],
+  ['operator GPS telemetry', read('src/components/FieldOperator/BalerPWA.tsx').includes('navigator.geolocation.watchPosition') && read('src/components/FieldOperator/BalerPWA.tsx').includes("machine_locations")],
+  ['offline evidence queue', read('src/lib/offlineEvidenceQueue.ts').includes('indexedDB') && read('src/lib/offlineEvidenceQueue.ts').includes('SHA-256')],
+  ['evidence capture uploads to private storage', read('src/components/FieldOperator/BalerPWA.tsx').includes("storage.from('evidence')") && read('src/components/FieldOperator/BalerPWA.tsx').includes('evidence_assets')],
+  ['verification record is not registry certificate', read('src/utils/spatialVerification.ts').includes("certificate_status: 'ILLUSTRATIVE_DEMO'") && read('src/utils/spatialVerification.ts').includes("verra_vm0042_eligible: false")],
 ];
 
 for (const [name, ok] of checks) if (!ok) errors.push(`failed check: ${name}`);
@@ -93,4 +108,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log(`NIRDHOOM V7.5 audit passed: ${required.length} required files, ${checks.length} architecture/security checks.`);
+console.log(`NIRDHOOM production audit passed: ${required.length} required files, ${checks.length} architecture/security checks.`);

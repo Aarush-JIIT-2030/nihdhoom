@@ -7,12 +7,12 @@ export function ImpactResearch({ fields, demoMode }: Props) {
   const verified = fields.filter(f => f.status === 'VERIFIED_NON_BURN' || f.is_verified_non_burn);
   const acres = verified.reduce((s, f) => s + Number(f.acreage || 0), 0);
   const residue = verified.reduce((s, f) => s + Number(f.acreage || 0) * 1.8, 0);
-  const evidenceCoverage = verified.length ? 100 : 0;
+  const evidenceCoverage = 0;
 
   const metrics = [
-    ['Verified hectares', (acres * 0.404686).toFixed(1), 'ha'],
-    ['Verified residue', residue.toFixed(1), 't'],
-    ['Evidence coverage', evidenceCoverage, '%'],
+    ['Field area in verified records', (acres * 0.404686).toFixed(1), 'ha'],
+    ['Estimated residue potential', residue.toFixed(1), 't'],
+    ['Evidence coverage', 'Not measured', ''],
     ['Verified fields', verified.length, 'fields'],
   ];
 
@@ -31,7 +31,7 @@ export function ImpactResearch({ fields, demoMode }: Props) {
       <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
         <div className="flex items-center gap-2"><Leaf className="h-4 w-4 text-emerald-400" /><h2 className="font-bold text-white">Impact chain</h2></div>
         <div className="mt-4 space-y-2 text-xs">
-          {['Field registered','Residue quantified','Machine job completed','Evidence captured','Verification passed','Residue offtaken','Impact calculated'].map((x, i) => <div key={x} className="flex items-center gap-3 rounded-lg border border-slate-800 p-3"><span className="grid h-6 w-6 place-items-center rounded-full bg-slate-800 text-slate-300">{i+1}</span><span className="text-slate-300">{x}</span>{i < 5 && <CheckCircle2 className="ml-auto h-4 w-4 text-emerald-400" />}</div>)}
+          {['Field registered','Residue estimate','Machine job completed','Evidence captured','Verification review','Residue offtaken','Impact calculated'].map((x, i) => { const available = [fields.length > 0, fields.length > 0, false, false, verified.length > 0, false, false][i]; return <div key={x} className="flex items-center gap-3 rounded-lg border border-slate-800 p-3"><span className="grid h-6 w-6 place-items-center rounded-full bg-slate-800 text-slate-300">{i+1}</span><span className="text-slate-300">{x}</span>{available ? <CheckCircle2 className="ml-auto h-4 w-4 text-emerald-400" /> : <span className="ml-auto text-[10px] text-slate-500">not established</span>}</div>; })}
         </div>
       </div>
 

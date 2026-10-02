@@ -13,7 +13,7 @@ export function ResiduePooling({ fields, demoMode }: Props) {
   const [demands, setDemands] = useState<Demand[]>([]);
   const [notice, setNotice] = useState('');
 
-  const localSupply = useMemo(() => fields.map(f => ({
+  const localSupply = useMemo(() => fields.filter((f) => demoMode || f.status === 'VERIFIED_NON_BURN' || f.is_verified_non_burn).map(f => ({
     fieldId: f.id,
     farmer: f.farmer_name,
     village: f.village,

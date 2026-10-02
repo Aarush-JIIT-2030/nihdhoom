@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Header, ActiveTab } from './components/Header';
 import { DemoWalkthrough } from './components/DemoWalkthrough';
 import { LiveKPIDashboard } from './components/LiveKPIDashboard';
@@ -59,6 +60,20 @@ export function App() {
   const totalPayoutInr = fields.reduce((sum, field) => sum + (Number(field.payout_amount) || 0), 0);
   const verifiedCount = fields.filter((field) => field.is_verified_non_burn || field.status === 'VERIFIED_NON_BURN').length;
 
+  useEffect(() => {
+    const demoOnlyTabs: ActiveTab[] = [
+      'AGENTIC_CONSOLE',
+      'DEMO_RUNNER',
+      'DIGITAL_TWIN_3D',
+      'MACHINERY_3D',
+      'FARMER_SURFACE',
+      'OFFTAKE_AUCTION',
+      'CARBON_MARKET',
+      'JUDGE_DEFENSE',
+    ];
+    if (!demoMode && demoOnlyTabs.includes(activeTab)) setActiveTab('OVERVIEW');
+  }, [activeTab, demoMode, setActiveTab]);
+
   const handleSelectField = (field: Field) => {
     setSelectedField(field);
   };
@@ -73,6 +88,7 @@ export function App() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         openPitchDrawer={() => setIsPitchDrawerOpen(true)}
+        demoMode={demoMode}
       />
 
       {!demoMode && loadingLiveData && <div className="mx-auto w-full max-w-7xl px-4 pt-2 text-xs text-cyan-300">Loading live Supabase operational records…</div>}
@@ -125,6 +141,7 @@ export function App() {
               fields={fields}
               machines={machines}
               fireEvents={fireEvents}
+              demoMode={demoMode}
               onUpdateFieldStatus={handleUpdateFieldStatus}
               onViewCertificateModal={(f) => setCertificateField(f)}
             />
@@ -303,6 +320,7 @@ export function App() {
 
                 {selectedField && (
                   <FieldDetailDrawer
+                    demoMode={demoMode}
                     field={selectedField}
                     onClose={() => setSelectedField(null)}
                     onTriggerUpiPayout={(f) => setFieldForUpiModal(f)}
@@ -336,6 +354,7 @@ export function App() {
             <BalerPWA
               fields={fields}
               activeMachine={machines[0]}
+              demoMode={demoMode}
               onJobCompleted={(fId, amt) => handleUpdateFieldStatus(fId, 'CLEARED_PENDING_AUDIT', amt)}
             />
           ) : (
@@ -363,6 +382,7 @@ export function App() {
           <SatelliteAudit
             fields={fields}
             fireEvents={fireEvents}
+            demoMode={demoMode}
           />
         )}
 
@@ -418,7 +438,7 @@ export function App() {
       />
 
       {/* Live Agentic Telemetry Toast Stream */}
-      <AgenticTelemetryToast onNavigateTab={(tab) => setActiveTab(tab as ActiveTab)} />
+      <AgenticTelemetryToast demoMode={demoMode} onNavigateTab={(tab) => setActiveTab(tab as ActiveTab)} />
 
       {/* Modern Footer */}
       <footer className="mt-auto border-t border-emerald-500/15 bg-slate-950/95 py-5 text-center text-xs text-slate-400">

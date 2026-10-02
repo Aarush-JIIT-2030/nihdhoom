@@ -182,8 +182,8 @@ export interface NonBurnCertificate {
   paddy_variety: PaddyVariety;
   clearance_timestamp: string;
   firms_audit_pass: boolean;
-  firms_fires_detected_in_polygon: 0;
-  firms_buffer_meters: 50;
+  firms_fires_detected_in_polygon: number;
+  firms_buffer_meters: number;
   ndvi_pre_harvest: number;
   ndvi_post_clearance: number;
   co2e_avoided_tonnes: number;
@@ -193,4 +193,5 @@ export interface NonBurnCertificate {
   sha256_hash: string;
   issued_at: string;
   verra_vm0042_eligible: boolean;
+  certificate_status: 'ILLUSTRATIVE_DEMO' | 'VERIFIED_INTERNAL';
 }

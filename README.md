@@ -53,7 +53,7 @@ NIRDHOOM is designed around the practical steps involved in managing crop residu
 
 The intended chain is:
 
-`Field → consent → quote → booking → dispatch → operator job → GPS/evidence → residue lot → buyer offer → verification`
+`Field → consent → quote → booking → dispatch → operator GPS/evidence → verified residue lot → buyer demand/pool → offtake → verification/impact`
 
 This is a target workflow, not a claim that every step is currently connected to a live provider or field operation.
 
@@ -65,10 +65,10 @@ The repository currently contains the following product surfaces and foundations
 |---|---|---|
 | Farmer experience | Field view, booking flow, timeline, weather/context and residue pathways | Data may be demo or indicative; live service capacity is not established |
 | Field mapping | OpenStreetMap basemap and field-boundary drawing prototype | A drawn polygon is not authoritative cadastral/Khasra geometry |
-| Operator workflow | Assigned-job stages and proof/evidence concepts | Device, GPS freshness, upload, and offline behavior need field validation |
-| Dispatch | Queue/fleet surface and API hook | Heuristic fallback is not a confirmed optimized route |
+| Operator workflow | Assigned jobs, device GPS telemetry, private evidence upload, SHA-256 hashing and offline evidence queue | Live provider/RLS behavior still requires field-pilot validation |
+| Dispatch | Authenticated `/api/dispatch` + vehicle-specific OR-Tools service + local heuristic fallback | Solver output still requires human review before execution |
 | Verification | Evidence and remote-sensing audit model | Satellite signals are supporting evidence, not field-level proof by themselves |
-| Residue network | Lots, buyers, offers and related schema/UI | Seeded buyers/offers are not contracts or confirmed offtake |
+| Residue network | Verified-lot deal pools, buyer demand, offers and related schema/UI | Buyer demand is not a contract until commercial terms are executed |
 | Sathi assistant | Assistant UI and server route | Provider-backed and authenticated field context depend on configuration |
 | Supabase | SQL migrations, roles, RLS policies and RPC foundations | Must be tested on a dedicated NIRDHOOM project before real data is used |
 | PWA | Manifest, service worker and app-shell foundation | Not proof of complete offline transaction synchronization |
@@ -156,7 +156,7 @@ More detailed source notes, caveats, and refresh guidance are in [docs/PUNJAB-CR
 | Server routes | TypeScript / Node-compatible API routes |
 | Dispatch service foundation | Python, OR-Tools |
 | Assistant integration | Server-side provider adapter |
-| Browser testing | Playwright |
+| Browser testing | Not part of the current release; CI runs type, audit, unit, build and dispatch-service checks |
 | Static checks | TypeScript build check and repository audit script |
 | PWA | Web app manifest and service worker |
 
@@ -191,7 +191,6 @@ Vite prints the local development URL in the terminal.
 | `npm run audit` | Run the repository's static validation/audit script |
 | `npm run syntaxcheck` | Run the TypeScript project build check |
 | `npm test` | Run Node test files matching `tests/*.test.mjs` |
-| `npm run e2e` | Run Playwright browser tests |
 
 A command existing in `package.json` does not mean its tests have passed. Run the commands against your current checkout and inspect the results.
 
@@ -230,7 +229,7 @@ See `.env.example` for the repository's current variable names. Never commit `.e
 
 Apply migrations in chronological order:
 
-Apply every migration in `supabase/migrations/` in filename order, including the V7.1–V7.5 integrity and database-hygiene migrations. Do not skip the later security migrations.
+Apply every migration in `supabase/migrations/` in filename order, including the booking/verification/security migrations and the residue-pooling migrations. Do not skip the later security migrations.
 
 Then configure the required authentication and storage settings documented by the migrations. Use `supabase/seed.sql` only for an explicitly identified demo environment.
 
@@ -246,8 +245,11 @@ npm run syntaxcheck
 npm run audit
 npm test
 npm run build
-npm run e2e
 ```
+
+The Python dispatch service also has a unit-test suite and should be checked with `python -m unittest test_main.py -v` after installing `services/dispatch-ortools/requirements.txt`.
+
+The current release deliberately does not include a browser E2E harness.
 
 The Python dispatch service also has a syntax check:
 
@@ -309,7 +311,6 @@ Use [docs/FINAL-PILOT-READINESS.md](docs/FINAL-PILOT-READINESS.md) as the detail
 | `supabase/migrations/` | Database schema, policies, and RPC migrations |
 | `supabase/seed.sql` | Demo seed data |
 | `public/` | Static assets, icons, manifest, and service worker |
-| `e2e/` | Playwright browser tests |
 | `scripts_validate.mjs` | Repository audit script |
 | `docs/PUNJAB-CROP-RESIDUE-RESEARCH.md` | Research notes and product implications |
 | `docs/RESEARCH-DATA.md` | Dated public data, source scope, and caveats |

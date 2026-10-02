@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { 
   CheckCircle2, 
   MapPin, 
@@ -16,23 +16,174 @@ import {
 } from 'lucide-react';
 import { Field, Machine } from '../../types';
 import { UpiSettlementModal } from './UpiSettlementModal';
+import { supabase } from '../../lib/supabase';
+import { queuedEvidenceCount, queueEvidence, registerEvidenceQueueReplay } from '../../lib/offlineEvidenceQueue';
 
 interface BalerPWAProps {
   fields: Field[];
   activeMachine: Machine;
+  demoMode: boolean;
   onJobCompleted: (fieldId: string, amount: number) => void;
 }
 
 export const BalerPWA: React.FC<BalerPWAProps> = ({
   fields,
   activeMachine,
+  demoMode,
   onJobCompleted,
 }) => {
   const [selectedFieldId, setSelectedFieldId] = useState<string>(fields[0]?.id || 'FIELD-101');
   const [moistureValue, setMoistureValue] = useState<number>(14.2);
   const [balesCount, setBalesCount] = useState<number>(38);
   const [showUpiModal, setShowUpiModal] = useState(false);
-  const [offlineSyncActive, setOfflineSyncActive] = useState(true);
+  const [offlineSyncActive, setOfflineSyncActive] = useState(typeof navigator !== 'undefined' ? navigator.onLine : true);
+
+  useEffect(() => {
+    const client = supabase;
+    if (demoMode || !client || typeof navigator === 'undefined' || !navigator.geolocation) return;
+    let cancelled = false;
+
+    const syncGps = async (position: GeolocationPosition) => {
+      if (cancelled) return;
+      const next = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+        accuracy: position.coords.accuracy,
+      };
+      setGpsState(next);
+      if (Date.now() - lastGpsWrite.current < 15000) return;
+      lastGpsWrite.current = Date.now();
+
+      const { data } = await client.auth.getSession();
+      const user = data.session?.user;
+      if (!user) return;
+
+      await client.from('machine_locations').insert({
+        machine_id: activeMachine.id,
+        latitude: next.lat,
+        longitude: next.lng,
+        speed_kmh: Number.isFinite(position.coords.speed || NaN) ? Math.max(0, Number(position.coords.speed) * 3.6) : null,
+        source: 'operator-pwa',
+        recorded_at: new Date(position.timestamp).toISOString(),
+      });
+    };
+
+    const watchId = navigator.geolocation.watchPosition(syncGps, () => setGpsState(null), {
+      enableHighAccuracy: true,
+      maximumAge: 10000,
+      timeout: 15000,
+    });
+    const onOnline = () => setOfflineSyncActive(true);
+    const onOffline = () => setOfflineSyncActive(false);
+    window.addEventListener('online', onOnline);
+    window.addEventListener('offline', onOffline);
+
+    return () => {
+      cancelled = true;
+      navigator.geolocation.clearWatch(watchId);
+      window.removeEventListener('online', onOnline);
+      window.removeEventListener('offline', onOffline);
+    };
+  }, [activeMachine.id, demoMode]);
+
+  useEffect(() => {
+    if (demoMode) return;
+    let dispose: (() => void) | undefined;
+    void registerEvidenceQueueReplay().then((cleanup) => { dispose = cleanup; });
+    const refresh = async () => setQueuedEvidence(await queuedEvidenceCount());
+    void refresh();
+    const timer = window.setInterval(refresh, 5000);
+    return () => {
+      if (dispose) dispose();
+      window.clearInterval(timer);
+    };
+  }, [demoMode]);
+
+  const handleEvidenceCapture = async (file: File) => {
+    setEvidenceMessage('');
+    const capturedAt = new Date().toISOString();
+    const gps = gpsState;
+    if (demoMode) {
+      setEvidenceMessage('Demo photo captured locally; no evidence record was uploaded.');
+      return;
+    }
+
+    const client = supabase;
+    if (!client) {
+      setEvidenceMessage('Live Supabase is not configured. Evidence was not uploaded.');
+      return;
+    }
+    const { data } = await client.auth.getSession();
+    const user = data.session?.user;
+    if (!user) {
+      setEvidenceMessage('Sign in as the assigned operator before uploading evidence.');
+      return;
+    }
+
+    if (!navigator.onLine) {
+      await queueEvidence({
+        fieldId: currentField.id,
+        fileName: file.name,
+        fileType: file.type,
+        blob: file,
+        capturedAt,
+        latitude: gps?.lat ?? null,
+        longitude: gps?.lng ?? null,
+        accuracyM: gps?.accuracy ?? null,
+      });
+      setQueuedEvidence(await queuedEvidenceCount());
+      setEvidenceMessage('Offline: evidence saved to the device queue and will sync when the connection returns.');
+      return;
+    }
+
+    const id = crypto.randomUUID();
+    const path = `${user.id}/${currentField.id}/${id}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+    const upload = await client.storage.from('evidence').upload(path, file, { contentType: file.type, upsert: false });
+    if (upload.error) {
+      await queueEvidence({
+        fieldId: currentField.id,
+        fileName: file.name,
+        fileType: file.type,
+        blob: file,
+        capturedAt,
+        latitude: gps?.lat ?? null,
+        longitude: gps?.lng ?? null,
+        accuracyM: gps?.accuracy ?? null,
+      });
+      setQueuedEvidence(await queuedEvidenceCount());
+      setEvidenceMessage(`Upload unavailable; evidence queued safely for replay. ${upload.error.message}`);
+      return;
+    }
+
+    const bytes = await file.arrayBuffer();
+    const digest = await crypto.subtle.digest('SHA-256', bytes);
+    const hash = Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('');
+    const { error } = await client.from('evidence_assets').insert({
+      field_id: currentField.id,
+      kind: 'field_photo',
+      storage_path: path,
+      source: 'operator-pwa',
+      captured_at: capturedAt,
+      latitude: gps?.lat ?? null,
+      longitude: gps?.lng ?? null,
+      gps_accuracy_m: gps?.accuracy ?? null,
+      sha256: hash,
+      created_by: user.id,
+      sync_source: 'online',
+      metadata: { file_name: file.name, mime_type: file.type },
+    });
+
+    if (error) {
+      setEvidenceMessage(`Evidence metadata could not be recorded: ${error.message}`);
+      return;
+    }
+    setEvidenceMessage('Evidence uploaded, hashed and linked to the field record.');
+  };
+
+  const [gpsState, setGpsState] = useState<{ lat: number; lng: number; accuracy: number } | null>(null);
+  const [evidenceMessage, setEvidenceMessage] = useState('');
+  const [queuedEvidence, setQueuedEvidence] = useState(0);
+  const lastGpsWrite = useRef(0);
 
   const currentField = fields.find((f) => f.id === selectedFieldId) || fields[0];
   const isJobFinished = currentField.status === 'CLEARED_PENDING_AUDIT' || currentField.status === 'VERIFIED_NON_BURN';
@@ -45,14 +196,14 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
           <div className="flex items-center gap-2 mb-2">
             <Sparkles className="w-5 h-5 text-emerald-400" />
             <h3 className="font-bold text-base text-white">
-              Beat 3: Field Operator PWA & Instant UPI Settlement
+              Field Operator PWA • Evidence & Job Completion
             </h3>
           </div>
           <p className="text-xs text-slate-300 leading-relaxed">
             In rural Punjab, network connectivity in the middle of a 20-acre paddy field is notoriously spotty. The Baler Operator PWA runs offline-first with IndexedDB caching and GPS geofencing. 
           </p>
           <div className="mt-3 bg-slate-950/70 p-2.5 rounded-lg border border-emerald-500/20 text-xs text-slate-300">
-            <strong>The Trust Breakthrough:</strong> Weight disputes at the farmgate kill traditional baling models. Nirdhoom verifies the field polygon via GPS, locks per-acre pricing, and fires a guaranteed UPI settlement in under 90 seconds!
+            <strong>The field workflow should capture GPS, job state, quantity and evidence. Payment remains intentionally disabled in this release.</strong>
           </div>
         </div>
 
@@ -95,7 +246,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
             <div className="device-notch"></div>
             <div className="flex items-center gap-1.5 text-xs">
               <Wifi className="w-3 h-3 text-emerald-400" />
-              <span>PWA Offline Sync</span>
+              <span>{demoMode ? 'PWA Simulation' : 'PWA / device sync'}</span>
             </div>
           </div>
 
@@ -161,7 +312,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
                 </div>
 
                 <div className="text-right">
-                  <span className="text-[10px] text-slate-400 block">Settle Payout</span>
+                  <span className="text-[10px] text-slate-400 block">{demoMode ? 'Demo quote' : 'Server quote'}</span>
                   <span className="text-base font-extrabold text-emerald-400 font-mono">
                     ₹{(currentField.payout_amount || 5075).toLocaleString()}
                   </span>
@@ -188,7 +339,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
                     </span>
                   </div>
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/80 text-slate-950 font-extrabold">
-                    Ready For Baler
+                    {demoMode ? 'Demo assignment' : 'Live assignment'}
                   </span>
                 </div>
               </div>
@@ -203,7 +354,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
                   <span>Call Farmer</span>
                 </a>
                 <button
-                  onClick={() => alert(`Starting GPS route navigation to field [${currentField.center.lat}, ${currentField.center.lng}]`)}
+                  onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${currentField.center.lat},${currentField.center.lng}`, '_blank', 'noopener,noreferrer')}
                   className="flex-1 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer shadow"
                 >
                   <Navigation className="w-3.5 h-3.5" />
@@ -216,7 +367,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
                 <div className="flex justify-between items-center">
                   <span className="text-slate-400 flex items-center gap-1">
                     <Droplet className="w-3.5 h-3.5 text-cyan-400" />
-                    <span>Moisture Probe Sensor:</span>
+                    <span>{demoMode ? 'Demo moisture control:' : 'Moisture sensor:'}</span>
                   </span>
                   <strong className={`font-mono ${moistureValue > 20 ? 'text-red-400' : 'text-emerald-400'}`}>
                     {moistureValue}% {moistureValue <= 20 ? '(Optimal)' : '(High Moisture Alert!)'}
@@ -229,36 +380,66 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
                   step="0.5"
                   value={moistureValue}
                   onChange={(e) => setMoistureValue(Number(e.target.value))}
+                  disabled={!demoMode}
                   className="w-full accent-cyan-400 cursor-pointer"
                 />
 
                 <div className="flex justify-between items-center pt-1 border-t border-slate-800 text-[11px]">
-                  <span className="text-slate-400">Straw Yield (Round Bales):</span>
+                  <span className="text-slate-400">{demoMode ? 'Estimated straw yield:' : 'Straw quantity:'}</span>
                   <strong className="text-white font-mono">{balesCount} Bales (~{Math.round(currentField.acreage * 2.2 * 10) / 10} Tonnes)</strong>
                 </div>
 
                 <div className="flex justify-between items-center text-[11px]">
-                  <span className="text-slate-400">QR Lot Code Generated:</span>
+                  <span className="text-slate-400">QR lot:</span>
                   <span className="font-mono text-cyan-300 font-bold flex items-center gap-1">
                     <QrCode className="w-3 h-3" />
-                    {currentField.qr_lot_code || 'PB-SGR-26-LOT-0101'}
+                    {demoMode ? (currentField.qr_lot_code || 'DEMO-LOT') : (currentField.qr_lot_code || 'Not assigned')}
                   </span>
                 </div>
               </div>
 
-              {/* Big Action: Trigger UPI Settlement */}
+              <div className="rounded-lg border border-cyan-500/20 bg-cyan-950/10 p-3 text-xs">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-bold text-cyan-200">Field evidence</span>
+                  <span className={`text-[10px] font-semibold ${offlineSyncActive ? 'text-emerald-300' : 'text-amber-300'}`}>
+                    {offlineSyncActive ? 'ONLINE' : 'OFFLINE QUEUE'}
+                  </span>
+                </div>
+                <div className="mt-1 text-slate-400">
+                  {gpsState ? `GPS ±${Math.round(gpsState.accuracy)}m` : demoMode ? 'Demo GPS' : 'Waiting for device GPS permission'}
+                  {!demoMode && queuedEvidence > 0 && ` • ${queuedEvidence} queued`}
+                </div>
+                <label className="mt-2 flex cursor-pointer items-center justify-center rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-2 font-bold text-cyan-200 hover:bg-cyan-500/20">
+                  Capture field photo
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    capture="environment"
+                    className="sr-only"
+                    onChange={(event) => {
+                      const file = event.target.files?.[0];
+                      if (file) void handleEvidenceCapture(file);
+                      event.currentTarget.value = '';
+                    }}
+                  />
+                </label>
+                {evidenceMessage && <p className="mt-2 text-[11px] text-slate-300">{evidenceMessage}</p>}
+              </div>
+
+              {/* Completion action: payment is never triggered from the browser */}
               {!isJobFinished ? (
                 <button
-                  onClick={() => setShowUpiModal(true)}
-                  className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-extrabold text-xs shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95"
+                  onClick={() => demoMode && setShowUpiModal(true)}
+                  disabled={!demoMode}
+                  className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 disabled:from-slate-800 disabled:to-slate-800 disabled:text-slate-500 text-white font-extrabold text-xs shadow-lg shadow-emerald-600/30 disabled:shadow-none flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95"
                 >
                   <Zap className="w-4 h-4 fill-current text-amber-300" />
-                  <span>Mark Cleared & Fire &lt;90s UPI Payout</span>
+                  <span>{demoMode ? 'Simulate field completion' : 'Complete via authorized server workflow'}</span>
                 </button>
               ) : (
                 <div className="p-2.5 rounded-xl bg-emerald-950/70 border border-emerald-500/50 text-emerald-300 text-xs font-bold text-center flex items-center justify-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  <span>Job Cleared • UPI Paid & Recorded in Ledger</span>
+                  <span>{demoMode ? 'Demo job completed locally • no payment made' : 'Live completion is controlled by the server workflow'}</span>
                 </div>
               )}
             </div>

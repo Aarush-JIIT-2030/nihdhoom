@@ -26,6 +26,7 @@ interface DemoWalkthroughProps {
   fields: Field[];
   machines: Machine[];
   fireEvents: BurnEvent[];
+  demoMode: boolean;
   onUpdateFieldStatus: (fieldId: string, newStatus: Field['status'], payoutAmt?: number) => void;
   onViewCertificateModal: (field: Field) => void;
 }
@@ -34,6 +35,7 @@ export const DemoWalkthrough: React.FC<DemoWalkthroughProps> = ({
   fields,
   machines,
   fireEvents,
+  demoMode,
   onUpdateFieldStatus,
   onViewCertificateModal,
 }) => {
@@ -240,6 +242,7 @@ export const DemoWalkthrough: React.FC<DemoWalkthroughProps> = ({
             <BalerPWA
               fields={fields}
               activeMachine={machines[0]}
+              demoMode={demoMode}
               onJobCompleted={(fId, amt) => onUpdateFieldStatus(fId, 'CLEARED_PENDING_AUDIT', amt)}
             />
           </div>
@@ -263,6 +266,7 @@ export const DemoWalkthrough: React.FC<DemoWalkthroughProps> = ({
             <SatelliteAudit
               fields={fields}
               fireEvents={fireEvents}
+              demoMode={demoMode}
             />
           </div>
         )}

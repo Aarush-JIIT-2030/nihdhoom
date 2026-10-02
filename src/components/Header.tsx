@@ -40,12 +40,14 @@ interface HeaderProps {
   activeTab: ActiveTab;
   setActiveTab: (tab: ActiveTab) => void;
   openPitchDrawer: () => void;
+  demoMode: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   activeTab,
   setActiveTab,
   openPitchDrawer,
+  demoMode,
 }) => {
   return (
     <header className="sticky top-0 z-50 bg-[#03060f]/90 backdrop-blur-md border-b border-emerald-500/20 px-4 py-3 shadow-xl">
@@ -66,11 +68,11 @@ export const Header: React.FC<HeaderProps> = ({
                   NIRDHOOM
                 </span>
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 font-bold border border-amber-500/40">
-                  DEMO / SIMULATION
+                  {demoMode ? 'DEMO / SIMULATION' : 'LIVE / OPERATIONAL'}
                 </span>
               </div>
               <p className="text-[11px] text-slate-400 hidden sm:block">
-                Field operations prototype • simulated data unless marked live
+                {demoMode ? 'Field operations prototype • synthetic data' : 'Live field operations • provider-backed records'}
               </p>
             </div>
           </div>
@@ -93,18 +95,18 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="hidden xl:flex items-center gap-3.5 text-xs font-medium bg-slate-900/80 px-4 py-1.5 rounded-full border border-emerald-500/25 shadow-inner">
           <div className="flex items-center gap-1.5 text-emerald-400">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span className="font-semibold">Punjab Hotspot 3D</span>
+            <span className="font-semibold">NIRDHOOM Operations</span>
           </div>
           <span className="text-slate-700">|</span>
           <div className="flex items-center gap-1 text-slate-300">
-            <span className="text-slate-500">Idle CRM:</span>
-            <span className="text-emerald-300 font-mono font-bold">Demo dataset</span>
+            <span className="text-slate-500">Mode:</span>
+            <span className="text-emerald-300 font-mono font-bold">{demoMode ? 'Synthetic data' : 'Live records'}</span>
           </div>
           <span className="text-slate-700">|</span>
           <div className="flex items-center gap-1 text-slate-300">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="text-slate-500">VIIRS:</span>
-            <span className="text-amber-300 font-bold">Demo screen</span>
+            <span className="text-slate-500">Remote sensing:</span>
+            <span className="text-amber-300 font-bold">{demoMode ? 'Simulation' : 'Evidence layer'}</span>
           </div>
           <span className="text-slate-700">|</span>
           <div className="flex items-center gap-1 text-amber-400">

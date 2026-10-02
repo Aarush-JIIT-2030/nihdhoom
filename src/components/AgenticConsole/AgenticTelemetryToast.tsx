@@ -62,7 +62,8 @@ const STREAM_EVENTS: TelemetryEvent[] = [
 
 export const AgenticTelemetryToast: React.FC<{
   onNavigateTab?: (tab: string) => void;
-}> = ({ onNavigateTab }) => {
+  demoMode: boolean;
+}> = ({ onNavigateTab, demoMode }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
@@ -75,7 +76,11 @@ export const AgenticTelemetryToast: React.FC<{
     return () => clearInterval(timer);
   }, []);
 
-  const currentEvent = STREAM_EVENTS[currentIndex];
+  const currentEvent = demoMode ? STREAM_EVENTS[currentIndex] : {
+    id: 'live-status', icon: 'vrp' as const, title: 'Live telemetry surface',
+    detail: 'Live operational events are shown only from connected records. No synthetic payout, fire or buyer events are injected into live mode.',
+    badge: 'LIVE RECORDS', time: 'current', targetTab: 'OPS_CONSOLE',
+  };
 
   if (!isVisible) return null;
 
@@ -89,7 +94,7 @@ export const AgenticTelemetryToast: React.FC<{
               Telemetry Stream
             </span>
             <span className="text-[10px] text-slate-500 font-mono">
-              ({currentIndex + 1}/{STREAM_EVENTS.length})
+              {demoMode ? `(${currentIndex + 1}/${STREAM_EVENTS.length})` : '(live)'}
             </span>
           </div>
 

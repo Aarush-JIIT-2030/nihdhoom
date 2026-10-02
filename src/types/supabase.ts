@@ -1,5 +1,4 @@
-// Generated from the dedicated NIRDHOOM Supabase project.
-// Regenerate with Supabase tooling after schema changes.
+// Generated from the connected NIRDHOOM Supabase project. Regenerate after schema changes.
 export type Json =
   | string
   | number
@@ -258,6 +257,53 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "buyer_contracts_buyer_id_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "buyers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      buyer_demands: {
+        Row: {
+          buyer_id: string
+          buyer_name: string
+          created_at: string
+          id: string
+          max_moisture_pct: number | null
+          pickup_deadline: string
+          radius_km: number
+          residue_type: string
+          status: string
+          target_tonnes: number
+        }
+        Insert: {
+          buyer_id: string
+          buyer_name: string
+          created_at?: string
+          id?: string
+          max_moisture_pct?: number | null
+          pickup_deadline: string
+          radius_km?: number
+          residue_type?: string
+          status?: string
+          target_tonnes: number
+        }
+        Update: {
+          buyer_id?: string
+          buyer_name?: string
+          created_at?: string
+          id?: string
+          max_moisture_pct?: number | null
+          pickup_deadline?: string
+          radius_km?: number
+          residue_type?: string
+          status?: string
+          target_tonnes?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "buyer_demands_buyer_id_fkey"
             columns: ["buyer_id"]
             isOneToOne: false
             referencedRelation: "buyers"
@@ -837,6 +883,36 @@ export type Database = {
           },
         ]
       }
+      impact_methodologies: {
+        Row: {
+          active: boolean
+          assumptions: Json
+          created_at: string
+          id: string
+          name: string
+          source_url: string | null
+          version: string
+        }
+        Insert: {
+          active?: boolean
+          assumptions?: Json
+          created_at?: string
+          id?: string
+          name: string
+          source_url?: string | null
+          version: string
+        }
+        Update: {
+          active?: boolean
+          assumptions?: Json
+          created_at?: string
+          id?: string
+          name?: string
+          source_url?: string | null
+          version?: string
+        }
+        Relationships: []
+      }
       jobs: {
         Row: {
           actual_arrived_at: string | null
@@ -1264,6 +1340,109 @@ export type Database = {
           },
         ]
       }
+      residue_pool_members: {
+        Row: {
+          committed_tonnes: number
+          created_at: string
+          farmer_id: string
+          id: string
+          pool_id: string
+          residue_lot_id: string
+          status: string
+        }
+        Insert: {
+          committed_tonnes: number
+          created_at?: string
+          farmer_id: string
+          id?: string
+          pool_id: string
+          residue_lot_id: string
+          status?: string
+        }
+        Update: {
+          committed_tonnes?: number
+          created_at?: string
+          farmer_id?: string
+          id?: string
+          pool_id?: string
+          residue_lot_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "residue_pool_members_farmer_id_fkey"
+            columns: ["farmer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "residue_pool_members_pool_id_fkey"
+            columns: ["pool_id"]
+            isOneToOne: false
+            referencedRelation: "residue_pools"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "residue_pool_members_residue_lot_id_fkey"
+            columns: ["residue_lot_id"]
+            isOneToOne: false
+            referencedRelation: "residue_lots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      residue_pools: {
+        Row: {
+          buyer_demand_id: string | null
+          created_at: string
+          created_by: string
+          current_tonnes: number
+          id: string
+          name: string
+          pickup_deadline: string | null
+          status: string
+          target_tonnes: number
+        }
+        Insert: {
+          buyer_demand_id?: string | null
+          created_at?: string
+          created_by: string
+          current_tonnes?: number
+          id?: string
+          name: string
+          pickup_deadline?: string | null
+          status?: string
+          target_tonnes: number
+        }
+        Update: {
+          buyer_demand_id?: string | null
+          created_at?: string
+          created_by?: string
+          current_tonnes?: number
+          id?: string
+          name?: string
+          pickup_deadline?: string | null
+          status?: string
+          target_tonnes?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "residue_pools_buyer_demand_id_fkey"
+            columns: ["buyer_demand_id"]
+            isOneToOne: false
+            referencedRelation: "buyer_demands"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "residue_pools_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       soil_reports: {
         Row: {
           action_plan: Json
@@ -1484,6 +1663,49 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      create_residue_pool: {
+        Args: {
+          p_buyer_demand_id?: string
+          p_name: string
+          p_pickup_deadline: string
+          p_target_tonnes: number
+        }
+        Returns: {
+          buyer_demand_id: string | null
+          created_at: string
+          created_by: string
+          current_tonnes: number
+          id: string
+          name: string
+          pickup_deadline: string | null
+          status: string
+          target_tonnes: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "residue_pools"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      join_residue_pool: {
+        Args: { p_pool_id: string; p_quantity_tonnes: number }
+        Returns: {
+          committed_tonnes: number
+          created_at: string
+          farmer_id: string
+          id: string
+          pool_id: string
+          residue_lot_id: string
+          status: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "residue_pool_members"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       record_verification_review: {
         Args: {
           p_confidence: number
@@ -1544,6 +1766,33 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      reserve_clearance_booking_v2: {
+        Args: { p_field_id: string; p_requested_date: string }
+        Returns: {
+          accepted_at: string | null
+          assigned_at: string | null
+          cancelled_at: string | null
+          created_at: string
+          field_id: string
+          guaranteed_by_date: string | null
+          id: string
+          machine_id: string | null
+          penalty_amount: number
+          pricing_band: string | null
+          quote_metadata: Json
+          quoted_amount: number
+          rate_per_acre: number
+          requested_date: string
+          status: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "bookings"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       transition_job: {
         Args: { p_job_id: string; p_metadata?: Json; p_next_status: string }
         Returns: {
@@ -1565,6 +1814,45 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "jobs"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      verify_field_geometry: {
+        Args: { p_field_id: string; p_metadata?: Json; p_source: string }
+        Returns: {
+          acreage: number
+          block: string | null
+          boundary: unknown
+          boundary_geojson: Json | null
+          boundary_source: string
+          boundary_verified: boolean
+          center_lat: number | null
+          center_lng: number | null
+          clearance_deadline: string | null
+          consent_id: string | null
+          created_at: string
+          crop: string
+          district: string
+          expected_harvest_date: string | null
+          external_id: string | null
+          geometry: Json | null
+          geometry_area_acres: number | null
+          geometry_type: string | null
+          geometry_verified_at: string | null
+          geometry_verified_by: string | null
+          id: string
+          khasra_no: string
+          moisture_pct: number | null
+          owner_id: string
+          status: string
+          updated_at: string
+          variety: string | null
+          village: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "fields"
           isOneToOne: true
           isSetofReturn: false
         }
@@ -1701,4 +1989,3 @@ export const Constants = {
     Enums: {},
   },
 } as const
-
