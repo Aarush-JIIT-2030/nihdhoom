@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { 
   CheckCircle2, 
   MapPin, 
@@ -34,7 +34,148 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
   const [moistureValue, setMoistureValue] = useState<number>(14.2);
   const [balesCount, setBalesCount] = useState<number>(38);
   const [showUpiModal, setShowUpiModal] = useState(false);
-  const [offlineSyncActive, setOfflineSyncActive] = useState(true);
+  const [offlineSyncActive, setOfflineSyncActive] = useState(typeof navigator !== 'undefined' ? navigator.onLine : true);
+
+  useEffect(() => {
+    if (demoMode || !supabase || typeof navigator === 'undefined' || !navigator.geolocation) return;
+    let cancelled = false;
+
+    const syncGps = async (position: GeolocationPosition) => {
+      if (cancelled) return;
+      const next = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+        accuracy: position.coords.accuracy,
+      };
+      setGpsState(next);
+      if (Date.now() - lastGpsWrite.current < 15000) return;
+      lastGpsWrite.current = Date.now();
+
+      const { data } = await supabase.auth.getSession();
+      const user = data.session?.user;
+      if (!user) return;
+
+      await supabase.from('machine_locations').insert({
+        machine_id: activeMachine.id,
+        latitude: next.lat,
+        longitude: next.lng,
+        speed_kmh: Number.isFinite(position.coords.speed || NaN) ? Math.max(0, Number(position.coords.speed) * 3.6) : null,
+        source: 'operator-pwa',
+        recorded_at: new Date(position.timestamp).toISOString(),
+      });
+    };
+
+    const watchId = navigator.geolocation.watchPosition(syncGps, () => setGpsState(null), {
+      enableHighAccuracy: true,
+      maximumAge: 10000,
+      timeout: 15000,
+    });
+    const onOnline = () => setOfflineSyncActive(true);
+    const onOffline = () => setOfflineSyncActive(false);
+    window.addEventListener('online', onOnline);
+    window.addEventListener('offline', onOffline);
+
+    return () => {
+      cancelled = true;
+      navigator.geolocation.clearWatch(watchId);
+      window.removeEventListener('online', onOnline);
+      window.removeEventListener('offline', onOffline);
+    };
+  }, [activeMachine.id, demoMode]);
+
+  useEffect(() => {
+    if (demoMode) return;
+    let dispose: (() => void) | undefined;
+    void registerEvidenceQueueReplay().then((cleanup) => { dispose = cleanup; });
+    const refresh = async () => setQueuedEvidence(await queuedEvidenceCount());
+    void refresh();
+    const timer = window.setInterval(refresh, 5000);
+    return () => {
+      if (dispose) dispose();
+      window.clearInterval(timer);
+    };
+  }, [demoMode]);
+
+  const handleEvidenceCapture = async (file: File) => {
+    setEvidenceMessage('');
+    const capturedAt = new Date().toISOString();
+    const gps = gpsState;
+    if (demoMode) {
+      setEvidenceMessage('Demo photo captured locally; no evidence record was uploaded.');
+      return;
+    }
+
+    const { data } = await supabase?.auth.getSession() || { data: { session: null } };
+    const user = data.session?.user;
+    if (!user) {
+      setEvidenceMessage('Sign in as the assigned operator before uploading evidence.');
+      return;
+    }
+
+    if (!navigator.onLine) {
+      await queueEvidence({
+        fieldId: currentField.id,
+        fileName: file.name,
+        fileType: file.type,
+        blob: file,
+        capturedAt,
+        latitude: gps?.lat ?? null,
+        longitude: gps?.lng ?? null,
+        accuracyM: gps?.accuracy ?? null,
+      });
+      setQueuedEvidence(await queuedEvidenceCount());
+      setEvidenceMessage('Offline: evidence saved to the device queue and will sync when the connection returns.');
+      return;
+    }
+
+    const id = crypto.randomUUID();
+    const path = `${user.id}/${currentField.id}/${id}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+    const upload = await supabase.storage.from('evidence').upload(path, file, { contentType: file.type, upsert: false });
+    if (upload.error) {
+      await queueEvidence({
+        fieldId: currentField.id,
+        fileName: file.name,
+        fileType: file.type,
+        blob: file,
+        capturedAt,
+        latitude: gps?.lat ?? null,
+        longitude: gps?.lng ?? null,
+        accuracyM: gps?.accuracy ?? null,
+      });
+      setQueuedEvidence(await queuedEvidenceCount());
+      setEvidenceMessage(`Upload unavailable; evidence queued safely for replay. ${upload.error.message}`);
+      return;
+    }
+
+    const bytes = await file.arrayBuffer();
+    const digest = await crypto.subtle.digest('SHA-256', bytes);
+    const hash = Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('');
+    const { error } = await supabase.from('evidence_assets').insert({
+      field_id: currentField.id,
+      kind: 'field_photo',
+      storage_path: path,
+      source: 'operator-pwa',
+      captured_at: capturedAt,
+      latitude: gps?.lat ?? null,
+      longitude: gps?.lng ?? null,
+      gps_accuracy_m: gps?.accuracy ?? null,
+      sha256: hash,
+      created_by: user.id,
+      sync_source: 'online',
+      metadata: { file_name: file.name, mime_type: file.type },
+    });
+
+    if (error) {
+      setEvidenceMessage(`Evidence metadata could not be recorded: ${error.message}`);
+      return;
+    }
+    setEvidenceMessage('Evidence uploaded, hashed and linked to the field record.');
+  };
+
+  const [gpsState, setGpsState] = useState<{ lat: number; lng: number; accuracy: number } | null>(null);
+  const [evidenceMessage, setEvidenceMessage] = useState('');
+  const [queuedEvidence, setQueuedEvidence] = useState(0);
+  const lastGpsWrite = useRef(0);
 
   const currentField = fields.find((f) => f.id === selectedFieldId) || fields[0];
   const isJobFinished = currentField.status === 'CLEARED_PENDING_AUDIT' || currentField.status === 'VERIFIED_NON_BURN';
@@ -247,6 +388,34 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
                     {demoMode ? (currentField.qr_lot_code || 'DEMO-LOT') : (currentField.qr_lot_code || 'Not assigned')}
                   </span>
                 </div>
+              </div>
+
+              <div className="rounded-lg border border-cyan-500/20 bg-cyan-950/10 p-3 text-xs">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-bold text-cyan-200">Field evidence</span>
+                  <span className={`text-[10px] font-semibold ${offlineSyncActive ? 'text-emerald-300' : 'text-amber-300'}`}>
+                    {offlineSyncActive ? 'ONLINE' : 'OFFLINE QUEUE'}
+                  </span>
+                </div>
+                <div className="mt-1 text-slate-400">
+                  {gpsState ? `GPS ±${Math.round(gpsState.accuracy)}m` : demoMode ? 'Demo GPS' : 'Waiting for device GPS permission'}
+                  {!demoMode && queuedEvidence > 0 && ` • ${queuedEvidence} queued`}
+                </div>
+                <label className="mt-2 flex cursor-pointer items-center justify-center rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-2 font-bold text-cyan-200 hover:bg-cyan-500/20">
+                  Capture field photo
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    capture="environment"
+                    className="sr-only"
+                    onChange={(event) => {
+                      const file = event.target.files?.[0];
+                      if (file) void handleEvidenceCapture(file);
+                      event.currentTarget.value = '';
+                    }}
+                  />
+                </label>
+                {evidenceMessage && <p className="mt-2 text-[11px] text-slate-300">{evidenceMessage}</p>}
               </div>
 
               {/* Completion action: payment is never triggered from the browser */}
