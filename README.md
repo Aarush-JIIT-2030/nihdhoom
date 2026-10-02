@@ -311,7 +311,6 @@ Use [docs/FINAL-PILOT-READINESS.md](docs/FINAL-PILOT-READINESS.md) as the detail
 | `supabase/migrations/` | Database schema, policies, and RPC migrations |
 | `supabase/seed.sql` | Demo seed data |
 | `public/` | Static assets, icons, manifest, and service worker |
-| `e2e/` | browser E2E testing browser tests |
 | `scripts_validate.mjs` | Repository audit script |
 | `docs/PUNJAB-CROP-RESIDUE-RESEARCH.md` | Research notes and product implications |
 | `docs/RESEARCH-DATA.md` | Dated public data, source scope, and caveats |
