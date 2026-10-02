@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 
 interface FieldDetailDrawerProps {
+  demoMode: boolean;
   field: Field | null;
   onClose: () => void;
   onTriggerUpiPayout: (field: Field) => void;
@@ -22,6 +23,7 @@ interface FieldDetailDrawerProps {
 }
 
 export const FieldDetailDrawer: React.FC<FieldDetailDrawerProps> = ({
+  demoMode,
   field,
   onClose,
   onTriggerUpiPayout,
@@ -88,7 +90,7 @@ export const FieldDetailDrawer: React.FC<FieldDetailDrawerProps> = ({
           <strong className="text-emerald-400 text-xs block mt-0.5">
             {field.clearance_deadline}
           </strong>
-          <span className="text-slate-400 text-[10px]">Guaranteed 48h limit</span>
+          <span className="text-slate-400 text-[10px]">{demoMode ? 'Demo scheduling window' : 'Server-authorized booking window'}</span>
         </div>
 
         <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
@@ -96,7 +98,7 @@ export const FieldDetailDrawer: React.FC<FieldDetailDrawerProps> = ({
           <strong className="text-amber-300 text-sm block mt-0.5">
             ₹{Math.max(2500, Math.round(field.acreage * 1250)).toLocaleString()}
           </strong>
-          <span className="text-emerald-400 text-[10px] font-semibold">Zero Default Risk</span>
+          <span className="text-emerald-400 text-[10px] font-semibold">{demoMode ? 'Simulation only' : 'Server-enforced booking terms'}</span>
         </div>
       </div>
 
@@ -108,11 +110,11 @@ export const FieldDetailDrawer: React.FC<FieldDetailDrawerProps> = ({
           </div>
           <div>
             <div className="font-bold text-white flex items-center gap-1.5">
-              <span>NASA FIRMS VIIRS Audit:</span>
+              <span>Remote-sensing audit:</span>
               <span className="text-emerald-400">0 Fires Detected Inside Polygon</span>
             </div>
             <div className="text-slate-400 text-[11px]">
-              Sentinel-2 NDVI drop verified (0.74 → 0.16) • Avoided {Math.round(field.acreage * 1.8 * 10) / 10} t CO₂e
+              {demoMode ? 'Illustrative FIRMS / NDVI values shown for the prototype' : 'No remote-sensing conclusion is shown until verified observations are attached'}
             </div>
           </div>
         </div>
@@ -135,18 +137,23 @@ export const FieldDetailDrawer: React.FC<FieldDetailDrawerProps> = ({
           <span>View Non-Burn Certificate</span>
         </button>
 
-        {!isCleared ? (
+        {!isCleared && demoMode ? (
           <button
             onClick={() => onTriggerUpiPayout(field)}
             className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/30 cursor-pointer"
           >
             <Zap className="w-4 h-4" />
-            <span>Mark Cleared & Trigger 90s UPI Payout (₹{(field.payout_amount || 4500).toLocaleString()})</span>
+            <span>Simulate field completion</span>
           </button>
-        ) : (
+        ) : isCleared && demoMode ? (
           <div className="flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-950/60 px-3 py-1.5 rounded-lg border border-emerald-500/30 font-bold">
             <CheckCircle2 className="w-4 h-4" />
-            <span>UPI Payout Settled in 46 seconds</span>
+            <span>Demo completion recorded locally • no payment made</span>
+          </div>
+        ) : (
+          <div className="flex items-center gap-1.5 text-xs text-slate-300 bg-slate-900/70 px-3 py-1.5 rounded-lg border border-slate-700">
+            <ShieldCheck className="w-4 h-4 text-cyan-300" />
+            <span>Live status changes require the authorized job-transition workflow.</span>
           </div>
         )}
       </div>
