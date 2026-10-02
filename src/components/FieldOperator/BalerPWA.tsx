@@ -16,6 +16,8 @@ import {
 } from 'lucide-react';
 import { Field, Machine } from '../../types';
 import { UpiSettlementModal } from './UpiSettlementModal';
+import { supabase } from '../../lib/supabase';
+import { flushEvidenceQueue, queuedEvidenceCount, queueEvidence, registerEvidenceQueueReplay } from '../../lib/offlineEvidenceQueue';
 
 interface BalerPWAProps {
   fields: Field[];
