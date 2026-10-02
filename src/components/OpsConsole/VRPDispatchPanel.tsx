@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Field, Machine, LatLng } from '../../types';
-import { runVRPOptimizer, VRPDispatchResult } from '../../utils/vrpOptimizer';
+import { runVRPOptimizer, fromServerDispatchPlan, VRPDispatchResult } from '../../utils/vrpOptimizer';
+import { supabase } from '../../lib/supabase';
 import { 
   Cpu, 
   CheckCircle2, 
@@ -33,19 +34,57 @@ export const VRPDispatchPanel: React.FC<VRPDispatchPanelProps> = ({
   const [isSolving, setIsSolving] = useState(false);
   const [selectedMachineId, setSelectedMachineId] = useState<string>(machines[0]?.id || '');
 
-  const handleRunOptimizer = () => {
+  const handleRunOptimizer = async () => {
     setIsSolving(true);
-    setTimeout(() => {
-      const res = runVRPOptimizer(fields, machines);
-      setOptimizerResult(res);
-      setIsSolving(false);
-
-      // Default select first machine's route
-      if (res.assignments.length > 0) {
-        onRouteSelected(res.assignments[0].routeCoordinates);
-        setSelectedMachineId(res.assignments[0].machineId);
+    try {
+      if (supabase && import.meta.env.VITE_NIRDHOOM_DEMO_MODE !== 'true') {
+        const { data: sessionData } = await supabase.auth.getSession();
+        const token = sessionData.session?.access_token;
+        if (!token) throw new Error('Sign in with an authorized dispatcher account before running live dispatch.');
+        const started = performance.now();
+        const response = await fetch('/api/dispatch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({
+            fields: fields.map((f) => ({
+              id: f.id,
+              lat: f.center.lat,
+              lng: f.center.lng,
+              acres: f.acreage,
+              deadline: f.clearance_deadline,
+            })),
+            machines: machines.map((m) => ({
+              id: m.id,
+              lat: m.current_location.lat,
+              lng: m.current_location.lng,
+              capacity_acres_day: m.capacity_acres_day,
+              status: m.status,
+            })),
+          }),
+        });
+        const plan = await response.json();
+        if (!response.ok) throw new Error(plan?.error || 'Dispatch service rejected the request.');
+        const res = fromServerDispatchPlan(plan, fields, machines, Math.round(performance.now() - started));
+        setOptimizerResult(res);
+        if (res.assignments.length > 0) {
+          onRouteSelected(res.assignments[0].routeCoordinates);
+          setSelectedMachineId(res.assignments[0].machineId);
+        }
+      } else {
+        await new Promise((resolve) => setTimeout(resolve, 250));
+        const res = runVRPOptimizer(fields, machines);
+        setOptimizerResult(res);
+        if (res.assignments.length > 0) {
+          onRouteSelected(res.assignments[0].routeCoordinates);
+          setSelectedMachineId(res.assignments[0].machineId);
+        }
       }
-    }, 600);
+    } catch (error) {
+      setOptimizerResult(null);
+      window.alert(error instanceof Error ? error.message : 'Unable to run dispatch planner.');
+    } finally {
+      setIsSolving(false);
+    }
   };
 
   const handleSelectMachine = (machineId: string) => {
@@ -89,7 +128,7 @@ export const VRPDispatchPanel: React.FC<VRPDispatchPanelProps> = ({
           ) : (
             <>
               <Play className="w-4 h-4 fill-current" />
-              <span>Re-Run VRP Optimizer</span>
+              <span>{optimizerResult?.source === 'server-ortools' ? 'Re-run live OR-Tools plan' : 'Run dispatch planner'}</span>
             </>
           )}
         </button>
@@ -108,7 +147,7 @@ export const VRPDispatchPanel: React.FC<VRPDispatchPanelProps> = ({
               <span className="text-xs text-emerald-400 font-normal">acres</span>
             </div>
             <div className="text-[10px] text-emerald-400 font-semibold mt-0.5">
-              100% Inside 48h Window
+              {optimizerResult.unassignedFieldIds.length === 0 ? 'All eligible fields assigned' : `${optimizerResult.unassignedFieldIds.length} field(s) unassigned`}
             </div>
           </div>
 
@@ -122,7 +161,7 @@ export const VRPDispatchPanel: React.FC<VRPDispatchPanelProps> = ({
               <span className="text-xs text-slate-400 font-normal">km</span>
             </div>
             <div className="text-[10px] text-cyan-400 font-semibold mt-0.5">
-              Saved {optimizerResult.deadheadSavedKm} km (-43%)
+              {optimizerResult.source === 'server-ortools' ? 'Server solver result' : 'Local heuristic estimate'}
             </div>
           </div>
 
@@ -132,10 +171,10 @@ export const VRPDispatchPanel: React.FC<VRPDispatchPanelProps> = ({
               <ShieldAlert className="w-3.5 h-3.5 text-amber-400" />
             </div>
             <div className="text-lg font-extrabold text-amber-300 mt-1 font-mono">
-              ₹{optimizerResult.totalPenaltyPrevented.toLocaleString()}
+              {optimizerResult.unassignedFieldIds.length}
             </div>
             <div className="text-[10px] text-emerald-400 font-semibold mt-0.5">
-              Zero Default Liability
+              Unassigned fields
             </div>
           </div>
 
@@ -148,7 +187,7 @@ export const VRPDispatchPanel: React.FC<VRPDispatchPanelProps> = ({
               {optimizerResult.fleetUtilizationPct}%
             </div>
             <div className="text-[10px] text-slate-400 mt-0.5">
-              Solved in {optimizerResult.solverExecutionTimeMs} ms
+              {optimizerResult.source === 'server-ortools' ? 'OR-Tools service' : 'Local heuristic'} • {optimizerResult.solverExecutionTimeMs} ms
             </div>
           </div>
         </div>
