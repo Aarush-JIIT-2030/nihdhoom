@@ -20,6 +20,8 @@ export interface VRPDispatchResult {
   totalPenaltyPrevented: number;
   fleetUtilizationPct: number;
   solverExecutionTimeMs: number;
+  source: 'local-heuristic' | 'server-ortools';
+  unassignedFieldIds: string[];
 }
 
 // Calculate Haversine distance in km between two geo-coordinates
@@ -93,7 +95,7 @@ export function runVRPOptimizer(fields: Field[], machines: Machine[]): VRPDispat
     }
 
     // Add return route or drop off at nearest storage yard
-    seqDesc.push('Discharge straw to nearest buffer yard & trigger UPI payout');
+    seqDesc.push('Route complete • residue handoff requires verified storage/offtake workflow');
 
     const capacityPct = Math.min(100, Math.round((machineAcres / machine.capacity_acres_day) * 100));
     totalScheduledAcres += machineAcres;
@@ -108,7 +110,7 @@ export function runVRPOptimizer(fields: Field[], machines: Machine[]): VRPDispat
       capacityPct,
       deadheadKm: Math.round(machineDeadhead * 10) / 10,
       penaltyRiskBefore: penaltyBefore,
-      penaltyRiskAfter: 0, // Successfully scheduled inside 48h guarantee window!
+      penaltyRiskAfter: 0,
       routeCoordinates: routeCoords,
       sequenceDescriptions: seqDesc,
     });
@@ -116,15 +118,69 @@ export function runVRPOptimizer(fields: Field[], machines: Machine[]): VRPDispat
 
   const totalMachineCapacity = machines.reduce((acc, m) => acc + m.capacity_acres_day, 0);
   const fleetUtilizationPct = Math.round((totalScheduledAcres / totalMachineCapacity) * 100);
-  const executionTime = Math.round(performance.now() - startTime + 14); // Add simulated solver solve time
+  const executionTime = Math.round(performance.now() - startTime);
 
   return {
     assignments,
     totalAcresScheduled: Math.round(totalScheduledAcres * 10) / 10,
     totalDeadheadKm: Math.round(totalDeadhead * 10) / 10,
-    deadheadSavedKm: Math.round(totalDeadhead * 0.43 * 10) / 10, // 43% travel reduction vs uncoordinated phone calling
-    totalPenaltyPrevented: assignments.reduce((acc, a) => acc + a.penaltyRiskBefore, 0),
+    deadheadSavedKm: 0,
+    totalPenaltyPrevented: 0,
     fleetUtilizationPct,
     solverExecutionTimeMs: executionTime,
+    source: 'local-heuristic',
+    unassignedFieldIds: unassignedFields.map((f) => f.id),
+  };
+}
+
+
+export function fromServerDispatchPlan(
+  plan: { routes?: Array<{ machine_id: string; stops: string[]; total_acres: number }>; unassigned?: string[] },
+  fields: Field[],
+  machines: Machine[],
+  executionTimeMs: number,
+): VRPDispatchResult {
+  const assignments = (plan.routes || []).map((route) => {
+    const machine = machines.find((m) => m.id === route.machine_id);
+    if (!machine) return null;
+    const routeFields = (route.stops || []).map((id) => fields.find((f) => f.id === id)).filter(Boolean) as Field[];
+    const routeCoordinates = [machine.current_location, ...routeFields.map((f) => f.center)];
+    const deadheadKm = routeCoordinates.slice(1).reduce(
+      (sum, point, index) => sum + calculateDistanceKm(routeCoordinates[index], point),
+      0,
+    );
+    return {
+      machineId: machine.id,
+      machineName: machine.name,
+      operatorName: machine.operator_name,
+      fieldIds: routeFields.map((f) => f.id),
+      totalAcres: Math.round(Number(route.total_acres || 0) * 10) / 10,
+      capacityPct: machine.capacity_acres_day > 0
+        ? Math.min(100, Math.round((Number(route.total_acres || 0) / machine.capacity_acres_day) * 100))
+        : 0,
+      deadheadKm: Math.round(deadheadKm * 10) / 10,
+      penaltyRiskBefore: 0,
+      penaltyRiskAfter: 0,
+      routeCoordinates,
+      sequenceDescriptions: routeFields.map((f, index) =>
+        `${index + 1}. Clear ${f.khasra_no || f.id} (${f.village}) — ${f.acreage} ac`,
+      ),
+    };
+  }).filter(Boolean) as VRPDispatchResult['assignments'];
+
+  const totalAcresScheduled = assignments.reduce((sum, a) => sum + a.totalAcres, 0);
+  const totalDeadheadKm = assignments.reduce((sum, a) => sum + a.deadheadKm, 0);
+  const totalCapacity = machines.reduce((sum, m) => sum + Math.max(0, m.capacity_acres_day), 0);
+
+  return {
+    assignments,
+    totalAcresScheduled: Math.round(totalAcresScheduled * 10) / 10,
+    totalDeadheadKm: Math.round(totalDeadheadKm * 10) / 10,
+    deadheadSavedKm: 0,
+    totalPenaltyPrevented: 0,
+    fleetUtilizationPct: totalCapacity > 0 ? Math.round((totalAcresScheduled / totalCapacity) * 100) : 0,
+    solverExecutionTimeMs: executionTimeMs,
+    source: 'server-ortools',
+    unassignedFieldIds: plan.unassigned || [],
   };
 }
