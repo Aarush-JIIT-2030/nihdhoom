@@ -79,6 +79,7 @@ function validSolverPlan(plan: any, fields: Point[], machines: Machine[]) {
       acres += Number(fields.find(f => f.id === id)?.acres || 0);
     }
     const machine = machines.find(m => m.id === route.machine_id)!;
+    if (machine.status === 'OFFLINE') return false;
     if (acres > machine.capacity_acres_day || Number(route.total_acres) > machine.capacity_acres_day ||
         Math.abs(acres - Number(route.total_acres)) > 0.05) return false;
   }
