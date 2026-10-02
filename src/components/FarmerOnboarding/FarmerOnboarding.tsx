@@ -342,11 +342,11 @@ export const FarmerOnboarding: React.FC = () => {
                 </div>
                 <button
                   onClick={advance}
-                  disabled={aadhaarNo.replace(/\s/g, '').length < 12 || loading}
+                  disabled={!DEMO_MODE || aadhaarNo.replace(/\s/g, '').length < 12 || loading}
                   className="mt-auto w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow transition-all"
                 >
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Fingerprint className="w-4 h-4" />}
-                  Launch Digilocker Consent
+                  {DEMO_MODE ? 'Simulate identity-provider handoff' : 'Identity provider not configured'}
                 </button>
               </>
             )}
@@ -402,11 +402,11 @@ export const FarmerOnboarding: React.FC = () => {
                 
                 <button
                   onClick={advance}
-                  disabled={!faceScanned || loading}
+                  disabled={!DEMO_MODE || !faceScanned || loading}
                   className="w-full py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow transition-all"
                 >
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
-                  Confirm Biometric Match
+                  {DEMO_MODE ? 'Confirm demo biometric state' : 'Biometric provider not configured'}
                 </button>
               </>
             )}
@@ -430,12 +430,12 @@ export const FarmerOnboarding: React.FC = () => {
                   </div>
                   {!bankVerified ? (
                     <button
-                      onClick={() => { setBankVerified(true); }}
-                      disabled={!upiId || loading}
+                      onClick={() => { if (DEMO_MODE) setBankVerified(true); }}
+                      disabled={!DEMO_MODE || !upiId || loading}
                       className="py-2 rounded-lg bg-amber-600/80 hover:bg-amber-500 disabled:opacity-40 text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow transition-all"
                     >
                       <IndianRupee className="w-3.5 h-3.5" />
-                      Fire ₹1 Penny Drop via RazorpayX
+                      {DEMO_MODE ? 'Simulate bank-link state' : 'Bank provider not configured'}
                     </button>
                   ) : (
                     <div className="p-2.5 bg-emerald-950/50 border border-emerald-500/40 rounded-lg text-xs text-emerald-300 flex items-center gap-2">
@@ -446,11 +446,11 @@ export const FarmerOnboarding: React.FC = () => {
                 </div>
                 <button
                   onClick={advance}
-                  disabled={!bankVerified || loading}
+                  disabled={!DEMO_MODE || !bankVerified || loading}
                   className="mt-auto w-full py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 disabled:opacity-40 disabled:cursor-not-allowed text-slate-950 font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow transition-all"
                 >
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CreditCard className="w-4 h-4" />}
-                  Confirm Bank Linking
+                  {DEMO_MODE ? 'Confirm demo bank-link state' : 'Bank verification unavailable'}
                 </button>
               </>
             )}
@@ -487,16 +487,16 @@ export const FarmerOnboarding: React.FC = () => {
                   </div>
                   <div className="p-3 bg-slate-900/80 rounded-lg border border-slate-800 text-xs text-slate-300">
                     <MapPin className="w-3.5 h-3.5 text-emerald-400 inline mr-1.5" />
-                    Field polygon auto-generated from Khasra coordinates. Farmer can adjust boundary on next screen.
+                    {DEMO_MODE ? 'Demo polygon placeholder only; no authoritative land record is queried.' : 'Live mode requires an authorized Punjab land-records data feed before a field can be created.'}
                   </div>
                 </div>
                 <button
                   onClick={advance}
-                  disabled={!khasra || !acreage || loading}
+                  disabled={!DEMO_MODE || !khasra || !acreage || loading}
                   className="mt-auto w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow transition-all"
                 >
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <MapPin className="w-4 h-4" />}
-                  Link Land Records & Complete Onboarding
+                  {DEMO_MODE ? 'Simulate land-record link' : 'Official cadastral provider required'}
                 </button>
               </>
             )}
