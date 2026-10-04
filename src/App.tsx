@@ -25,6 +25,7 @@ import { ParticleField } from './components/Effects/ParticleField';
 import { CommandCenter } from './components/CommandCenter/CommandCenter';
 import { ResiduePooling } from './components/ResiduePooling/ResiduePooling';
 import { ImpactResearch } from './components/ImpactResearch/ImpactResearch';
+import { HarvestIntelligence } from './components/HarvestIntelligence/HarvestIntelligence';
 
 
 import { INITIAL_STORAGE_YARDS, INITIAL_BUYERS } from './data/mockData';
@@ -116,6 +117,10 @@ export function App() {
 
         {activeTab === 'IMPACT_RESEARCH' && (
           <ImpactResearch fields={fields} demoMode={demoMode} />
+        )}
+
+        {activeTab === 'HARVEST_INTELLIGENCE' && (
+          <HarvestIntelligence fields={fields} machines={machines} demoMode={demoMode} />
         )}
 
         {/* TAB 0: AGENTIC AI MULTI-AGENT SWARM */}
