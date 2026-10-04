@@ -1,4 +1,4 @@
-import { Activity, MapPinned, Truck, Users, Factory, ShieldCheck, Leaf, Search } from 'lucide-react';
+import { Activity, MapPinned, Truck, Users, Factory, ShieldCheck, Leaf, Search, AlertTriangle, Clock } from 'lucide-react';
 import { Field, Machine, BurnEvent, StorageYard, Buyer } from '../../types';
 import { OpsMap } from '../OpsConsole/OpsMap';
 
@@ -84,6 +84,59 @@ export function CommandCenter({ fields, machines, fireEvents, storageYards, buye
 
         <div className="mt-3 rounded-lg border border-amber-500/20 bg-amber-500/5 px-3 py-2 text-[11px] text-amber-200">
           Residue estimate is a planning coefficient only ({'1.8 t/acre'} in the current prototype). It must not be presented as measured recovery or a carbon claim without a versioned methodology and evidence.
+        </div>
+      </section>
+
+      <section className="rounded-2xl border border-rose-500/20 bg-slate-950/70 p-4">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <div className="flex items-center gap-2 text-rose-300">
+              <AlertTriangle className="h-4 w-4" />
+              <h2 className="font-bold text-white">Exceptions & action queue</h2>
+            </div>
+            <p className="mt-1 text-xs text-slate-500">Operational exceptions are more actionable than vanity counters. Resolve these before expanding capacity.</p>
+          </div>
+          <span className="rounded-full border border-rose-500/20 bg-rose-500/10 px-2 py-1 text-[10px] font-bold text-rose-300">
+            {fields.filter(f => f.status === 'REGISTERED').length + machines.filter(m => m.status === 'MAINTENANCE').length} open signals
+          </span>
+        </div>
+        <div className="mt-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+          {[
+            ...fields.filter(f => f.status === 'REGISTERED').slice(0, 3).map(f => ({
+              key: `field-${f.id}`,
+              title: 'Needs dispatch',
+              detail: `${f.khasra_no} • ${f.acreage} ac • ${f.village}`,
+              icon: Truck,
+            })),
+            ...machines.filter(m => m.status === 'MAINTENANCE').slice(0, 3).map(m => ({
+              key: `machine-${m.id}`,
+              title: 'Machine unavailable',
+              detail: `${m.name} • ${m.home_chc}`,
+              icon: Factory,
+            })),
+            ...fields.filter(f => new Date(f.clearance_deadline).getTime() < Date.now() && !['VERIFIED_NON_BURN'].includes(f.status)).slice(0, 3).map(f => ({
+              key: `deadline-${f.id}`,
+              title: 'Deadline risk',
+              detail: `${f.khasra_no} • deadline ${new Date(f.clearance_deadline).toLocaleDateString()}`,
+              icon: Clock,
+            })),
+          ].slice(0, 6).map(item => {
+            const Icon = item.icon;
+            return (
+              <div key={item.key} className="rounded-xl border border-slate-800 bg-slate-900/60 p-3">
+                <div className="flex items-center gap-2">
+                  <Icon className="h-4 w-4 text-rose-300" />
+                  <span className="text-xs font-bold text-white">{item.title}</span>
+                </div>
+                <div className="mt-1 text-[11px] text-slate-400">{item.detail}</div>
+              </div>
+            );
+          })}
+          {fields.filter(f => f.status === 'REGISTERED').length === 0 && machines.filter(m => m.status === 'MAINTENANCE').length === 0 && (
+            <div className="md:col-span-2 lg:col-span-3 rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3 text-xs text-emerald-200">
+              No current registration or maintenance exceptions. Deadline risk is still evaluated from the latest field records.
+            </div>
+          )}
         </div>
       </section>
 
