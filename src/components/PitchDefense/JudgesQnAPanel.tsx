@@ -50,7 +50,7 @@ const JUDGE_QUESTIONS: JudgeQnA[] = [
     question: 'If collection economics are broken, where is the actual profitable business?',
     shortAnswer: 'Parali is not the business; it is the zero-CAC customer acquisition channel.',
     detailedDefense:
-      'Paddy straw sales to CBG barely cover baling and diesel. The reframe worth saying out loud: parali collection is the hook that gets us a verified, geo-tagged, financially-connected farmer network in Punjab for free. The real business is selling certified seeds, discounted fertilizer, and diesel via our credit wallet margin, plus monetising auditable carbon credits ($18/tCO2e) via our NASA FIRMS verification layer.',
+      'Paddy straw sales to CBG barely cover baling and diesel. The reframe worth saying out loud: parali collection is the hook that gets us a verified, geo-tagged, financially-connected farmer network in Punjab for free. The real business is selling certified seeds, discounted fertilizer, and diesel via our credit wallet margin, plus building a future evidence-backed carbon accounting layer; no carbon credits are currently issued.',
     tag: 'BUSINESS_MODEL',
   },
   {
@@ -311,7 +311,7 @@ export const JudgesQnAPanel: React.FC = () => {
                   <span className="font-mono text-emerald-300">₹{(nirdhoomDispatchFee / 100000).toFixed(1)} L</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Verra Carbon Credits ($18/tCO2e):</span>
+                  <span>Carbon accounting (methodology not configured):</span>
                   <span className="font-mono text-emerald-300">₹{(nirdhoomCarbonRevenue / 100000).toFixed(1)} L</span>
                 </div>
                 <div className="flex justify-between">
