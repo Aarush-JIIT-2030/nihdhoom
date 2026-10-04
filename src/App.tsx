@@ -401,7 +401,7 @@ export function App() {
           )
         )}
 
-        {/* TAB 5: NASA FIRMS SATELLITE AUDIT (The Money Shot) */}
+        {/* TAB 5: REMOTE-SENSING EVIDENCE AUDIT */}
         {activeTab === 'SATELLITE_AUDIT' && (
           <SatelliteAudit
             fields={fields}
@@ -435,7 +435,7 @@ export function App() {
       </main>
 
       {/* Global Modals */}
-      {/* 1. Verifiable Institutional Carbon Certificate Modal */}
+      {/* 1. Illustrative internal verification record modal */}
       {certificateField && (
         <CarbonCertificate
           certificate={generateNonBurnCertificate(certificateField)}
