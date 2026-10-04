@@ -97,7 +97,7 @@ export const WhatsAppSimulator: React.FC<WhatsAppSimulatorProps> = ({
       time: '10:44 AM',
       hasVoiceNote: true,
       voiceNoteDuration: '0:18',
-      voiceNoteScript: `Mubarakbaad Gurpreet ji! Tuhada slot pakka book ho gaya hai. 16 October nu baler pahuchega. Tuhade UPI khate vich 5075 rupaye khet clear hunde hi 90 second vich transfer ho jaange.`,
+      voiceNoteScript: `Mubarakbaad Gurpreet ji! Tuhada slot pakka book ho gaya hai. 16 October nu baler pahuchega. Payment is currently simulated; no UPI transfer is initiated by this prototype.`,
     };
     setMessages((prev) => [...prev, confirmationMsg]);
     if (onSlotConfirmed) {
@@ -248,7 +248,7 @@ export const WhatsAppSimulator: React.FC<WhatsAppSimulatorProps> = ({
               <span className="text-base font-extrabold text-emerald-400 font-mono">
                 ₹{(dynamicQuote.ratePerAcre * 3.5).toLocaleString()}
               </span>
-              <span className="text-slate-400 text-[10px] block">&lt;90s via UPI</span>
+              <span className="text-slate-400 text-[10px] block">Payment workflow is simulated</span>
             </div>
           </div>
 
@@ -257,7 +257,7 @@ export const WhatsAppSimulator: React.FC<WhatsAppSimulatorProps> = ({
               <ShieldCheck className="w-4 h-4 text-amber-400" />
               <div>
                 <span className="font-bold text-amber-200 block">Parametric Penalty Backing</span>
-                <span className="text-[11px] text-slate-300">If delayed &gt;48h: ₹{dynamicQuote.penaltyCoverage} paid to UPI</span>
+                <span className="text-[11px] text-slate-300">Illustrative penalty policy: ₹{dynamicQuote.penaltyCoverage}; no payment is initiated</span>
               </div>
             </div>
           </div>
