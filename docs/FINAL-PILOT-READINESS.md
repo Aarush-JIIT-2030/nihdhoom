@@ -19,14 +19,14 @@ This document is the consolidated implementation checklist for taking the curren
 ### 1. Reproducible build and repository hygiene
 - [ ] Regenerate and commit `package-lock.json` from the current `package.json`; use `npm ci` in CI after the lockfile is synchronized.
 - [ ] Confirm Node.js version consistency across local development, CI and Vercel.
-- [ ] Run syntax/type checks, static audit, unit tests, production build and browser tests on the final commit.
+- [x] CI runs syntax/type checks, static audit, unit tests, production build and dispatch-service checks; browser/device testing remains an external pilot gate.
 - [ ] Inspect and resolve all CI failures; retain run links in the release notes.
 - [x] The inactive duplicate TSX entrypoint was removed; `src/App.tsx` is the active application mounted by `src/main.jsx`.
 - [x] The obsolete monolithic HTML bundle and committed ZIP archive were removed.
 
 ### 2. Database and access control
-- [ ] Apply migrations 001, 002, 003 and 004 in order to a fresh dedicated Supabase project.
-- [ ] Repeat migration testing against a representative existing schema.
+- [x] Apply the repository migrations to the dedicated NIRDHOOM Supabase project (`igqgtlmnwssjaoxkkzbm`); the project currently reports all 19 repository migrations applied.
+- [ ] Repeat migration testing against a disposable fresh project/branch before introducing pilot data.
 - [ ] Verify every foreign key, trigger, index, constraint and RPC executes as intended.
 - [ ] Test row-level security using separate farmer, operator, dispatcher, verifier and admin accounts.
 - [ ] Prove a farmer cannot read or modify another farmer's records.
@@ -127,7 +127,8 @@ This document is the consolidated implementation checklist for taking the curren
 - [ ] Harvest forecast with source, date, confidence/limitations and fallback behavior.
 - [ ] Soil report provenance, test date and reviewed action plan.
 - [ ] Credit wallet only when balances are backed by auditable transactions.
-- [ ] Carbon accounting only after a documented methodology, evidence chain and independent review.
+- [x] Carbon-accounting methodology gate documented against current VM0042 v2.2; no NIRDHOOM credit is represented as issued or registry-verified.
+- [ ] Carbon accounting can only advance after project-specific baseline, eligibility, SOC/other required measurements, QA/QC, independent verification and registry process are established.
 - [ ] Analytics that distinguish operational metrics from demo and public research data.
 - [ ] AI Sathi only with authenticated, field-scoped access, bounded answers and safe fallback.
 - [ ] Notification delivery receipts, retries, consent and preferences.
@@ -217,4 +218,4 @@ The latest source audit found and corrected additional trust-boundary issues:
 - The duplicate non-canonical PWA manifest was removed; `manifest.webmanifest` is the canonical manifest referenced by `index.html`.
 - The environment template no longer contains a project-specific Supabase URL.
 
-The repository still requires a real Supabase migration run, role-by-role RLS testing, real provider/device testing and operational partner validation before a live pilot.
+The dedicated Supabase project is connected and the expected migrations are applied. Remaining pilot gates are role-by-role RLS tests with separate identities, fresh-schema rehearsal, provider/device tests, authoritative cadastral source, real machine telemetry, buyer contracts, privacy/support processes and operational partner sign-off.
