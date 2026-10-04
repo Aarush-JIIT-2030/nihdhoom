@@ -38,7 +38,7 @@ export function HarvestIntelligence({ fields, machines, demoMode }: Props) {
   const selectedDate = new Date(start);
   selectedDate.setDate(selectedDate.getDate() + offset);
 
-  const selectedWeatherField = upcoming[0] || fields[0];
+  const selectedWeatherField = fields[0];
 
   useEffect(() => {
     if (demoMode || !supabase || !selectedWeatherField) {
