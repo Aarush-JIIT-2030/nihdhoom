@@ -76,10 +76,10 @@ export const LiveKPIDashboard: React.FC<LiveKPIDashboardProps> = ({
   const [upiMessage, setUpiMessage] = useState('');
 
   const upiFlashes = [
-    '₹5,075 CREDITED → Gurpreet Singh Brar',
-    '₹7,250 CREDITED → Harinder Singh Dhillon',
-    '₹4,350 CREDITED → Manpreet Kaur Sandhu',
-    '₹6,500 CREDITED → Kuldeep Singh Cheema',
+    'SIMULATED → farmer settlement example',
+    'SIMULATED → settlement example',
+    'SIMULATED → settlement example',
+    'SIMULATED → settlement example',
   ];
   const flashRef = useRef(0);
 
@@ -141,7 +141,7 @@ export const LiveKPIDashboard: React.FC<LiveKPIDashboardProps> = ({
       color: 'text-emerald-400',
       borderColor: 'border-emerald-500/40',
       bgColor: 'bg-emerald-950/30',
-      sub: 'NASA VIIRS verified',
+      sub: 'Remote-sensing evidence',
       subColor: 'text-emerald-300',
     },
     {
