@@ -19,11 +19,12 @@ import {
   Loader2,
 } from 'lucide-react';
 
-type KYCStep = 'PHONE' | 'OTP' | 'AADHAAR' | 'FACE_SCAN' | 'BANK' | 'LAND_RECORDS' | 'DONE';
+type KYCStep = 'PHONE' | 'OTP' | 'CONSENT' | 'AADHAAR' | 'FACE_SCAN' | 'BANK' | 'LAND_RECORDS' | 'DONE';
 
 const STEPS: { id: KYCStep; label: string; sublabel: string; icon: React.FC<{ className?: string }> }[] = [
   { id: 'PHONE', label: 'Mobile Verification', sublabel: 'Enter registered mobile', icon: Phone },
   { id: 'OTP', label: 'OTP Confirm', sublabel: '6-digit SMS code', icon: Smartphone },
+  { id: 'CONSENT', label: 'Farmer consent', sublabel: 'Operational data agreement', icon: Shield },
   { id: 'AADHAAR', label: 'Identity verification (demo)', sublabel: 'Demo only — no external identity API', icon: Fingerprint },
   { id: 'FACE_SCAN', label: 'Selfie match (demo)', sublabel: 'Demo state — no biometric processing', icon: Camera },
   { id: 'BANK', label: 'Bank link (demo)', sublabel: 'Demo state — no bank verification', icon: Landmark },
@@ -31,7 +32,7 @@ const STEPS: { id: KYCStep; label: string; sublabel: string; icon: React.FC<{ cl
   { id: 'DONE', label: 'Demo profile created', sublabel: 'Not registered in a live system', icon: CheckCircle2 },
 ];
 
-const STEP_ORDER: KYCStep[] = ['PHONE', 'OTP', 'AADHAAR', 'FACE_SCAN', 'BANK', 'LAND_RECORDS', 'DONE'];
+const STEP_ORDER: KYCStep[] = ['PHONE', 'OTP', 'CONSENT', 'AADHAAR', 'FACE_SCAN', 'BANK', 'LAND_RECORDS', 'DONE'];
 const DEMO_MODE = import.meta.env.VITE_NIRDHOOM_DEMO_MODE === 'true';
 
 export const FarmerOnboarding: React.FC = () => {
@@ -49,6 +50,7 @@ export const FarmerOnboarding: React.FC = () => {
   const [faceScanned, setFaceScanned] = useState(false);
   const [bankVerified, setBankVerified] = useState(false);
   const [otpError, setOtpError] = useState('');
+  const [consentAccepted, setConsentAccepted] = useState(false);
 
   const stepIndex = STEP_ORDER.indexOf(currentStep);
 
@@ -112,14 +114,14 @@ export const FarmerOnboarding: React.FC = () => {
       setOtpError(profileError.message || 'Verified, but farmer profile could not be saved.');
       return;
     }
-    setCurrentStep('AADHAAR');
+    setCurrentStep('CONSENT');
   };
 
   const reset = () => {
     setCurrentStep('PHONE');
     setPhone(''); setOtp(''); setAadhaarNo(''); setName(''); setVillage('');
     setBlock(''); setUpiId(''); setKhasra(''); setAcreage('');
-    setFaceScanned(false); setBankVerified(false); setOtpError('');
+    setFaceScanned(false); setBankVerified(false); setOtpError(''); setConsentAccepted(false);
   };
 
   const isComplete = (step: KYCStep) => STEP_ORDER.indexOf(step) < stepIndex;
@@ -308,6 +310,68 @@ export const FarmerOnboarding: React.FC = () => {
                 >
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
                   {DEMO_MODE ? 'Verify Demo OTP & Continue' : 'Verify OTP & Continue'}
+                </button>
+                {otpError && <div className="text-xs text-red-300 bg-red-950/30 border border-red-500/30 rounded-lg p-2">{otpError}</div>}
+              </>
+            )}
+
+            {currentStep === 'CONSENT' && (
+              <>
+                <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
+                  <Shield className="w-4 h-4 text-emerald-400" />
+                  <h4 className="font-bold text-sm text-white">Step 3: Farmer consent</h4>
+                </div>
+                <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4 text-xs text-slate-300 leading-relaxed">
+                  NIRDHOOM may use your field, booking, machine-operation, evidence and residue-lot records to coordinate clearance and produce an auditable operational record. Identity-provider, bank and registry services are separate integrations and are not implied by this consent.
+                </div>
+                <label className="flex items-start gap-3 rounded-xl border border-slate-800 bg-slate-900/60 p-4 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={consentAccepted}
+                    onChange={(e) => setConsentAccepted(e.target.checked)}
+                    className="mt-0.5 h-4 w-4 accent-emerald-500"
+                  />
+                  <span className="text-xs text-slate-300">
+                    I consent to the NIRDHOOM operational record workflow and understand that this prototype does not perform Aadhaar, biometric, bank or payment processing.
+                  </span>
+                </label>
+                <button
+                  onClick={async () => {
+                    if (!consentAccepted) return;
+                    if (DEMO_MODE) { advance(); return; }
+                    if (!supabase) { setOtpError('Live authentication is not configured.'); return; }
+                    setLoading(true);
+                    setOtpError('');
+                    const { data: userData } = await supabase.auth.getUser();
+                    if (!userData.user) {
+                      setLoading(false);
+                      setOtpError('Your session expired. Please verify your phone again.');
+                      return;
+                    }
+                    const { error: consentError } = await supabase.from('consents').insert({
+                      profile_id: userData.user.id,
+                      consent_type: 'NIRDHOOM_OPERATIONAL_RECORD',
+                      version: '2026-10-04',
+                      source: 'WEB_OTP_ONBOARDING',
+                    });
+                    if (consentError) {
+                      setLoading(false);
+                      setOtpError(consentError.message || 'Consent could not be recorded.');
+                      return;
+                    }
+                    const { error: profileError } = await supabase.from('profiles').update({ consent_status: 'GRANTED' }).eq('id', userData.user.id);
+                    setLoading(false);
+                    if (profileError) {
+                      setOtpError(profileError.message || 'Consent was recorded but profile status could not be updated.');
+                      return;
+                    }
+                    setCurrentStep('AADHAAR');
+                  }}
+                  disabled={!consentAccepted || loading}
+                  className="mt-auto w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow transition-all"
+                >
+                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Shield className="w-4 h-4" />}
+                  {DEMO_MODE ? 'Accept demo consent' : 'Record consent & continue'}
                 </button>
                 {otpError && <div className="text-xs text-red-300 bg-red-950/30 border border-red-500/30 rounded-lg p-2">{otpError}</div>}
               </>
