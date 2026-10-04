@@ -43,9 +43,9 @@ const STREAM_EVENTS: TelemetryEvent[] = [
   {
     id: 'evt-3',
     icon: 'upi',
-    title: 'Instant UPI Settlement <90s SLA',
-    detail: '₹7,800 disbursed to Harpreet Singh via RazorpayX. UTR: #UPI-9923812 settled in 44s.',
-    badge: 'UPI PAYOUT',
+    title: 'Settlement workflow (simulated)',
+    detail: 'Synthetic payment event for the demo. No provider transaction or UTR is created.'
+    badge: 'SIMULATED',
     time: '4m ago',
     targetTab: 'BALER_OPERATOR',
   },
