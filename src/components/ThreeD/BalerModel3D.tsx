@@ -457,10 +457,10 @@ export const BalerModel3D: React.FC = () => {
           <div>
             <div className="flex items-center gap-2 text-purple-400 font-bold text-xs mb-1">
               <QrCode className="w-4 h-4" />
-              <span>Digital QR Lot Tagging & UPI Trigger</span>
+              <span>Digital QR Lot Tagging & Settlement Workflow (Simulated)</span>
             </div>
             <p className="text-xs text-slate-300 leading-relaxed">
-              Each discharged bale lot receives a weatherproof tamper-evident QR code linked to the farmer's Khasra polygon, immediately triggering the &lt;90s UPI settlement.
+              Each discharged bale lot receives a weatherproof tamper-evident QR code linked to the farmer's Khasra polygon, creating an auditable settlement record; provider settlement is not connected.
             </p>
           </div>
         )}
