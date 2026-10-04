@@ -73,7 +73,7 @@ export function executeFirmsAudit(fields: Field[], fireEvents: BurnEvent[]) {
 }
 
 /**
- * Generates an institutional Verra VM0042-compliant Non-Burn Certificate
+ * Generates an internal illustrative verification record; it is not a registry or Verra certificate
  */
 export function generateNonBurnCertificate(field: Field): NonBurnCertificate {
   return {
