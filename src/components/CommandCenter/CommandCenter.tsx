@@ -54,6 +54,39 @@ export function CommandCenter({ fields, machines, fireEvents, storageYards, buye
         ))}
       </section>
 
+      <section className="rounded-2xl border border-cyan-500/20 bg-slate-950/60 p-4">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div>
+            <div className="flex items-center gap-2 text-cyan-300">
+              <ShieldCheck className="h-4 w-4" />
+              <h2 className="font-bold text-white">Evidence → Impact readiness</h2>
+            </div>
+            <p className="mt-1 text-xs text-slate-500">Impact is downstream of verified operational evidence. This panel never treats planned residue as verified impact.</p>
+          </div>
+          <button onClick={onOpenImpact} className="rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-2 text-xs font-bold text-cyan-200 hover:bg-cyan-500/15">Open research workspace</button>
+        </div>
+
+        <div className="mt-4 grid grid-cols-2 lg:grid-cols-5 gap-2">
+          {[
+            ['Registered', fields.length, 'field records'],
+            ['Scheduled / active', activeJobs, 'operations'],
+            ['Cleared for audit', fields.filter(f => f.status === 'CLEARED_PENDING_AUDIT').length, 'awaiting verification'],
+            ['Verified', verified, 'non-burn fields'],
+            ['Impact-ready', verified, 'verified records'],
+          ].map(([label, value, note]) => (
+            <div key={String(label)} className="rounded-xl border border-slate-800 bg-slate-900/60 p-3">
+              <div className="text-lg font-black text-white">{value}</div>
+              <div className="text-[11px] font-semibold text-slate-300">{label}</div>
+              <div className="mt-0.5 text-[10px] text-slate-500">{note}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-3 rounded-lg border border-amber-500/20 bg-amber-500/5 px-3 py-2 text-[11px] text-amber-200">
+          Residue estimate is a planning coefficient only ({'1.8 t/acre'} in the current prototype). It must not be presented as measured recovery or a carbon claim without a versioned methodology and evidence.
+        </div>
+      </section>
+
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         <div className="lg:col-span-8 rounded-2xl border border-slate-800 bg-slate-950/60 p-3">
           <div className="mb-3 flex items-center justify-between">
