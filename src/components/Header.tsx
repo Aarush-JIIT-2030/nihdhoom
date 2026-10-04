@@ -11,6 +11,7 @@ import {
   Box, 
   Globe,
   Leaf,
+  Wheat,
   UserCheck,
   Bot,
   Layers3,
@@ -23,6 +24,7 @@ export type ActiveTab =
   | 'OVERVIEW'
   | 'RESIDUE_POOLS'
   | 'IMPACT_RESEARCH'
+  | 'HARVEST_INTELLIGENCE'
   | 'AGENTIC_CONSOLE'
   | 'DEMO_RUNNER'
   | 'DIGITAL_TWIN_3D'
@@ -151,6 +153,18 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
 
           {/* Agentic AI Swarm Console Tab */}
+          <button
+            onClick={() => setActiveTab('HARVEST_INTELLIGENCE')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+              activeTab === 'HARVEST_INTELLIGENCE'
+                ? 'bg-gradient-to-r from-amber-600 to-orange-500 text-white shadow-md shadow-amber-500/30 ring-1 ring-amber-300'
+                : 'text-amber-300 hover:text-amber-200 hover:bg-slate-900'
+            }`}
+          >
+            <Wheat className="w-3.5 h-3.5" />
+            <span>Harvest Intel</span>
+          </button>
+
           <button
             onClick={() => setActiveTab('AGENTIC_CONSOLE')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
