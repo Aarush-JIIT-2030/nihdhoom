@@ -89,7 +89,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
               </p>
             </div>
             <div className="text-right hidden sm:block">
-              <span className="text-xs font-mono text-emerald-400 font-bold block">{demoMode ? 'Synthetic demo only' : auditReport.dataAvailability === 'NO_OBSERVATIONS' ? 'No observation proof' : 'Not a registry certificate'}</span>
+              <span className="text-xs font-mono text-emerald-400 font-bold block">{demoMode ? 'Synthetic demo only' : auditReport.dataAvailability === 'NO_OBSERVATIONS' ? 'No observations available' : 'Supporting evidence only'}</span>
               <span className="text-[10px] text-slate-400">No registry issuance</span>
             </div>
           </div>
