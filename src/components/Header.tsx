@@ -25,6 +25,7 @@ export type ActiveTab =
   | 'RESIDUE_POOLS'
   | 'IMPACT_RESEARCH'
   | 'HARVEST_INTELLIGENCE'
+  | 'FIELD_PROVENANCE'
   | 'AGENTIC_CONSOLE'
   | 'DEMO_RUNNER'
   | 'DIGITAL_TWIN_3D'
@@ -152,7 +153,17 @@ export const Header: React.FC<HeaderProps> = ({
             <span>Impact & Research</span>
           </button>
 
-          {/* Agentic AI Swarm Console Tab */}
+          <button
+            onClick={() => setActiveTab('FIELD_PROVENANCE')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+              activeTab === 'FIELD_PROVENANCE' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30' : 'text-indigo-300 hover:text-indigo-200 hover:bg-slate-900'
+            }`}
+          >
+            <Map className="w-3.5 h-3.5" />
+            <span>Field Trust</span>
+          </button>
+
+          {/* Agentic AI Swarm Console Tab */
           <button
             onClick={() => setActiveTab('HARVEST_INTELLIGENCE')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
