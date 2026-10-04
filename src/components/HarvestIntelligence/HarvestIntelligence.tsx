@@ -41,7 +41,7 @@ export function HarvestIntelligence({ fields, machines, demoMode }: Props) {
   const selectedWeatherField = fields[0];
 
   useEffect(() => {
-    if (demoMode || !supabase || !selectedWeatherField) {
+    if (demoMode || !selectedWeatherField) {
       setWeather(null);
       setWeatherError(null);
       return;
@@ -51,7 +51,13 @@ export function HarvestIntelligence({ fields, machines, demoMode }: Props) {
     const loadWeather = async () => {
       setWeatherLoading(true);
       setWeatherError(null);
-      const { data } = await supabase.auth.getSession();
+      const db = supabase;
+      if (!db) {
+        if (active) setWeatherError('Live weather is not configured.');
+        setWeatherLoading(false);
+        return;
+      }
+      const { data } = await db.auth.getSession();
       const token = data.session?.access_token;
       if (!token) {
         if (active) setWeatherError('Sign in to load field weather.');
