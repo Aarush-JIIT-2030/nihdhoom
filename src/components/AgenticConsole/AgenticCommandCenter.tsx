@@ -273,7 +273,7 @@ export const AgenticCommandCenter: React.FC<{
                 <span className="badge badge-amber text-[10px]">AWAITING SIGN-OFF</span>
               </div>
               <p className="text-xs text-slate-300">
-                Agent proposed 4 machine dispatches & ₹12,500 instant UPI payout. Verify before execution.
+                Agent proposed 4 machine dispatches & ₹12,500 simulated settlement workflow. Verify before execution.
               </p>
             </div>
           </div>
