@@ -33,7 +33,7 @@ export function ImpactResearch({ fields, demoMode }: Props) {
     <section className="grid grid-cols-1 lg:grid-cols-12 gap-4">
       <div className="lg:col-span-8 rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
         <div className="flex items-center justify-between gap-3">
-          <div><div className="flex items-center gap-2"><MapPinned className="h-4 w-4 text-cyan-300" /><h2 className="font-bold text-white">Field-to-impact ledger</h2></div><p className="mt-1 text-xs text-slate-500">Operational stage and research readiness for each field record.</p></div>
+          <div><div className="flex items-center gap-2"><MapPin className="h-4 w-4 text-cyan-300" /><h2 className="font-bold text-white">Field-to-impact ledger</h2></div><p className="mt-1 text-xs text-slate-500">Operational stage and research readiness for each field record.</p></div>
           <span className="text-[10px] text-slate-500">{fields.length} record(s)</span>
         </div>
         <div className="mt-4 space-y-2">
@@ -96,6 +96,6 @@ export function ImpactResearch({ fields, demoMode }: Props) {
       </div>
     </section>
 
-    <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-3 text-xs text-amber-200 flex gap-2"><Database className="h-4 w-4 shrink-0" /> {demoMode ? 'Demo mode: metrics are illustrative and are not production measurements.' : 'Live mode: metrics are limited to records currently available in Supabase.'} <Clock3 className="h-4 w-4 shrink-0 ml-auto" /><ShieldCheck className="h-4 w-4 shrink-0" /></div>
+    <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-3 text-xs text-amber-200 flex gap-2"><Database className="h-4 w-4 shrink-0" /> {demoMode ? 'Demo mode: metrics are illustrative and are not production measurements.' : 'Live mode: metrics are limited to records currently available in Supabase.'} <Clock className="h-4 w-4 shrink-0 ml-auto" /><ShieldCheck className="h-4 w-4 shrink-0" /></div>
   </div>;
 }
