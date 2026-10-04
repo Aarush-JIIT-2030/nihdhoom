@@ -103,6 +103,7 @@ const checks = [
   ['unified field job surface', exists('src/components/FieldJobs/FieldJobBoard.tsx') && app.includes("activeTab === 'FIELD_JOBS'") && read('src/components/Header.tsx').includes("'FIELD_JOBS'")],
   ['field job live chain reads', read('src/components/FieldJobs/FieldJobBoard.tsx').includes("from('jobs')") && read('src/components/FieldJobs/FieldJobBoard.tsx').includes("from('evidence_assets')") && read('src/components/FieldJobs/FieldJobBoard.tsx').includes("from('residue_lots')")],
   ['field job action queue', read('src/components/FieldJobs/FieldJobBoard.tsx').includes('Needs action') && read('src/components/FieldJobs/FieldJobBoard.tsx').includes('Deadline risk')],
+  ['live weather planning adapter', read('src/components/HarvestIntelligence/HarvestIntelligence.tsx').includes('/api/weather?field_id=') && read('api/weather.ts').includes('open-meteo')],
   ['explicit farmer consent flow', read('src/components/FarmerOnboarding/FarmerOnboarding.tsx').includes("NIRDHOOM_OPERATIONAL_RECORD") && read('src/components/FarmerOnboarding/FarmerOnboarding.tsx').includes("consent_status: 'GRANTED'")],
   ['settlement surfaces disclosed', read('src/components/FieldOperator/UpiSettlementModal.tsx').includes('no money movement') && !read('src/App.tsx').includes('Instant UPI Settlement')],
   ['demo data is opt-in', controller.includes("VITE_NIRDHOOM_DEMO_MODE === 'true'") && controller.includes('DEMO_MODE ? INITIAL_FIELDS : []') && envExample.includes('VITE_NIRDHOOM_DEMO_MODE=false')],
