@@ -76,8 +76,8 @@ const NODES: NodeItem[] = [
   },
   {
     id: 'upi',
-    title: 'Instant UPI Ledger',
-    subtitle: '<90s Payout Guaranteed',
+    title: 'Settlement ledger (simulated)',
+    subtitle: 'Provider integration disabled',
     icon: Zap,
     badge: 'Beat 3',
     color: 'text-amber-400',
