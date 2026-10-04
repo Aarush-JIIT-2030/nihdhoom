@@ -20,7 +20,7 @@ export const AgenticNeuralCore3D: React.FC<AgenticNeuralCore3DProps> = ({
     { id: 'vrp', name: 'VRP Solver Agent', role: 'Google OR-Tools', color: '#10b981' },
     { id: 'pricing', name: 'Dynamic Yield Agent', role: 'Parametric Insurance', color: '#3b82f6' },
     { id: 'voice', name: 'Voice NLP Agent', role: 'Punjabi WhatsApp/IVR', color: '#fbbf24' },
-    { id: 'audit', name: 'FIRMS Verification Agent', role: 'NASA VIIRS 375m', color: '#34d399' },
+    { id: 'audit', name: 'Remote Sensing Agent', role: 'FIRMS / VIIRS evidence', color: '#34d399' },
   ];
 
   useEffect(() => {
