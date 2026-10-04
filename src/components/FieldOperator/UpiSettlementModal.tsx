@@ -159,7 +159,7 @@ export const UpiSettlementModal: React.FC<UpiSettlementModalProps> = ({
             </div>
           </div>
           <div className="flex justify-between items-center text-slate-400">
-            <span>UPI ID (Instant VPA):</span>
+            <span>UPI ID (simulated VPA):</span>
             <span className="font-mono text-cyan-300">{upiId}</span>
           </div>
           <div className="flex justify-between items-center text-slate-400">
