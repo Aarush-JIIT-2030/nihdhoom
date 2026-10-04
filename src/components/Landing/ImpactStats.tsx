@@ -96,7 +96,7 @@ const FARMER_TESTIMONIALS = [
     acres: 12.0,
     crop: 'Pusa-44',
     avatar: '/images/punjab_farmer_hero.jpg',
-    savings: 'Satellite verified 0-burn for Verra VM0042 carbon credit',
+    savings: 'Synthetic example • carbon methodology not configured',
   },
 ];
 
@@ -129,7 +129,7 @@ export const ImpactStats: React.FC<ImpactStatsProps> = ({ onNavigateTab }) => {
                 </span>
               </div>
               <p className="text-xs text-slate-400 mt-0.5">
-                Source: CAQM, IITM DSS, Punjab Agriculture Dept, NASA FIRMS
+                Source: public research references • provider observations only when configured
               </p>
             </div>
           </div>
@@ -454,7 +454,7 @@ export const ImpactStats: React.FC<ImpactStatsProps> = ({ onNavigateTab }) => {
           {[
             {
               title: 'CBG / Biogas',
-              price: '₹1,850/T',
+              price: 'Indicative',
               margin: 'LOW',
               icon: Factory,
               color: 'text-slate-400',
@@ -465,34 +465,34 @@ export const ImpactStats: React.FC<ImpactStatsProps> = ({ onNavigateTab }) => {
             },
             {
               title: 'Mushroom Substrate',
-              price: '₹3,850/T',
+              price: 'Indicative',
               margin: 'ULTRA HIGH',
               icon: TreePine,
               color: 'text-emerald-400',
               borderColor: 'border-emerald-500/30',
-              desc: 'Fresh, golden, low-silica PR-126 straw. 2.1× CBG rate with net 7-day payment. Premium ESG offtake.',
+              desc: 'Illustrative premium-offtake pathway; live buyer price, quality and settlement terms are not configured.',
               buyers: 'Punjab Agro-Fungi Ltd',
               image: '/images/offtake_facility.jpg',
             },
             {
               title: 'Biochar',
-              price: '₹2,650/T',
+              price: 'Indicative',
               margin: 'HIGH',
               icon: Globe,
               color: 'text-teal-400',
               borderColor: 'border-teal-500/30',
-              desc: 'Mobile pyrolysis producing soil-amending biochar. Qualifies for secondary soil carbon removal credits.',
+              desc: 'Illustrative biochar pathway; carbon eligibility depends on a configured methodology and verification.',
               buyers: 'Takachar, AirTerra',
               image: '/images/baling_fleet.jpg',
             },
             {
               title: 'Cattle Fodder',
-              price: '₹2,400/T',
+              price: 'Indicative',
               margin: 'MEDIUM',
               icon: Heart,
               color: 'text-amber-400',
               borderColor: 'border-amber-500/30',
-              desc: '4% urea spray breaks ligno-cellulosic bond, turning parali into digestible cattle roughage for dairy cooperatives.',
+              desc: 'Illustrative fodder pathway; actual quality, safety and buyer requirements must be verified by the offtaker.',
               buyers: 'Malwa Dairy Co-op',
               image: '/images/punjab_farm_hero.jpg',
             },
@@ -535,7 +535,7 @@ export const ImpactStats: React.FC<ImpactStatsProps> = ({ onNavigateTab }) => {
         </div>
 
         <div className="mt-5 p-4 rounded-xl bg-gradient-to-r from-emerald-950/30 to-teal-950/30 border border-emerald-500/20 text-xs text-slate-300 leading-relaxed">
-          <strong className="text-emerald-300">Nirdhoom's Quality-Based Auction:</strong> Unlike traditional dump-to-CBG at ₹1,850/T, our multi-offtake auction routes straw by quality (moisture %, silica content, variety) to the highest-margin buyer. Mushroom substrate at ₹3,850/T delivers 2.1× returns vs CBG baseline. Early booking farmers get priority access to premium offtakes.
+          <strong className="text-emerald-300">Nirdhoom's Quality-Based Auction:</strong> The multi-offtake model can route lots by moisture, quality and buyer requirements. Prices and margins shown above are illustrative until live buyer contracts are connected.
         </div>
       </section>
     </div>
