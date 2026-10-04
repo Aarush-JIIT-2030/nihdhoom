@@ -48,8 +48,8 @@ const PRESET_PROMPTS = [
     agentSequence: ['vrp', 'sentinel', 'voice'],
   },
   {
-    title: '🛰️ NASA VIIRS Thermal Sweep',
-    prompt: 'Query NOAA-20 / Suomi-NPP VIIRS 375m active fire points at 18:30 UTC and intersect against registered customer polygons.',
+    title: '🛰️ FIRMS / VIIRS Thermal Sweep',
+    prompt: 'Query configured FIRMS / VIIRS observations and intersect them with registered field polygons. Treat matches as supporting thermal evidence, not proof of burn or non-burn.',
     agentSequence: ['sentinel', 'audit'],
   },
   {
