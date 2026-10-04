@@ -15,7 +15,8 @@ import {
   UserCheck,
   Bot,
   Layers3,
-  BarChart3
+  BarChart3,
+  ClipboardList
 } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 
@@ -26,6 +27,7 @@ export type ActiveTab =
   | 'IMPACT_RESEARCH'
   | 'HARVEST_INTELLIGENCE'
   | 'FIELD_PROVENANCE'
+  | 'FIELD_JOBS'
   | 'AGENTIC_CONSOLE'
   | 'DEMO_RUNNER'
   | 'DIGITAL_TWIN_3D'
@@ -151,6 +153,16 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <BarChart3 className="w-3.5 h-3.5" />
             <span>Impact & Research</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('FIELD_JOBS')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+              activeTab === 'FIELD_JOBS' ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/30' : 'text-emerald-300 hover:text-emerald-200 hover:bg-slate-900'
+            }`}
+          >
+            <ClipboardList className="w-3.5 h-3.5" />
+            <span>Field Jobs</span>
           </button>
 
           <button
