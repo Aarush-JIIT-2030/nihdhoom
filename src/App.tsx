@@ -135,6 +135,7 @@ export function App() {
         {activeTab === 'DEMO_RUNNER' && (
           <div className="flex flex-col gap-2">
             <LiveKPIDashboard
+              demoMode={demoMode}
               acresScheduled={acresScheduled}
               totalPayoutInr={totalPayoutInr}
               co2Avoided={0}
