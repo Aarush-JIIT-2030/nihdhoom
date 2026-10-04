@@ -229,7 +229,7 @@ export const DemoWalkthrough: React.FC<DemoWalkthroughProps> = ({
           <div className="flex flex-col gap-3">
             <div className="p-3 bg-amber-950/40 border border-amber-500/30 rounded-xl text-xs text-slate-200 flex items-center justify-between">
               <div>
-                <strong>Beat 3 in Action:</strong> Baler Operator completes job in the field, checks moisture sensor (14.2%), generates QR Lot code, and triggers an instant <strong>&lt;90s UPI settlement</strong> with realistic Soundbox voice chime!
+                <strong>Beat 3 in Action:</strong> Baler Operator completes the demo job, records evidence and a QR lot, then opens the <strong>simulated settlement workflow</strong>. No real money moves.
               </div>
               <button
                 onClick={() => setCurrentBeat(4)}
@@ -252,7 +252,7 @@ export const DemoWalkthrough: React.FC<DemoWalkthroughProps> = ({
           <div className="flex flex-col gap-3">
             <div className="p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-xl text-xs text-slate-200 flex items-center justify-between">
               <div>
-                <strong>Beat 4: The Money Shot!</strong> NASA FIRMS VIIRS satellite thermal overlay proves 0 fires in our customer polygons vs 8 fiery red anomalies in neighboring unregistered farms. Click <em>"View Certificate"</em> to inspect the institutional carbon claim!
+                <strong>Beat 4: Evidence Review</strong> FIRMS/VIIRS observations are shown as one supporting evidence layer. They do not by themselves prove a field did not burn or issue a carbon certificate.
               </div>
               <button
                 onClick={() => setCurrentBeat(1)}
