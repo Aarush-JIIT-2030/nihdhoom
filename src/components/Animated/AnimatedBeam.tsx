@@ -66,8 +66,8 @@ const NODES: NodeItem[] = [
   },
   {
     id: 'nasa',
-    title: 'NASA FIRMS VIIRS',
-    subtitle: '375m Zero-Burn Audit',
+    title: 'FIRMS / VIIRS evidence',
+    subtitle: 'Thermal observation layer',
     icon: ShieldCheck,
     badge: 'Beat 4',
     color: 'text-emerald-400',
