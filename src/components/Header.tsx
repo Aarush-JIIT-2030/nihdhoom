@@ -163,7 +163,7 @@ export const Header: React.FC<HeaderProps> = ({
             <span>Field Trust</span>
           </button>
 
-          {/* Agentic AI Swarm Console Tab */
+          {/* Agentic AI Swarm Console Tab */}
           <button
             onClick={() => setActiveTab('HARVEST_INTELLIGENCE')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
