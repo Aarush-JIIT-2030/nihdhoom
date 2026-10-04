@@ -27,6 +27,7 @@ type JobRecord = {
   actual_completed_at: string | null;
   failure_reason: string | null;
   last_transition_at: string | null;
+  booking?: { field_id: string } | null;
 };
 
 type EvidenceRecord = {
@@ -113,7 +114,7 @@ export function FieldJobBoard({
       if (!db) return;
 
       const [jobsResult, evidenceResult, lotsResult] = await Promise.all([
-        db.from('jobs').select('id,booking_id,machine_id,operator_id,status,slot_start,slot_end,actual_arrived_at,actual_completed_at,failure_reason,last_transition_at').order('updated_at', { ascending: false }).limit(250),
+        db.from('jobs').select('id,booking_id,machine_id,operator_id,status,slot_start,slot_end,actual_arrived_at,actual_completed_at,failure_reason,last_transition_at,booking:bookings(field_id)').order('updated_at', { ascending: false }).limit(250),
         db.from('evidence_assets').select('id,field_id,booking_id,kind,captured_at,latitude,longitude,created_at').order('created_at', { ascending: false }).limit(500),
         db.from('residue_lots').select('id,field_id,quantity_tonnes,status,baled_at,assigned_buyer_id,quality_grade').order('created_at', { ascending: false }).limit(250),
       ]);
@@ -140,8 +141,8 @@ export function FieldJobBoard({
   const jobByField = useMemo(() => {
     const map = new Map<string, JobRecord>();
     for (const job of jobs) {
-      const field = fields.find((f) => f.job_id === job.id);
-      if (field && !map.has(field.id)) map.set(field.id, job);
+      const fieldId = job.booking?.field_id || fields.find((f) => f.job_id === job.id)?.id;
+      if (fieldId && !map.has(fieldId)) map.set(fieldId, job);
     }
     return map;
   }, [fields, jobs]);
