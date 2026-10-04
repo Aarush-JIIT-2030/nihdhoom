@@ -45,9 +45,9 @@ const ROTATING_WORDS = [
   'Agentic Multi-Agent AI',
   'Parametric Slot Guarantees',
   'OR-Tools Constrained VRP',
-  'NASA VIIRS 375m Satellite Proof',
-  '<90s Instant UPI Disbursements',
-  'Institutional Carbon Credits',
+  'FIRMS / VIIRS thermal evidence',
+  'Payment workflow (simulated)',
+  'Carbon accounting readiness',
 ];
 
 const PUNJAB_DISTRICT_TICKERS = [
@@ -135,7 +135,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
 
           {/* Hard-hitting subtitle based on the 1-liner brief */}
           <p className="text-sm sm:text-base lg:text-lg text-slate-300 max-w-3xl mx-auto leading-relaxed mb-8 font-['Plus_Jakarta_Sans'] font-normal">
-            We run an autonomous dispatch network over Punjab’s tens of thousands of idle, 50–80% subsidised crop residue machines. We sell farmers a <strong className="text-emerald-300 font-semibold">guaranteed clearance date backed by penalty</strong>, price it dynamically by how early they book, settle per acre in <strong className="text-cyan-300 font-semibold">&lt;90 seconds over UPI</strong>, and prove non-burning against <strong className="text-teal-300 font-semibold">NASA FIRMS satellite fire data</strong> for carbon registries and CBG plants.
+            We run an autonomous dispatch network over Punjab’s tens of thousands of idle, 50–80% subsidised crop residue machines. We sell farmers a <strong className="text-emerald-300 font-semibold">guaranteed clearance date backed by penalty</strong>, price it dynamically by how early they book, settle through a payment workflow that is currently simulated, and support field verification with <strong className="text-teal-300 font-semibold">NASA FIRMS satellite observations</strong> as one evidence source rather than absolute proof.
           </p>
 
           {/* Interactive CTAs Bar */}
@@ -180,12 +180,12 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
               <div className="text-[11px] font-mono text-slate-400 mt-1 uppercase">Scheduled Sangrur</div>
             </div>
             <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 text-center hover:border-cyan-500/40 transition-colors">
-              <div className="text-xl sm:text-2xl font-black font-mono text-cyan-300">0 Burns</div>
-              <div className="text-[11px] font-mono text-slate-400 mt-1 uppercase">NASA FIRMS Verified</div>
+              <div className="text-xl sm:text-2xl font-black font-mono text-cyan-300">Evidence</div>
+              <div className="text-[11px] font-mono text-slate-400 mt-1 uppercase">Remote-sensing layer</div>
             </div>
             <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 text-center hover:border-amber-500/40 transition-colors">
-              <div className="text-xl sm:text-2xl font-black font-mono text-amber-400">&lt;90s</div>
-              <div className="text-[11px] font-mono text-slate-400 mt-1 uppercase">Instant UPI SLA</div>
+              <div className="text-xl sm:text-2xl font-black font-mono text-amber-400">SIM</div>
+              <div className="text-[11px] font-mono text-slate-400 mt-1 uppercase">Payments disabled</div>
             </div>
             <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 text-center hover:border-teal-500/40 transition-colors">
               <div className="text-xl sm:text-2xl font-black font-mono text-teal-300">₹0 Capex</div>
@@ -207,7 +207,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
             <div className="absolute bottom-4 left-4 right-4">
               <div className="flex items-center gap-2 mb-1.5">
                 <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/30 text-emerald-300 border border-emerald-500/50">
-                  GROUND REALITY: SANGRUR CLUSTER
+                  DEMO FIELD SCENARIO
                 </span>
                 <span className="text-xs text-slate-400 font-mono">18 Days Pre-Harvest</span>
               </div>
@@ -215,7 +215,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
                 "Reliability beats rate. Every single time."
               </h4>
               <p className="text-xs text-slate-300 mt-1 leading-relaxed">
-                Gurpreet Singh Brar (Ubhawal, Sangrur) booked pickup 18 days prior to harvest. Contracted clearance slot locked under ₹4,500 default penalty guarantee; baler dispatched from Bhawanigarh CHC in 90 seconds.
+                Illustrative booking scenario. The displayed farmer, timing, penalty and dispatch details are synthetic demo values, not live service commitments.
               </p>
             </div>
           </div>
@@ -231,11 +231,11 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
               <div className="absolute bottom-3 left-3 right-3">
                 <div className="flex items-center justify-between text-[10px] font-mono text-cyan-300 mb-1">
-                  <span>NASA FIRMS VIIRS 375m SENSOR</span>
-                  <span className="text-emerald-400 font-bold">0 Burns In Polygon</span>
+                  <span>FIRMS / VIIRS EVIDENCE LAYER</span>
+                  <span className="text-emerald-400 font-bold">NOT A NO-BURN CERTIFICATE</span>
                 </div>
                 <div className="text-xs font-bold text-white">
-                  Audit Proof Against 100+ Regional Fires
+                  Supporting thermal observations; coverage is not proof of absence
                 </div>
               </div>
             </div>
@@ -281,7 +281,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
                 </span>
               </div>
               <p className="text-xs text-slate-300 mt-0.5 leading-relaxed">
-                Orbiting NOAA-20 satellite with active radar scan cone, real-time thermal fire anomalies, and 3D verified field beacons across Sangrur.
+                Illustrative geospatial visualization of field and remote-sensing concepts; live observations appear only when a provider-backed data source is configured.
               </p>
             </div>
           </div>
