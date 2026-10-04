@@ -45,7 +45,7 @@ export const JudgePitchDrawer: React.FC<JudgePitchDrawerProps> = ({
             The One-Liner We Are Pitching
           </span>
           <p className="text-sm font-semibold text-white leading-relaxed font-['Outfit']">
-            "We don’t buy straw and we don’t buy balers. We run a dispatch network over Punjab’s idle, already-subsidised crop residue machinery. We sell farmers a <span className="text-emerald-400 underline">guaranteed clearance date backed by a penalty</span>, price it dynamically by how early they book, settle <span className="text-emerald-400 underline">per acre in under 90 seconds over UPI</span>, and prove non-burning against satellite fire data so the record can be sold to carbon registries, CBG plants and the state."
+            "We don’t buy straw and we don’t buy balers. We run a dispatch network over Punjab’s idle, already-subsidised crop residue machinery. We sell farmers a <span className="text-emerald-400 underline">guaranteed clearance date backed by a penalty</span>, price it dynamically by how early they book, settle <span className="text-emerald-400 underline">through a future provider integration; payment is currently simulated</span>, and prove non-burning against satellite fire data so the record can be sold to carbon registries, CBG plants and the state."
           </p>
         </div>
 
@@ -66,14 +66,14 @@ export const JudgePitchDrawer: React.FC<JudgePitchDrawerProps> = ({
             <div className="bg-slate-950/70 p-3 rounded-lg border border-slate-800">
               <strong className="text-emerald-400 block mb-1">Wedge 2: Product Guarantee</strong>
               <p className="text-slate-300 text-[11px]">
-                Sell certainty, not price. A guarantee with teeth. If our baler misses the 48h deadline, we pay a ₹4,500 UPI late-sowing penalty.
+                Sell certainty, not price. A pilot service-level commitment can carry a penalty once a real operator contract is executed; the current UI only models that policy.
               </p>
             </div>
 
             <div className="bg-slate-950/70 p-3 rounded-lg border border-slate-800">
               <strong className="text-emerald-400 block mb-1">Wedge 3: Pricing Mechanism</strong>
               <p className="text-slate-300 text-[11px]">
-                Price by time, not weight. Settle per acre over UPI in &lt;90s. Airline yield management: 3 weeks early = ₹1,450/ac; walk-in = ₹750/ac.
+                Price by time, not weight. Use server-calculated pricing by booking urgency; payment remains simulated until a provider is integrated and reconciled.
               </p>
             </div>
 
@@ -87,7 +87,7 @@ export const JudgePitchDrawer: React.FC<JudgePitchDrawerProps> = ({
             <div className="sm:col-span-2 bg-slate-950/70 p-3 rounded-lg border border-slate-800">
               <strong className="text-emerald-400 block mb-1">Wedge 5: Offtake Layer</strong>
               <p className="text-slate-300 text-[11px]">
-                Stop assuming biogas is the best buyer. Multi-offtake auction routes lots to Mushroom substrate (₹3,850/t), Packaging (₹3,200/t), and Biochar (₹2,650/t) instead of low-margin CBG.
+                Route verified residue lots to the best eligible offtake pathway after buyer identity, quality, quantity, price and delivery terms are confirmed.
               </p>
             </div>
           </div>
