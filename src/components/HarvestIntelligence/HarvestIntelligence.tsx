@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { CalendarDays, Factory, Gauge, MapPinned, ShieldCheck, Sparkles, Truck, Wheat } from 'lucide-react';
 import { Field, Machine } from '../../types';
+import { supabase } from '../../lib/supabase';
 
 interface Props {
   fields: Field[];
@@ -31,8 +32,60 @@ export function HarvestIntelligence({ fields, machines, demoMode }: Props) {
   }, [harvestDates]);
 
   const [offset, setOffset] = useState(7);
+  const [weather, setWeather] = useState<{ precipitationProbability: number; precipitationMm: number; windGustKmh: number; fetchedAt: string } | null>(null);
+  const [weatherLoading, setWeatherLoading] = useState(false);
+  const [weatherError, setWeatherError] = useState<string | null>(null);
   const selectedDate = new Date(start);
   selectedDate.setDate(selectedDate.getDate() + offset);
+
+  const selectedWeatherField = upcoming[0] || fields[0];
+
+  useEffect(() => {
+    if (demoMode || !supabase || !selectedWeatherField) {
+      setWeather(null);
+      setWeatherError(null);
+      return;
+    }
+
+    let active = true;
+    const loadWeather = async () => {
+      setWeatherLoading(true);
+      setWeatherError(null);
+      const { data } = await supabase.auth.getSession();
+      const token = data.session?.access_token;
+      if (!token) {
+        if (active) setWeatherError('Sign in to load field weather.');
+        setWeatherLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/weather?field_id=${encodeURIComponent(selectedWeatherField.id)}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload?.error || 'Weather provider unavailable');
+        const hourly = payload?.forecast?.hourly || {};
+        const probabilities = Array.isArray(hourly.precipitation_probability) ? hourly.precipitation_probability.slice(0, 24) : [];
+        const precipitation = Array.isArray(hourly.precipitation) ? hourly.precipitation.slice(0, 24) : [];
+        const gusts = Array.isArray(hourly.wind_gusts_10m) ? hourly.wind_gusts_10m.slice(0, 24) : [];
+        if (!active) return;
+        setWeather({
+          precipitationProbability: probabilities.length ? Math.max(...probabilities.map(Number).filter(Number.isFinite)) : 0,
+          precipitationMm: precipitation.length ? precipitation.reduce((sum: number, value: number) => sum + (Number(value) || 0), 0) : 0,
+          windGustKmh: gusts.length ? Math.max(...gusts.map(Number).filter(Number.isFinite)) : 0,
+          fetchedAt: String(payload?.fetched_at || new Date().toISOString()),
+        });
+      } catch (error) {
+        if (active) setWeatherError(error instanceof Error ? error.message : 'Weather provider unavailable');
+      } finally {
+        if (active) setWeatherLoading(false);
+      }
+    };
+
+    void loadWeather();
+    return () => { active = false; };
+  }, [demoMode, selectedWeatherField?.id]);
 
   const horizon = useMemo(() => {
     const end = new Date(start);
@@ -120,6 +173,45 @@ export function HarvestIntelligence({ fields, machines, demoMode }: Props) {
           <span>+18 days</span>
           <span>+35 days</span>
         </div>
+      </section>
+
+      <section className="rounded-2xl border border-cyan-500/20 bg-slate-950/65 p-4">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div>
+            <div className="flex items-center gap-2 text-cyan-300 text-xs font-bold uppercase tracking-widest">
+              <ShieldCheck className="h-4 w-4" /> Weather-aware operations
+            </div>
+            <h2 className="mt-1 text-lg font-black text-white">Should the fleet move this window?</h2>
+            <p className="mt-1 text-xs text-slate-500">
+              Live mode reads Open-Meteo through the authenticated weather adapter for the selected field. It informs planning; it does not guarantee machine access or harvest conditions.
+            </p>
+          </div>
+          <div className="text-[10px] text-slate-500">
+            {demoMode ? 'No synthetic weather score' : weatherLoading ? 'Fetching live forecast…' : weather ? `Fetched ${new Date(weather.fetchedAt).toLocaleString('en-IN')}` : 'No forecast'}
+          </div>
+        </div>
+        {weatherError ? (
+          <div className="mt-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-200">{weatherError}</div>
+        ) : weather ? (
+          <div className="mt-3 grid grid-cols-3 gap-2">
+            <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3">
+              <div className="text-[10px] text-slate-500">Max rain probability</div>
+              <div className="mt-1 text-xl font-black text-cyan-200">{weather.precipitationProbability}%</div>
+            </div>
+            <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3">
+              <div className="text-[10px] text-slate-500">24h precipitation</div>
+              <div className="mt-1 text-xl font-black text-cyan-200">{weather.precipitationMm.toFixed(1)} mm</div>
+            </div>
+            <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3">
+              <div className="text-[10px] text-slate-500">Max wind gust</div>
+              <div className="mt-1 text-xl font-black text-cyan-200">{weather.windGustKmh.toFixed(0)} km/h</div>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-3 rounded-lg border border-dashed border-slate-700 p-4 text-xs text-slate-500">
+            {demoMode ? 'Weather is intentionally not fabricated in demo mode.' : 'Select a field with valid coordinates to load the live forecast.'}
+          </div>
+        )}
       </section>
 
       <section className="grid grid-cols-2 lg:grid-cols-5 gap-3">
