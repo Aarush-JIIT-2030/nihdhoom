@@ -34,7 +34,7 @@ const MARKET_LISTINGS: CarbonListing[] = [
   {
     id: 'NRD-2026-SGR-001',
     projectName: 'Nirdhoom Sangrur Non-Burn Cluster',
-    registry: 'Verra VCS',
+    registry: 'External registry (illustrative)',
     country: '🇮🇳 India · Punjab',
     standard: 'VM0042 (Improved Agricultural Land Management)',
     vintage: '2026',
@@ -76,7 +76,7 @@ const MARKET_LISTINGS: CarbonListing[] = [
   {
     id: 'VCS-BR-DAC-002',
     projectName: 'Brazil Cerrado Biochar Carbon Removal',
-    registry: 'Verra VCS',
+    registry: 'External registry (illustrative)',
     country: '🇧🇷 Brazil · Minas Gerais',
     standard: 'VM0044 (Biochar Soil Amendment)',
     vintage: '2026',
@@ -90,7 +90,7 @@ const MARKET_LISTINGS: CarbonListing[] = [
   {
     id: 'NRD-2027-SUNAM-PRE',
     projectName: 'Nirdhoom Sunam Expansion Block (Pre-Verified)',
-    registry: 'Verra VCS',
+    registry: 'External registry (illustrative)',
     country: '🇮🇳 India · Punjab',
     standard: 'VM0042 (Anticipated Season 2027)',
     vintage: '2027',
