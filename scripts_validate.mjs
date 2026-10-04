@@ -34,6 +34,7 @@ const required = [
   'supabase/migrations/202610020010_nirdhoom_residue_pooling_and_research.sql',
   'supabase/migrations/202610020011_nirdhoom_residue_pooling_security_and_indexes.sql',
   'supabase/migrations/202610020012_nirdhoom_residue_pool_verification_gate.sql',
+  'supabase/migrations/202610040001_machine_privacy_and_pool_member_visibility.sql',
   '.github/workflows/ci.yml',
 ];
 
@@ -56,6 +57,7 @@ const v76 = read('supabase/migrations/202610020009_nirdhoom_security_advisor_cle
 const v77 = read('supabase/migrations/202610020010_nirdhoom_residue_pooling_and_research.sql');
 const v78 = read('supabase/migrations/202610020011_nirdhoom_residue_pooling_security_and_indexes.sql');
 const v79 = read('supabase/migrations/202610020012_nirdhoom_residue_pool_verification_gate.sql');
+const v80 = read('supabase/migrations/202610040001_machine_privacy_and_pool_member_visibility.sql');
 const controller = read('src/state/useAppController.ts');
 const envExample = read('.env.example');
 
@@ -84,6 +86,8 @@ const checks = [
   ['security advisor cleanup', v76.includes('revoke all on function public.prevent_farmer_field_tampering()') && v76.includes('drop index if exists public.buyers_profile_unique_idx') && v76.includes('(select auth.uid())')],
   ['residue pooling schema', v77.includes('buyer_demands') && v77.includes('residue_pool_members') && v77.includes('impact_methodologies')],
   ['residue pooling execution restricted', v78.includes('revoke execute on function public.join_residue_pool') && v78.includes('revoke execute on function public.create_residue_pool')],
+  ['machine privacy policy', v80.includes('create policy "authorized reads machines"') && v80.includes("operator_user_id=(select auth.uid())") && v80.includes("f.owner_id=(select auth.uid())")],
+  ['pool member privacy policy', v80.includes('create policy "authorized read pool members"') && v80.includes("farmer_id=(select auth.uid())")],
   ['pool requires verified residue', v79.includes("l.status in ('VERIFIED','VERIFIED_NON_BURN')") && v79.includes('status=case when current_tonnes+p_quantity_tonnes >= target_tonnes then \'MATCHED\'')],
   ['demo payment disclosure', read('src/components/FieldOperator/UpiSettlementModal.tsx').includes('no money movement')],
   ['live payment webhook disabled', read('api/payments/webhook.ts').includes('status(501)') && read('api/payments/initiate.ts').includes('501')],
