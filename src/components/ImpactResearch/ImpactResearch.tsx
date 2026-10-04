@@ -1,4 +1,4 @@
-import { BarChart3, BookOpen, CheckCircle2, Database, Leaf, ShieldCheck } from 'lucide-react';
+import { BarChart3, BookOpen, CheckCircle2, Database, Leaf, ShieldCheck, MapPin, FlaskConical, Clock } from 'lucide-react';
 import { Field } from '../../types';
 
 interface Props { fields: Field[]; demoMode: boolean; }
