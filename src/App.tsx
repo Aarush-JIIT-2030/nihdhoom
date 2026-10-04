@@ -26,6 +26,7 @@ import { CommandCenter } from './components/CommandCenter/CommandCenter';
 import { ResiduePooling } from './components/ResiduePooling/ResiduePooling';
 import { ImpactResearch } from './components/ImpactResearch/ImpactResearch';
 import { HarvestIntelligence } from './components/HarvestIntelligence/HarvestIntelligence';
+import { FieldProvenancePanel } from './components/FieldProvenance/FieldProvenancePanel';
 
 
 import { INITIAL_STORAGE_YARDS, INITIAL_BUYERS } from './data/mockData';
@@ -119,6 +120,10 @@ export function App() {
           <ImpactResearch fields={fields} demoMode={demoMode} />
         )}
 
+        {activeTab === 'FIELD_PROVENANCE' && (
+          <FieldProvenancePanel fields={fields} demoMode={demoMode} />
+        )}
+
         {activeTab === 'HARVEST_INTELLIGENCE' && (
           <HarvestIntelligence fields={fields} machines={machines} demoMode={demoMode} />
         )}
@@ -203,7 +208,7 @@ export function App() {
                     <ShieldCheck className="w-4 h-4 text-emerald-400" />
                   </div>
                   <div className="text-xl font-extrabold text-emerald-400 font-mono">
-                    {fields.length} Polygons (20.7 ac)
+                    {fields.length} Polygons
                   </div>
                   <p className="text-[11px] text-slate-400 mt-1">
                     Illustrative thermal intersection check
@@ -218,7 +223,7 @@ export function App() {
                     <span className="text-sm">🔥</span>
                   </div>
                   <div className="text-xl font-extrabold text-red-400 font-mono">
-                    {fireEvents.length} Points (442 K)
+                    {fireEvents.length} Points
                   </div>
                   <p className="text-[11px] text-slate-400 mt-1">
                     Demo fire events shown outside customer boundaries
