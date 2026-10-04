@@ -51,12 +51,12 @@ const ROTATING_WORDS = [
 ];
 
 const PUNJAB_DISTRICT_TICKERS = [
-  { district: 'Sangrur (Bhawanigarh)', status: 'ACTIVE DISPATCH', balers: '4 CHC Balers', acres: '88.4 ac', firms: '0 Burns Verified', time: 'Live' },
-  { district: 'Patiala (Nabaha)', status: 'VRP RE-ROUTING', balers: '6 CHC Balers', acres: '142.0 ac', firms: '0 Burns Verified', time: '1m ago' },
-  { district: 'Barnala (Mehal Kalan)', status: 'HARVEST SPIKE', balers: '3 CHC Balers', acres: '64.8 ac', firms: '0 Burns Verified', time: '2m ago' },
-  { district: 'Mansa (Budhlada)', status: 'NDVI 96% MATURE', balers: '5 CHC Balers', acres: '110.5 ac', firms: '0 Burns Verified', time: '3m ago' },
-  { district: 'Ludhiana (Jagraon)', status: 'AUCTION CLOSED', balers: '4 CHC Balers', acres: '92.0 ac', firms: '0 Burns Verified', time: '5m ago' },
-  { district: 'Bathinda (Rampura)', status: 'SLOT CONTRACTED', balers: '3 CHC Balers', acres: '78.2 ac', firms: '0 Burns Verified', time: '7m ago' },
+  { district: 'Sangrur (Bhawanigarh)', status: 'ACTIVE DISPATCH', balers: '4 CHC Balers', acres: '88.4 ac', firms: 'Thermal observations reviewed', time: 'Live' },
+  { district: 'Patiala (Nabaha)', status: 'VRP RE-ROUTING', balers: '6 CHC Balers', acres: '142.0 ac', firms: 'Thermal observations reviewed', time: '1m ago' },
+  { district: 'Barnala (Mehal Kalan)', status: 'HARVEST SPIKE', balers: '3 CHC Balers', acres: '64.8 ac', firms: 'Thermal observations reviewed', time: '2m ago' },
+  { district: 'Mansa (Budhlada)', status: 'NDVI 96% MATURE', balers: '5 CHC Balers', acres: '110.5 ac', firms: 'Thermal observations reviewed', time: '3m ago' },
+  { district: 'Ludhiana (Jagraon)', status: 'AUCTION CLOSED', balers: '4 CHC Balers', acres: '92.0 ac', firms: 'Thermal observations reviewed', time: '5m ago' },
+  { district: 'Bathinda (Rampura)', status: 'SLOT CONTRACTED', balers: '3 CHC Balers', acres: '78.2 ac', firms: 'Thermal observations reviewed', time: '7m ago' },
 ];
 
 export const AgenticLanding: React.FC<AgenticLandingProps> = ({
@@ -435,7 +435,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
             {
               tab: 'BALER_OPERATOR' as ActiveTab,
               title: '📱 Field Operator Offline PWA',
-              desc: 'Low-connectivity field app with IndexedDB sync queue, QR lot weighment, and instant UPI payout trigger.',
+              desc: 'Low-connectivity field app with IndexedDB sync queue, QR lot weighment, and simulated settlement workflow.',
               tag: 'Offline-First',
               badgeColor: 'text-blue-300 bg-blue-950/60 border-blue-500/30',
             },
