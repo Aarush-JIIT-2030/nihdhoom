@@ -58,7 +58,7 @@ const PRESET_PROMPTS = [
     agentSequence: ['pricing', 'voice'],
   },
   {
-    title: '💸 <90s UPI Settlement Batch',
+    title: '💸 Settlement workflow (simulated)',
     prompt: 'Verify weighment & geotagged bale photos for Field PB-SGR-01, trigger RazorpayX direct UPI payout to Gurpreet Singh, and dispatch Punjabi voice confirmation.',
     agentSequence: ['audit', 'voice'],
   },
