@@ -504,7 +504,7 @@ export const FarmerOnboarding: React.FC = () => {
                   ) : (
                     <div className="p-2.5 bg-emerald-950/50 border border-emerald-500/40 rounded-lg text-xs text-emerald-300 flex items-center gap-2">
                       <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                      Bank account verified: {upiId} · ₹1 credited & reversed
+                      Demo bank-link state recorded for {upiId}; no bank transaction was performed
                     </div>
                   )}
                 </div>
