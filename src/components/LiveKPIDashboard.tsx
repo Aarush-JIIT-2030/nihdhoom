@@ -62,6 +62,7 @@ interface LiveKPIDashboardProps {
   firmsZeroBurnCount?: number;
   activeMachines?: number;
   fireEventsOutsideCount?: number;
+  demoMode?: boolean;
 }
 
 export const LiveKPIDashboard: React.FC<LiveKPIDashboardProps> = ({
@@ -71,6 +72,7 @@ export const LiveKPIDashboard: React.FC<LiveKPIDashboardProps> = ({
   firmsZeroBurnCount = 5,
   activeMachines = 4,
   fireEventsOutsideCount = 8,
+  demoMode = true,
 }) => {
   const [upiFlash, setUpiFlash] = useState(false);
   const [upiMessage, setUpiMessage] = useState('');
@@ -104,11 +106,11 @@ export const LiveKPIDashboard: React.FC<LiveKPIDashboardProps> = ({
       color: 'text-emerald-400',
       borderColor: 'border-emerald-500/30',
       bgColor: 'bg-emerald-500/5',
-      sub: '100% inside 48h window',
+      sub: demoMode ? 'Illustrative demo metric' : 'From connected field records',
       subColor: 'text-emerald-400',
     },
     {
-      label: 'UPI Settled Today',
+      label: demoMode ? 'Settlement ledger (sim.)' : 'Settlement ledger',
       value: totalPayoutInr,
       prefix: '₹',
       suffix: '',
@@ -117,11 +119,11 @@ export const LiveKPIDashboard: React.FC<LiveKPIDashboardProps> = ({
       color: 'text-amber-400',
       borderColor: 'border-amber-500/30',
       bgColor: 'bg-amber-500/5',
-      sub: '< 90s per settlement',
+      sub: demoMode ? 'No money movement' : 'Provider state only',
       subColor: 'text-amber-400',
     },
     {
-      label: 'CO₂e Avoided',
+      label: demoMode ? 'CO₂e planning estimate' : 'CO₂e recorded',
       value: co2Avoided,
       suffix: ' t',
       decimals: 1,
@@ -129,19 +131,19 @@ export const LiveKPIDashboard: React.FC<LiveKPIDashboardProps> = ({
       color: 'text-teal-400',
       borderColor: 'border-teal-500/30',
       bgColor: 'bg-teal-500/5',
-      sub: 'Verra VM0042 eligible',
+      sub: demoMode ? 'Methodology not configured' : 'Methodology-dependent',
       subColor: 'text-teal-400',
     },
     {
-      label: 'FIRMS 0-Burn Fields',
+      label: demoMode ? 'Thermal evidence examples' : 'Thermal evidence',
       value: firmsZeroBurnCount,
-      suffix: ' / 5',
+      suffix: demoMode ? ' examples' : '',
       decimals: 0,
       icon: ShieldCheck,
       color: 'text-emerald-400',
       borderColor: 'border-emerald-500/40',
       bgColor: 'bg-emerald-950/30',
-      sub: 'Remote-sensing evidence',
+      sub: demoMode ? 'Not a non-burn certificate' : 'Supporting observations',
       subColor: 'text-emerald-300',
     },
     {
@@ -197,7 +199,7 @@ export const LiveKPIDashboard: React.FC<LiveKPIDashboardProps> = ({
                 </span>
                 <span className="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-bold">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />
-                  NOAA-20 LIVE
+                  FIRMS / VIIRS layer
                 </span>
               </div>
               <p className="text-[11px] text-slate-400 mt-0.5">
@@ -217,10 +219,10 @@ export const LiveKPIDashboard: React.FC<LiveKPIDashboardProps> = ({
             <Zap className={`w-4 h-4 shrink-0 ${upiFlash ? 'text-amber-400' : 'text-slate-500'}`} />
             <div className="text-xs overflow-hidden">
               <div className={`font-bold truncate ${upiFlash ? 'text-amber-300' : 'text-slate-400'}`}>
-                {upiFlash ? upiMessage : 'UPI SLA: < 90s guarantee'}
+                {upiFlash ? upiMessage : 'Settlement workflow: disabled'}
               </div>
               <div className="text-slate-500 text-[10px]">
-                {upiFlash ? 'Settlement completed · Soundbox alert sent' : 'Zero weight dispute · Per-acre pricing'}
+                {upiFlash ? 'Simulation only · no provider event' : 'Provider integration disabled'}
               </div>
             </div>
           </div>
