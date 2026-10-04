@@ -35,6 +35,24 @@ export interface LatLng {
   lng: number;
 }
 
+
+export type ProvenanceStatus = 'DECLARED' | 'MAPPED' | 'REFERENCE_MATCHED' | 'FIELD_VERIFIED';
+
+export type ProvenanceSource = 'FARMER_DECLARATION' | 'CADASTRAL_REFERENCE' | 'GPS_OPERATOR' | 'SYSTEM_DERIVED' | 'UNKNOWN';
+
+export interface FieldProvenance {
+  acreage: ProvenanceSource;
+  geometry: ProvenanceSource;
+  khasra: ProvenanceSource;
+  crop: ProvenanceSource;
+  harvest_date: ProvenanceSource;
+  status: ProvenanceStatus;
+  verified_by?: string;
+  verified_at?: string;
+  verification_method?: string;
+  notes?: string;
+}
+
 export interface Field {
   id: string;
   farmer_id: string;
@@ -57,6 +75,10 @@ export interface Field {
   qr_lot_code?: string;
   payout_amount?: number;
   is_verified_non_burn?: boolean;
+  provenance?: FieldProvenance;
+  job_id?: string;
+  residue_lot_id?: string;
+  last_operational_update_at?: string;
 }
 
 export interface PickupRequest {
