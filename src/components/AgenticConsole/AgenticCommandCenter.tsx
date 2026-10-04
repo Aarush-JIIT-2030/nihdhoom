@@ -59,7 +59,7 @@ const PRESET_PROMPTS = [
   },
   {
     title: '💸 Settlement workflow (simulated)',
-    prompt: 'Verify weighment & geotagged bale photos for Field PB-SGR-01, trigger RazorpayX direct UPI payout to Gurpreet Singh, and dispatch Punjabi voice confirmation.',
+    prompt: 'Verify weighment & geotagged bale photos for Field PB-SGR-01, prepare a simulated settlement record and Punjabi voice confirmation; no provider payout is initiated.',
     agentSequence: ['audit', 'voice'],
   },
 ];
@@ -112,8 +112,8 @@ export const AgenticCommandCenter: React.FC<{
       agent: 'Voice NLP Agent',
       action: 'dispatch_punjabi_whatsapp_and_audio()',
       toolCall: 'whatsapp_cloud_api.send_template(phone="+919876543210", lang="pa_IN")',
-      reasoning: 'Generated bilingual Punjabi confirmation with slot time, driver contact, and locked UPI payout estimate. Synthesized 12-second voice note for offline listening.',
-      output: 'WhatsApp message & audio dispatched • Message ID: wamid.HBgLM... • Status: Read',
+      reasoning: 'Generated bilingual Punjabi confirmation with slot time, driver contact, and locked simulated payout estimate. Synthesized 12-second voice note for offline listening.',
+      output: 'WhatsApp/audio delivery is simulated; no provider message ID is claimed.',
       status: 'DONE',
       timestamp: '18:42:11.085',
     },
@@ -372,7 +372,7 @@ export const AgenticCommandCenter: React.FC<{
                   id: 'audit',
                   name: 'Verification & Registry Agent',
                   tech: 'NASA FIRMS VIIRS 375m + ST_Contains',
-                  desc: 'Nightly thermal audit, zero-burn proof, Gold Standard VM0042 issuance.',
+                  desc: 'Nightly thermal audit, zero-burn proof, future methodology/registry pathway after measurement and independent verification.',
                   state: 'Active',
                   color: 'text-teal-400 border-teal-500/30 bg-teal-950/20',
                   badge: 'badge-emerald',
