@@ -48,7 +48,7 @@ const AnimCounter: React.FC<{
   );
 };
 
-/* ── Real Statistics from CAQM, NASA FIRMS, Punjab Agriculture Dept ── */
+/* ── Public context statistics; never presented as NIRDHOOM outcomes ── */
 const PUNJAB_FIRE_STATS = [
   { year: '2020', fires: 76929, color: '#ef4444' },
   { year: '2021', fires: 71304, color: '#f97316' },
@@ -173,7 +173,7 @@ export const ImpactStats: React.FC<ImpactStatsProps> = ({ onNavigateTab }) => {
                   1.25 lakh CRM machines already deployed — we dispatch idle ones with zero capex
                 </h4>
                 <p className="text-[11px] text-slate-300 mt-1 leading-relaxed">
-                  50-80% subsidised baler fleet sitting in CHCs &amp; FPOs. Guaranteed clearance + satellite verification + &lt;90s UPI payout.
+                  50-80% subsidised baler fleet sitting in CHCs &amp; FPOs. Capacity-aware dispatch + layered evidence review + simulated settlement workflow.
                 </p>
               </div>
             </div>
@@ -288,7 +288,7 @@ export const ImpactStats: React.FC<ImpactStatsProps> = ({ onNavigateTab }) => {
               Punjab Malwa Belt: District-Level Hotspot Intelligence
             </h2>
             <p className="text-xs text-slate-400 mt-0.5">
-              Sangrur cluster is Nirdhoom's launch district — highest fire density, maximum idle CHC infrastructure
+              Sangrur cluster is candidate research area; no live pilot is claimed — highest fire density, maximum idle CHC infrastructure
             </p>
           </div>
         </div>
@@ -339,7 +339,7 @@ export const ImpactStats: React.FC<ImpactStatsProps> = ({ onNavigateTab }) => {
                           ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
                           : 'bg-slate-800 text-slate-400 border border-slate-700'
                       }`}>
-                        {idx === 0 ? '● ACTIVE PILOT' : 'EXPANSION Q2'}
+                        {idx === 0 ? '● PROTOTYPE / RESEARCH' : 'RESEARCH CONTEXT'}
                       </span>
                     </td>
                   </tr>
@@ -381,7 +381,7 @@ export const ImpactStats: React.FC<ImpactStatsProps> = ({ onNavigateTab }) => {
               </span>
             </div>
             <p className="text-xs text-slate-400 mt-0.5">
-              Authentic testimonials from farmers in our Sangrur pilot — reliability beats rate, every time
+              Synthetic UX examples for the prototype — no live pilot testimonial is claimed.
             </p>
           </div>
         </div>
@@ -420,9 +420,9 @@ export const ImpactStats: React.FC<ImpactStatsProps> = ({ onNavigateTab }) => {
                     {t.acres} ac · {t.crop}
                   </span>
                 </div>
-                <span className="text-emerald-400 font-semibold font-mono flex items-center gap-1">
+                <span className="text-slate-400 font-semibold font-mono flex items-center gap-1">
                   <ShieldCheck className="w-3 h-3" />
-                  0 Burns
+                  No field-level claim
                 </span>
               </div>
               <div className="mt-2 text-[10px] text-emerald-300 font-mono flex items-center gap-1">
