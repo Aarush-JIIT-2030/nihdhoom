@@ -27,7 +27,7 @@ type JobRecord = {
   actual_completed_at: string | null;
   failure_reason: string | null;
   last_transition_at: string | null;
-  booking?: { field_id: string } | null;
+  booking?: { field_id: string } | { field_id: string }[] | null;
 };
 
 type EvidenceRecord = {
@@ -66,7 +66,7 @@ const stageFor = (field: Field, job?: JobRecord, lot?: LotRecord) => {
   if (lot || field.residue_lot_id) return 'RESIDUE';
   if (job?.status === 'COMPLETED' || field.status === 'CLEARED_PENDING_AUDIT') return 'EVIDENCE';
   if (job?.status === 'BALING' || field.status === 'BALING_IN_PROGRESS') return 'BALING';
-  if (job?.status === 'ARRIVED' || job?.status === 'ASSIGNED' || field.status === 'ON_THE_WAY' || field.status === 'MACHINE_ASSIGNED') return 'DISPATCH';
+  if (job?.status === 'ARRIVED' || job?.status === 'ASSIGNED' || job?.status === 'DISPATCHED' || field.status === 'MACHINE_ASSIGNED') return 'DISPATCH';
   if (field.status === 'SCHEDULED') return 'SCHEDULED';
   return 'REGISTERED';
 };
@@ -124,7 +124,7 @@ export function FieldJobBoard({
       if (firstError) {
         setError(firstError.message);
       } else {
-        setJobs((jobsResult.data || []) as JobRecord[]);
+        setJobs((jobsResult.data || []) as unknown as JobRecord[]);
         setEvidence((evidenceResult.data || []) as EvidenceRecord[]);
         setLots((lotsResult.data || []) as LotRecord[]);
       }
@@ -141,7 +141,8 @@ export function FieldJobBoard({
   const jobByField = useMemo(() => {
     const map = new Map<string, JobRecord>();
     for (const job of jobs) {
-      const fieldId = job.booking?.field_id || fields.find((f) => f.job_id === job.id)?.id;
+      const booking = Array.isArray(job.booking) ? job.booking[0] : job.booking;
+      const fieldId = booking?.field_id || fields.find((f) => f.job_id === job.id)?.id;
       if (fieldId && !map.has(fieldId)) map.set(fieldId, job);
     }
     return map;
