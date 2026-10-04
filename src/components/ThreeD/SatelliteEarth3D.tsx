@@ -556,7 +556,7 @@ export const SatelliteEarth3D: React.FC<SatelliteEarth3DProps> = ({
         <div className="bg-slate-950/85 backdrop-blur-md border border-slate-800 px-3.5 py-1.5 rounded-xl pointer-events-auto flex items-center gap-4 text-xs font-mono">
           <div className="flex items-center gap-1.5 text-emerald-400">
             <ShieldCheck className="w-3.5 h-3.5" />
-            <span>0 Burns (Nirdhoom)</span>
+            <span>Evidence review (Nirdhoom)</span>
           </div>
           <span className="text-slate-700">|</span>
           <div className="flex items-center gap-1.5 text-red-400">
