@@ -27,6 +27,7 @@ import { ResiduePooling } from './components/ResiduePooling/ResiduePooling';
 import { ImpactResearch } from './components/ImpactResearch/ImpactResearch';
 import { HarvestIntelligence } from './components/HarvestIntelligence/HarvestIntelligence';
 import { FieldProvenancePanel } from './components/FieldProvenance/FieldProvenancePanel';
+import { FieldJobBoard } from './components/FieldJobs/FieldJobBoard';
 
 
 import { INITIAL_STORAGE_YARDS, INITIAL_BUYERS } from './data/mockData';
@@ -118,6 +119,18 @@ export function App() {
 
         {activeTab === 'IMPACT_RESEARCH' && (
           <ImpactResearch fields={fields} demoMode={demoMode} />
+        )}
+
+        {activeTab === 'FIELD_JOBS' && (
+          <FieldJobBoard
+            fields={fields}
+            machines={machines}
+            demoMode={demoMode}
+            onSelectField={handleSelectField}
+            onOpenDispatch={() => setActiveTab('OPS_CONSOLE')}
+            onOpenResidue={() => setActiveTab('RESIDUE_POOLS')}
+            onOpenImpact={() => setActiveTab('IMPACT_RESEARCH')}
+          />
         )}
 
         {activeTab === 'FIELD_PROVENANCE' && (
