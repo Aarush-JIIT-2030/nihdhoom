@@ -443,7 +443,7 @@ export function App() {
         />
       )}
 
-      {/* 2. Instant UPI Settlement Modal */}
+      {/* 2. Simulated settlement record modal */}
       {fieldForUpiModal && (
         <UpiSettlementModal
           field={fieldForUpiModal}
