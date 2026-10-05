@@ -226,8 +226,7 @@ export function FieldJobBoard({
   const evidenceCount = rows.reduce((sum, r) => sum + r.fieldProof.length, 0);
   const lotCount = rows.filter((r) => r.lot).length;
 
-  return (
-    <div className="farmer-surface farmer-fields space-y-4">
+  return (\n    <div className="field-job-board farmer-surface farmer-fields space-y-4">
       <section className="rounded-2xl border border-emerald-500/20 bg-slate-950/75 p-5 shadow-xl shadow-emerald-950/10">
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
           <div>
