@@ -27,7 +27,7 @@ const NODES: NodeItem[] = [
   {
     id: 'farmer',
     title: 'Farmer Request',
-    subtitle: 'WhatsApp / Punjabi IVR',
+    subtitle: 'Telegram / Punjabi IVR',
     icon: MessageSquare,
     badge: 'Beat 1',
     color: 'text-emerald-400',
