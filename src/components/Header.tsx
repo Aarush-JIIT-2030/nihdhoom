@@ -83,7 +83,8 @@ export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: H
   const activeSecondary = secondaryNav.some((item) => item.id === activeTab);
 
   return (
-    <header className="nirdhoom-field-header sticky top-0 z-50 border-b px-3 sm:px-5">
+    <>
+      <header className="nirdhoom-field-header sticky top-0 z-50 border-b px-3 sm:px-5">
       <div className="mx-auto max-w-[1480px]">
         <div className="flex min-h-[72px] items-center gap-3">
           <button
@@ -178,9 +179,9 @@ export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: H
           </div>
         )}
       </div>
-    </header>
+      </header>
 
-    <nav className="field-mobile-bottom-nav lg:hidden" aria-label="Farmer quick navigation">
+      <nav className="field-mobile-bottom-nav lg:hidden" aria-label="Farmer quick navigation">
       {[
         ['OVERVIEW', 'Home', Activity],
         ['FIELD_JOBS', 'Fields', ClipboardList],
@@ -202,6 +203,7 @@ export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: H
           </button>
         );
       })}
-    </nav>
+      </nav>
+    </>
   );
 }
