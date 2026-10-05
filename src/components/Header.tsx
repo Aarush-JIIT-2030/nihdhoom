@@ -175,6 +175,22 @@ export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: H
           })}
         </div>
 
+        {/* Mobile task navigation: keep the five farmer actions one tap away. */}
+        <nav className="field-mobile-bottom-nav lg:hidden" aria-label="Farmer quick navigation">
+          {[
+            ['OVERVIEW', 'Home', Activity],
+            ['FIELD_JOBS', 'Fields', ClipboardList],
+            ['FARMER_ONBOARDING', 'Book', Tractor],
+            ['OPS_CONSOLE', 'Track', Map],
+            ['RESIDUE_POOLS', 'Market', Leaf],
+          ].map(([id, label, Icon]) => {
+            const NavIcon = Icon as typeof Activity;
+            return <button key={String(id)} type="button" onClick={() => navigate(id as ActiveTab)} className={activeTab === id ? 'is-active' : ''} aria-current={activeTab === id ? 'page' : undefined}>
+              <NavIcon className="h-4 w-4" /><span>{String(label)}</span>
+            </button>;
+          })}
+        </nav>
+
         {mobileOpen && (
           <div className="field-mobile-panel lg:hidden">
             <div className="mb-2 px-1 text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-900/45">All NIRDHOOM surfaces</div>
