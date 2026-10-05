@@ -62,8 +62,8 @@ export function TelegramSimulator({ onSlotConfirmed }: TelegramSimulatorProps) {
     setLinking(true);
     setLinkError('');
     try {
-      const { data } = await supabase?.auth.getSession();
-      const accessToken = data?.session?.access_token;
+      const sessionResult = await supabase?.auth.getSession();
+      const accessToken = sessionResult?.data?.session?.access_token;
       if (!accessToken) {
         setLinkError('Sign in to NIRDHOOM first, then generate a secure Telegram link.');
         return;
