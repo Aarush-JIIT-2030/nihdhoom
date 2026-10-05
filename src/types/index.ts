@@ -58,6 +58,8 @@ export interface FieldProvenance {
 
 export interface Field {
   id: string;
+  /** Supabase UUID for live joins/RPCs; UI may use an external field identifier in id. */
+  dbId?: string;
   farmer_id: string;
   farmer_name: string;
   farmer_phone: string;
