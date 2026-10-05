@@ -58,8 +58,8 @@ const PRESET_PROMPTS = [
     agentSequence: ['pricing', 'voice'],
   },
   {
-    title: '💸 Settlement workflow (simulated)',
-    prompt: 'Verify weighment & geotagged bale photos for Field PB-SGR-01, prepare a simulated settlement record and Punjabi voice confirmation; no provider payout is initiated.',
+    title: '📋 Proof & status workflow (demo)',
+    prompt: 'Verify weighment & geotagged bale photos for Field PB-SGR-01, prepare a simulated operational record and Punjabi status confirmation; no payment provider is called.',
     agentSequence: ['audit', 'voice'],
   },
 ];
@@ -103,7 +103,7 @@ export const AgenticCommandCenter: React.FC<{
       action: 'calculate_parametric_slot_quote()',
       toolCall: 'yield_pricing.quote(days_to_harvest=14, block_capacity=84%, acreage=5.2)',
       reasoning: 'Early booking at 14 days pre-harvest qualifies for maximum forward-visibility subsidy. Base rate: ₹1,500/acre. Net quote: ₹7,800 with capacity reservation is required before any confirmed slot.',
-      output: 'Guaranteed rate: ₹1,500/acre • Late-sowing compensation backed: ₹7,500 penalty bond',
+      output: 'Indicative rate: ₹1,500/acre • Capacity reservation required before a confirmed slot',
       status: 'DONE',
       timestamp: '18:42:10.612',
     },
@@ -170,7 +170,7 @@ export const AgenticCommandCenter: React.FC<{
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white font-['Outfit'] leading-tight mb-4">
             Zero Burning. Autonomous Dispatch.{' '}
             <span className="hero-word">
-              <span className="text-gradient">Guaranteed Slots.</span>
+              <span className="text-gradient">Capacity-aware Dispatch.</span>
               <svg
                 className="hero-underline"
                 viewBox="0 0 220 14"
@@ -273,7 +273,7 @@ export const AgenticCommandCenter: React.FC<{
                 <span className="badge badge-amber text-[10px]">AWAITING SIGN-OFF</span>
               </div>
               <p className="text-xs text-slate-300">
-                Agent proposed 4 machine dispatches & ₹12,500 simulated settlement workflow. Verify before execution.
+                Agent proposed 4 machine dispatches and a demo operational workflow. Verify before execution; no payment provider is called.
               </p>
             </div>
           </div>
