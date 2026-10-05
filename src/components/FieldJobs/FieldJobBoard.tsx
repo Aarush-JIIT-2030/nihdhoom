@@ -57,7 +57,7 @@ interface Props {
   demoMode: boolean;
   onSelectField: (field: Field) => void;
   onOpenDispatch: () => void;
-  onOpenParali: () => void;
+  onOpenResidue: () => void;
   onOpenImpact: () => void;
 }
 
@@ -89,7 +89,7 @@ export function FieldJobBoard({
   demoMode,
   onSelectField,
   onOpenDispatch,
-  onOpenParali,
+  onOpenResidue,
   onOpenImpact,
 }: Props) {
   const [jobs, setJobs] = useState<JobRecord[]>([]);
@@ -223,7 +223,7 @@ export function FieldJobBoard({
             <button onClick={onOpenDispatch} className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-3 py-2 text-xs font-bold text-white hover:bg-indigo-500">
               <Route className="h-3.5 w-3.5" /> Find machine
             </button>
-            <button onClick={onOpenParali} className="inline-flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs font-bold text-amber-200 hover:bg-amber-500/20">
+            <button onClick={onOpenResidue} className="inline-flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs font-bold text-amber-200 hover:bg-amber-500/20">
               <PackageCheck className="h-3.5 w-3.5" /> Parali
             </button>
             <button onClick={onOpenImpact} className="inline-flex items-center gap-2 rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-2 text-xs font-bold text-cyan-200 hover:bg-cyan-500/20">
