@@ -2521,3 +2521,32 @@ html[data-theme="dark"] .nirdhoom-field-app .text-emerald-950 {
   }
   .workspace-journey-step span:last-child { white-space: nowrap; }
 }
+
+/* Progressive loading: keep route transitions calm while secondary chunks load. */
+.workspace-loading {
+  display:flex;
+  min-height:180px;
+  align-items:center;
+  justify-content:center;
+  gap:.65rem;
+  margin:1rem 0;
+  padding:2rem;
+  border:1px solid color-mix(in srgb, var(--border, #dce7dc) 80%, transparent);
+  border-radius:20px;
+  background:color-mix(in srgb, var(--surface, #fff) 88%, transparent);
+  color:var(--muted, #68796a);
+  font-size:.9rem;
+  font-weight:700;
+}
+.workspace-loading-spinner {
+  width:1rem;
+  height:1rem;
+  border:2px solid currentColor;
+  border-right-color:transparent;
+  border-radius:50%;
+  animation:nirdhoom-spin .7s linear infinite;
+}
+@keyframes nirdhoom-spin { to { transform:rotate(360deg); } }
+@media(prefers-reduced-motion:reduce) {
+  .workspace-loading-spinner { animation:none; }
+}
