@@ -96,7 +96,7 @@ export function CommandCenter({
                 <p>{step.text}</p>
                 <span className="home-card-link">{step.tab} <ChevronRight /></span>
               </div>
-            </article>
+            </button>
           );
         })}
       </section>
