@@ -80,6 +80,7 @@ export function useAppController() {
 
       const normalizedFields: Field[] = (fieldRows || []).map(normalizeField).map((f) => ({
         ...f,
+        dbId: f.dbId,
         acreage: f.acres,
         farmer_id: String((fieldRows || []).find((row) => row.id === f.dbId)?.owner_id || ''),
         farmer_name: '',
