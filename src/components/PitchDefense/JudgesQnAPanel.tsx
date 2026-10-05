@@ -91,9 +91,8 @@ export const JudgesQnAPanel: React.FC = () => {
 
   // Nirdhoom Asset-Light Model
   const nirdhoomDispatchFee = unitAcreage * 350; // Take rate on machine routing
-  const nirdhoomCarbonRevenue = unitAcreage * 1.8 * 1500 * 0.35; // 35% cut of carbon credit
-  const nirdhoomInputMargin = unitAcreage * 620; // Margin on fertilizer/wheat seed retail
-  const nirdhoomNetRevenue = nirdhoomDispatchFee + nirdhoomCarbonRevenue + nirdhoomInputMargin;
+  const nirdhoomInputMargin = unitAcreage * 620; // Illustrative future agri-input margin
+  const nirdhoomNetRevenue = nirdhoomDispatchFee + nirdhoomInputMargin;
 
   return (
     <div className="flex flex-col gap-6 max-w-6xl mx-auto p-2">
@@ -298,9 +297,9 @@ export const JudgesQnAPanel: React.FC = () => {
           <div className="p-4 rounded-xl bg-emerald-950/30 border border-emerald-500/40 flex flex-col justify-between">
             <div>
               <span className="badge badge-emerald text-[10px] mb-1">
-                Nirdhoom Reframe (Asset-Light Dispatch Network)
+                Nirdhoom Reframe (Illustrative Asset-Light Model)
               </span>
-              <h5 className="font-bold text-sm text-white">Route Stranded Machinery + Sell High-Margin Trust</h5>
+              <h5 className="font-bold text-sm text-white">Route machinery + build verified farmer workflows</h5>
               <div className="mt-3 flex flex-col gap-1.5 text-xs text-slate-300">
                 <div className="flex justify-between">
                   <span>Machinery Capex:</span>
@@ -311,10 +310,6 @@ export const JudgesQnAPanel: React.FC = () => {
                   <span className="font-mono text-emerald-300">₹{(nirdhoomDispatchFee / 100000).toFixed(1)} L</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Carbon revenue (excluded from release):</span>
-                  <span className="font-mono text-slate-400">Not counted</span>
-                </div>
-                <div className="flex justify-between">
                   <span>Agri-Input Retail Margin (Wheat Seed/Diesel):</span>
                   <span className="font-mono text-emerald-300">₹{(nirdhoomInputMargin / 100000).toFixed(1)} L</span>
                 </div>
@@ -322,12 +317,12 @@ export const JudgesQnAPanel: React.FC = () => {
             </div>
 
             <div className="pt-3 mt-3 border-t border-emerald-500/20 text-xs">
-              <span className="text-[10px] text-slate-400 block">Total High-Margin Software Revenue</span>
+              <span className="text-[10px] text-slate-400 block">Illustrative network revenue model</span>
               <div className="text-xl font-black text-emerald-400 font-mono">
-                ₹{(nirdhoomNetRevenue / 100000).toFixed(2)} Lakhs (78% Net Margin)
+                ₹{(nirdhoomNetRevenue / 100000).toFixed(2)} Lakhs (illustrative)
               </div>
               <span className="text-[10px] text-emerald-300">
-                Zero balance-sheet inventory risk • Scalable across all 30 lakh acres
+                Illustrative only • excludes payment and carbon revenue from this release
               </span>
             </div>
           </div>
