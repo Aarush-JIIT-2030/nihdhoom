@@ -75,7 +75,7 @@ class AudioManager {
 
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel(); // Stop prior audio
-      const utteranceText = `Paytm par ${amount} rupaye prapt hue. Verified Nirdhoom clearance for ${farmerName}.`;
+      const utteranceText = `Demo mein Nirdhoom clearance ke liye ${farmerName} ka ${amount} rupaye ka simulated settlement event dikhaya ja raha hai. Koi asli payment nahi hui.`;
       const utterance = new SpeechSynthesisUtterance(utteranceText);
       utterance.rate = 1.0;
       utterance.pitch = 1.1;
