@@ -18,6 +18,7 @@ import { Field, Machine } from '../../types';
 import { UpiSettlementModal } from './UpiSettlementModal';
 import { supabase } from '../../lib/supabase';
 import { queuedEvidenceCount, queueEvidence, registerEvidenceQueueReplay } from '../../lib/offlineEvidenceQueue';
+import { validateEvidenceFile } from '../../lib/evidenceValidation';
 
 interface BalerPWAProps {
   fields: Field[];
@@ -101,6 +102,11 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
 
   const handleEvidenceCapture = async (file: File) => {
     setEvidenceMessage('');
+    const validationError = await validateEvidenceFile(file, file.name);
+    if (validationError) {
+      setEvidenceMessage(validationError);
+      return;
+    }
     const capturedAt = new Date().toISOString();
     const gps = gpsState;
     if (demoMode) {
@@ -174,6 +180,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
     });
 
     if (error) {
+      await client.storage.from('evidence').remove([path]);
       setEvidenceMessage(`Evidence metadata could not be recorded: ${error.message}`);
       return;
     }
