@@ -60,7 +60,7 @@ create or replace function public.consume_telegram_link_token(
 returns uuid
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, pg_temp
 as $$
 declare
   token_row public.telegram_link_tokens%rowtype;
@@ -108,3 +108,4 @@ end;
 $$;
 
 revoke all on function public.consume_telegram_link_token(text,bigint,bigint,text,text,text) from public, anon, authenticated;
+grant execute on function public.consume_telegram_link_token(text,bigint,bigint,text,text,text) to service_role;
