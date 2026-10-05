@@ -1,0 +1,156 @@
+import { useMemo, useState } from 'react';
+import { Bell, CalendarCheck, Camera, CheckCircle2, MapPin, Send, ShieldCheck } from 'lucide-react';
+
+interface TelegramSimulatorProps {
+  onSlotConfirmed?: (fieldId: string) => void;
+}
+
+const BOT_USERNAME = import.meta.env.VITE_TELEGRAM_BOT_USERNAME || 'NIRDHOOMBot';
+
+export function TelegramSimulator({ onSlotConfirmed }: TelegramSimulatorProps) {
+  const [language, setLanguage] = useState<'pa' | 'hi' | 'en'>('pa');
+  const [confirmed, setConfirmed] = useState(false);
+
+  const botUrl = useMemo(() => `https://t.me/${BOT_USERNAME}`, []);
+
+  const copy = {
+    pa: {
+      title: 'NIRDHOOM Telegram',
+      subtitle: 'ਕਿਸਾਨ ਲਈ ਸੌਖਾ ਸੰਚਾਰ — ਬੁਕਿੰਗ, ਮਸ਼ੀਨ ਅਤੇ ਸਬੂਤ ਇੱਕੋ ਥਾਂ',
+      welcome: 'ਸਤ ਸ੍ਰੀ ਅਕਾਲ! ਮੈਂ NIRDHOOM Sathi ਹਾਂ। ਤੁਹਾਡੇ ਖੇਤ ਦੀ clearance booking ਅਤੇ status ਵਿੱਚ ਮਦਦ ਕਰ ਸਕਦਾ ਹਾਂ।',
+      cta: 'Telegram ਵਿੱਚ NIRDHOOM ਖੋਲ੍ਹੋ',
+      slot: 'Clearance slot',
+      slotValue: 'ਅਗਲਾ ਉਪਲਬਧ slot — ਪੁਸ਼ਟੀ ਤੋਂ ਪਹਿਲਾਂ live capacity ਚੈੱਕ ਹੋਵੇਗੀ',
+      evidence: 'Field evidence',
+      evidenceValue: 'Operator Telegram ਤੋਂ photo/evidence workflow ਖੋਲ੍ਹ ਸਕਦਾ ਹੈ',
+      alerts: 'Status alerts',
+      alertsValue: 'Booking, operator assignment ਅਤੇ verification updates',
+      note: 'Live capacity, GPS ਅਤੇ verification ਸਿਰਫ਼ authenticated backend records ਤੋਂ ਦਿਖਾਏ ਜਾਣਗੇ।',
+    },
+    hi: {
+      title: 'NIRDHOOM Telegram',
+      subtitle: 'किसान के लिए आसान संचार — बुकिंग, मशीन और सबूत एक जगह',
+      welcome: 'नमस्ते! मैं NIRDHOOM Sathi हूँ। मैं आपके खेत की clearance booking और status में मदद कर सकता हूँ।',
+      cta: 'Telegram में NIRDHOOM खोलें',
+      slot: 'Clearance slot',
+      slotValue: 'अगला उपलब्ध slot — पुष्टि से पहले live capacity जाँची जाएगी',
+      evidence: 'Field evidence',
+      evidenceValue: 'Operator Telegram से photo/evidence workflow खोल सकता है',
+      alerts: 'Status alerts',
+      alertsValue: 'Booking, operator assignment और verification updates',
+      note: 'Live capacity, GPS और verification केवल authenticated backend records से दिखेंगे।',
+    },
+    en: {
+      title: 'NIRDHOOM Telegram',
+      subtitle: 'One farmer channel for booking, machine status and evidence',
+      welcome: 'Hello! I am NIRDHOOM Sathi. I can help with clearance booking and field status.',
+      cta: 'Open NIRDHOOM in Telegram',
+      slot: 'Clearance slot',
+      slotValue: 'Next available slot — live capacity is checked before confirmation',
+      evidence: 'Field evidence',
+      evidenceValue: 'Operators can open the photo/evidence workflow from Telegram',
+      alerts: 'Status alerts',
+      alertsValue: 'Booking, operator assignment and verification updates',
+      note: 'Live capacity, GPS and verification are shown only from authenticated backend records.',
+    },
+  }[language];
+
+  const confirmDemo = () => {
+    setConfirmed(true);
+    onSlotConfirmed?.('demo-field-1');
+  };
+
+  return (
+    <section className="mx-auto w-full max-w-5xl space-y-4">
+      <div className="overflow-hidden rounded-3xl border border-amber-300/40 bg-gradient-to-br from-amber-50 via-white to-emerald-50 p-5 shadow-sm sm:p-7">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+          <div className="max-w-2xl">
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-amber-300 bg-white px-3 py-1.5 text-xs font-bold text-amber-800">
+              <Send className="h-3.5 w-3.5" /> TELEGRAM-FIRST FARMER CHANNEL
+            </div>
+            <h2 className="font-['Outfit'] text-2xl font-black tracking-tight text-emerald-950 sm:text-3xl">{copy.title}</h2>
+            <p className="mt-2 text-sm font-medium leading-6 text-emerald-950/70 sm:text-base">{copy.subtitle}</p>
+            <div className="mt-5 rounded-2xl border border-emerald-900/10 bg-white/80 p-4 text-sm leading-6 text-slate-700">
+              <span className="font-bold text-emerald-950">Sathi:</span> {copy.welcome}
+            </div>
+          </div>
+
+          <div className="flex w-full flex-col gap-2 sm:w-auto">
+            <a
+              href={botUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#229ED9] px-5 py-3 text-sm font-black text-white shadow-lg transition hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+            >
+              <Send className="h-4 w-4" /> {copy.cta}
+            </a>
+            <div className="text-center text-[11px] font-semibold text-slate-500">
+              @{BOT_USERNAME}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-5 flex flex-wrap gap-2">
+          {[
+            ['pa', 'ਪੰਜਾਬੀ'],
+            ['hi', 'हिन्दी'],
+            ['en', 'English'],
+          ].map(([id, label]) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => setLanguage(id as 'pa' | 'hi' | 'en')}
+              className={`min-h-10 rounded-xl border px-3 text-sm font-bold transition ${language === id ? 'border-emerald-600 bg-emerald-700 text-white' : 'border-emerald-900/10 bg-white text-emerald-950 hover:bg-emerald-50'}`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+        {[
+          { icon: CalendarCheck, title: copy.slot, value: copy.slotValue },
+          { icon: Camera, title: copy.evidence, value: copy.evidenceValue },
+          { icon: Bell, title: copy.alerts, value: copy.alertsValue },
+        ].map(({ icon: Icon, title, value }) => (
+          <div key={title} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <Icon className="h-5 w-5 text-amber-600" />
+            <h3 className="mt-3 text-base font-extrabold text-slate-950">{title}</h3>
+            <p className="mt-1 text-sm leading-5 text-slate-600">{value}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="rounded-2xl border border-amber-300/50 bg-amber-50 p-4">
+        <div className="flex items-start gap-3">
+          <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-amber-700" />
+          <p className="text-sm font-medium leading-6 text-amber-950">{copy.note}</p>
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-slate-800 bg-slate-950 p-5 text-white shadow-sm">
+        <div className="flex items-center gap-2">
+          <MapPin className="h-5 w-5 text-amber-400" />
+          <h3 className="text-lg font-extrabold">Telegram → NIRDHOOM workflow</h3>
+        </div>
+        <div className="mt-4 grid gap-2 sm:grid-cols-4">
+          {['Farmer starts bot', 'Link field / consent', 'Book + track', 'Evidence + verification'].map((step, index) => (
+            <div key={step} className="rounded-xl border border-white/10 bg-white/5 p-3">
+              <div className="text-xs font-black text-amber-300">0{index + 1}</div>
+              <div className="mt-1 text-sm font-bold text-white">{step}</div>
+            </div>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={confirmDemo}
+          className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-xl bg-amber-400 px-4 py-2.5 text-sm font-black text-slate-950 hover:bg-amber-300"
+        >
+          {confirmed ? <CheckCircle2 className="h-4 w-4" /> : <CalendarCheck className="h-4 w-4" />}
+          {confirmed ? 'Demo slot confirmed' : 'Preview booking handoff'}
+        </button>
+      </div>
+    </section>
+  );
+}
