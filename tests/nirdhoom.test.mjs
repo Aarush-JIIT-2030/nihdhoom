@@ -95,9 +95,9 @@ test('simulation surfaces do not claim real transactions', () => {
 test('demo operational data is opt-in and production starts empty', () => {
   const controller = read('src/state/useAppController.ts');
   assert.match(controller, /VITE_NIRDHOOM_DEMO_MODE === 'true'/);
-  assert.match(controller, /useState<Field>\[\]\(DEMO_MODE \? demoSeed\.fields : \[\]\)/);
-  assert.match(controller, /useState<Machine>\[\]\(DEMO_MODE \? demoSeed\.machines : \[\]\)/);
-  assert.match(controller, /useState<BurnEvent>\[\]\(DEMO_MODE \? demoSeed\.fireEvents : \[\]\)/);
+  assert.match(controller, /useState<Field\[\]>\(DEMO_MODE \? demoSeed\.fields : \[\]\)/);
+  assert.match(controller, /useState<Machine\[\]>\(DEMO_MODE \? demoSeed\.machines : \[\]\)/);
+  assert.match(controller, /useState<BurnEvent\[\]>\(DEMO_MODE \? demoSeed\.fireEvents : \[\]\)/);
   assert.match(read('.env.example'), /VITE_NIRDHOOM_DEMO_MODE=false/);
 });
 
