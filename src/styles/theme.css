@@ -1018,3 +1018,198 @@ html[data-theme="kisan"] .nirdhoom-field-app .relative.overflow-hidden.rounded-2
     font-size: 18px !important;
   }
 }
+
+
+/* =========================================================
+   NIRDHOOM SCREEN QA — legacy surface harmonisation
+   Keep intentional device/map dark surfaces intact while
+   making farmer, research, pooling and simulator screens
+   feel like one product.
+   ========================================================= */
+
+html[data-theme="kisan"] .nirdhoom-field-app .farmer-onboarding-surface,
+html[data-theme="kisan"] .nirdhoom-field-app .field-job-board,
+html[data-theme="kisan"] .nirdhoom-field-app .impact-research-surface,
+html[data-theme="kisan"] .nirdhoom-field-app .residue-pooling-surface,
+html[data-theme="kisan"] .nirdhoom-field-app .carbon-simulator-surface {
+  color: #304b38;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .farmer-onboarding-surface :where(.text-white, .text-slate-200, .text-slate-300) {
+  color: #304b38 !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .farmer-onboarding-surface :where(.text-slate-400, .text-slate-500) {
+  color: #607263 !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .farmer-onboarding-surface :where(.bg-slate-950, .bg-slate-900, .bg-slate-900\/60, .bg-slate-900\/80, .bg-slate-950\/70) {
+  background: #fbfcf8 !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .farmer-onboarding-surface :where(.border-slate-800, .border-slate-700) {
+  border-color: rgba(31,122,70,.14) !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .farmer-onboarding-surface :where(button) {
+  border-radius: 12px;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .farmer-onboarding-surface :where(input) {
+  background: #fff !important;
+  color: #173522 !important;
+  border-color: rgba(31,122,70,.22) !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .field-job-board :where(article) {
+  background: #fffdf8 !important;
+  border-color: rgba(31,122,70,.14) !important;
+  box-shadow: 0 8px 24px rgba(32,74,43,.045);
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .field-job-board :where(.text-white, .text-slate-200, .text-slate-300) {
+  color: #304b38 !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .field-job-board :where(.text-slate-400, .text-slate-500) {
+  color: #657565 !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .field-job-board :where(.bg-slate-950, .bg-slate-950\/70, .bg-slate-900\/55) {
+  background: #f7faf4 !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .field-job-board :where(.border-slate-800, .border-slate-700) {
+  border-color: rgba(31,122,70,.13) !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .impact-research-surface :where(.bg-slate-950\/70, .bg-slate-950\/60, .bg-slate-900\/60, .bg-slate-900\/50) {
+  background: #fffdf8 !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .impact-research-surface :where(.text-white, .text-slate-200, .text-slate-300) {
+  color: #304b38 !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .impact-research-surface :where(.text-slate-400, .text-slate-500) {
+  color: #657565 !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .impact-research-surface :where(.border-slate-800, .border-slate-700) {
+  border-color: rgba(31,122,70,.14) !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .residue-pooling-surface :where(.bg-slate-950\/70, .bg-slate-950\/60, .bg-slate-900\/60, .bg-slate-900\/50) {
+  background: #fffdf8 !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .residue-pooling-surface :where(.text-white, .text-slate-200, .text-slate-300) {
+  color: #304b38 !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .residue-pooling-surface :where(.text-slate-400, .text-slate-500) {
+  color: #657565 !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .residue-pooling-surface :where(.border-slate-800, .border-slate-700) {
+  border-color: rgba(31,122,70,.14) !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .carbon-simulator-surface :where(.glass-panel, .glass-panel-emerald) {
+  background: #fffdf8 !important;
+  border-color: rgba(31,122,70,.14) !important;
+  box-shadow: 0 10px 28px rgba(32,74,43,.055);
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .carbon-simulator-surface :where(.bg-slate-950, .bg-slate-950\/40, .bg-slate-900\/60, .bg-slate-900\/80, .bg-slate-900\/95) {
+  background: #f7faf4 !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .carbon-simulator-surface :where(.text-white, .text-slate-200, .text-slate-300) {
+  color: #304b38 !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .carbon-simulator-surface :where(.text-slate-400, .text-slate-500) {
+  color: #657565 !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .carbon-simulator-surface :where(.border-slate-800, .border-slate-700) {
+  border-color: rgba(31,122,70,.14) !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .carbon-simulator-surface :where(input) {
+  background: #fff !important;
+  color: #173522 !important;
+  border-color: rgba(31,122,70,.22) !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .ops-map-surface {
+  min-height: 420px;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .ops-map-surface > :where(.absolute) {
+  max-width: calc(100% - 20px);
+}
+
+@media (max-width: 760px) {
+  html[data-theme="kisan"] .nirdhoom-field-app .farmer-onboarding-surface,
+  html[data-theme="kisan"] .nirdhoom-field-app .field-job-board,
+  html[data-theme="kisan"] .nirdhoom-field-app .impact-research-surface,
+  html[data-theme="kisan"] .nirdhoom-field-app .residue-pooling-surface,
+  html[data-theme="kisan"] .nirdhoom-field-app .carbon-simulator-surface {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  html[data-theme="kisan"] .nirdhoom-field-app .field-job-board :where(article) {
+    padding: 14px !important;
+  }
+
+  html[data-theme="kisan"] .nirdhoom-field-app .impact-research-surface :where(.grid) {
+    min-width: 0;
+  }
+
+  html[data-theme="kisan"] .nirdhoom-field-app .carbon-simulator-surface :where(.grid) {
+    min-width: 0;
+  }
+
+  html[data-theme="kisan"] .nirdhoom-field-app .ops-map-surface {
+    height: min(74vh, 520px);
+    min-height: 390px;
+    border-radius: 16px;
+  }
+}
+
+@media (max-width: 560px) {
+  html[data-theme="kisan"] .nirdhoom-field-app .farmer-onboarding-surface {
+    gap: 14px;
+  }
+
+  html[data-theme="kisan"] .nirdhoom-field-app .impact-research-surface :where(h1) {
+    font-size: 1.65rem;
+  }
+
+  html[data-theme="kisan"] .nirdhoom-field-app .impact-research-surface :where(.grid.grid-cols-2) {
+    grid-template-columns: 1fr;
+  }
+
+  html[data-theme="kisan"] .nirdhoom-field-app .carbon-simulator-surface :where(.grid.grid-cols-2) {
+    grid-template-columns: 1fr;
+  }
+
+  html[data-theme="kisan"] .nirdhoom-field-app .ops-map-surface {
+    min-height: 360px;
+  }
+}
+
+@media (max-width: 420px) {
+  html[data-theme="kisan"] .nirdhoom-field-app .field-job-board :where(article) {
+    padding: 12px !important;
+  }
+
+  html[data-theme="kisan"] .nirdhoom-field-app .ops-map-surface {
+    min-height: 340px;
+    height: 68vh;
+  }
+}
