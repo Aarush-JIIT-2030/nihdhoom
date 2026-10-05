@@ -1030,3 +1030,150 @@ html[data-theme="kisan"] .home-text-button:focus-visible {
   outline: 3px solid #e5b84b;
   outline-offset: 2px;
 }
+
+
+/* =========================================================
+   FARMER-FIRST PRODUCT POLISH — reference-inspired
+   Calm hierarchy, obvious actions, no dashboard overload.
+   ========================================================= */
+html[data-theme="kisan"] .home-farmer-actions {
+  display:grid;
+  grid-template-columns:1.35fr repeat(4,minmax(0,1fr));
+  gap:.65rem;
+  align-items:stretch;
+  margin:0 0 2.1rem;
+  padding:.7rem;
+  border:1px solid rgba(31,122,70,.12);
+  border-radius:20px;
+  background:rgba(255,255,255,.88);
+  box-shadow:0 12px 32px rgba(35,76,44,.055);
+}
+html[data-theme="kisan"] .home-farmer-actions-intro {
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:.65rem .85rem;
+}
+html[data-theme="kisan"] .home-farmer-actions-intro strong {
+  margin-top:.25rem;
+  color:#173522;
+  font-size:.86rem;
+  line-height:1.2;
+}
+html[data-theme="kisan"] .home-farmer-actions-intro > span:last-child {
+  margin-top:.22rem;
+  color:#758776;
+  font-size:.6rem;
+  line-height:1.4;
+}
+html[data-theme="kisan"] .home-farmer-actions > button {
+  min-width:0;
+  display:flex;
+  align-items:center;
+  gap:.55rem;
+  padding:.75rem .72rem;
+  border:1px solid rgba(31,122,70,.09);
+  border-radius:15px;
+  background:#f8fbf6;
+  color:#28643e;
+  text-align:left;
+  transition:transform .18s ease,background .18s ease,box-shadow .18s ease;
+}
+html[data-theme="kisan"] .home-farmer-actions > button:hover {
+  transform:translateY(-2px);
+  background:#eef7eb;
+  box-shadow:0 10px 24px rgba(35,76,44,.08);
+}
+html[data-theme="kisan"] .home-farmer-actions > button > svg:first-child {
+  flex:none;
+  width:18px;
+  height:18px;
+  color:#2f8250;
+}
+html[data-theme="kisan"] .home-farmer-actions > button > span {
+  min-width:0;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+}
+html[data-theme="kisan"] .home-farmer-actions > button b {
+  color:#1c4e30;
+  font-size:.67rem;
+  line-height:1.2;
+}
+html[data-theme="kisan"] .home-farmer-actions > button small {
+  margin-top:.2rem;
+  color:#718272;
+  font-size:.53rem;
+  line-height:1.25;
+}
+html[data-theme="kisan"] .home-farmer-actions > button > svg:last-child {
+  flex:none;
+  width:13px;
+  height:13px;
+  color:#86a08a;
+}
+html[data-theme="kisan"] .home-farmer-actions > button:focus-visible {
+  outline:3px solid rgba(49,115,72,.24);
+  outline-offset:2px;
+}
+html[data-theme="kisan"] .home-hero {
+  box-shadow:0 30px 80px -42px rgba(27,67,40,.34);
+}
+html[data-theme="kisan"] .home-hero-content {
+  max-width:800px;
+}
+html[data-theme="kisan"] .home-hero h1 {
+  max-width:760px;
+}
+html[data-theme="kisan"] .home-section-kicker {
+  letter-spacing:.12em;
+}
+html[data-theme="kisan"] .home-workflow-card,
+html[data-theme="kisan"] .home-role-card,
+html[data-theme="kisan"] .home-map-card,
+html[data-theme="kisan"] .home-split-story,
+html[data-theme="kisan"] .home-evidence {
+  box-shadow:0 10px 30px rgba(35,76,44,.055);
+}
+html[data-theme="kisan"] .home-workflow-card:hover,
+html[data-theme="kisan"] .home-role-card:hover {
+  border-color:rgba(31,122,70,.2);
+}
+html[data-theme="kisan"] .home-workflow-body p,
+html[data-theme="kisan"] .home-role-card p {
+  color:#637664;
+}
+@media(max-width:1100px) {
+  html[data-theme="kisan"] .home-farmer-actions {
+    grid-template-columns:repeat(4,minmax(0,1fr));
+  }
+  html[data-theme="kisan"] .home-farmer-actions-intro {
+    grid-column:1/-1;
+    padding:.35rem .6rem .5rem;
+  }
+}
+@media(max-width:720px) {
+  html[data-theme="kisan"] .home-farmer-actions {
+    grid-template-columns:1fr 1fr;
+    gap:.5rem;
+    padding:.6rem;
+    border-radius:18px;
+  }
+  html[data-theme="kisan"] .home-farmer-actions-intro {
+    grid-column:1/-1;
+    padding:.3rem .45rem .5rem;
+  }
+  html[data-theme="kisan"] .home-farmer-actions > button {
+    min-height:66px;
+    padding:.65rem;
+  }
+  html[data-theme="kisan"] .home-farmer-actions > button > svg:last-child {
+    display:none;
+  }
+}
+@media(prefers-reduced-motion:reduce) {
+  html[data-theme="kisan"] .home-farmer-actions > button {
+    transition:none;
+  }
+}
