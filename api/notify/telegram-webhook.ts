@@ -27,7 +27,7 @@ function menu() {
   };
 }
 
-export async function POST(request: Request) {
+async function handle(request: Request) {
   const secret = process.env.TELEGRAM_WEBHOOK_SECRET;
   if (!secret) return Response.json({ error: 'Telegram webhook secret is not configured' }, { status: 503 });
   if (request.headers.get('x-telegram-bot-api-secret-token') !== secret) {
@@ -89,6 +89,23 @@ export async function POST(request: Request) {
   return Response.json({ ok: true, update_id: update.update_id });
 }
 
-export async function GET() {
-  return Response.json({ ok: true, service: 'nirdhoom-telegram-webhook' });
+
+export default async function handler(req: any, res: any) {
+  if (req.method === 'GET') return res.status(200).json({ ok: true, service: 'nirdhoom-telegram-webhook' });
+  if (req.method !== 'POST') {
+    res.setHeader?.('Allow', 'GET, POST');
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+  const body = typeof req.body === 'string' ? req.body : JSON.stringify(req.body || {});
+  const request = new Request('https://nirdhoom.local/api/notify/telegram-webhook', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-telegram-bot-api-secret-token': String(req.headers?.['x-telegram-bot-api-secret-token'] || ''),
+    },
+    body,
+  });
+  const response = await handle(request);
+  const responseBody = await response.json().catch(() => ({}));
+  return res.status(response.status).json(responseBody);
 }
