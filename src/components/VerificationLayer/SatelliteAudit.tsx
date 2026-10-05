@@ -127,6 +127,13 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
         </div>
       </div>
 
+      <section className="evidence-language" aria-label="Evidence language">
+        <div><b>Observed</b><span>What the system actually saw</span></div>
+        <div><b>Verified</b><span>What an authorized review confirmed</span></div>
+        <div><b>Calculated</b><span>Derived from recorded inputs</span></div>
+        <div><b>Estimated</b><span>Planning value, not a measured outcome</span></div>
+      </section>
+
       {/* 4 Quantitative Proof Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="glass-panel p-4 border-emerald-500/30">
