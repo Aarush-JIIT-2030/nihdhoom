@@ -229,7 +229,7 @@ function WorkspaceHeader({ activeTab, demoMode, onNavigate }: WorkspaceHeaderPro
         <h1 id="workspace-title">{meta.title}</h1>
         <p>{meta.description}</p>
         {meta.action && (
-          <button type="button" onClick={() => onNavigate(meta.action!.tab)} className="workspace-action">
+          <button type="button" onClick={() => onNavigate(meta.action!.tab)} onMouseEnter={() => prefetchWorkspace(meta.action!.tab)} onFocus={() => prefetchWorkspace(meta.action!.tab)} className="workspace-action">
             {meta.action.label} <span aria-hidden="true">→</span>
           </button>
         )}
