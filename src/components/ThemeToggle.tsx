@@ -53,7 +53,7 @@ export const ThemeToggle: React.FC = () => {
     >
       {theme === 'kisan' && (
         <>
-          <Wheat className="w-3.5 h-3.5 text-amber-400 animate-bounce" />
+          <Wheat className="w-3.5 h-3.5 text-amber-600" />
           <span className="hidden sm:inline text-amber-300 font-semibold">Field Theme</span>
         </>
       )}
