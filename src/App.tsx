@@ -324,7 +324,7 @@ export function App() {
 
       {/* Main Content Area */}
       <main id="main-content" className="field-main flex-1 w-full max-w-[1480px] mx-auto px-3 sm:px-5 lg:px-7 py-5 sm:py-7 relative z-10">
-        <Suspense fallback={<div className="workspace-loading" role="status" aria-live="polite"><span className="workspace-loading-spinner" aria-hidden="true" /> Loading this workspace…</div>}>
+        <Suspense fallback={<WorkspaceLoading />}>
         {activeTab !== 'OVERVIEW' && <WorkspaceHeader activeTab={activeTab} demoMode={demoMode} onNavigate={navigate} />}
 
         {/* PRIMARY PRODUCT SURFACE: RESIDUE-FIRST COMMAND CENTER */}
