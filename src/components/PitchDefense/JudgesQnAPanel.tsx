@@ -1,15 +1,6 @@
 import React, { useState } from 'react';
 import { 
-  HelpCircle, 
-  ShieldAlert, 
-  CheckCircle2, 
-  DollarSign, 
-  TrendingUp, 
-  Scale, 
-  AlertTriangle,
-  Sparkles,
-  ChevronDown,
-  ChevronUp
+  HelpCircle, ShieldAlert, CheckCircle2, DollarSign, ChevronDown, ChevronUp
 } from 'lucide-react';
 
 interface JudgeQnA {
@@ -74,18 +65,7 @@ const JUDGE_QUESTIONS: JudgeQnA[] = [
 
 export const JudgesQnAPanel: React.FC = () => {
   const [expandedId, setExpandedId] = useState<string>('q1');
-  const [unitAcreage, setUnitAcreage] = useState<number>(1000);
 
-  // Unit Economics calculations comparing Incumbent Model vs Nirdhoom Model
-  const incumbentCapex = Math.round((unitAcreage / 300) * 1800000); // Baler purchase capex
-  const incumbentRevenue = unitAcreage * 2.2 * 1850; // Tonnes * CBG rate
-  const incumbentCosts = unitAcreage * (1100 + 750); // Baling + transport
-  const incumbentNetMargin = incumbentRevenue - incumbentCosts;
-
-  // Nirdhoom Asset-Light Model
-  const nirdhoomDispatchFee = unitAcreage * 350; // Take rate on machine routing
-  const nirdhoomInputMargin = unitAcreage * 620; // Illustrative future agri-input margin
-  const nirdhoomNetRevenue = nirdhoomDispatchFee + nirdhoomInputMargin;
 
   return (
     <div className="flex flex-col gap-6 max-w-6xl mx-auto p-2">
@@ -177,101 +157,37 @@ export const JudgesQnAPanel: React.FC = () => {
         })}
       </div>
 
-      {/* Live Unit Economics Comparison: Asset-Heavy vs Nirdhoom Asset-Light Reframe */}
+      {/* Evidence-backed business model */}
       <div className="glass-panel p-5 flex flex-col gap-4">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-          <div className="flex items-center gap-2">
-            <DollarSign className="w-5 h-5 text-emerald-400" />
-            <h4 className="font-bold text-base text-white">
-              Unit Economics Reality: Asset-Heavy vs Nirdhoom Asset-Light
-            </h4>
-          </div>
-          <div className="flex items-center gap-2 text-xs">
-            <span className="text-slate-400">Simulation Scale:</span>
-            <span className="font-bold text-emerald-400 font-mono text-sm">{unitAcreage.toLocaleString()} Acres</span>
+        <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
+          <DollarSign className="w-5 h-5 text-emerald-400" />
+          <div>
+            <h4 className="font-bold text-base text-white">Business model: what is known vs what we will test</h4>
+            <p className="text-xs text-slate-400 mt-1">No invented margins. We anchor the pilot around observed CRM rental economics.</p>
           </div>
         </div>
-
-        <input
-          type="range"
-          min="500"
-          max="10000"
-          step="500"
-          value={unitAcreage}
-          onChange={(e) => setUnitAcreage(Number(e.target.value))}
-          className="w-full accent-emerald-500 cursor-pointer"
-        />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Old Incumbent Model */}
-          <div className="p-4 rounded-xl bg-red-950/20 border border-red-500/30 flex flex-col justify-between">
-            <div>
-              <span className="badge badge-crimson text-[10px] mb-1">
-                Asset-heavy reference model
-              </span>
-              <h5 className="font-bold text-sm text-white">Buy Balers, Sell Parali to CBG</h5>
-              <div className="mt-3 flex flex-col gap-1.5 text-xs text-slate-300">
-                <div className="flex justify-between">
-                  <span>Machinery Capex (15L/baler):</span>
-                  <strong className="text-red-400 font-mono">₹{(incumbentCapex / 100000).toFixed(1)} Lakhs Capex</strong>
-                </div>
-                <div className="flex justify-between">
-                  <span>Gross Straw Revenue @ ₹1,850/t:</span>
-                  <span className="font-mono">₹{(incumbentRevenue / 100000).toFixed(1)} L</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Baling + Transport Costs:</span>
-                  <span className="font-mono text-red-300">-₹{(incumbentCosts / 100000).toFixed(1)} L</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="pt-3 mt-3 border-t border-red-500/20 text-xs">
-              <span className="text-[10px] text-slate-400 block">Operating Cash Margin</span>
-              <div className="text-lg font-black text-red-400 font-mono">
-                Thin to Negative (-₹{(Math.abs(incumbentNetMargin) / 100000).toFixed(1)} L)
-              </div>
-              <span className="text-[10px] text-slate-500">
-                Illustrative comparison only; not NIRDHOOM field economics.
-              </span>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div className="rounded-xl border border-cyan-500/25 bg-cyan-950/15 p-4">
+            <span className="badge badge-emerald text-[10px]">Market evidence</span>
+            <h5 className="mt-2 font-bold text-sm text-white">CRM access already has a market</h5>
+            <p className="mt-2 text-xs leading-relaxed text-slate-300">CEEW reports all-inclusive CRM packages around ₹2,000/acre in Punjab, with renting substantially cheaper than buying equipment for smaller holdings.</p>
           </div>
-
-          {/* Nirdhoom Reframe Model */}
-          <div className="p-4 rounded-xl bg-emerald-950/30 border border-emerald-500/40 flex flex-col justify-between">
-            <div>
-              <span className="badge badge-emerald text-[10px] mb-1">
-                Nirdhoom Reframe (Illustrative Asset-Light Model)
-              </span>
-              <h5 className="font-bold text-sm text-white">Route machinery + build verified farmer workflows</h5>
-              <div className="mt-3 flex flex-col gap-1.5 text-xs text-slate-300">
-                <div className="flex justify-between">
-                  <span>Machinery Capex:</span>
-                  <strong className="text-emerald-400 font-mono">₹0 (Route Subsidised CHC Fleet)</strong>
-                </div>
-                <div className="flex justify-between">
-                  <span>Dispatch Commission (₹350/ac):</span>
-                  <span className="font-mono text-emerald-300">₹{(nirdhoomDispatchFee / 100000).toFixed(1)} L</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Illustrative future input/offtake margin:</span>
-                  <span className="font-mono text-emerald-300">₹{(nirdhoomInputMargin / 100000).toFixed(1)} L</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="pt-3 mt-3 border-t border-emerald-500/20 text-xs">
-              <span className="text-[10px] text-slate-400 block">Illustrative network revenue model</span>
-              <div className="text-xl font-black text-emerald-400 font-mono">
-                ₹{(nirdhoomNetRevenue / 100000).toFixed(2)} Lakhs (illustrative)
-              </div>
-              <span className="text-[10px] text-emerald-300">
-                Illustrative only • excludes payment and carbon revenue from this release
-              </span>
-            </div>
+          <div className="rounded-xl border border-amber-500/25 bg-amber-950/15 p-4">
+            <span className="badge badge-emerald text-[10px]">Our hypothesis</span>
+            <h5 className="mt-2 font-bold text-sm text-white">Charge for coordination, not machinery</h5>
+            <p className="mt-2 text-xs leading-relaxed text-slate-300">A future NIRDHOOM pilot can test a transparent coordination/service fee with CHCs, FPOs or other paying partners. The current release has no live payment movement.</p>
           </div>
+          <div className="rounded-xl border border-emerald-500/25 bg-emerald-950/15 p-4">
+            <span className="badge badge-emerald text-[10px]">Pilot metrics</span>
+            <h5 className="mt-2 font-bold text-sm text-white">Prove value before scaling</h5>
+            <p className="mt-2 text-xs leading-relaxed text-slate-300">Measure booking completion, machine arrival, clearance time, operator utilisation, evidence completeness, residue handoff and willingness to pay.</p>
+          </div>
+        </div>
+        <div className="rounded-xl border border-slate-800 bg-slate-950/50 p-3 text-[11px] text-slate-400">
+          <strong className="text-slate-200">Evidence boundary:</strong> CEEW's observed rental prices and service patterns are market context, not NIRDHOOM revenue. Any future fee, offtake margin or carbon value requires a real pilot and counterparty.
         </div>
       </div>
+
     </div>
   );
 };
