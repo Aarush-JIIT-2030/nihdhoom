@@ -59,12 +59,12 @@ export function CommandCenter({
         <img src={heroImage} alt="Farmer and field in Punjab" className="home-hero-image" />
         <div className="home-hero-overlay" />
         <div className="home-hero-content">
-          <div className="home-eyebrow"><Leaf className="h-4 w-4" /> NIRDHOOM • Field-first crop residue network</div>
-          <h1>Turn crop residue<br /><span>into a managed resource.</span></h1>
-          <p>From the field to the baler, from evidence to verified residue, and from residue to the right buyer — NIRDHOOM connects the whole journey.</p>
+          <div className="home-eyebrow"><Leaf className="h-4 w-4" /> FIELD CLEARANCE COORDINATION • NIRDHOOM</div>
+          <h1>When harvest ends,<br /><span>who clears the field?</span></h1>
+          <p>NIRDHOOM connects the farmer request to available machine capacity, field evidence and the next residue pathway — so the messy middle becomes visible and actionable.</p>
           <div className="home-actions">
-            <button onClick={onOpenResidue} className="home-primary">Explore residue & buyers <ArrowRight className="h-4 w-4" /></button>
-            <button onClick={onOpenImpact} className="home-secondary"><ShieldCheck className="h-4 w-4" /> See how verification works</button>
+            <button onClick={() => onNavigate('FARMER_ONBOARDING')} className="home-primary">Book parali pickup <ArrowRight className="h-4 w-4" /></button>
+            <button onClick={() => onNavigate('DEMO_RUNNER')} className="home-secondary"><ShieldCheck className="h-4 w-4" /> See the 2-minute demo</button>
           </div>
           <div className="home-trust-row">
             <span><CheckCircle2 /> Evidence before impact</span>
