@@ -240,6 +240,20 @@ test('Telegram Mini App identity is verified server-side', () => {
 });
 
 
+test('competition center is wired for both RIDE and WarriorHacks', () => {
+  const header = read('src/components/Header.tsx');
+  const app = read('src/App.tsx');
+  const center = read('src/components/PitchDefense/CompetitionCenter.tsx');
+  assert.match(header, /COMPETITION_CENTER/);
+  assert.match(header, /Competition Pitch/);
+  assert.match(app, /const CompetitionCenter = lazy/);
+  assert.match(app, /activeTab === 'COMPETITION_CENTER'/);
+  assert.match(center, /RIDE HACK/);
+  assert.match(center, /WARRIORHACKS 2\.0/);
+  assert.match(center, /Field.*Book.*Machine.*Proof.*Parali/);
+  assert.match(center, /Real payment or payout movement/);
+});
+
 test('theme preference is applied before React boot and themes are shell-safe', () => {
   const html = read('index.html');
   const toggle = read('src/components/ThemeToggle.tsx');
