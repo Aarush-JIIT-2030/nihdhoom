@@ -1,8 +1,8 @@
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense, useEffect, useCallback, startTransition } from 'react';
 import { Header, ActiveTab } from './components/Header';
 const DemoWalkthrough = lazy(() => import('./components/DemoWalkthrough').then((m) => ({ default: m.DemoWalkthrough })));
 import { LiveKPIDashboard } from './components/LiveKPIDashboard';
-import { OpsMap } from './components/OpsConsole/OpsMap';
+const OpsMap = lazy(() => import('./components/OpsConsole/OpsMap').then((m) => ({ default: m.OpsMap })));
 const VRPDispatchPanel = lazy(() => import('./components/OpsConsole/VRPDispatchPanel').then((m) => ({ default: m.VRPDispatchPanel })));
 const FieldDetailDrawer = lazy(() => import('./components/OpsConsole/FieldDetailDrawer').then((m) => ({ default: m.FieldDetailDrawer })));
 const TelegramSimulator = lazy(() => import('./components/FarmerSurface/TelegramSimulator').then((m) => ({ default: m.TelegramSimulator })));
@@ -296,6 +296,10 @@ export function App() {
     if (!demoMode && demoOnlyTabs.includes(activeTab)) setActiveTab('OVERVIEW');
   }, [activeTab, demoMode, setActiveTab]);
 
+  const navigate = useCallback((tab: ActiveTab) => {
+    startTransition(() => setActiveTab(tab));
+  }, [setActiveTab]);
+
   const handleSelectField = (field: Field) => {
     setSelectedField(field);
   };
@@ -317,7 +321,7 @@ export function App() {
       {/* Main Content Area */}
       <main id="main-content" className="field-main flex-1 w-full max-w-[1480px] mx-auto px-3 sm:px-5 lg:px-7 py-5 sm:py-7 relative z-10">
         <Suspense fallback={<div className="workspace-loading" role="status" aria-live="polite"><span className="workspace-loading-spinner" aria-hidden="true" /> Loading this workspace…</div>}>
-        {activeTab !== 'OVERVIEW' && <WorkspaceHeader activeTab={activeTab} demoMode={demoMode} onNavigate={setActiveTab} />}
+        {activeTab !== 'OVERVIEW' && <WorkspaceHeader activeTab={activeTab} demoMode={demoMode} onNavigate={navigate} />}
 
         {/* PRIMARY PRODUCT SURFACE: RESIDUE-FIRST COMMAND CENTER */}
         {activeTab === 'OVERVIEW' && (
@@ -328,9 +332,9 @@ export function App() {
             storageYards={demoMode ? INITIAL_STORAGE_YARDS : []}
             buyers={demoMode ? INITIAL_BUYERS : []}
             onSelectField={handleSelectField}
-            onOpenResidue={() => setActiveTab('RESIDUE_POOLS')}
-            onOpenImpact={() => setActiveTab('IMPACT_RESEARCH')}
-            onNavigate={(tab) => setActiveTab(tab as ActiveTab)}
+            onOpenResidue={() => navigate('RESIDUE_POOLS')}
+            onOpenImpact={() => navigate('IMPACT_RESEARCH')}
+            onNavigate={(tab) => navigate(tab as ActiveTab)}
           />
         )}
 
@@ -356,9 +360,9 @@ export function App() {
             machines={machines}
             demoMode={demoMode}
             onSelectField={handleSelectField}
-            onOpenDispatch={() => setActiveTab('OPS_CONSOLE')}
-            onOpenResidue={() => setActiveTab('RESIDUE_POOLS')}
-            onOpenImpact={() => setActiveTab('IMPACT_RESEARCH')}
+            onOpenDispatch={() => navigate('OPS_CONSOLE')}
+            onOpenResidue={() => navigate('RESIDUE_POOLS')}
+            onOpenImpact={() => navigate('IMPACT_RESEARCH')}
           />
         )}
 
