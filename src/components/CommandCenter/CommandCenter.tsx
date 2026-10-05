@@ -71,6 +71,27 @@ export function CommandCenter({
         </div>
       </section>
 
+      {/* FARMER-FIRST QUICK ACTIONS */}
+      <section className="home-farmer-actions" aria-label="Quick farmer actions">
+        <div className="home-farmer-actions-intro">
+          <span className="home-section-kicker">For farmers</span>
+          <strong>Start with what you need today.</strong>
+          <span>No technical setup. Just choose an action.</span>
+        </div>
+        <button type="button" onClick={() => onNavigate('FARMER_ONBOARDING')}>
+          <MapPinned /><span><b>My field</b><small>Add or view your field</small></span><ChevronRight />
+        </button>
+        <button type="button" onClick={() => onNavigate('FARMER_ONBOARDING')}>
+          <CalendarDays /><span><b>Book clearance</b><small>Plan residue removal</small></span><ChevronRight />
+        </button>
+        <button type="button" onClick={() => onNavigate('OPS_CONSOLE')}>
+          <Truck /><span><b>Track machine</b><small>See today's operation</small></span><ChevronRight />
+        </button>
+        <button type="button" onClick={onOpenResidue}>
+          <Leaf /><span><b>Sell residue</b><small>Explore verified buyers</small></span><ChevronRight />
+        </button>
+      </section>
+
       {/* QUICK CONTEXT: plain language, no dashboard overload */}
       <section className="home-intro">
         <div>
