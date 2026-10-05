@@ -2450,3 +2450,74 @@ html[data-theme="dark"] .nirdhoom-field-app .text-emerald-950 {
 .field-mobile-bottom-nav {
   isolation: isolate;
 }
+
+
+.workspace-journey {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: min(100%, 620px);
+  margin-top: 18px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel-soft);
+}
+.workspace-journey-step {
+  position: relative;
+  display: inline-flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 34px;
+  border: 0;
+  border-radius: 10px;
+  color: var(--muted);
+  background: transparent;
+  font-size: .68rem;
+  font-weight: 850;
+  cursor: pointer;
+  transition: background .18s var(--ease), color .18s var(--ease), transform .18s var(--ease);
+}
+.workspace-journey-step:hover { background: var(--card-hover); color: var(--text); }
+.workspace-journey-step.is-current {
+  color: var(--text);
+  background: var(--panel-strong);
+  box-shadow: 0 1px 4px rgba(0,0,0,.08);
+}
+.workspace-journey-step.is-done { color: var(--green-bright); }
+.workspace-journey-number {
+  display: grid;
+  width: 20px;
+  height: 20px;
+  place-items: center;
+  flex: 0 0 20px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  font-size: 9px;
+  font-weight: 900;
+}
+.workspace-journey-step.is-current .workspace-journey-number {
+  border-color: var(--blue-bright);
+  background: color-mix(in srgb, var(--blue-bright) 12%, transparent);
+}
+.workspace-journey-step.is-done .workspace-journey-number {
+  border-color: color-mix(in srgb, var(--green-bright) 35%, var(--line));
+  background: color-mix(in srgb, var(--green-bright) 10%, transparent);
+}
+@media (max-width: 760px) {
+  .workspace-journey {
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin-top: 14px;
+  }
+  .workspace-journey::-webkit-scrollbar { display: none; }
+  .workspace-journey-step {
+    flex: 0 0 auto;
+    min-width: 76px;
+    padding: 0 7px;
+  }
+  .workspace-journey-step span:last-child { white-space: nowrap; }
+}
