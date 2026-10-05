@@ -31,26 +31,26 @@ type NavItem = {
 const primaryNav: NavItem[] = [
   { id: 'OVERVIEW', label: 'Home', short: 'Home', icon: Activity, description: 'Farmer-first overview and today\'s activity' },
   { id: 'FIELD_JOBS', label: 'My Fields', short: 'Fields', icon: ClipboardList, description: 'Fields, bookings and clearance jobs' },
-  { id: 'FARMER_ONBOARDING', label: 'Book Clearance', short: 'Book', icon: Tractor, description: 'Consent and clearance onboarding' },
-  { id: 'OPS_CONSOLE', label: 'Track Clearance', short: 'Track', icon: Map, description: 'Map, machines and active routes' },
-  { id: 'RESIDUE_POOLS', label: 'Residue Market', short: 'Residue', icon: Leaf, description: 'Residue supply, pools and buyer demand' },
-  { id: 'SATELLITE_AUDIT', label: 'Verify', short: 'Verify', icon: ShieldCheck, description: 'Evidence and verification' },
-  { id: 'IMPACT_RESEARCH', label: 'Impact & Research', short: 'Impact', icon: BarChart3, description: 'Verified impact and research workspace' },
+  { id: 'FARMER_ONBOARDING', label: 'Book Parali Pickup', short: 'Book', icon: Tractor, description: 'Choose your field and book machine pickup' },
+  { id: 'OPS_CONSOLE', label: 'Track My Machine', short: 'Track', icon: Map, description: 'See where the machine is and what happens next' },
+  { id: 'RESIDUE_POOLS', label: 'Parali Market', short: 'Market', icon: Leaf, description: 'See where collected parali can go' },
+  { id: 'SATELLITE_AUDIT', label: 'Check My Proof', short: 'Proof', icon: ShieldCheck, description: 'See photos, field proof and verification' },
+  { id: 'IMPACT_RESEARCH', label: 'Why It Matters', short: 'Impact', icon: BarChart3, description: 'Simple facts about crop residue and air quality' },
 ];
 
 const secondaryNav: NavItem[] = [
-  { id: 'HARVEST_INTELLIGENCE', label: 'Harvest Intelligence', icon: Wheat, description: 'Harvest pressure and timing' },
-  { id: 'FIELD_PROVENANCE', label: 'Field Trust', icon: ShieldCheck, description: 'Field provenance and audit trail' },
-  { id: 'BALER_OPERATOR', label: 'Operator PWA', icon: Smartphone, description: 'Machine operator workflow' },
-  { id: 'FARMER_SURFACE', label: 'Farmer Telegram', icon: MessageSquare, description: 'Telegram farmer communication surface' },
-  { id: 'FARMER_KYC', label: 'Farmer Onboarding', icon: UserCheck, description: 'Phone OTP, consent and profile setup' },
-  { id: 'OFFTAKE_AUCTION', label: 'Buyer Offtake', icon: TrendingUp, description: 'Buyer demand and procurement' },
-  { id: 'CARBON_MARKET', label: 'Carbon', icon: CircleDollarSign, description: 'Carbon marketplace prototype' },
-  { id: 'AGENTIC_CONSOLE', label: 'AI Assistant', icon: Bot, description: 'AI operations workspace' },
-  { id: 'DIGITAL_TWIN_3D', label: '3D Field Twin', icon: Activity, description: 'Geospatial digital twin' },
-  { id: 'MACHINERY_3D', label: '3D Baler', icon: Activity, description: 'Machine digital twin' },
-  { id: 'DEMO_RUNNER', label: 'Demo Walkthrough', icon: Sparkles, description: 'End-to-end product walkthrough' },
-  { id: 'JUDGE_DEFENSE', label: 'Judge Q&A', icon: HelpCircle, description: 'Pitch defence workspace' },
+  { id: 'HARVEST_INTELLIGENCE', label: 'Harvest Timing', icon: Wheat, description: 'Know when to prepare for harvest and pickup' },
+  { id: 'FIELD_PROVENANCE', label: 'Field Details', icon: ShieldCheck, description: 'Field boundary, consent and history' },
+  { id: 'BALER_OPERATOR', label: 'Machine Worker', icon: Smartphone, description: 'Tools for the person driving the machine' },
+  { id: 'FARMER_SURFACE', label: 'Telegram Help', icon: MessageSquare, description: 'Get updates and help on Telegram' },
+  { id: 'FARMER_KYC', label: 'My Profile', icon: UserCheck, description: 'Phone verification and farmer consent' },
+  { id: 'OFFTAKE_AUCTION', label: 'Buyers', icon: TrendingUp, description: 'See buyer needs for collected parali' },
+  { id: 'CARBON_MARKET', label: 'Carbon (Advanced)', icon: CircleDollarSign, description: 'Advanced carbon evidence workspace' },
+  { id: 'AGENTIC_CONSOLE', label: 'AI Helper (Advanced)', icon: Bot, description: 'Advanced assistant for operations' },
+  { id: 'DIGITAL_TWIN_3D', label: '3D Field View', icon: Activity, description: 'Advanced 3D view of fields' },
+  { id: 'MACHINERY_3D', label: '3D Machine View', icon: Activity, description: 'Advanced 3D machine view' },
+  { id: 'DEMO_RUNNER', label: 'How NIRDHOOM Works', icon: Sparkles, description: 'See the complete journey step by step' },
+  { id: 'JUDGE_DEFENSE', label: 'Product Q&A', icon: HelpCircle, description: 'Questions and answers about the product' },
 ];
 
 export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: HeaderProps) {
@@ -131,7 +131,7 @@ export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: H
                 <div className="field-more-menu" role="menu">
                   <div className="px-3 pb-2 pt-1">
                     <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-900/45">Explore NIRDHOOM</div>
-                    <div className="mt-1 text-[11px] text-emerald-900/55">Operations, evidence, buyers and advanced tools.</div>
+                    <div className="mt-1 text-[11px] text-emerald-900/55">Machines, proof, buyers and advanced tools.</div>
                   </div>
                   <div className="grid grid-cols-2 gap-1.5">
                     {secondaryNav.map((item) => {
