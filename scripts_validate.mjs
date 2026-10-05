@@ -5,6 +5,18 @@ const root = new URL('.', import.meta.url).pathname;
 const read = file => fs.readFileSync(path.join(root, file), 'utf8');
 const exists = file => fs.existsSync(path.join(root, file));
 const errors = [];
+const apiRouteFiles = [];
+function collectApiRoutes(dir, prefix = '') {
+  if (!fs.existsSync(dir)) return;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (entry.name.startsWith('_')) continue;
+    const relative = prefix ? `${prefix}/${entry.name}` : entry.name;
+    const absolute = path.join(dir, entry.name);
+    if (entry.isDirectory()) collectApiRoutes(absolute, relative);
+    else if (/\\.(m?js|cjs|ts)$/.test(entry.name)) apiRouteFiles.push(relative);
+  }
+}
+collectApiRoutes(path.join(root, 'api'));
 
 const required = [
   'index.html',
@@ -77,6 +89,7 @@ const checks = [
   ['no committed build archive', !exists('nirdhoom-final.zip') && !exists('Nirdhoom-6-Telegram-Supabase-FIRMS-Telegram.zip')],
   ['no stale legacy data module', !exists('src/lib/data.js')],
   ['Node 24 runtime', pkg.engines?.node?.includes('24') && !read('vercel.json').includes('functions')],
+  ['Vercel Hobby serverless function budget', apiRouteFiles.length <= 12],
   ['lockfile present', lock.includes('"lockfileVersion": 3')],
   ['Supabase RLS', /enable row level security/i.test(read('supabase/migrations/202609270002_nirdhoom_production.sql'))],
   ['server-owned booking RPC', v71.includes('reserve_clearance_booking_v2') && v71.includes('server_authoritative')],
