@@ -294,15 +294,18 @@ test('visible competition surfaces stay claim-safe', () => {
 });
 
 
-test('theme preference is applied before React boot and themes are shell-safe', () => {
+test('application uses one field-first theme and no theme switcher', () => {
   const html = read('index.html');
-  const toggle = read('src/components/ThemeToggle.tsx');
+  const header = read('src/components/Header.tsx');
   const css = read('src/index.css');
-  assert.match(html, /localStorage\.getItem\('nirdhoom-theme'\)/);
-  assert.doesNotMatch(html, /data-theme="kisan" style="background:/);
-  assert.match(toggle, /localStorage\.setItem\(STORAGE_KEY, theme\)/);
-  assert.match(css, /html\[data-theme="dark"\] \.nirdhoom-field-app/);
-  assert.match(css, /html\[data-theme="light"\] \.nirdhoom-field-app/);
+  const theme = read('src/styles/theme.css');
+  assert.match(html, /<html lang="en" data-theme="kisan">/);
+  assert.doesNotMatch(html, /nirdhoom-theme/);
+  assert.doesNotMatch(header, /ThemeToggle/);
+  assert.match(css, /html\[data-theme="kisan"\]/);
+  assert.match(theme, /html\[data-theme="kisan"\]/);
+  assert.doesNotMatch(theme, /html\[data-theme="dark"\] \{/);
+  assert.doesNotMatch(theme, /html\[data-theme="light"\] \{/);
 });
 
 test('Hindi text converter is present and uses bounded transliteration requests', () => {
