@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import {
   UserCheck,
@@ -51,6 +51,13 @@ export const FarmerOnboarding: React.FC = () => {
   const [bankVerified, setBankVerified] = useState(false);
   const [otpError, setOtpError] = useState('');
   const [consentAccepted, setConsentAccepted] = useState(false);
+  const [resendSeconds, setResendSeconds] = useState(0);
+
+  useEffect(() => {
+    if (resendSeconds <= 0) return;
+    const timer = window.setInterval(() => setResendSeconds((value) => Math.max(0, value - 1)), 1000);
+    return () => window.clearInterval(timer);
+  }, [resendSeconds]);
 
   const stepIndex = STEP_ORDER.indexOf(currentStep);
 
@@ -82,6 +89,7 @@ export const FarmerOnboarding: React.FC = () => {
       setOtpError(error.message || 'Unable to send OTP.');
       return;
     }
+    setResendSeconds(45);
     setCurrentStep('OTP');
   };
 
@@ -130,9 +138,9 @@ export const FarmerOnboarding: React.FC = () => {
   return (
     <div className="flex flex-col gap-6 max-w-6xl mx-auto p-2">
       {/* Banner */}
-      <div className="glass-panel-emerald p-5">
+      <div className="relative overflow-hidden rounded-3xl border border-emerald-400/20 bg-gradient-to-br from-slate-950 via-emerald-950 to-slate-950 p-5 shadow-[0_20px_60px_rgba(0,0,0,.20)] sm:p-6">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center shrink-0 shadow-lg shadow-emerald-500/30">
+          <div className="w-12 h-12 rounded-2xl bg-amber-400/15 text-amber-300 border border-amber-300/30 flex items-center justify-center shrink-0 shadow-lg shadow-amber-500/10">
             <UserCheck className="w-6 h-6" />
           </div>
           <div>
@@ -140,10 +148,10 @@ export const FarmerOnboarding: React.FC = () => {
               <h3 className="font-extrabold text-lg text-white font-['Outfit']">
                 Farmer KYC & Onboarding Flow
               </h3>
-              <span className="badge badge-emerald text-xs">{DEMO_MODE ? 'Simulation' : 'Live phone OTP + KYC demo'}</span>
+              <span className="rounded-full border border-amber-300/25 bg-amber-300/10 px-2.5 py-1 text-[11px] font-black text-amber-200">{DEMO_MODE ? 'SIMULATION' : 'LIVE OTP'}</span>
             </div>
-            <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
-              Mobile OTP is connected to Supabase Auth in live mode. Identity, biometric, bank and cadastral steps remain explicit demo/adapter states until their authorized providers are connected.
+            <p className="text-sm text-slate-300 mt-2 max-w-2xl leading-6">
+              <span className="font-semibold text-white">Mobile OTP is live.</span> Identity, biometric, bank and cadastral steps remain explicit demo/adapter states until their authorized providers are connected.
             </p>
           </div>
         </div>
@@ -152,7 +160,7 @@ export const FarmerOnboarding: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Steps Sidebar */}
         <div className="lg:col-span-4">
-          <div className="glass-panel p-4 flex flex-col gap-1.5">
+          <div className="glass-panel p-4 flex flex-col gap-1.5 rounded-3xl">
             <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
               Onboarding Progress
             </h4>
@@ -195,7 +203,7 @@ export const FarmerOnboarding: React.FC = () => {
 
         {/* Active Step Form */}
         <div className="lg:col-span-8">
-          <div className="glass-panel p-5 flex flex-col gap-4 min-h-[400px]">
+          <div className="glass-panel p-5 flex flex-col gap-4 min-h-[400px] rounded-3xl border border-slate-700/70">
             {currentStep === 'PHONE' && (
               <>
                 <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
@@ -272,14 +280,17 @@ export const FarmerOnboarding: React.FC = () => {
                   <h4 className="font-bold text-sm text-white">Step 2: OTP Verification</h4>
                 </div>
                 <div className="p-3 bg-slate-900/80 rounded-lg border border-slate-800 text-xs text-slate-300">
-                  OTP sent to <strong className="text-white">+91 {phone}</strong> via SMS.
+                  <div className="flex items-center justify-between gap-3">
+                    <span>OTP sent to <strong className="text-white">+91 {phone}</strong> via SMS.</span>
+                    <button type="button" onClick={() => { setCurrentStep('PHONE'); setOtp(''); setOtpError(''); }} className="shrink-0 text-amber-300 font-bold hover:text-amber-200">Edit</button>
+                  </div>
                   {DEMO_MODE && <>
                     <br/>
                     <span className="text-emerald-400 font-semibold">Demo OTP: 8 4 2 6 1 3</span>
                   </>}
                 </div>
-                <div>
-                  <label className="text-xs text-slate-400 block mb-2">Enter 6-digit OTP</label>
+                <div className="rounded-2xl border border-amber-400/20 bg-amber-400/5 p-4">
+                  <label className="text-sm font-bold text-slate-200 block mb-3">Enter 6-digit OTP</label>
                   <div className="flex gap-2 justify-center">
                     {Array.from({ length: 6 }).map((_, i) => (
                       <input
@@ -302,6 +313,11 @@ export const FarmerOnboarding: React.FC = () => {
                       />
                     ))}
                   </div>
+                  <p className="mt-3 text-xs text-slate-500">Never share this code with anyone. NIRDHOOM will only use it to verify this phone.</p>
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <button type="button" disabled={resendSeconds > 0 || loading} onClick={sendLiveOtp} className="text-sm font-bold text-amber-300 disabled:text-slate-600">{resendSeconds > 0 ? `Resend OTP in ${resendSeconds}s` : 'Resend OTP'}</button>
+                  <span className="text-xs text-slate-500">SMS verification</span>
                 </div>
                 <button
                   onClick={verifyLiveOtp}
