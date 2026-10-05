@@ -61,7 +61,7 @@ export const MultiOfftakeAuction: React.FC = () => {
             src="/images/offtake_facility.jpg" 
             alt="Punjab CBG Plant & Gourmet Mushroom Cultivation from Paddy Straw"
             className="w-full h-48 object-cover object-center"
-          / loading="lazy" decoding="async">
+           loading="lazy" decoding="async" />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
           <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between">
             <div>
