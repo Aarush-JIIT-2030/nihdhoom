@@ -959,6 +959,28 @@ html[data-theme="kisan"] .home-cta-links { display:grid; grid-template-columns:1
 html[data-theme="kisan"] .home-cta-links span { display:flex; align-items:center; gap:.5rem; padding:.72rem; border:1px solid rgba(255,255,255,.11); border-radius:13px; background:rgba(255,255,255,.06); color:rgba(255,255,255,.8); font-size:.66rem; font-weight:800; }
 html[data-theme="kisan"] .home-cta-links svg { width:15px; height:15px; color:#d5e9c0; }
 
+html[data-theme="kisan"] .home-workflow-card:focus-visible,
+html[data-theme="kisan"] .home-role-card:focus-visible {
+  outline:3px solid rgba(49,115,72,.28);
+  outline-offset:3px;
+  transform:translateY(-2px);
+}
+html[data-theme="kisan"] .home-role-card:hover {
+  transform:translateY(-3px);
+  box-shadow:0 20px 44px rgba(35,76,44,.10);
+}
+html[data-theme="kisan"] .home-workflow-card,
+html[data-theme="kisan"] .home-role-card {
+  cursor:pointer;
+  appearance:none;
+  font:inherit;
+}
+html[data-theme="kisan"] .home-primary:focus-visible,
+html[data-theme="kisan"] .home-secondary:focus-visible,
+html[data-theme="kisan"] .home-text-button:focus-visible {
+  outline:3px solid rgba(242,196,94,.5);
+  outline-offset:3px;
+}
 @media(max-width:1050px){
  html[data-theme="kisan"] .home-workflow{grid-template-columns:repeat(2,1fr)}
  html[data-theme="kisan"] .home-role-grid{grid-template-columns:repeat(2,1fr)}
