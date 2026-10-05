@@ -1,4 +1,5 @@
 declare const process: { env: Record<string, string | undefined> };
+import { rateLimit } from './_lib/rateLimit';
 
 type Coordinate = { lat: number; lng: number };
 const validPoint = (p: any): p is Coordinate =>
@@ -32,6 +33,8 @@ async function verifyUser(req: any) {
 }
 
 export default async function handler(req: any, res: any) {
+  if (!rateLimit(req, res, 'api-firms.ts', 30)) return res.status(429).json({ error: 'Too many requests; please retry shortly.' });
+
   if (req.method !== 'POST') {
     res.setHeader?.('Allow', 'POST');
     return res.status(405).json({ error: 'Method not allowed' });
