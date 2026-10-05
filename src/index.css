@@ -1933,3 +1933,174 @@ html[data-theme="kisan"] .home-hero .home-eyebrow {
   border-color:rgba(242,140,40,.55);
   box-shadow:0 0 0 1px rgba(242,140,40,.10) inset;
 }
+
+
+/* Research story: visual evidence without turning the homepage into a dashboard. */
+html[data-theme="kisan"] .home-research-story {
+  display:grid;
+  grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr);
+  gap:1.25rem;
+  margin-top:4rem;
+  padding:1.2rem;
+  border:1px solid rgba(31,122,70,.12);
+  border-radius:26px;
+  background:linear-gradient(135deg,#fffaf1 0%,#f5f8ef 52%,#fff 100%);
+  box-shadow:0 16px 42px rgba(35,76,44,.07);
+  overflow:hidden;
+}
+html[data-theme="kisan"] .home-research-copy {
+  padding:1.4rem;
+  align-self:center;
+}
+html[data-theme="kisan"] .home-research-copy h2 {
+  margin-top:.35rem;
+  color:#173522;
+  font-family:'Outfit','DM Sans',sans-serif;
+  font-size:clamp(1.75rem,3vw,2.7rem);
+  line-height:1.08;
+  letter-spacing:-.045em;
+}
+html[data-theme="kisan"] .home-research-copy > p {
+  margin-top:.85rem;
+  max-width:650px;
+  color:#536657;
+  font-size:.98rem;
+  line-height:1.72;
+}
+html[data-theme="kisan"] .home-research-points {
+  display:grid;
+  gap:.6rem;
+  margin-top:1.2rem;
+}
+html[data-theme="kisan"] .home-research-points > div {
+  padding:.8rem .9rem;
+  border:1px solid rgba(242,140,40,.18);
+  border-radius:15px;
+  background:rgba(255,255,255,.82);
+}
+html[data-theme="kisan"] .home-research-points strong {
+  display:block;
+  color:#294d35;
+  font-size:.88rem;
+}
+html[data-theme="kisan"] .home-research-points span {
+  display:block;
+  margin-top:.18rem;
+  color:#667768;
+  font-size:.82rem;
+  line-height:1.5;
+}
+html[data-theme="kisan"] .home-research-sources {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:.5rem .7rem;
+  margin-top:1.1rem;
+  padding-top:.9rem;
+  border-top:1px solid rgba(31,122,70,.10);
+}
+html[data-theme="kisan"] .home-research-sources > span {
+  width:100%;
+  color:#8a6330;
+  font-size:.72rem;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+html[data-theme="kisan"] .home-research-sources a {
+  min-height:44px;
+  display:inline-flex;
+  align-items:center;
+  padding:.55rem .7rem;
+  border-radius:11px;
+  background:#fff1df;
+  color:#a45617;
+  font-size:.76rem;
+  font-weight:800;
+  text-decoration:underline;
+  text-underline-offset:2px;
+}
+html[data-theme="kisan"] .home-research-images {
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  grid-template-rows:1fr 1fr;
+  gap:.7rem;
+  min-height:420px;
+}
+html[data-theme="kisan"] .home-research-image {
+  position:relative;
+  min-width:0;
+  min-height:0;
+  margin:0;
+  overflow:hidden;
+  border-radius:19px;
+  border:1px solid rgba(31,122,70,.10);
+  background:#e8efe2;
+}
+html[data-theme="kisan"] .home-research-image-main {
+  grid-row:1 / span 2;
+}
+html[data-theme="kisan"] .home-research-image img {
+  width:100%;
+  height:100%;
+  min-height:0;
+  display:block;
+  object-fit:cover;
+  transition:transform .45s ease;
+}
+html[data-theme="kisan"] .home-research-image:hover img {
+  transform:scale(1.035);
+}
+html[data-theme="kisan"] .home-research-image::after {
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,transparent 52%,rgba(12,31,19,.72) 100%);
+  pointer-events:none;
+}
+html[data-theme="kisan"] .home-research-image figcaption {
+  position:absolute;
+  left:.8rem;
+  right:.8rem;
+  bottom:.7rem;
+  z-index:1;
+  color:white;
+  font-size:.76rem;
+  line-height:1.35;
+  font-weight:900;
+  text-shadow:0 1px 5px rgba(0,0,0,.45);
+}
+@media(max-width:900px) {
+  html[data-theme="kisan"] .home-research-story {
+    grid-template-columns:1fr;
+  }
+  html[data-theme="kisan"] .home-research-images {
+    min-height:360px;
+  }
+}
+@media(max-width:639px) {
+  html[data-theme="kisan"] .home-research-story {
+    margin-top:2.5rem;
+    padding:.7rem;
+    border-radius:21px;
+  }
+  html[data-theme="kisan"] .home-research-copy {
+    padding:.8rem;
+  }
+  html[data-theme="kisan"] .home-research-copy > p {
+    font-size:.96rem;
+  }
+  html[data-theme="kisan"] .home-research-images {
+    min-height:420px;
+    grid-template-columns:1fr 1fr;
+    grid-template-rows:1.25fr .75fr;
+  }
+  html[data-theme="kisan"] .home-research-image-main {
+    grid-column:1 / span 2;
+    grid-row:auto;
+  }
+  html[data-theme="kisan"] .home-research-image-phone,
+  html[data-theme="kisan"] .home-research-image-circular {
+    grid-row:auto;
+  }
+}
