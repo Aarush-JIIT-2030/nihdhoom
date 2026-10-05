@@ -40,15 +40,15 @@ The UI must never present these simulated surfaces as completed real-world trans
 These require provider/authority credentials, contracts, or operational deployment rather than more UI:
 
 1. Authoritative cadastral geometry import/export from the relevant land-record authority.
-2. Production WhatsApp Cloud credentials and approved message templates.
-3. Production Punjabi voice/IVR provider.
+2. Production Telegram bot configuration, webhook secret and approved farmer messaging flows.
+3. Production Punjabi voice/IVR provider, if used.
 4. Buyer contract/offtake operations and physical logistics.
 5. Real payment-provider integration, when intentionally brought into scope.
 6. Formal carbon methodology selection, MRV protocol, registry relationship and third-party verification.
 7. Fresh-project migration rehearsal plus adversarial RLS testing with real role accounts.
 8. Android field-device pilot for GPS, offline sync, camera/storage and poor-connectivity behavior.
 9. Production monitoring, alerting and incident-response runbooks.
-10. Vercel/production deployment configuration, intentionally deferred by project scope.
+10. Vercel/production deployment configuration and supervised end-to-end pilot testing.
 
 ## Truthfulness rules
 
