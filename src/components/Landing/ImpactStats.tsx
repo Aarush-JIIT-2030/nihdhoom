@@ -142,7 +142,7 @@ export const ImpactStats: React.FC<ImpactStatsProps> = ({ onNavigateTab }) => {
                 src="/images/parali_burning.jpg"
                 alt="Stubble burning fields in Punjab creating severe air pollution"
                 className="w-full h-56 object-cover object-center group-hover:scale-105 transition-transform duration-500 opacity-90"
-              / loading="lazy" decoding="async">
+               loading="lazy" decoding="async" />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent" />
               <div className="absolute bottom-4 left-4 right-4">
                 <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-red-500/25 text-red-400 border border-red-500/40 mb-2 inline-block">
@@ -163,7 +163,7 @@ export const ImpactStats: React.FC<ImpactStatsProps> = ({ onNavigateTab }) => {
                 src="/images/baling_fleet.jpg"
                 alt="Subsidised CRM baler fleet clearing paddy straw from Punjab fields"
                 className="w-full h-56 object-cover object-center group-hover:scale-105 transition-transform duration-500"
-              / loading="lazy" decoding="async">
+               loading="lazy" decoding="async" />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent" />
               <div className="absolute bottom-4 left-4 right-4">
                 <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/25 text-emerald-400 border border-emerald-500/40 mb-2 inline-block">
@@ -395,7 +395,7 @@ export const ImpactStats: React.FC<ImpactStatsProps> = ({ onNavigateTab }) => {
                   src={t.avatar}
                   alt={t.name}
                   className="w-12 h-12 rounded-full object-cover border-2 border-amber-500/30"
-                / loading="lazy" decoding="async">
+                 loading="lazy" decoding="async" />
                 <div>
                   <h4 className="text-sm font-bold text-white">{t.name}</h4>
                   <p className="text-[11px] text-amber-400 font-mono">{t.village}</p>
@@ -507,7 +507,7 @@ export const ImpactStats: React.FC<ImpactStatsProps> = ({ onNavigateTab }) => {
                   src={pathway.image}
                   alt={pathway.title}
                   className="w-full h-28 object-cover group-hover:scale-105 transition-transform duration-500"
-                / loading="lazy" decoding="async">
+                 loading="lazy" decoding="async" />
                 <div className="p-4">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
