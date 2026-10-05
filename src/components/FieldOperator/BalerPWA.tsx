@@ -147,7 +147,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
     const upload = await client.storage.from('evidence').upload(path, file, { contentType: file.type, upsert: false });
     if (upload.error) {
       await queueEvidence({
-        fieldId: currentField.id,
+        fieldId: currentField.dbId || currentField.id,
         fileName: file.name,
         fileType: file.type,
         blob: file,
@@ -165,7 +165,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
     const digest = await crypto.subtle.digest('SHA-256', bytes);
     const hash = Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('');
     const { error } = await client.from('evidence_assets').insert({
-      field_id: currentField.id,
+      field_id: currentField.dbId || currentField.id,
       kind: 'field_photo',
       storage_path: path,
       source: 'operator-pwa',
