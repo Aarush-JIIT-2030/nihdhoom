@@ -1,4 +1,5 @@
 declare const process: { env: Record<string, string | undefined> };
+import { rateLimit } from './_lib/rateLimit';
 
 async function requireConfiguredAuth(req: any) {
   const auth = String(req.headers?.authorization || '');
@@ -21,6 +22,8 @@ const isIsoDate = (value: unknown): value is string => {
 };
 
 export default async function handler(req: any, res: any) {
+  if (!rateLimit(req, res, 'api-quote.ts', 60)) return res.status(429).json({ error: 'Too many requests; please retry shortly.' });
+
   if (req.method !== 'POST') {
     res.setHeader?.('Allow', 'POST');
     return res.status(405).json({ error: 'Method not allowed' });
