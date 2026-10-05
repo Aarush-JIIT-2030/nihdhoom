@@ -43,6 +43,7 @@ const secondaryNav: NavItem[] = [
   { id: 'FIELD_PROVENANCE', label: 'Field Trust', icon: ShieldCheck, description: 'Field provenance and audit trail' },
   { id: 'BALER_OPERATOR', label: 'Operator PWA', icon: Smartphone, description: 'Machine operator workflow' },
   { id: 'FARMER_SURFACE', label: 'Farmer WhatsApp', icon: MessageSquare, description: 'Farmer communication surface' },
+  { id: 'FARMER_ONBOARDING', label: 'Farmer Onboarding', icon: UserCheck, description: 'Phone OTP, consent and profile setup' },
   { id: 'OFFTAKE_AUCTION', label: 'Buyer Offtake', icon: TrendingUp, description: 'Buyer demand and procurement' },
   { id: 'CARBON_MARKET', label: 'Carbon', icon: CircleDollarSign, description: 'Carbon marketplace prototype' },
   { id: 'AGENTIC_CONSOLE', label: 'AI Assistant', icon: Bot, description: 'AI operations workspace' },
