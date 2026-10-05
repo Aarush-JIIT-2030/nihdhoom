@@ -3145,3 +3145,78 @@ html[data-theme="kisan"] {
 .nirdhoom-field-app img[loading="lazy"] {
   content-visibility: auto;
 }
+
+.workspace-skeleton {
+  display: grid;
+  gap: 14px;
+  min-height: 360px;
+}
+.workspace-skeleton-hero {
+  display: grid;
+  grid-template-columns: minmax(0,1.4fr) minmax(220px,.7fr);
+  gap: 18px;
+  min-height: 220px;
+  padding: clamp(18px,3vw,30px);
+  border: 1px solid rgba(31,122,70,.12);
+  border-radius: 24px;
+  background: rgba(255,255,255,.92);
+  box-shadow: 0 14px 36px rgba(38,76,43,.06);
+}
+.workspace-skeleton-copy {
+  display: grid;
+  align-content: center;
+  gap: 12px;
+}
+.workspace-skeleton-line,
+.workspace-skeleton-image,
+.workspace-skeleton-grid span {
+  display: block;
+  overflow: hidden;
+  position: relative;
+  background: #e8eee2;
+}
+.workspace-skeleton-line::after,
+.workspace-skeleton-image::after,
+.workspace-skeleton-grid span::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.75), transparent);
+  animation: nirdhoom-shimmer 1.35s ease-in-out infinite;
+}
+.workspace-skeleton-line {
+  height: 14px;
+  width: min(520px, 88%);
+  border-radius: 999px;
+}
+.workspace-skeleton-line.is-kicker { width: 150px; height: 10px; }
+.workspace-skeleton-line.is-title { width: min(440px, 82%); height: 38px; border-radius: 12px; }
+.workspace-skeleton-line.short { width: 58%; }
+.workspace-skeleton-image {
+  min-height: 180px;
+  border-radius: 18px;
+}
+.workspace-skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 14px;
+}
+.workspace-skeleton-grid span {
+  min-height: 120px;
+  border-radius: 18px;
+}
+@keyframes nirdhoom-shimmer {
+  to { transform: translateX(100%); }
+}
+@media (max-width: 640px) {
+  .workspace-skeleton-hero { grid-template-columns: 1fr; min-height: 330px; }
+  .workspace-skeleton-image { min-height: 110px; }
+  .workspace-skeleton-grid { grid-template-columns: 1fr; }
+  .workspace-skeleton-grid span { min-height: 84px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .workspace-skeleton-line::after,
+  .workspace-skeleton-image::after,
+  .workspace-skeleton-grid span::after { animation: none; }
+}
