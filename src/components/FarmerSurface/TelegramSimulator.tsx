@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { Bell, CalendarCheck, Camera, CheckCircle2, MapPin, Send, ShieldCheck } from 'lucide-react';
 
@@ -13,6 +13,16 @@ export function TelegramSimulator({ onSlotConfirmed }: TelegramSimulatorProps) {
   const [confirmed, setConfirmed] = useState(false);
   const [linking, setLinking] = useState(false);
   const [linkError, setLinkError] = useState('');
+  const [botReady, setBotReady] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    fetch('/api/notify/telegram-webhook', { method: 'GET' })
+      .then((res) => res.ok)
+      .then((ok) => { if (active) setBotReady(ok); })
+      .catch(() => { if (active) setBotReady(false); });
+    return () => { active = false; };
+  }, []);
 
   const botUrl = useMemo(() => BOT_USERNAME ? `https://t.me/${BOT_USERNAME}` : 'https://t.me', []);
 
@@ -93,11 +103,19 @@ export function TelegramSimulator({ onSlotConfirmed }: TelegramSimulatorProps) {
 
   return (
     <section className="mx-auto w-full max-w-5xl space-y-4">
-      <div className="overflow-hidden rounded-3xl border border-amber-300/40 bg-gradient-to-br from-amber-50 via-white to-emerald-50 p-5 shadow-sm sm:p-7">
+      <div className="relative overflow-hidden rounded-3xl border border-amber-300/50 bg-gradient-to-br from-[#fff8eb] via-white to-[#eef8f0] p-5 shadow-[0_18px_60px_rgba(28,79,45,.10)] sm:p-7">
+        <div className="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-amber-300/20 blur-3xl" aria-hidden="true" />
+        <div className="absolute -bottom-20 left-1/3 h-44 w-44 rounded-full bg-emerald-300/10 blur-3xl" aria-hidden="true" />
         <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-2xl">
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-amber-300 bg-white px-3 py-1.5 text-xs font-bold text-amber-800">
+            <div className="mb-3 flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-2 rounded-full border border-amber-300 bg-white px-3 py-1.5 text-xs font-bold text-amber-800 shadow-sm">
               <Send className="h-3.5 w-3.5" /> TELEGRAM-FIRST FARMER CHANNEL
+              </span>
+              <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-black ${botReady === true ? 'bg-emerald-100 text-emerald-800' : botReady === false ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600'}`}>
+                <span className={`h-1.5 w-1.5 rounded-full ${botReady === true ? 'bg-emerald-500' : botReady === false ? 'bg-red-500' : 'bg-slate-400'}`} />
+                {botReady === true ? 'BOT ONLINE' : botReady === false ? 'BOT UNAVAILABLE' : 'CHECKING BOT'}
+              </span>
             </div>
             <h2 className="font-['Outfit'] text-2xl font-black tracking-tight text-emerald-950 sm:text-3xl">{copy.title}</h2>
             <p className="mt-2 text-sm font-medium leading-6 text-emerald-950/70 sm:text-base">{copy.subtitle}</p>
@@ -111,7 +129,7 @@ export function TelegramSimulator({ onSlotConfirmed }: TelegramSimulatorProps) {
               href={botUrl}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#229ED9] px-5 py-3 text-sm font-black text-white shadow-lg transition hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#229ED9] px-5 py-3 text-sm font-black text-white shadow-[0_12px_30px_rgba(34,158,217,.25)] transition-transform hover:-translate-y-0.5 transition hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
             >
               <Send className="h-4 w-4" /> {copy.cta}
             </a>
@@ -130,7 +148,18 @@ export function TelegramSimulator({ onSlotConfirmed }: TelegramSimulatorProps) {
           </div>
         </div>
 
-        <div className="mt-5 flex flex-wrap gap-2">
+        <div className="mt-6 rounded-2xl border border-emerald-900/10 bg-white/75 p-3 backdrop-blur-sm">
+          <div className="grid gap-2 sm:grid-cols-4">
+            {['Open Telegram', 'Securely link account', 'Book / track', 'Receive updates'].map((step, index) => (
+              <div key={step} className="flex items-center gap-2 rounded-xl bg-emerald-50/70 px-3 py-2.5">
+                <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-emerald-700 text-xs font-black text-white">{index + 1}</span>
+                <span className="text-xs font-bold text-emerald-950">{step}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-4 flex flex-wrap gap-2">
           {[
             ['pa', 'ਪੰਜਾਬੀ'],
             ['hi', 'हिन्दी'],
