@@ -152,7 +152,7 @@ export const CarbonMarketplace: React.FC = () => {
     .reduce((sum, l) => sum + l.priceUsd * l.available_credits, 0);
 
   return (
-    <div className="flex flex-col gap-6 max-w-6xl mx-auto p-2">
+    <div className="carbon-simulator-surface flex flex-col gap-6 max-w-6xl mx-auto p-2">
       {/* Banner */}
       <div className="glass-panel-emerald p-5">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -241,7 +241,7 @@ export const CarbonMarketplace: React.FC = () => {
             icon: Globe,
             color: 'text-emerald-400',
             border: 'border-emerald-500/30',
-            sub: 'Voluntary market bullish',
+            sub: 'Illustrative demo snapshot',
           },
         ].map((card) => {
           const Icon = card.icon;
