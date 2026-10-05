@@ -62,6 +62,37 @@ export const CompetitionCenter: React.FC<CompetitionCenterProps> = ({ onNavigate
       </div>
     </section>
 
+    <section className="competition-section competition-proof">
+      <div className="competition-section-heading">
+        <div>
+          <div className="competition-eyebrow">WHY THIS PROBLEM, WHY NOW</div>
+          <h3>The pitch is grounded in a documented adoption gap.</h3>
+        </div>
+      </div>
+      <div className="competition-proof-grid">
+        <div><strong>86%</strong><span>of surveyed Punjab farmers had never heard of Unnat Kisan.</span><small>CEEW 2026 • 102-farmer survey</small></div>
+        <div><strong>15%</strong><span>of farmers practising in-situ CRM accessed CHC services in cited research.</span><small>CEEW 2025 CHC study</small></div>
+        <div><strong>1%</strong><span>reported using digital machinery-rental apps in the cited Punjab research.</span><small>CEEW evidence synthesis</small></div>
+        <div><strong>45%</strong><span>of surveyed CHCs offering in-situ rental reported packaged services.</span><small>CEEW 2025 CHC study</small></div>
+      </div>
+      <p className="competition-source-note">These are survey/research findings, not NIRDHOOM performance claims. Our pilot should measure booking completion, machine arrival, clearance time, evidence completeness and residue handoff.</p>
+    </section>
+
+    <section className="competition-section competition-scorecard">
+      <div className="competition-section-heading">
+        <div>
+          <div className="competition-eyebrow">JUDGE SCORECARD</div>
+          <h3>Every judging criterion maps to something visible in the demo.</h3>
+        </div>
+      </div>
+      <div className="competition-score-grid">
+        <div><b>Impact</b><span>Fix the coordination gap between farmers, machinery and residue utilisation.</span><strong>Show: farmer → clearance → residue</strong></div>
+        <div><b>Feasibility</b><span>Asset-light model uses registered capacity instead of requiring a new fleet.</span><strong>Show: capacity match + pilot gates</strong></div>
+        <div><b>User experience</b><span>Farmer-first words, mobile flow and local-language Telegram support.</span><strong>Show: 30-second booking</strong></div>
+        <div><b>Technical craft</b><span>Server-authoritative booking, RLS, GPS/evidence, dispatch and verification.</span><strong>Show: architecture only after the outcome</strong></div>
+      </div>
+    </section>
+
     <section className="competition-grid">
       <article className="competition-card competition-card-rider">
         <div className="competition-card-top">
