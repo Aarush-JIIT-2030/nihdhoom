@@ -46,9 +46,9 @@ export const DemoWalkthrough: React.FC<DemoWalkthroughProps> = ({
   const beats = [
     {
       step: 1,
-      title: 'Beat 1: Farmer Telegram & Parametric Slot Guarantee',
-      oneLiner: 'Book via Punjabi Telegram; get confirmed clearance slot + late penalty guarantee in seconds.',
-      badge: 'Demand Capture & Pricing',
+      title: 'Beat 1: Farmer Telegram & Capacity-Aware Booking',
+      oneLiner: 'Book via Punjabi Telegram; see an indicative clearance window and follow the live booking workflow.',
+      badge: 'Demand Capture & Planning',
       icon: MessageSquare,
       color: 'text-emerald-400',
     },
