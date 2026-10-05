@@ -23,58 +23,51 @@ interface JudgeQnA {
 const JUDGE_QUESTIONS: JudgeQnA[] = [
   {
     id: 'q1',
-    question: 'How are you different from Verbio or PRESPL?',
-    shortAnswer: 'They buy straw and own assets. We own neither. We are the dispatch and verification layer.',
-    detailedDefense:
-      'Verbio, PRESPL, A2P Energy, and Farm2Energy operate as traditional capex-heavy biomass aggregators. They buy balers, hold inventory for months, and suffer from working-capital starvation. Nirdhoom owns zero balers. We sit as a software coordination and verification network over the 50-80% government-subsidised machinery already parked in Punjab CHCs. Verbio is not our competitor; they are our offtake customer for volume straw.',
+    question: 'What is NIRDHOOM actually selling?',
+    shortAnswer: 'A coordination and evidence layer for crop-residue clearance — not a baler fleet.',
+    detailedDefense: 'The current product coordinates field records, farmer requests, machine work, evidence and residue pathways. We do not claim to own the machinery or operate a commercial fleet today. The startup thesis is asset-light: software can make existing machinery easier to discover, schedule and verify.',
     tag: 'COMPETITION',
   },
   {
     id: 'q2',
-    question: 'Why won’t in-situ management win instead (Happy Seeder, Super SMS, Bio-decomposer)?',
-    shortAnswer: 'In-situ is complementary, but requires soil moisture and tight timelines. We route both.',
-    detailedDefense:
-      'In-situ mulch requires precise soil moisture; if the field is dry, Happy Seeders cause poor wheat germination and rodent infestations. Furthermore, farmers are risk-averse in the 15-day window. Nirdhoom does not force ex-situ; our OR-Tools dispatch engine routes Super Seeders and Happy Seeders just as easily as balers. But when ex-situ is demanded, we guarantee the clearance slot.',
+    question: 'Why not just use existing government CRM services?',
+    shortAnswer: 'The gap we target is coordination: who is coming, when, what happened, and what happens to the residue next.',
+    detailedDefense: 'Government machinery and subsidy programs are important infrastructure, not something we replace. NIRDHOOM is designed as a coordination layer around that infrastructure: field registration, consent, booking, dispatch, operator evidence, verification and residue handoff. A pilot would test whether this reduces missed slots and coordination overhead.',
     tag: 'AGRONOMY',
   },
   {
     id: 'q3',
-    question: 'What do your balers do the other 10 months of the year?',
-    shortAnswer: 'We don’t own balers. The CHC owner’s 10-month idle pain is exactly what we monetise.',
-    detailedDefense:
-      'A startup buying balers at ₹15-20 lakh each dies of idle capex. The Punjab CRM subsidy has already deployed tens of thousands of balers across FPOs and CHCs. Those machines sit idle not because they lack work, but because scheduling is done over phone calls and village politics. We unlock stranded public infrastructure with zero capital cost.',
+    question: 'Does the platform depend on buying expensive machinery?',
+    shortAnswer: 'No. The prototype is intentionally asset-light.',
+    detailedDefense: 'The software model can work with registered CHC, FPO or individual machines. That keeps the product focused on utilization, routing and evidence rather than financing a new machine fleet. Actual commercial capacity and machine ownership would be validated during a field pilot.',
     tag: 'ASSET_STRATEGY',
   },
   {
     id: 'q4',
-    question: 'If collection economics are broken, where is the actual profitable business?',
-    shortAnswer: 'Parali is not the business; it is the zero-CAC customer acquisition channel.',
-    detailedDefense:
-      'Paddy straw sales to CBG barely cover baling and diesel. The reframe worth saying out loud: parali collection is the hook that gets us a verified, geo-tagged, financially-connected farmer network in Punjab for free. The real business is selling certified seeds, discounted fertilizer, and diesel via our credit wallet margin, plus building a future evidence-backed carbon accounting layer; no carbon credits are currently issued.',
+    question: 'Where can the business model come from?',
+    shortAnswer: 'The first testable wedge is a service/coordination fee; downstream offtake is a separate pathway.',
+    detailedDefense: 'The release does not claim live revenue, payments or buyer contracts. A future pilot can test a transparent service fee for successful coordination and, separately, commercial residue handling with real buyers. Carbon revenue and financial products are intentionally excluded until the required methodology, counterparties and controls exist.',
     tag: 'BUSINESS_MODEL',
   },
   {
     id: 'q5',
-    question: 'With fires down 93% (76,929 in 2020 to 5,114 in 2025), is the problem solved?',
-    shortAnswer: 'Fire counts dropped, but burnt area has not proportionally. Farmers shifted to burning outside satellite windows.',
-    detailedDefense:
-      'CAQM recorded 5,114 fire incidents in 2025 (down from 10,909 in 2024 and 76,929 in 2020). However, experts note that farmers shifted burns to late afternoon/evening hours, evading VIIRS polar satellite overpass times (10:30 AM to 1:30 PM). Burnt area has declined more gradually. Punjab now deploys drone surveillance in hotspot districts. Nirdhoom multi-layer verification (FIRMS thermal + Sentinel-2 NDVI burn-scar + polygon clearance receipts) catches what satellite counts alone miss.',
+    question: 'If Punjab fire counts have fallen, why is this still worth solving?',
+    shortAnswer: 'Lower reported fire-event counts are encouraging; they do not remove the seasonal coordination problem.',
+    detailedDefense: 'Official reporting shows a large decline in reported Punjab fire events in recent seasons. NIRDHOOM does not claim that its prototype caused that decline. The remaining product question is operational: can farmers access non-burning residue-management options reliably during the narrow harvest-to-sowing window? That is what a pilot should measure.',
     tag: 'COMPETITION',
   },
   {
     id: 'q6',
-    question: 'What about the new Rs 5K-30K environmental penalties and Red Entry system?',
-    shortAnswer: 'Penalties create demand for our service. We are the compliance escape valve.',
-    detailedDefense:
-      'The 2026 CAQM rules impose Environmental Compensation of Rs 5,000 (under 2 ac), Rs 10,000 (2-5 ac), Rs 30,000 (over 5 ac) plus a Red Entry in land revenue records that bars agricultural loans for 15-30 months. This punitive framework creates massive demand for a reliable, affordable clearance service. Nirdhoom guaranteed slot at Rs 1,350-1,450/ac is dramatically cheaper than a Rs 30,000 fine plus loan freeze. We are the compliance escape valve.',
-    tag: 'BUSINESS_MODEL',
+    question: 'Are you using satellite data as proof that a field did not burn?',
+    shortAnswer: 'No. Satellite observations are one evidence layer, not a no-burn certificate by themselves.',
+    detailedDefense: 'The verification model keeps field geometry, operator evidence, GPS, satellite observations and human review distinct. A missing thermal observation cannot prove that a field was clear. This distinction is important for trustworthy environmental claims.',
+    tag: 'COMPETITION',
   },
   {
     id: 'q7',
-    question: 'How do you ensure machines actually reach small and marginal farmers?',
-    shortAnswer: '50% of Punjab farmers have under 2 acres. Our per-acre pricing democratises machine access.',
-    detailedDefense:
-      'Many farmers own small tractors (25-30 BHP), while effective CRM machinery often requires 50 HP tractors and weighs over 13 quintals. Individual machine ownership makes no economic sense for small holders. Our dispatch network matches the right machine to the right tractor at the right time. CHCs exist precisely for this but lack digital scheduling. We fix the last-mile coordination problem that keeps public machinery stranded.',
+    question: 'How do you make the product usable for farmers?',
+    shortAnswer: 'Start with the next action: choose field, book pickup, track machine, show proof.',
+    detailedDefense: 'The farmer navigation uses plain language, larger mobile controls, a five-step journey, Telegram support and local-language surfaces. Advanced dispatch, 3D and research tools remain available for operators and judges without making the farmer complete those workflows.',
     tag: 'ASSET_STRATEGY',
   },
 ];
@@ -112,7 +105,7 @@ export const JudgesQnAPanel: React.FC = () => {
               </span>
             </div>
             <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
-              Every hackathon pitch fails when judges challenge asset utilization, competition from Verbio/PRESPL, and collection margins. Here is our airtight, defensible thesis.
+              Use this panel to answer the hard questions without turning prototype assumptions into production claims.
             </p>
           </div>
         </div>
@@ -192,7 +185,7 @@ export const JudgesQnAPanel: React.FC = () => {
       {/* Accordion of the 4 Tough Judge Questions */}
       <div className="flex flex-col gap-3">
         <h4 className="font-bold text-sm text-white uppercase tracking-wider text-slate-400">
-          The 4 Critical Pitch Defenses
+          Critical pitch defences
         </h4>
 
         {JUDGE_QUESTIONS.map((q) => {
@@ -263,7 +256,7 @@ export const JudgesQnAPanel: React.FC = () => {
           <div className="p-4 rounded-xl bg-red-950/20 border border-red-500/30 flex flex-col justify-between">
             <div>
               <span className="badge badge-crimson text-[10px] mb-1">
-                Old Model (Verbio / PRESPL Clone)
+                Asset-heavy reference model
               </span>
               <h5 className="font-bold text-sm text-white">Buy Balers, Sell Parali to CBG</h5>
               <div className="mt-3 flex flex-col gap-1.5 text-xs text-slate-300">
@@ -288,7 +281,7 @@ export const JudgesQnAPanel: React.FC = () => {
                 Thin to Negative (-₹{(Math.abs(incumbentNetMargin) / 100000).toFixed(1)} L)
               </div>
               <span className="text-[10px] text-slate-500">
-                Dies of working capital & 60-day delayed CBG credit terms
+                Illustrative comparison only; not NIRDHOOM field economics.
               </span>
             </div>
           </div>
@@ -310,7 +303,7 @@ export const JudgesQnAPanel: React.FC = () => {
                   <span className="font-mono text-emerald-300">₹{(nirdhoomDispatchFee / 100000).toFixed(1)} L</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Agri-Input Retail Margin (Wheat Seed/Diesel):</span>
+                  <span>Illustrative future input/offtake margin:</span>
                   <span className="font-mono text-emerald-300">₹{(nirdhoomInputMargin / 100000).toFixed(1)} L</span>
                 </div>
               </div>
