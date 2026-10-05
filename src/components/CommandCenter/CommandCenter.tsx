@@ -56,7 +56,7 @@ export function CommandCenter({
     <div className="field-page field-home pb-12">
       {/* HERO: visual story first */}
       <section className="home-hero">
-        <img src={heroImage} alt="Farmer and field in Punjab" className="home-hero-image" / loading="lazy" decoding="async">
+        <img src={heroImage} alt="Farmer and field in Punjab" className="home-hero-image"  loading="lazy" decoding="async" />
         <div className="home-hero-overlay" />
         <div className="home-hero-content">
           <div className="home-eyebrow"><Leaf className="h-4 w-4" /> FIELD CLEARANCE COORDINATION • NIRDHOOM</div>
