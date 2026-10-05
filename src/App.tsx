@@ -436,10 +436,6 @@ export function App() {
         )}
 
         {/* TAB: FARMER ONBOARDING KYC */}
-        {activeTab === 'FARMER_ONBOARDING' && (
-          <FarmerOnboarding />
-        )}
-
         {/* TAB 7: JUDGE DEFENSE & UNIT ECONOMICS */}
         {activeTab === 'JUDGE_DEFENSE' && (
           <JudgesQnAPanel />
