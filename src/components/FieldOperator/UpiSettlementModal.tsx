@@ -25,7 +25,7 @@ export const UpiSettlementModal: React.FC<UpiSettlementModalProps> = ({
   onClose,
   onSettlementComplete,
 }) => {
-  const [secondsRemaining, setSecondsRemaining] = useState(14); // Simulating fast settlement inside the 90s guarantee
+  const [secondsRemaining, setSecondsRemaining] = useState(14); // Demo-only countdown; no settlement guarantee or provider call is made
   const [settled, setSettled] = useState(false);
   const [apiStep, setApiStep] = useState(0);
 
