@@ -180,7 +180,7 @@ export const OpsMap: React.FC<OpsMapProps> = ({
       });
     }
 
-    // 2. Render Subsidized Baler Fleet (Machines)
+    // 2. Render Registered Machine Capacity
     if (showMachines) {
       machines.forEach((machine) => {
         const iconHtml = `
@@ -371,7 +371,7 @@ export const OpsMap: React.FC<OpsMapProps> = ({
                 : 'text-slate-400 hover:text-white'
             }`}
           >
-            🛰️ Satellite (Sentinel)
+            🛰️ Satellite imagery
           </button>
           <button
             onClick={() => setTileMode('dark')}
