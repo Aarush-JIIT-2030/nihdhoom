@@ -106,7 +106,7 @@ const checks = [
   ['live weather planning adapter', read('src/components/HarvestIntelligence/HarvestIntelligence.tsx').includes('/api/weather?field_id=') && read('api/weather.ts').includes('open-meteo')],
   ['explicit farmer consent flow', read('src/components/FarmerOnboarding/FarmerOnboarding.tsx').includes("consent_type: 'farmer_network'") && read('src/components/FarmerOnboarding/FarmerOnboarding.tsx').includes("consent_status: 'GRANTED'")],
   ['settlement surfaces disclosed', read('src/components/FieldOperator/UpiSettlementModal.tsx').includes('no money movement') && !read('src/App.tsx').includes('Instant UPI Settlement')],
-  ['demo data is opt-in', controller.includes("VITE_NIRDHOOM_DEMO_MODE === 'true'") && controller.includes('DEMO_MODE ? INITIAL_FIELDS : []') && envExample.includes('VITE_NIRDHOOM_DEMO_MODE=false')],
+  ['demo data is opt-in', controller.includes("VITE_NIRDHOOM_DEMO_MODE === 'true'") && controller.includes('useState<Field[]>(DEMO_MODE ? demoSeed.fields : [])') && controller.includes('useState<Machine[]>(DEMO_MODE ? demoSeed.machines : [])') && envExample.includes('VITE_NIRDHOOM_DEMO_MODE=false')],
   ['live data loader exists', controller.includes("client.from('fields')") && controller.includes("client.from('machines')") && controller.includes('setLoadingLiveData(false)')],
   ['operator GPS telemetry', read('src/components/FieldOperator/BalerPWA.tsx').includes('navigator.geolocation.watchPosition') && read('src/components/FieldOperator/BalerPWA.tsx').includes("machine_locations")],
   ['offline evidence queue', read('src/lib/offlineEvidenceQueue.ts').includes('indexedDB') && read('src/lib/offlineEvidenceQueue.ts').includes('SHA-256')],
