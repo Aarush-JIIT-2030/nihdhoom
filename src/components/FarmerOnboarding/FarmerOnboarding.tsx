@@ -134,7 +134,7 @@ export const FarmerOnboarding: React.FC = () => {
   const isCurrent = (step: KYCStep) => step === currentStep;
 
   return (
-    <div className="flex flex-col gap-6 max-w-6xl mx-auto p-2">
+    <div className="farmer-onboarding-surface flex flex-col gap-6 max-w-6xl mx-auto p-2">
       {/* Banner */}
       <div className="relative overflow-hidden rounded-3xl border border-emerald-400/20 bg-gradient-to-br from-slate-950 via-emerald-950 to-slate-950 p-5 shadow-[0_20px_60px_rgba(0,0,0,.20)] sm:p-6">
         <div className="flex items-center gap-3">
