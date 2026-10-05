@@ -6,19 +6,48 @@ import { supabase } from '../lib/supabase';
 import { normalizeField } from '../lib/domain';
 
 const DEMO_MODE = import.meta.env.VITE_NIRDHOOM_DEMO_MODE === 'true';
+const DEMO_STATE_KEY = 'nirdhoom.demo.state.v2';
+
+type DemoState = { fields: Field[]; machines: Machine[]; fireEvents: BurnEvent[] };
 
 export function useAppController() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('OVERVIEW');
-  const [fields, setFields] = useState<Field[]>(DEMO_MODE ? INITIAL_FIELDS : []);
-  const [machines, setMachines] = useState<Machine[]>(DEMO_MODE ? INITIAL_MACHINES : []);
-  const [fireEvents, setFireEvents] = useState<BurnEvent[]>(DEMO_MODE ? MOCK_FIRMS_FIRE_EVENTS : []);
-  const [selectedField, setSelectedField] = useState<Field | null>(DEMO_MODE ? INITIAL_FIELDS[0] : null);
+
+  const [demoSeed] = useState<DemoState>(() => {
+    const fallback = { fields: INITIAL_FIELDS, machines: INITIAL_MACHINES, fireEvents: MOCK_FIRMS_FIRE_EVENTS };
+    if (!DEMO_MODE || typeof window === 'undefined') return fallback;
+    try {
+      const raw = window.localStorage.getItem(DEMO_STATE_KEY);
+      if (!raw) return fallback;
+      const saved = JSON.parse(raw) as Partial<DemoState>;
+      if (Array.isArray(saved.fields) && Array.isArray(saved.machines) && Array.isArray(saved.fireEvents)) {
+        return saved as DemoState;
+      }
+    } catch {
+      // Storage is optional; the seeded demo remains usable.
+    }
+    return fallback;
+  });
+
+  const [fields, setFields] = useState<Field[]>(DEMO_MODE ? demoSeed.fields : []);
+  const [machines, setMachines] = useState<Machine[]>(DEMO_MODE ? demoSeed.machines : []);
+  const [fireEvents, setFireEvents] = useState<BurnEvent[]>(DEMO_MODE ? demoSeed.fireEvents : []);
+  const [selectedField, setSelectedField] = useState<Field | null>(DEMO_MODE ? demoSeed.fields[0] || null : null);
   const [loadingLiveData, setLoadingLiveData] = useState(!DEMO_MODE && Boolean(supabase));
   const [liveDataError, setLiveDataError] = useState<string | null>(null);
   const [activeRoutePolyline, setActiveRoutePolyline] = useState<LatLng[]>([]);
   const [isPitchDrawerOpen, setIsPitchDrawerOpen] = useState(false);
   const [certificateField, setCertificateField] = useState<Field | null>(null);
   const [fieldForUpiModal, setFieldForUpiModal] = useState<Field | null>(null);
+
+  useEffect(() => {
+    if (!DEMO_MODE || typeof window === 'undefined') return;
+    try {
+      window.localStorage.setItem(DEMO_STATE_KEY, JSON.stringify({ fields, machines, fireEvents }));
+    } catch {
+      // Some privacy modes disable localStorage; do not block the product.
+    }
+  }, [fields, machines, fireEvents]);
 
   useEffect(() => {
     if (DEMO_MODE || !supabase) {
@@ -29,6 +58,7 @@ export function useAppController() {
     let active = true;
     const client = supabase;
     if (!client) { setLoadingLiveData(false); return; }
+
     const load = async () => {
       setLoadingLiveData(true);
       setLiveDataError(null);
