@@ -24,6 +24,9 @@ const balerImage = '/images/baler_machine.jpg';
 const fleetImage = '/images/baling_dispatch_fleet_1790447115856.jpg';
 const offtakeImage = '/images/offtake_facility.jpg';
 const satelliteImage = '/images/satellite_firms.jpg';
+const burningImage = '/images/parali_burning.jpg';
+const farmerPhoneImage = '/images/farmer_phone.jpg';
+const circularUseImage = '/images/cbg_mushroom_offtake_1790447167269.jpg';
 
 export function CommandCenter({
   fields, machines, fireEvents, storageYards, buyers, onSelectField, onOpenResidue, onOpenImpact, onNavigate
@@ -36,10 +39,10 @@ export function CommandCenter({
   const cleared = fields.filter(f => ['CLEARED_PENDING_AUDIT', 'VERIFIED_NON_BURN'].includes(f.status)).length;
 
   const workflow = [
-    { n: '01', title: 'Register the field', text: 'Add the field, location and consent once.', icon: MapPinned, image: farmImage, tab: 'My Fields' },
-    { n: '02', title: 'Book clearance', text: 'Request a baler and plan the job around harvest.', icon: CalendarDays, image: balerImage, tab: 'Book Clearance' },
-    { n: '03', title: 'Track the operation', text: 'Follow the machine and see the field move through each stage.', icon: Truck, image: fleetImage, tab: 'Track Clearance' },
-    { n: '04', title: 'Prove what happened', text: 'Capture evidence, verify the field and release residue for offtake.', icon: ShieldCheck, image: satelliteImage, tab: 'Verify' },
+    { n: '01', title: 'Register the field', text: 'Add the field, location and consent once.', icon: MapPinned, image: farmImage, imageAlt: 'Cultivated field landscape', tab: 'My Fields' },
+    { n: '02', title: 'Book clearance', text: 'Request a baler and plan the job around harvest.', icon: CalendarDays, image: balerImage, imageAlt: 'Baler working with crop residue', tab: 'Book Clearance' },
+    { n: '03', title: 'Track the operation', text: 'Follow the machine and see the field move through each stage.', icon: Truck, image: fleetImage, imageAlt: 'Agricultural machines moving baled residue', tab: 'Track Clearance' },
+    { n: '04', title: 'Prove what happened', text: 'Capture evidence, verify the field and release residue for offtake.', icon: ShieldCheck, image: satelliteImage, imageAlt: 'Satellite view used as verification context', tab: 'Verify' },
   ];
 
   const audiences = [
@@ -108,7 +111,7 @@ export function CommandCenter({
           return (
             <button type="button" key={step.n} onClick={() => onNavigate(step.tab === 'My Fields' ? 'FIELD_JOBS' : step.tab === 'Book Clearance' ? 'FARMER_ONBOARDING' : step.tab === 'Track Clearance' ? 'OPS_CONSOLE' : 'SATELLITE_AUDIT')} className="home-workflow-card text-left">
               <div className="home-workflow-image">
-                <img src={step.image} alt="" loading="lazy" />
+                <img src={step.image} alt={step.imageAlt} loading="lazy" />
                 <span>{step.n}</span>
               </div>
               <div className="home-workflow-body">
@@ -120,6 +123,52 @@ export function CommandCenter({
             </button>
           );
         })}
+      </section>
+
+      {/* RESEARCH-BACKED STORY: the problem, the field workflow and the utilisation chain */}
+      <section className="home-research-story" aria-labelledby="research-story-title">
+        <div className="home-research-copy">
+          <div className="home-section-kicker">Why this chain matters</div>
+          <h2 id="research-story-title">Crop-residue management is a field-to-market problem.</h2>
+          <p>
+            India’s 2024 Crop Residue Management guidelines call for reducing air pollution and nutrient loss from burning,
+            while building supply chains for useful residue through appropriate mechanisation. Recent ICAR work in Punjab also
+            highlights demand-driven machinery deployment, digital mapping, baler tracking and viable biomass supply chains.
+          </p>
+          <div className="home-research-points">
+            <div>
+              <strong>1. Manage the field</strong>
+              <span>Choose an in-situ or collection pathway that fits the crop and field.</span>
+            </div>
+            <div>
+              <strong>2. Coordinate machines</strong>
+              <span>Match available machinery and operators to actual local demand.</span>
+            </div>
+            <div>
+              <strong>3. Move verified biomass</strong>
+              <span>Aggregate, store and dispatch residue only after the operational record is clear.</span>
+            </div>
+          </div>
+          <div className="home-research-sources">
+            <span>Research basis</span>
+            <a href="https://agrimachinery.nic.in/Files/Guidelines/Guidelines_CRM2024.pdf" target="_blank" rel="noreferrer">Govt. of India • CRM Guidelines 2024</a>
+            <a href="https://icar.gov.in/index.php/en/punjab-stakeholders-forge-integrates-action-agenda-crop-residue-management" target="_blank" rel="noreferrer">ICAR-ATARI Ludhiana • Punjab workshop • 30 Sep 2026</a>
+          </div>
+        </div>
+        <div className="home-research-images">
+          <figure className="home-research-image home-research-image-main">
+            <img src={burningImage} alt="Crop-residue burning, shown as the problem NIRDHOOM is designed to help manage" loading="lazy" />
+            <figcaption>Problem: residue burning</figcaption>
+          </figure>
+          <figure className="home-research-image home-research-image-phone">
+            <img src={farmerPhoneImage} alt="Farmer using a phone for field coordination" loading="lazy" />
+            <figcaption>Coordination: farmer-first access</figcaption>
+          </figure>
+          <figure className="home-research-image home-research-image-circular">
+            <img src={circularUseImage} alt="Residue utilisation facility representing downstream demand" loading="lazy" />
+            <figcaption>Pathway: utilisation and offtake</figcaption>
+          </figure>
+        </div>
       </section>
 
       {/* LIVE PRODUCT LAYER */}
