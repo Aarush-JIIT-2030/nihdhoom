@@ -209,5 +209,7 @@ test('Telegram Mini App identity is verified server-side', () => {
   assert.match(source, /10 \* 60/);
   assert.match(source, /TELEGRAM_BOT_TOKEN/);
   assert.match(source, /telegram_user_id/);
+  assert.match(source, /const verified = verifyInitData\\(initData\\)/);
+  assert.doesNotMatch(source, /async function verifyInitData/);
   assert.match(source, /Telegram account is not linked to a NIRDHOOM profile/);
 });
