@@ -45,7 +45,7 @@ export const JudgePitchDrawer: React.FC<JudgePitchDrawerProps> = ({
             The One-Liner We Are Pitching
           </span>
           <p className="text-sm font-semibold text-white leading-relaxed font-['Outfit']">
-            "We don’t buy straw and we don’t buy balers. We run a dispatch network over Punjab’s idle, already-subsidised crop residue machinery. We sell farmers a <span className="text-emerald-400 underline">guaranteed clearance date backed by a penalty</span>, price it dynamically by how early they book, settle <span className="text-emerald-400 underline">through a future provider integration; payment is currently simulated</span>, and prove non-burning against satellite fire data so the record can be sold to carbon registries, CBG plants and the state."
+            "We don’t buy straw and we don’t buy balers. We run a dispatch network over Punjab’s idle, already-subsidised crop residue machinery. We give farmers a <span className="text-emerald-400 underline">capacity-aware clearance estimate</span>, price the service through the booking workflow, keep payment <span className="text-emerald-400 underline">disabled in this release</span>, and review field proof against satellite fire data so verified residue can move toward real offtake and future evidence-based impact pathways."
           </p>
         </div>
 
