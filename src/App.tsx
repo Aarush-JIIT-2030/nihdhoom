@@ -348,6 +348,7 @@ export function App() {
                   storageYards={demoMode ? INITIAL_STORAGE_YARDS : []}
                   buyers={demoMode ? INITIAL_BUYERS : []}
                   selectedField={selectedField}
+                  demoMode={demoMode}
                   onSelectField={handleSelectField}
                   activeRoutePolyline={activeRoutePolyline}
                 />
