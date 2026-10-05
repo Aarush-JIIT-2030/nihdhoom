@@ -84,7 +84,7 @@ A production Vite build could not be run in the preparation environment because 
 - Added dispatch API + OR-Tools service package + deterministic fallback.
 - Added FIRMS API adapter with polygon matching; it remains supporting evidence rather than absolute non-burn proof.
 - Added buyer contracts, storage yards, QR residue lots, credits wallet, harvest forecasts and soil reports.
-- Added payment webhook foundation, WhatsApp Cloud API adapter and IVR provider adapter.
+- Added Telegram bot/webhook/linking foundation and IVR adapter; payment routes were later removed from the release to keep money movement explicitly disabled.
 - Added live-record Sathi grounding, Node tests and GitHub Actions CI.
 - `npm test` passes 3/3.
 - `npm run syntaxcheck` passes.
