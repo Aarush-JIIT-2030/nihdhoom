@@ -1,4 +1,5 @@
 declare const process: { env: Record<string, string | undefined> };
+import { rateLimit } from './_lib/rateLimit';
 
 function json(res: any, status: number, body: unknown) {
   res.setHeader?.('Cache-Control', 'no-store');
@@ -30,6 +31,8 @@ function queryValue(req: any, key: string) {
 }
 
 export default async function handler(req: any, res: any) {
+  if (!rateLimit(req, res, 'api-weather.ts', 30)) return res.status(429).json({ error: 'Too many requests; please retry shortly.' });
+
   if (req.method !== 'GET') {
     res.setHeader?.('Allow', 'GET');
     return json(res, 405, { error: 'Method not allowed' });
