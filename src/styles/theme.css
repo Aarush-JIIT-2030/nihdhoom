@@ -942,3 +942,79 @@ html[data-theme="kisan"] .nirdhoom-field-app .photo-band > div {
     transform: none;
   }
 }
+
+
+/* Warm treatment for the live telemetry strip so it belongs to the field-first product */
+html[data-theme="kisan"] .nirdhoom-field-app .relative.overflow-hidden.rounded-2xl.border.border-emerald-500\/20.bg-gradient-to-r {
+  background: linear-gradient(135deg, #fffdf8 0%, #f5f8ef 58%, #fff6e7 100%) !important;
+  border-color: rgba(31,122,70,.14) !important;
+  box-shadow: 0 14px 38px rgba(32,74,43,.08) !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .relative.overflow-hidden.rounded-2xl.border.border-emerald-500\/20.bg-gradient-to-r .text-white {
+  color: #173522 !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .relative.overflow-hidden.rounded-2xl.border.border-emerald-500\/20.bg-gradient-to-r .text-slate-400,
+html[data-theme="kisan"] .nirdhoom-field-app .relative.overflow-hidden.rounded-2xl.border.border-emerald-500\/20.bg-gradient-to-r .text-slate-500 {
+  color: #657565 !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .relative.overflow-hidden.rounded-2xl.border.border-emerald-500\/20.bg-gradient-to-r .bg-slate-900\/80 {
+  background: #fff !important;
+  border-color: rgba(31,122,70,.12) !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .relative.overflow-hidden.rounded-2xl.border.border-emerald-500\/20.bg-gradient-to-r .border-emerald-500\/30 {
+  border-color: rgba(35,122,72,.18) !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .relative.overflow-hidden.rounded-2xl.border.border-emerald-500\/20.bg-gradient-to-r .bg-emerald-500\/5 {
+  background: #edf7eb !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .relative.overflow-hidden.rounded-2xl.border.border-emerald-500\/20.bg-gradient-to-r .bg-amber-500\/5 {
+  background: #fff4e2 !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .relative.overflow-hidden.rounded-2xl.border.border-emerald-500\/20.bg-gradient-to-r .bg-teal-500\/5 {
+  background: #edf7f3 !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .relative.overflow-hidden.rounded-2xl.border.border-emerald-500\/20.bg-gradient-to-r .bg-cyan-500\/5 {
+  background: #eef7f8 !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .relative.overflow-hidden.rounded-2xl.border.border-emerald-500\/20.bg-gradient-to-r .bg-red-500\/5 {
+  background: #fff0ed !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .relative.overflow-hidden.rounded-2xl.border.border-emerald-500\/20.bg-gradient-to-r [class*="text-emerald-"] {
+  color: #237a48 !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .relative.overflow-hidden.rounded-2xl.border.border-emerald-500\/20.bg-gradient-to-r [class*="text-amber-"] {
+  color: #a95404 !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .relative.overflow-hidden.rounded-2xl.border.border-emerald-500\/20.bg-gradient-to-r [class*="text-cyan-"] {
+  color: #2b7180 !important;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app .relative.overflow-hidden.rounded-2xl.border.border.border-emerald-500\/20 {
+  color: #173522;
+}
+
+@media (max-width: 640px) {
+  html[data-theme="kisan"] .nirdhoom-field-app .relative.overflow-hidden.rounded-2xl.border.border-emerald-500\/20.bg-gradient-to-r {
+    padding: 14px !important;
+  }
+
+  html[data-theme="kisan"] .nirdhoom-field-app .relative.overflow-hidden.rounded-2xl.border.border-emerald-500\/20.bg-gradient-to-r .grid.grid-cols-2 {
+    gap: 8px;
+  }
+
+  html[data-theme="kisan"] .nirdhoom-field-app .relative.overflow-hidden.rounded-2xl.border.border-emerald-500\/20.bg-gradient-to-r .text-lg {
+    font-size: 18px !important;
+  }
+}
