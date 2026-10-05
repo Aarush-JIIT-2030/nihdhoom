@@ -400,7 +400,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
             {
               tab: 'DEMO_RUNNER' as ActiveTab,
               title: '🎬 4-Beat Live Pitch Runner',
-              desc: 'Step-by-step hackathon pitch sequence: Farmer Telegram → OR-Tools Map → UPI Payout → Satellite 0-Burn.',
+              desc: 'Step-by-step hackathon pitch sequence: Farmer Telegram → OR-Tools Map → Evidence → Satellite audit.',
               tag: 'Hackathon Flow',
               badgeColor: 'text-emerald-300 bg-emerald-950/60 border-emerald-500/30',
             },
