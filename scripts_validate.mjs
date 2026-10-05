@@ -30,7 +30,6 @@ const required = [
   'api/quote.ts',
   'api/dispatch.ts',
   'api/firms.ts',
-  'api/notify/whatsapp.ts',
   'api/notify/ivr.ts',
   'api/notify/telegram.ts',
   'api/notify/telegram-webhook.ts',
