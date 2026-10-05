@@ -111,6 +111,9 @@ const checks = [
   ['operator GPS telemetry', read('src/components/FieldOperator/BalerPWA.tsx').includes('navigator.geolocation.watchPosition') && read('src/components/FieldOperator/BalerPWA.tsx').includes("machine_locations")],
   ['offline evidence queue', read('src/lib/offlineEvidenceQueue.ts').includes('indexedDB') && read('src/lib/offlineEvidenceQueue.ts').includes('SHA-256')],
   ['evidence capture uploads to private storage', read('src/components/FieldOperator/BalerPWA.tsx').includes("storage.from('evidence')") && read('src/components/FieldOperator/BalerPWA.tsx').includes('evidence_assets')],
+  ['API rate limiting', exists('api/_lib/rateLimit.ts') && read('api/assistant.ts').includes('rateLimit(req, res') && read('api/quote.ts').includes('rateLimit(req, res') && read('api/firms.ts').includes('rateLimit(req, res') && read('api/weather.ts').includes('rateLimit(req, res')],
+  ['evidence file content validation', exists('src/lib/evidenceValidation.ts') && read('src/lib/evidenceValidation.ts').includes('isJpeg') && read('src/lib/evidenceValidation.ts').includes('MAX_EVIDENCE_BYTES') && read('src/components/FieldOperator/BalerPWA.tsx').includes('validateEvidenceFile')],
+  ['unsupported payment lifecycle removed from client domain', !read('src/lib/domain.ts').includes("'PAYMENT_PROCESSING','PAID'")],
   ['verification record is not registry certificate', read('src/utils/spatialVerification.ts').includes("certificate_status: 'ILLUSTRATIVE_DEMO'") && read('src/utils/spatialVerification.ts').includes("verra_vm0042_eligible: false")],
 ];
 
