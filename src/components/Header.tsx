@@ -161,9 +161,6 @@ export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: H
             <button onClick={() => setMobileOpen((value) => !value)} className="field-menu-button grid h-11 w-11 place-items-center rounded-xl border border-emerald-900/10 bg-white text-emerald-900 lg:hidden" aria-label={mobileOpen ? 'Close navigation' : 'Open navigation'} aria-expanded={mobileOpen}>
               {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
             </button>
-            <button onClick={() => setMobileOpen((value) => !value)} className="hidden" aria-label={mobileOpen ? 'Close navigation' : 'Open navigation'} aria-expanded={mobileOpen}>
-              {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-            </button>
           </div>
         </div>
 
