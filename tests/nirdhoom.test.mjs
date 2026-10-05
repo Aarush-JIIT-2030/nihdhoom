@@ -360,3 +360,13 @@ test('residue pool RPC cannot over-commit a verified lot and definer search path
   assert.match(sql, /set search_path = ''/);
   assert.match(sql, /revoke execute on function public\.join_residue_pool/);
 });
+
+
+test('audit command includes latest Supabase integrity hardening checks', () => {
+  const pkg = JSON.parse(read('package.json'));
+  const audit = read('scripts_integrity_validate.mjs');
+  assert.match(pkg.scripts.audit, /scripts_integrity_validate\.mjs/);
+  assert.match(audit, /20261006_nirdhoom_integrity_hardening\.sql/);
+  assert.match(audit, /l\.quantity_tonnes - coalesce/);
+  assert.match(audit, /set search_path = ''/);
+});
