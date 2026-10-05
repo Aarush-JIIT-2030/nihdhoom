@@ -85,7 +85,7 @@ export function App() {
   return (
     <div className="nirdhoom-field-app min-h-screen bg-[#03060f] text-slate-100 flex flex-col font-sans selection:bg-emerald-500 selection:text-slate-950 relative overflow-x-hidden">
       <a href="#main-content" className="skip-link">Skip to main content</a>
-      {/* Ambient Interactive Particle Field with Mouse Repulsion (Agentic AI design) */
+      {/* Ambient Interactive Particle Field with Mouse Repulsion (Agentic AI design) */}
       <ParticleField />
 
       {/* Top Header */}
