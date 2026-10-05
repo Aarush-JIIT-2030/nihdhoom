@@ -82,17 +82,17 @@ const FARMER_TESTIMONIALS = [
     name: 'Manpreet Kaur Sandhu',
     village: 'Bhalwan, Dhuri',
     quote: 'ਪਹਿਲਾਂ ਫ਼ੋਨ ਤੇ ਫ਼ੋਨ ਕਰਨੇ ਪੈਂਦੇ ਸੀ। ਹੁਣ Telegram ਤੇ ਬੁੱਕ ਕਰ ਲੈਂਦੇ ਹਾਂ, UPI ਤੇ ਪੈਸੇ 90 ਸਕਿੰਟ ਵਿਚ ਆ ਜਾਂਦੇ ਹਨ।',
-    quoteEn: 'Earlier I had to make endless calls. Now I book on Telegram, money comes in 90 seconds via UPI.',
+    quoteEn: 'Earlier I had to make endless calls. Now I can send a booking request through Telegram and see the field status in one place.',
     acres: 6.2,
     crop: 'Basmati-1509',
     avatar: '/images/farmer_manpreet.jpg',
-    savings: '₹3,625 settled via UPI within 46 seconds',
+    savings: 'Illustrative booking scenario • payment integration disabled',
   },
   {
     name: 'Harinder Singh Dhillon',
     village: 'Kheri Chandwan, Sunam',
-    quote: 'ਮੇਰੇ ਗੁਆਂਢੀ ਅੱਗ ਲਾਉਂਦੇ ਰਹੇ, ਪਰ ਮੈਂ ₹6,750 ਕਮਾ ਲਏ ਅਤੇ ਕਾਰਬਨ ਕ੍ਰੈਡਿਟ ਦਾ ਸਰਟੀਫ਼ਿਕੇਟ ਵੀ ਮਿਲਿਆ।',
-    quoteEn: 'My neighbors kept burning, but I earned ₹6,750 and also got a carbon credit certificate.',
+    quote: 'ਇਹ demo scenario ਹੈ — verification ਤੋਂ ਬਾਅਦ residue ਦੀ downstream value ਸਮਝਾਉਣ ਲਈ।',
+    quoteEn: 'Illustrative scenario showing how verified residue could unlock downstream value; no payment or carbon certificate is issued here.',
     acres: 12.0,
     crop: 'Pusa-44',
     avatar: '/images/punjab_farmer_hero.jpg',
@@ -374,7 +374,7 @@ export const ImpactStats: React.FC<ImpactStatsProps> = ({ onNavigateTab }) => {
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-lg font-bold text-white font-['Outfit']">
-                Voices From the Field: Real Farmer Experiences
+                Illustrative Field Scenarios: Illustrative Farmer Scenarios
               </h2>
               <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 font-mono font-bold border border-amber-500/30">
                 SANGRUR CLUSTER
