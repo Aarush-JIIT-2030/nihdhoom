@@ -132,7 +132,7 @@ test('Telegram is the primary farmer channel and legacy WhatsApp webhook is abse
 test('onboarding does not collect financial identifiers while payment is disabled', () => {
   const onboarding = read('src/components/FarmerOnboarding/FarmerOnboarding.tsx');
   assert.doesNotMatch(onboarding, /UPI ID \(Preferred\)/);
-  assert.match(onboarding, /does not ask for a real UPI ID or bank account/);
+  assert.match(onboarding, /do not ask for a real UPI ID or bank account/);
 });
 
 test('live field normalization does not invent Punjab coordinates', () => {
