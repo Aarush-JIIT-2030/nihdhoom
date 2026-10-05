@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { supabase } from '../../lib/supabase';
 import { Field, BurnEvent } from '../../types';
 import { executeFirmsAudit, generateNonBurnCertificate } from '../../utils/spatialVerification';
 import { CarbonCertificate } from './CarbonCertificate';
@@ -19,15 +20,45 @@ interface SatelliteAuditProps {
   fields: Field[];
   demoMode: boolean;
   fireEvents: BurnEvent[];
+  onVerified?: (fieldId: string) => void;
 }
 
 export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
   fields,
   demoMode,
   fireEvents,
+  onVerified,
 }) => {
   const auditReport = executeFirmsAudit(fields, fireEvents);
   const [selectedFieldForCert, setSelectedFieldForCert] = useState<Field | null>(null);
+  const [reviewingFieldId, setReviewingFieldId] = useState<string | null>(null);
+  const [reviewMessage, setReviewMessage] = useState('');
+
+  const handleVerify = async (field: Field) => {
+    setReviewingFieldId(field.id);
+    setReviewMessage('');
+    try {
+      if (demoMode) {
+        onVerified?.(field.id);
+        setReviewMessage(`Demo review recorded for ${field.khasra_no}. No registry or payment claim was issued.`);
+        return;
+      }
+      if (!supabase) throw new Error('Live Supabase is not configured.');
+      const { error } = await supabase.rpc('record_verification_review', {
+        p_field_id: field.id,
+        p_result: 'VERIFIED_NON_BURN',
+        p_confidence: 92,
+        p_metadata: { source: 'nirdhoom-review-console', observation_mode: auditReport.dataAvailability },
+      });
+      if (error) throw new Error(error.message);
+      onVerified?.(field.id);
+      setReviewMessage(`Verification review recorded for ${field.khasra_no}.`);
+    } catch (error) {
+      setReviewMessage(error instanceof Error ? error.message : 'Verification review failed.');
+    } finally {
+      setReviewingFieldId(null);
+    }
+  };
 
   const handleOpenCertificate = (fieldId: string) => {
     const f = fields.find((item) => item.id === fieldId);
@@ -211,12 +242,23 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
                       </span>
                     </td>
                     <td className="py-3 px-3 text-right">
-                      <button
-                        onClick={() => handleOpenCertificate(field.id)}
-                        className="px-2.5 py-1 rounded bg-slate-800 hover:bg-emerald-600 hover:text-white text-emerald-300 text-xs font-semibold border border-slate-700 transition-all cursor-pointer"
-                      >
-                        View verification record
-                      </button>
+                      <div className="flex items-center justify-end gap-2">
+                        {(field.status === 'CLEARED_PENDING_AUDIT' || demoMode) && field.status !== 'VERIFIED_NON_BURN' && (
+                          <button
+                            onClick={() => void handleVerify(field)}
+                            disabled={reviewingFieldId === field.id}
+                            className="px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-semibold border border-emerald-500 transition-all"
+                          >
+                            {reviewingFieldId === field.id ? 'Reviewing…' : 'Verify field'}
+                          </button>
+                        )}
+                        <button
+                          onClick={() => handleOpenCertificate(field.id)}
+                          className="px-2.5 py-1 rounded bg-slate-800 hover:bg-emerald-600 hover:text-white text-emerald-300 text-xs font-semibold border border-slate-700 transition-all cursor-pointer"
+                        >
+                          View record
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );
@@ -225,6 +267,8 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
           </table>
         </div>
       </div>
+
+      {reviewMessage && <div role="status" className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-3 text-xs text-emerald-200">{reviewMessage}</div>}
 
       {/* The 4 Inputs Architecture Diagram for Judges */}
       <div className="glass-panel p-4 bg-slate-950/60 flex flex-col gap-3">
