@@ -20,6 +20,7 @@ import { OpsMap } from './OpsConsole/OpsMap';
 import { VRPDispatchPanel } from './OpsConsole/VRPDispatchPanel';
 import { BalerPWA } from './FieldOperator/BalerPWA';
 import { SatelliteAudit } from './VerificationLayer/SatelliteAudit';
+import { ClearancePassport } from './VerificationLayer/ClearancePassport';
 import { INITIAL_STORAGE_YARDS, INITIAL_BUYERS } from '../data/mockData';
 
 interface DemoWalkthroughProps {
@@ -47,23 +48,23 @@ export const DemoWalkthrough: React.FC<DemoWalkthroughProps> = ({
     {
       step: 1,
       title: 'Beat 1: Farmer Telegram & Capacity-Aware Booking',
-      oneLiner: 'Book via Punjabi Telegram; see an indicative clearance window and follow the live booking workflow.',
+      oneLiner: 'Start with the farmer problem: request clearance and receive an understandable planning window.',
       badge: 'Demand Capture & Planning',
       icon: MessageSquare,
       color: 'text-emerald-400',
     },
     {
       step: 2,
-      title: 'Beat 2: Ops Console & OR-Tools VRP Dispatch',
-      oneLiner: 'Map runs OR-Tools to assign idle subsidised balers, drawing routes under 48h deadline constraints.',
+      title: 'Beat 2: Dispatch & machine coordination',
+      oneLiner: 'Coordinate available machines and compare routes without claiming fleet ownership or guaranteed capacity.',
       badge: 'The Core Product',
       icon: Map,
       color: 'text-cyan-400',
     },
     {
       step: 3,
-      title: 'Beat 3: Field Baler & completion workflow',
-      oneLiner: 'Field operator records the demo job, evidence and residue-lot state; live money movement is disabled.',
+      title: 'Beat 3: Field work & evidence capture',
+      oneLiner: 'The operator records progress, GPS context and field evidence; payment movement is disabled.',
       badge: 'Zero-Dispute Trust',
       icon: Zap,
       color: 'text-amber-400',
@@ -71,8 +72,8 @@ export const DemoWalkthrough: React.FC<DemoWalkthroughProps> = ({
     {
       step: 4,
       title: 'Beat 4: FIRMS / VIIRS Evidence Review',
-      oneLiner: 'Compare supplied thermal observations with registered polygons. This supports review; it does not create carbon credits or prove absence of fire.',
-      badge: 'Evidence & methodology gate',
+      oneLiner: 'Assemble the field, machine, evidence and residue checkpoints into one judge-readable trust record.',
+      badge: 'Proof & trust artifact',
       icon: Satellite,
       color: 'text-emerald-400',
     },
@@ -190,7 +191,7 @@ export const DemoWalkthrough: React.FC<DemoWalkthroughProps> = ({
           <div className="flex flex-col gap-4">
             <div className="p-3 bg-cyan-950/40 border border-cyan-500/30 rounded-xl text-xs text-slate-200 flex items-center justify-between">
               <div>
-                <strong>Beat 2 in Action:</strong> The Central Dispatch Engine takes all registered fields and runs an OR-Tools solver over idle subsidised balers, generating deadhead-minimized routes that eliminate late-sowing penalty exposure.
+                <strong>Beat 2 in Action:</strong> The dispatch layer compares available work and machine capacity and can use an OR-Tools route solver. The prototype does not claim guaranteed machine capacity or contractual penalties.
               </div>
               <button
                 onClick={() => setCurrentBeat(3)}
@@ -235,7 +236,7 @@ export const DemoWalkthrough: React.FC<DemoWalkthroughProps> = ({
                 onClick={() => setCurrentBeat(4)}
                 className="px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold text-xs whitespace-nowrap shrink-0 ml-4 cursor-pointer"
               >
-                Proceed to Beat 4 (The Money Shot) →
+                Proceed to Beat 4 (The trust proof) →
               </button>
             </div>
 
@@ -254,6 +255,8 @@ export const DemoWalkthrough: React.FC<DemoWalkthroughProps> = ({
               <div>
                 <strong>Beat 4: Evidence Review</strong> FIRMS/VIIRS observations are shown as one supporting evidence layer. They do not by themselves prove a field did not burn or issue a carbon certificate.
               </div>
+              <ClearancePassport field={selectedField} machine={machines[0]} demoMode={demoMode} />
+
               <button
                 onClick={() => setCurrentBeat(1)}
                 className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs whitespace-nowrap shrink-0 ml-4 cursor-pointer flex items-center gap-1"
