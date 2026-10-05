@@ -41,12 +41,10 @@ interface AgenticLandingProps {
 }
 
 const ROTATING_WORDS = [
-  'Agentic Multi-Agent AI',
-  'Capacity-aware dispatch',
-  'OR-Tools Constrained VRP',
-  'FIRMS / VIIRS thermal evidence',
-  'Payment disabled in this release',
-  'Carbon accounting readiness',
+  'Book a clearance',
+  'Track the machine',
+  'Capture field proof',
+  'Verify the residue pathway',
 ];
 
 const PUNJAB_DISTRICT_TICKERS = [
@@ -94,15 +92,15 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
           <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-slate-900/80 border border-emerald-500/40 text-emerald-300 text-xs font-mono mb-6 shadow-lg shadow-emerald-500/10 backdrop-blur-md">
             <span className="badge--dot" />
             <span className="font-bold tracking-wider uppercase">
-              PUNJAB CRM DISPATCH &amp; VERIFICATION NETWORK
+              FIELD-FIRST CROP-RESIDUE NETWORK
             </span>
             <span className="text-slate-600">|</span>
-            <span className="text-cyan-300 font-semibold">THE PARALI REFRAME</span>
+            <span className="text-cyan-300 font-semibold">NIRDHOOM</span>
           </div>
 
           {/* Main Kinetic Headline */}
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white font-['Outfit'] leading-[1.12] mb-6">
-            We Don't Buy Balers. We Route Punjab's Idle Machines With{' '}
+            From Field to Verified Parali —{' '}
             <span className="hero-word block sm:inline mt-2 sm:mt-0">
               <span className="text-gradient">
                 {ROTATING_WORDS[wordIndex]}
@@ -133,7 +131,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
 
           {/* Hard-hitting subtitle based on the 1-liner brief */}
           <p className="text-sm sm:text-base lg:text-lg text-slate-300 max-w-3xl mx-auto leading-relaxed mb-8 font-['Plus_Jakarta_Sans'] font-normal">
-            We run an autonomous dispatch network over Punjab’s tens of thousands of idle, 50–80% subsidised crop residue machines. We give farmers a <strong className="text-emerald-300 font-semibold">clearance estimate tied to the booking workflow</strong>, reserve capacity only when the server-authoritative booking path succeeds, and keep payment disabled in this release, and support field verification with <strong className="text-teal-300 font-semibold">NASA FIRMS satellite observations</strong> as one evidence source rather than absolute proof.
+            NIRDHOOM connects the practical chain behind non-burning crop-residue management: <strong className="text-emerald-300 font-semibold">field → booking → machine → proof → parali</strong>. The prototype combines farmer-first workflows, operational dispatch, GPS/evidence capture and layered verification. Demo records are labelled; live capacity, commercial contracts and payment movement are not claimed.
           </p>
 
           {/* Interactive CTAs Bar */}
@@ -143,51 +141,51 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
               className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-extrabold text-sm flex items-center gap-2.5 cursor-pointer shadow-xl shadow-emerald-500/30 hover:scale-[1.02] transition-all"
             >
               <Play className="w-4 h-4 fill-slate-950" />
-              <span>Launch 4-Beat Live Pitch Demo</span>
+              <span>Start the 2-Minute Competition Demo</span>
             </button>
 
             <button
-              onClick={() => onNavigateTab('AGENTIC_CONSOLE')}
+              onClick={() => onNavigateTab('OPS_CONSOLE')}
               className="px-6 py-3.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-cyan-300 hover:text-cyan-200 border border-cyan-500/40 font-bold text-sm flex items-center gap-2 cursor-pointer shadow-lg shadow-cyan-500/10 hover:scale-[1.02] transition-all"
             >
               <Bot className="w-4 h-4 text-cyan-400 animate-pulse" />
-              <span>Agentic Swarm Console</span>
+              <span>Operations & Dispatch</span>
             </button>
 
             <button
-              onClick={() => onNavigateTab('DIGITAL_TWIN_3D')}
+              onClick={() => onNavigateTab('SATELLITE_AUDIT')}
               className="px-5 py-3.5 rounded-xl bg-slate-900/70 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/80 font-semibold text-sm flex items-center gap-2 cursor-pointer hover:scale-[1.02] transition-all"
             >
               <Globe className="w-4 h-4 text-emerald-400" />
-              <span>3D Digital Twin</span>
+              <span>Field Proof View</span>
             </button>
 
             <button
-              onClick={openPitchDrawer}
+              onClick={() => onNavigateTab('COMPETITION_CENTER')}
               className="px-5 py-3.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-semibold text-sm flex items-center gap-2 cursor-pointer transition-all"
             >
               <Sparkles className="w-4 h-4" />
-              <span>Judge Pitch Deck</span>
+              <span>Competition Pitch Center</span>
             </button>
           </div>
 
           {/* Quick Metrics Bar in Hero with subtle borders */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full max-w-4xl">
             <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 text-center hover:border-emerald-500/40 transition-colors">
-              <div className="text-xl sm:text-2xl font-black font-mono text-emerald-400">88.4 ac</div>
-              <div className="text-[11px] font-mono text-slate-400 mt-1 uppercase">Scheduled Sangrur</div>
+              <div className="text-xl sm:text-2xl font-black font-mono text-emerald-400">5 steps</div>
+              <div className="text-[11px] font-mono text-slate-400 mt-1 uppercase">Field → proof journey</div>
             </div>
             <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 text-center hover:border-cyan-500/40 transition-colors">
-              <div className="text-xl sm:text-2xl font-black font-mono text-cyan-300">Evidence</div>
-              <div className="text-[11px] font-mono text-slate-400 mt-1 uppercase">Remote-sensing layer</div>
+              <div className="text-xl sm:text-2xl font-black font-mono text-cyan-300">GPS + proof</div>
+              <div className="text-[11px] font-mono text-slate-400 mt-1 uppercase">Operator evidence layer</div>
             </div>
             <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 text-center hover:border-amber-500/40 transition-colors">
-              <div className="text-xl sm:text-2xl font-black font-mono text-amber-400">SIM</div>
-              <div className="text-[11px] font-mono text-slate-400 mt-1 uppercase">Payments disabled</div>
+              <div className="text-xl sm:text-2xl font-black font-mono text-amber-400">₹0</div>
+              <div className="text-[11px] font-mono text-slate-400 mt-1 uppercase">Payment movement in release</div>
             </div>
             <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 text-center hover:border-teal-500/40 transition-colors">
-              <div className="text-xl sm:text-2xl font-black font-mono text-teal-300">₹0 Capex</div>
-              <div className="text-[11px] font-mono text-slate-400 mt-1 uppercase">Idle CRM Fleet</div>
+              <div className="text-xl sm:text-2xl font-black font-mono text-teal-300">Asset-light</div>
+              <div className="text-[11px] font-mono text-slate-400 mt-1 uppercase">Coordinate existing machines</div>
             </div>
           </div>
         </div>
