@@ -378,3 +378,255 @@ html[data-theme="kisan"] .nirdhoom-field-app p {
     transition-duration: .001ms !important;
   }
 }
+
+
+/* =========================================================
+   NIRDHOOM READABILITY + MOBILE LEGIBILITY PASS
+   Visual direction: warm field UI with saffron accents.
+   ========================================================= */
+
+html[data-theme="kisan"] {
+  --saffron: #c96f08;
+  --saffron-strong: #a95404;
+  --saffron-soft: #fff4e2;
+  --saffron-line: #e8bd82;
+  --readable-muted: #536658;
+  --readable-subtle: #657565;
+  --body-size: 15px;
+}
+
+html[data-theme="kisan"] body {
+  font-size: var(--body-size);
+  line-height: 1.62;
+  text-rendering: optimizeLegibility;
+  -webkit-text-size-adjust: 100%;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app {
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(p, li, label, td, dd) {
+  font-size: max(14px, 1em);
+  line-height: 1.62;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(small, .source-note, .photo-note) {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--readable-subtle);
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(h1, h2, h3, h4) {
+  color: #173522;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app h1 {
+  font-size: clamp(2rem, 4.2vw, 3.8rem);
+  font-weight: 850;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app h2 {
+  font-size: clamp(1.45rem, 2.8vw, 2.25rem);
+  font-weight: 820;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app h3 {
+  font-size: clamp(1.05rem, 2vw, 1.3rem);
+  font-weight: 800;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(.muted, .text-muted, [class*="text-muted"]) {
+  color: var(--readable-muted);
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(button, .field-button, .primary, .secondary) {
+  min-height: 44px;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(input, select, textarea) {
+  min-height: 46px;
+  font-size: 15px;
+  line-height: 1.4;
+  color: #173522;
+  background: #fff;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(input::placeholder, textarea::placeholder) {
+  color: #718172;
+  opacity: 1;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(a) {
+  color: #a95404;
+  text-underline-offset: 3px;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(a:hover) {
+  color: #7f4105;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(.badge, .pill, .tag, .live) {
+  font-size: 12px;
+  line-height: 1.2;
+  padding: 6px 10px;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(.comparison-table th) {
+  font-size: 12px;
+  font-weight: 800;
+  color: #536658;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(.comparison-table td) {
+  font-size: 14px;
+  line-height: 1.55;
+  color: #304b38;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(.research-source p, .research-chart small) {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(.job-head p, .satellite-panel p, .payment-top > div:first-child > span:last-child) {
+  font-size: 13px;
+  line-height: 1.55;
+  color: #536658;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(.carbon-step small, .payment-steps small, .operator-progress small) {
+  font-size: 11px;
+  line-height: 1.45;
+  color: #657565;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(.photo-band span) {
+  font-size: 12px;
+  line-height: 1.25;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(.field-nav-item, .field-more-button, .field-mobile-tab, .field-mobile-item) {
+  font-size: 13px;
+  line-height: 1.25;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(.field-more-menu) {
+  max-width: min(380px, calc(100vw - 24px));
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(.panel, .buyer, .metric, .research-source, .action-card) {
+  border-color: rgba(31,122,70,.15);
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(.primary) {
+  background: var(--saffron-strong);
+  border-color: var(--saffron-strong);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(169,84,4,.16);
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(.primary:hover) {
+  background: #843f03;
+  border-color: #843f03;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app :where(.secondary:hover, .text-btn:hover) {
+  color: #7f4105;
+}
+
+@media (max-width: 760px) {
+  html[data-theme="kisan"] .nirdhoom-field-app {
+    font-size: 15px;
+  }
+
+  html[data-theme="kisan"] .nirdhoom-field-app :where(p, li, label, td, dd) {
+    font-size: 14px;
+  }
+
+  html[data-theme="kisan"] .nirdhoom-field-app :where(.field-main, .container) {
+    width: min(100% - 24px, 100%);
+  }
+
+  html[data-theme="kisan"] .nirdhoom-field-app :where(.panel, .buyer, .metric, .research-source, .action-card) {
+    padding: 16px;
+  }
+
+  html[data-theme="kisan"] .nirdhoom-field-app :where(.hero-actions, .detail-actions, .operator-actions) {
+    gap: 10px;
+  }
+
+  html[data-theme="kisan"] .nirdhoom-field-app :where(.hero-actions button, .detail-actions button, .operator-actions button) {
+    min-height: 46px;
+  }
+
+  html[data-theme="kisan"] .nirdhoom-field-app :where(.photo-band span) {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 560px) {
+  html[data-theme="kisan"] .nirdhoom-field-app :where(h1) {
+    font-size: clamp(1.8rem, 9vw, 2.45rem);
+    line-height: 1.08;
+  }
+
+  html[data-theme="kisan"] .nirdhoom-field-app :where(h2) {
+    font-size: clamp(1.3rem, 6.5vw, 1.8rem);
+  }
+
+  html[data-theme="kisan"] .nirdhoom-field-app :where(h3) {
+    font-size: 1.08rem;
+  }
+
+  html[data-theme="kisan"] .nirdhoom-field-app :where(p, li, label, td, dd) {
+    font-size: 14px;
+    line-height: 1.58;
+  }
+
+  html[data-theme="kisan"] .nirdhoom-field-app :where(small, .source-note, .photo-note) {
+    font-size: 12px;
+  }
+
+  html[data-theme="kisan"] .nirdhoom-field-app :where(button, .field-button, .primary, .secondary) {
+    min-height: 46px;
+    font-size: 14px;
+  }
+
+  html[data-theme="kisan"] .nirdhoom-field-app :where(input, select, textarea) {
+    min-height: 48px;
+    font-size: 16px;
+  }
+
+  html[data-theme="kisan"] .nirdhoom-field-app :where(.field-mobile-tab, .field-mobile-item) {
+    font-size: 13px;
+  }
+
+  html[data-theme="kisan"] .nirdhoom-field-app :where(.research-bars) {
+    min-width: 0;
+  }
+
+  html[data-theme="kisan"] .nirdhoom-field-app :where(.payment-amount) {
+    font-size: clamp(38px, 14vw, 58px);
+  }
+}
+
+@media (max-width: 420px) {
+  html[data-theme="kisan"] .nirdhoom-field-app :where(.photo-band) {
+    grid-template-columns: 1fr;
+  }
+
+  html[data-theme="kisan"] .nirdhoom-field-app :where(.photo-band img) {
+    height: 170px;
+  }
+
+  html[data-theme="kisan"] .nirdhoom-field-app :where(.hero-actions button, .detail-actions button, .operator-actions button) {
+    width: 100%;
+  }
+}
