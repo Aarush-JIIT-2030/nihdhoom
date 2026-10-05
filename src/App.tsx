@@ -199,6 +199,15 @@ function WorkspaceHeader({ activeTab, demoMode, onNavigate }: WorkspaceHeaderPro
   const meta = WORKSPACE_META[activeTab];
   if (!meta) return null;
   const accentClass = meta.accent === 'amber' ? 'is-amber' : meta.accent === 'sky' ? 'is-sky' : 'is-green';
+  const journey = [
+    { label: 'Field', tab: 'FIELD_JOBS' as ActiveTab },
+    { label: 'Book', tab: 'FARMER_ONBOARDING' as ActiveTab },
+    { label: 'Machine', tab: 'OPS_CONSOLE' as ActiveTab },
+    { label: 'Proof', tab: 'SATELLITE_AUDIT' as ActiveTab },
+    { label: 'Parali', tab: 'RESIDUE_POOLS' as ActiveTab },
+  ];
+  const activeJourney = journey.findIndex((item) => item.tab === activeTab);
+  const journeyIndex = activeJourney >= 0 ? activeJourney : activeTab === 'BALER_OPERATOR' ? 2 : activeTab === 'FIELD_PROVENANCE' ? 0 : activeTab === 'OFFTAKE_AUCTION' ? 4 : 0;
 
   return (
     <section className={`workspace-hero ${accentClass}`} aria-labelledby="workspace-title">
@@ -215,6 +224,21 @@ function WorkspaceHeader({ activeTab, demoMode, onNavigate }: WorkspaceHeaderPro
             {meta.action.label} <span aria-hidden="true">→</span>
           </button>
         )}
+
+        <div className="workspace-journey" aria-label="NIRDHOOM journey">
+          {journey.map((item, index) => (
+            <button
+              key={item.label}
+              type="button"
+              className={`workspace-journey-step ${index === journeyIndex ? 'is-current' : ''} ${index < journeyIndex ? 'is-done' : ''}`}
+              onClick={() => onNavigate(item.tab)}
+              title={item.label}
+            >
+              <span className="workspace-journey-number">{index + 1}</span>
+              <span>{item.label}</span>
+            </button>
+          ))}
+        </div>
       </div>
       <div className="workspace-hero-image" aria-hidden="true">
         <img src={meta.image} alt="" loading="lazy" />
