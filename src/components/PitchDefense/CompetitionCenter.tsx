@@ -105,7 +105,7 @@ export const CompetitionCenter: React.FC<CompetitionCenterProps> = ({ onNavigate
           <li>Problem: seasonal residue clearance is fragmented and time-sensitive.</li>
           <li>Wedge: coordinate existing machinery instead of buying another fleet.</li>
           <li>Moat: field records + operational evidence + verified residue workflows.</li>
-          <li>Scale: start in North India, then reuse the workflow in other residue regions.</li>
+          <li>Policy fit: government action plans already call for farm mapping, machine utilisation, IT-based booking and stronger residue supply chains.</li>
         </ul>
         <div className="competition-unit-economics">
           <b>RIDE unit-economics hypothesis</b>
@@ -124,7 +124,7 @@ export const CompetitionCenter: React.FC<CompetitionCenterProps> = ({ onNavigate
         <h3>Pitch NIRDHOOM as a community solution</h3>
         <p>Lead with a simple farmer problem and prove the workflow works: book pickup, track the machine and verify what happened.</p>
         <ul>
-          <li>Impact: reduce friction around non-burning residue management.</li>
+          <li>Impact: reduce the coordination friction between farmers, machinery and residue utilisation.</li>
           <li>UX: farmer-first words, mobile-sized controls and local-language support.</li>
           <li>Technical craft: Supabase, server-owned booking, GPS/evidence, dispatch and verification.</li>
           <li>Feasibility: clearly separate implemented foundations from pilot dependencies.</li>
