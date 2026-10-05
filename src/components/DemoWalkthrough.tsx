@@ -62,8 +62,8 @@ export const DemoWalkthrough: React.FC<DemoWalkthroughProps> = ({
     },
     {
       step: 3,
-      title: 'Beat 3: Field Baler & simulated settlement',
-      oneLiner: 'Field operator scans the lot, verifies acreage and records a simulated settlement state; live money movement is disabled.',
+      title: 'Beat 3: Field Baler & completion workflow',
+      oneLiner: 'Field operator records the demo job, evidence and residue-lot state; live money movement is disabled.',
       badge: 'Zero-Dispute Trust',
       icon: Zap,
       color: 'text-amber-400',
@@ -171,7 +171,7 @@ export const DemoWalkthrough: React.FC<DemoWalkthroughProps> = ({
           <div className="flex flex-col gap-3">
             <div className="p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-xl text-xs text-slate-200 flex items-center justify-between">
               <div>
-                <strong>Beat 1 in Action:</strong> Farmer Gurpreet Singh books 3.5 acres via Punjabi Telegram. Notice the dynamic rate (₹1,450/ac) and the contractual late penalty of ₹4,500. Click <em>"Lock Slot"</em> or <em>"Listen to Punjabi Voice Note"</em>!
+                <strong>Beat 1 in Action:</strong> Farmer Gurpreet Singh books 3.5 acres via Punjabi Telegram. Notice the indicative demo rate and estimated clearance window. No contractual penalty or payment is active. Click <em>"Lock Slot"</em> or <em>"Listen to Punjabi Voice Note"</em>!
               </div>
               <button
                 onClick={() => setCurrentBeat(2)}
@@ -229,7 +229,7 @@ export const DemoWalkthrough: React.FC<DemoWalkthroughProps> = ({
           <div className="flex flex-col gap-3">
             <div className="p-3 bg-amber-950/40 border border-amber-500/30 rounded-xl text-xs text-slate-200 flex items-center justify-between">
               <div>
-                <strong>Beat 3 in Action:</strong> Baler Operator completes the demo job, records evidence and a QR lot, then opens the <strong>simulated settlement workflow</strong>. No real money moves.
+                <strong>Beat 3 in Action:</strong> Baler Operator completes the demo job, records evidence and a QR lot, then opens the <strong>completion workflow</strong>. No real money moves.
               </div>
               <button
                 onClick={() => setCurrentBeat(4)}
