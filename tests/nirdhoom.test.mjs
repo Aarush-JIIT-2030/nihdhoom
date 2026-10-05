@@ -182,6 +182,18 @@ test('Telegram identity linking is authenticated and server-owned', () => {
   assert.match(webhook, /consume_telegram_link_token/);
 });
 
+test('Telegram webhook is idempotent and server-persisted', () => {
+  const migration = read('supabase/migrations/202610050002_nirdhoom_telegram_webhook_idempotency.sql');
+  const source = read('api/notify/telegram-webhook.ts');
+  assert.match(migration, /telegram_webhook_updates/);
+  assert.match(migration, /update_id bigint primary key/);
+  assert.match(migration, /enable row level security/);
+  assert.match(source, /claimTelegramUpdate/);
+  assert.match(source, /telegram_webhook_updates/);
+  assert.match(source, /response.status === 409/);
+  assert.match(source, /duplicate: true/);
+});
+
 test('Telegram outbound notifications remain dispatcher/admin-only', () => {
   const source = read('api/notify/telegram.ts');
   assert.match(source, /verifyDispatcher\(req\)/);
