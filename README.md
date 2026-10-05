@@ -26,6 +26,7 @@ The dedicated NIRDHOOM Supabase project and deployed database state are document
 
 ## Contents
 
+- [Competition readiness](#competition-readiness)
 - [What the product is intended to do](#what-the-product-is-intended-to-do)
 - [Current implementation](#current-implementation)
 - [Workflow and architecture](#workflow-and-architecture)
@@ -40,6 +41,22 @@ The dedicated NIRDHOOM Supabase project and deployed database state are document
 - [Repository guide](#repository-guide)
 - [Research and references](#research-and-references)
 - [Contributing](#contributing)
+
+## Competition readiness
+
+NIRDHOOM is prepared for two different competition stories without changing the underlying product:
+
+- **RIDE Hack '26:** startup/incubation story — asset-light rural logistics, machinery coordination, verification, market validation and a supervised pilot path.
+- **WarriorHacks 2.0:** community-impact story — a simple farmer workflow that makes crop-residue clearance easier to request, track and verify.
+
+Open **More → Competition Pitch** inside the app for the judge-facing demo route and truth labels.
+
+Submission briefs:
+- [RIDE Hack '26 submission](docs/RIDE-HACK-26-SUBMISSION.md)
+- [WarriorHacks 2.0 submission](docs/WARRIORHACKS-2-SUBMISSION.md)
+- [Competition readiness checklist](docs/COMPETITION-READINESS.md)
+
+**WarriorHacks eligibility note:** the repository has development history predating the current event window. The public event page confirms the Hackathon requires code, a GitHub repository, a 2–3 minute demo and project images, but this repository does not assume that pre-existing work is eligible. Confirm the organizer's rule before submitting and never misrepresent development history.
 
 ## What the product is intended to do
 
