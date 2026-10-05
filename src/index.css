@@ -1463,3 +1463,135 @@ html[data-theme="kisan"] .field-journey b {
 @media(max-width:639px) {
   html[data-theme="kisan"] .field-journey > span { min-width:66px; }
 }
+
+
+/* Journey strips: turn complicated workflows into human-readable steps. */
+html[data-theme="kisan"] .farmer-step-strip {
+  display:flex;
+  align-items:center;
+  gap:.55rem;
+  padding:.75rem;
+  border:1px solid rgba(31,122,70,.11);
+  border-radius:18px;
+  background:#f8faf6;
+}
+html[data-theme="kisan"] .farmer-step-strip > div {
+  flex:1;
+  display:grid;
+  grid-template-columns:auto 1fr;
+  column-gap:.5rem;
+  align-items:center;
+  min-width:0;
+}
+html[data-theme="kisan"] .farmer-step-strip > div > span {
+  grid-row:span 2;
+  display:grid;
+  place-items:center;
+  width:28px;
+  height:28px;
+  border-radius:10px;
+  background:#e5eee1;
+  color:#66806a;
+  font-size:.65rem;
+  font-weight:900;
+}
+html[data-theme="kisan"] .farmer-step-strip > div.is-current > span {
+  background:#247a46;
+  color:#fff;
+}
+html[data-theme="kisan"] .farmer-step-strip strong {
+  color:#31583d;
+  font-size:.67rem;
+}
+html[data-theme="kisan"] .farmer-step-strip small {
+  margin-top:.12rem;
+  color:#849285;
+  font-size:.51rem;
+}
+html[data-theme="kisan"] .farmer-step-strip > i {
+  width:28px;
+  height:1px;
+  flex:none;
+  background:#ccd8c9;
+}
+html[data-theme="kisan"] .market-journey {
+  display:grid;
+  grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;
+  align-items:center;
+  gap:.65rem;
+  padding:1rem;
+  border:1px solid rgba(31,122,70,.10);
+  border-radius:18px;
+  background:linear-gradient(135deg,#f3f8ee,#fbf6e8);
+}
+html[data-theme="kisan"] .market-journey > div {
+  display:flex;
+  flex-direction:column;
+}
+html[data-theme="kisan"] .market-journey span {
+  color:#8b987f;
+  font-size:.5rem;
+  font-weight:900;
+  letter-spacing:.12em;
+}
+html[data-theme="kisan"] .market-journey b {
+  margin-top:.18rem;
+  color:#28583a;
+  font-size:.78rem;
+}
+html[data-theme="kisan"] .market-journey small {
+  margin-top:.12rem;
+  color:#7b897d;
+  font-size:.52rem;
+}
+html[data-theme="kisan"] .market-journey > i {
+  width:26px;
+  height:1px;
+  background:#c7d4c5;
+}
+html[data-theme="kisan"] .evidence-language {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:.65rem;
+}
+html[data-theme="kisan"] .evidence-language > div {
+  padding:.85rem;
+  border:1px solid rgba(31,122,70,.10);
+  border-radius:15px;
+  background:#f8faf6;
+}
+html[data-theme="kisan"] .evidence-language b {
+  color:#28583a;
+  font-size:.65rem;
+}
+html[data-theme="kisan"] .evidence-language span {
+  display:block;
+  margin-top:.25rem;
+  color:#7a887c;
+  font-size:.55rem;
+  line-height:1.4;
+}
+@media(max-width:720px) {
+  html[data-theme="kisan"] .farmer-step-strip {
+    display:grid;
+    grid-template-columns:1fr;
+  }
+  html[data-theme="kisan"] .farmer-step-strip > div {
+    padding:.15rem;
+  }
+  html[data-theme="kisan"] .farmer-step-strip > i {
+    display:none;
+  }
+  html[data-theme="kisan"] .market-journey {
+    grid-template-columns:1fr;
+    gap:.5rem;
+  }
+  html[data-theme="kisan"] .market-journey > i {
+    width:1px;
+    height:12px;
+    margin-left:8px;
+  }
+  html[data-theme="kisan"] .evidence-language {
+    grid-template-columns:1fr 1fr;
+  }
+}
