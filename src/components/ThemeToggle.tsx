@@ -46,7 +46,7 @@ export const ThemeToggle: React.FC = () => {
     <button
       type="button"
       onClick={cycleTheme}
-      className="px-2.5 py-1.5 rounded-lg border border-amber-500/40 bg-slate-900/90 hover:bg-slate-800 text-amber-300 transition-all cursor-pointer shadow-sm flex items-center gap-1.5 text-xs font-bold font-mono"
+      className="field-theme-toggle px-2.5 py-1.5 rounded-xl border bg-white hover:bg-emerald-50 transition-all cursor-pointer shadow-sm flex items-center gap-1.5 text-xs font-bold font-mono"
       title={`Current Theme: ${theme.toUpperCase()} (Click to Cycle: Kisan Vibe → Night Sky → Daylight)`}
       aria-label="Toggle theme"
     >
