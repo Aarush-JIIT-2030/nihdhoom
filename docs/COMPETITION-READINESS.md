@@ -29,10 +29,23 @@
 - [ ] Real Telegram bot webhook/link test
 - [ ] Supervised end-to-end field-pilot validation
 
+## Research-backed problem proof
+
+Use the following evidence in the pitch, with the caveat that these are research findings rather than NIRDHOOM performance claims:
+
+- CEEW's 2026 Punjab study reports 86% of surveyed farmers had never heard of Unnat Kisan and highlights practical, behavioural and trust barriers to CRM adoption.
+- CEEW's 2025 CHC study reports only about 15% of farmers practising in-situ CRM accessed CHC services in the cited evidence, while many CHCs still rely on phone/in-person coordination.
+- CEEW reports an all-inclusive CRM rental package around INR 2,000/acre in Punjab; this is useful market context, not a NIRDHOOM price.
+- The product thesis should therefore be stated as a coordination/evidence layer, not as another generic farmer app.
+
 ## Competition presentation
 - [x] RIDE startup story
 - [x] WarriorHacks community-solution story
 - [x] 2-minute demo route
+- [x] Research-backed problem proof
+- [x] Judge scorecard mapped to Impact / Feasibility / UX / Technical Craft
+- [x] Field Clearance Passport as final demo trust artifact
+- [x] Evidence-based unit-economics hypothesis for RIDE
 - [x] Judge defence with truth boundaries
 - [x] No payment/settlement overclaims
 - [ ] Record final demo video
