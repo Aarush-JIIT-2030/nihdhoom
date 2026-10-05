@@ -7,7 +7,7 @@ export interface PricingQuote {
   ratePerAcre: number;
   totalPayout: number;
   penaltyCoverage: number;
-  guaranteedHours: number;
+  planningWindowHours: number;
   tierName: string;
   tierBadgeColor: string;
   urgencyDiscountOrBonusPct: number;
@@ -55,8 +55,8 @@ export function calculateDynamicQuote(acreage: number, daysToHarvest: number): P
 
   const totalPayout = Math.round(ratePerAcre * acreage);
 
-  // Late sowing penalty: Covers PAU research-backed wheat yield loss (1.5 quintals/acre @ ₹2,275 MSP = ~₹3,400/acre)
-  // Illustrative penalty policy only; no automatic UPI transfer occurs in the current release.
+  // Illustrative late-sowing impact coverage only; this is not a payment promise.
+  // No automatic transfer or settlement occurs in the current release.
   const penaltyCoverage = Math.round(Math.max(2500, acreage * 1250));
 
   return {
@@ -64,7 +64,7 @@ export function calculateDynamicQuote(acreage: number, daysToHarvest: number): P
     ratePerAcre,
     totalPayout,
     penaltyCoverage,
-    guaranteedHours: 48,
+    planningWindowHours: 48,
     tierName,
     tierBadgeColor,
     urgencyDiscountOrBonusPct: urgencyBonus,
