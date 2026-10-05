@@ -26,7 +26,7 @@ const offtakeImage = '/images/offtake_facility.jpg';
 const satelliteImage = '/images/satellite_firms.jpg';
 
 export function CommandCenter({
-  fields, machines, fireEvents, storageYards, buyers, onSelectField, onOpenResidue, onOpenImpact
+  fields, machines, fireEvents, storageYards, buyers, onSelectField, onOpenResidue, onOpenImpact, onNavigate
 }: Props) {
   const activeJobs = fields.filter(f => ['SCHEDULED', 'BALING_IN_PROGRESS'].includes(f.status)).length;
   const verified = fields.filter(f => f.status === 'VERIFIED_NON_BURN' || f.is_verified_non_burn).length;
@@ -85,7 +85,7 @@ export function CommandCenter({
         {workflow.map((step) => {
           const Icon = step.icon;
           return (
-            <article key={step.n} className="home-workflow-card">
+            <button type="button" key={step.n} onClick={() => onNavigate(step.tab === 'My Fields' ? 'FIELD_JOBS' : step.tab === 'Book Clearance' ? 'FARMER_ONBOARDING' : step.tab === 'Track Clearance' ? 'OPS_CONSOLE' : 'SATELLITE_AUDIT')} className="home-workflow-card text-left">
               <div className="home-workflow-image">
                 <img src={step.image} alt="" loading="lazy" />
                 <span>{step.n}</span>
