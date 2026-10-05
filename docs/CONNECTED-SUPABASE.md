@@ -12,7 +12,7 @@ The dedicated NIRDHOOM Supabase project is connected to the application. This do
 
 ## Current repository migration chain
 
-The repository currently contains 18 ordered migrations:
+The repository currently contains 20 ordered migrations:
 
 1. 202609270001_nirdhoom_core
 2. 202609270002_nirdhoom_production
@@ -32,6 +32,8 @@ The repository currently contains 18 ordered migrations:
 16. 202610020012_nirdhoom_residue_pool_verification_gate
 17. 202610040001_machine_privacy_and_pool_member_visibility
 18. 202610040002_revoke_trigger_function_execute
+19. 202610050001_nirdhoom_telegram_identity
+20. 202610050002_nirdhoom_telegram_webhook_idempotency
 
 See `docs/DATABASE-RELEASE-LEDGER.md` for the release checklist and migration rules.
 
@@ -62,7 +64,8 @@ These are intentionally not faked by the application:
 - real machine/operator records and device GPS
 - production dispatch/OR-Tools service and operational validation
 - FIRMS provider key and scheduled ingestion
-- WhatsApp/IVR provider credentials and delivery validation
+- Telegram bot/webhook configuration and delivery validation
+- IVR provider credentials and delivery validation
 - real buyer/offtake contracts and allocation validation
 - production deployment configuration
 - field-pilot validation with real operators and farmers
