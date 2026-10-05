@@ -69,7 +69,7 @@ export const FieldDetailDrawer: React.FC<FieldDetailDrawerProps> = ({
             src="/images/farmer_gurpreet.jpg" 
             alt={field.farmer_name} 
             className="w-10 h-10 rounded-full border border-emerald-500/50 object-cover shrink-0"
-          />
+          / loading="lazy" decoding="async">
           <div className="min-w-0">
             <span className="text-slate-400 text-[10px] block">Farmer / Owner</span>
             <strong className="text-white text-xs block truncate">{field.farmer_name}</strong>
