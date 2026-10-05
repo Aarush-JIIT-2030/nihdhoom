@@ -166,3 +166,26 @@ test('field evidence upload rejects unsafe file types and sizes', () => {
   assert.match(validation, /isWebp/);
   assert.match(read('src/components/FieldOperator/BalerPWA.tsx'), /validateEvidenceFile/);
 });
+
+test('Telegram identity linking is authenticated and server-owned', () => {
+  const migration = read('supabase/migrations/202610050001_nirdhoom_telegram_identity.sql');
+  const linkApi = read('api/notify/telegram-link.ts');
+  const webhook = read('api/notify/telegram-webhook.ts');
+  assert.match(migration, /telegram_identities/);
+  assert.match(migration, /telegram_link_tokens/);
+  assert.match(migration, /consume_telegram_link_token/);
+  assert.match(migration, /revoke all on function public\.consume_telegram_link_token/);
+  assert.match(linkApi, /auth\/v1\/user/);
+  assert.match(linkApi, /SUPABASE_SERVICE_ROLE_KEY/);
+  assert.match(linkApi, /10 \* 60 \* 1000/);
+  assert.match(webhook, /x-telegram-bot-api-secret-token/);
+  assert.match(webhook, /consume_telegram_link_token/);
+});
+
+test('Telegram outbound notifications remain dispatcher/admin-only', () => {
+  const source = read('api/notify/telegram.ts');
+  assert.match(source, /verifyDispatcher\(req\)/);
+  assert.match(source, /TELEGRAM_BOT_TOKEN/);
+  assert.match(source, /validChatId/);
+  assert.match(source, /AbortSignal\.timeout\(10000\)/);
+});
