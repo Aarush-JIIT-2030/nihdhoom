@@ -123,7 +123,7 @@ export const LiveKPIDashboard: React.FC<LiveKPIDashboardProps> = ({
       subColor: 'text-emerald-300',
     },
     {
-      label: 'Active Balers',
+      label: 'Active Machines',
       value: activeMachines,
       suffix: ' units',
       decimals: 0,
@@ -131,7 +131,7 @@ export const LiveKPIDashboard: React.FC<LiveKPIDashboardProps> = ({
       color: 'text-cyan-400',
       borderColor: 'border-cyan-500/30',
       bgColor: 'bg-cyan-500/5',
-      sub: 'CHC subsidised fleet',
+      sub: 'Registered machine capacity',
       subColor: 'text-cyan-400',
     },
     {
