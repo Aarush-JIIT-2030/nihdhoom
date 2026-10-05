@@ -1,6 +1,69 @@
 # NIRDHOOM — Field-First Crop-Residue Network
 
 <p align="center">
+  <a href="https://github.com/coolbandariya/nihdhoom/actions/workflows/ci.yml"><img src="https://github.com/coolbandariya/nihdhoom/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <img src="https://img.shields.io/badge/React-19-2f7d46?logo=react&logoColor=white" alt="React 19">
+  <img src="https://img.shields.io/badge/Vite-8-646cff?logo=vite&logoColor=white" alt="Vite 8">
+  <img src="https://img.shields.io/badge/Supabase-Postgres-3ecf8e?logo=supabase&logoColor=white" alt="Supabase">
+  <img src="https://img.shields.io/badge/Status-Prototype%20%2F%20Integration-f0a52b" alt="Prototype / integration">
+</p>
+
+<p align="center"><b>Field → service → evidence → residue → buyer</b><br>Farmer-first coordination for crop-residue management.</p>
+
+> **Truth boundary:** NIRDHOOM is a prototype / integration foundation. Demo records, indicative quotes, heuristic dispatch, research figures and illustrative carbon/market views are labelled and must not be represented as live field outcomes or confirmed commercial commitments.
+
+## Why this repository is different
+
+NIRDHOOM treats residue management as an operational chain rather than a single dashboard: a field needs consent, a service request needs a verified quote, a machine assignment needs capacity, completed work needs evidence, and residue needs verification before it enters a buyer pathway.
+
+### Product map
+
+| Surface | Purpose | Loading strategy |
+|---|---|---|
+| **Home / Field view** | Farmer-first starting point and today's work | Initial bundle |
+| **My Fields / Booking** | Field records, consent and clearance request | Lazy + interaction prefetch |
+| **Track / Operator** | Map, machine workflow and evidence | Lazy; Leaflet deferred |
+| **Residue Market** | Verified lots, pooling and buyer demand | Lazy + prefetch |
+| **Impact / Research** | Evidence, methodology and context | Lazy + prefetch |
+| **Advanced** | 3D, AI, carbon and pitch surfaces | Lazy; heavy dependencies isolated |
+
+### Performance principles
+
+- Heavy workspaces use React `lazy()` + `Suspense` instead of shipping every screen up front.
+- Leaflet is deferred until Tracking is opened; Three.js stays behind the 3D workspaces.
+- Primary navigation uses React transitions so the current screen remains responsive while the next workspace loads.
+- Frequently reached workspaces begin loading on pointer/focus intent, reducing perceived navigation latency.
+- Images use native lazy loading and asynchronous decoding outside the primary hero.
+- Mobile removes expensive backdrop blur and respects `prefers-reduced-motion`.
+- Production builds use Vite's optimized asset pipeline with CSS code splitting.
+
+## Repository map
+
+```text
+src/
+├── App.tsx                     # Product shell + workspace routing
+├── components/
+│   ├── CommandCenter/          # Farmer-first home
+│   ├── ClearanceBooking/       # Booking flow
+│   ├── FieldJobs/              # Fields + job lifecycle
+│   ├── OpsConsole/             # Map + dispatch
+│   ├── FieldOperator/          # Operator/PWA workflow
+│   ├── ResiduePooling/         # Verified residue + buyer pooling
+│   ├── ImpactResearch/         # Research and evidence
+│   ├── VerificationLayer/      # Verification evidence
+│   └── ThreeD/                 # Deferred 3D experiences
+├── lib/                        # Supabase + lightweight app utilities
+├── state/                      # Application state/controller
+└── styles/                     # Theme and hero styles
+api/                            # Server-side Vercel API routes
+supabase/migrations/            # Database/RLS/integrity changes
+services/dispatch-ortools/      # Python dispatch service foundation
+tests/                          # Repository regression tests
+docs/                           # Architecture, research and release notes
+```
+
+---
+<p align="center">
   <a href="README.md"><b>English</b></a> ·
   <a href="README.hi.md">हिन्दी</a> ·
   <a href="README.pa.md">ਪੰਜਾਬੀ</a>
