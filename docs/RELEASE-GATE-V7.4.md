@@ -17,7 +17,7 @@ V7.4 is a repository-hardening release. It does not claim that external producti
 - FIRMS observations are no longer browser-insertable.
 - Operator evidence writes are linked to the authenticated operator's job.
 - GPS and evidence coordinates are constrained server-side.
-- WhatsApp/IVR provider routes require dispatcher/admin authentication.
+- Telegram outbound notifications and IVR routes require dispatcher/admin authentication.
 - Real payment movement remains explicitly disabled until a real provider adapter and reconciliation contract are implemented.
 
 ## Required before a real pilot
@@ -28,7 +28,7 @@ V7.4 is a repository-hardening release. It does not claim that external producti
 4. Connect real cadastral/Khasra and field-boundary verification.
 5. Connect real operator GPS telemetry.
 6. Connect the production OR-Tools service with its shared secret.
-7. Connect WhatsApp/IVR providers and test consent/rate limits.
+7. Configure Telegram webhook/linking plus any chosen IVR provider and test consent/rate limits.
 8. Calibrate harvest/weather intelligence against real field observations.
 9. Complete privacy, consent, retention and incident-response review.
 10. Run CI, then conduct a supervised end-to-end field pilot.
