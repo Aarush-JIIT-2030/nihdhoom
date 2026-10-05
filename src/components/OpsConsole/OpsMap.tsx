@@ -13,6 +13,7 @@ interface OpsMapProps {
   onSelectField: (field: Field) => void;
   activeRoutePolyline?: LatLng[];
   highlightFirmsFire?: boolean;
+  demoMode?: boolean;
 }
 
 export const OpsMap: React.FC<OpsMapProps> = ({
@@ -25,6 +26,7 @@ export const OpsMap: React.FC<OpsMapProps> = ({
   onSelectField,
   activeRoutePolyline,
   highlightFirmsFire = true,
+  demoMode = false,
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
@@ -351,9 +353,9 @@ export const OpsMap: React.FC<OpsMapProps> = ({
       {/* GPS Live Ticker Top-Left */}
       <div className="absolute top-3 left-3 z-10 bg-slate-900/90 backdrop-blur-md border border-emerald-500/30 rounded-lg px-3 py-1.5 flex items-center gap-2 text-xs shadow-lg">
         <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-        <span className="text-emerald-300 font-bold">GPS LIVE</span>
+        <span className="text-emerald-300 font-bold">{demoMode ? 'GPS DEMO' : 'GPS LIVE'}</span>
         <span className="text-slate-400">·</span>
-        <span className="text-slate-300 font-mono">{machines.length} balers tracked</span>
+        <span className="text-slate-300 font-mono">{machines.length} balers {demoMode ? 'simulated' : 'tracked'}</span>
         <span className="text-slate-500 text-[10px] ml-1">Updated {lastRefresh.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
       </div>
 
