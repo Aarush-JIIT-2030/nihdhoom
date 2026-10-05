@@ -2187,3 +2187,266 @@ html[data-theme="light"] .field-mobile-bottom-nav {
 html[data-theme="light"] .field-mobile-bottom-nav button { color: #607163 !important; }
 html[data-theme="light"] .field-mobile-bottom-nav button.is-active { background:#eaf4e7 !important; color:#1f7042 !important; }
 html[data-theme="light"] footer { background: var(--nav-bg-solid) !important; color: var(--muted) !important; }
+
+
+/* =========================================================
+   NIRDHOOM V8 WORKSPACE SYSTEM
+   Consistent page hierarchy across operations, farmer, market,
+   verification and research surfaces.
+   ========================================================= */
+.workspace-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 34%);
+  min-height: 196px;
+  margin: 0 0 20px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--panel-grad);
+  box-shadow: var(--shadow);
+}
+.workspace-hero-copy {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 28px clamp(20px, 4vw, 42px);
+}
+.workspace-eyebrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 9px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+.workspace-eyebrow-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--blue-bright);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--blue-bright) 12%, transparent);
+}
+.workspace-mode {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 8px;
+  color: var(--muted);
+  background: var(--panel-soft);
+  letter-spacing: .02em;
+}
+.workspace-hero h1 {
+  margin: 0;
+  max-width: 850px;
+  color: var(--text);
+  font-family: var(--font-head);
+  font-size: clamp(1.65rem, 3.5vw, 2.75rem);
+  font-weight: 900;
+  letter-spacing: -.035em;
+  line-height: 1.02;
+}
+.workspace-hero p {
+  max-width: 760px;
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: clamp(.84rem, 1.3vw, .98rem);
+  line-height: 1.6;
+}
+.workspace-action {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  gap: 9px;
+  margin-top: 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  padding: 9px 13px;
+  color: var(--text);
+  background: var(--panel-soft);
+  font-size: .74rem;
+  font-weight: 900;
+  cursor: pointer;
+  transition: transform .18s var(--ease), background .18s var(--ease), border-color .18s var(--ease);
+}
+.workspace-action:hover {
+  transform: translateY(-1px);
+  background: var(--card-hover);
+}
+.workspace-hero-image {
+  position: relative;
+  min-height: 196px;
+  overflow: hidden;
+  background: var(--bg-2);
+}
+.workspace-hero-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: .72;
+  filter: saturate(.82) contrast(.98);
+}
+.workspace-hero-image-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--hero-edge) 0%, color-mix(in srgb, var(--hero-edge) 55%, transparent) 18%, transparent 70%);
+}
+.workspace-hero.is-green { --hero-accent: #2f8b4d; }
+.workspace-hero.is-amber { --hero-accent: #c88716; }
+.workspace-hero.is-sky { --hero-accent: #2b8ea3; }
+.workspace-hero.is-green .workspace-eyebrow-dot { background: var(--hero-accent); }
+.workspace-hero.is-amber .workspace-eyebrow-dot { background: var(--hero-accent); }
+.workspace-hero.is-sky .workspace-eyebrow-dot { background: var(--hero-accent); }
+
+@media (max-width: 760px) {
+  .workspace-hero {
+    grid-template-columns: 1fr;
+    min-height: 0;
+    border-radius: 20px;
+  }
+  .workspace-hero-copy { padding: 22px 18px 20px; }
+  .workspace-hero h1 { font-size: clamp(1.5rem, 8vw, 2.1rem); }
+  .workspace-hero p { font-size: .86rem; line-height: 1.55; }
+  .workspace-hero-image { min-height: 120px; max-height: 150px; }
+  .workspace-hero-image-scrim {
+    background: linear-gradient(180deg, transparent 0%, var(--hero-edge) 92%);
+  }
+}
+
+/* Readability baseline for all product surfaces */
+.nirdhoom-field-app :is(h1,h2,h3,h4) {
+  text-wrap: balance;
+}
+.nirdhoom-field-app :is(p,li,td,th,label,button,a,input,select,textarea) {
+  -webkit-font-smoothing: antialiased;
+}
+.nirdhoom-field-app p,
+.nirdhoom-field-app li {
+  line-height: 1.55;
+}
+.nirdhoom-field-app table {
+  font-size: .82rem;
+}
+.nirdhoom-field-app th {
+  font-weight: 850;
+}
+.nirdhoom-field-app :is(input,select,textarea) {
+  font-size: .9rem;
+}
+.nirdhoom-field-app :is(button,a) {
+  touch-action: manipulation;
+}
+
+/* Field-first light theme: convert legacy dark dashboard surfaces into
+   readable product cards instead of mixing two unrelated visual systems. */
+html[data-theme="kisan"] .nirdhoom-field-app :is(
+  .bg-slate-950,
+  .bg-slate-950\/40,
+  .bg-slate-950\/50,
+  .bg-slate-950\/60,
+  .bg-slate-950\/70,
+  .bg-slate-950\/80,
+  .bg-slate-900,
+  .bg-slate-900\/40,
+  .bg-slate-900\/50,
+  .bg-slate-900\/60,
+  .bg-slate-900\/70,
+  .bg-slate-900\/80,
+  .bg-slate-900\/90
+) {
+  background: var(--panel-strong) !important;
+  color: var(--text);
+}
+html[data-theme="kisan"] .nirdhoom-field-app :is(
+  .border-slate-900,
+  .border-slate-800,
+  .border-slate-700,
+  .border-white\/5,
+  .border-white\/10
+) {
+  border-color: var(--line) !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :is(.text-white,.text-slate-100) {
+  color: var(--text) !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :is(.text-slate-200,.text-slate-300) {
+  color: #496451 !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :is(.text-slate-400,.text-slate-500) {
+  color: #6a7e6d !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .bg-emerald-950\/40,
+html[data-theme="kisan"] .nirdhoom-field-app .bg-emerald-950\/60 {
+  background: #edf6ea !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .bg-cyan-950\/40,
+html[data-theme="kisan"] .nirdhoom-field-app .bg-cyan-950\/60 {
+  background: #e8f5f5 !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .bg-amber-950\/40,
+html[data-theme="kisan"] .nirdhoom-field-app .bg-amber-950\/60 {
+  background: #fbf2df !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .text-cyan-300,
+html[data-theme="kisan"] .nirdhoom-field-app .text-cyan-400 {
+  color: #267989 !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .text-amber-300,
+html[data-theme="kisan"] .nirdhoom-field-app .text-amber-400 {
+  color: #946516 !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .text-emerald-300,
+html[data-theme="kisan"] .nirdhoom-field-app .text-emerald-400 {
+  color: #247743 !important;
+}
+
+/* Dark theme: make legacy light farmer cards readable without forcing a
+   neon aesthetic onto the entire product. */
+html[data-theme="dark"] .nirdhoom-field-app :is(.bg-white,.bg-white\/70,.bg-white\/75,.bg-white\/80,.bg-white\/90) {
+  background: var(--panel-strong) !important;
+  color: var(--text);
+}
+html[data-theme="dark"] .nirdhoom-field-app :is(.text-slate-950,.text-slate-900,.text-emerald-950,.text-emerald-900) {
+  color: var(--text) !important;
+}
+html[data-theme="dark"] .nirdhoom-field-app :is(.text-slate-600,.text-slate-700,.text-emerald-800,.text-emerald-700) {
+  color: var(--muted) !important;
+}
+html[data-theme="dark"] .nirdhoom-field-app :is(.border-slate-200,.border-emerald-900\/10,.border-emerald-800\/15) {
+  border-color: var(--line) !important;
+}
+html[data-theme="dark"] .nirdhoom-field-app .bg-emerald-50,
+html[data-theme="dark"] .nirdhoom-field-app .bg-emerald-50\/70 {
+  background: rgba(16,185,129,.10) !important;
+}
+html[data-theme="dark"] .nirdhoom-field-app .bg-amber-50 {
+  background: rgba(245,158,11,.10) !important;
+}
+html[data-theme="dark"] .nirdhoom-field-app .text-amber-950,
+html[data-theme="dark"] .nirdhoom-field-app .text-emerald-950 {
+  color: var(--text) !important;
+}
+
+/* Forms should never become tiny on mobile. */
+@media (max-width: 640px) {
+  .nirdhoom-field-app :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea) {
+    min-height: 46px;
+    font-size: 16px;
+  }
+  .nirdhoom-field-app :is(button,a[role="button"]) {
+    min-height: 44px;
+  }
+}
+
+/* Make the fixed mobile navigation visually distinct from page content. */
+.field-mobile-bottom-nav {
+  isolation: isolate;
+}
