@@ -594,7 +594,7 @@ export const FarmerOnboarding: React.FC = () => {
                 <div className="grid grid-cols-2 gap-2 w-full max-w-sm text-xs">
                   {[
                     { label: 'Farmer ID', value: `NRD-FMR-${Date.now().toString().slice(-6)}` },
-                    { label: 'UPI VPA', value: upiId || 'gurpreet.brar@oksbi' },
+                    { label: 'Phone verified', value: `+91 ${phone || '••••••••••'}` },
                     { label: 'Khasra', value: khasra || '412/1-2' },
                     { label: 'Acreage', value: `${acreage || '3.5'} acres` },
                   ].map((item) => (
