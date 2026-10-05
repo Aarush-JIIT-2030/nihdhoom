@@ -374,3 +374,17 @@ test('audit command includes latest Supabase integrity hardening checks', () => 
   assert.match(audit, /l\.quantity_tonnes - coalesce/);
   assert.match(audit, /set search_path = ''/);
 });
+
+
+test('legacy visual shells cannot return to the product UI', () => {
+  const app = read('src/App.tsx');
+  const css = read('src/index.css');
+  assert.doesNotMatch(app, /ParticleField/);
+  assert.doesNotMatch(css, /data-theme="dark"/);
+  assert.doesNotMatch(css, /data-theme="light"/);
+  assert.doesNotMatch(css, /field-theme-toggle/);
+  assert.doesNotMatch(read('src/styles/theme.css'), /data-theme="dark"/);
+  assert.doesNotMatch(read('src/styles/theme.css'), /data-theme="light"/);
+  assert.ok(!exists('src/components/ThemeToggle.tsx'));
+  assert.ok(!exists('src/styles/navbar.css'));
+});
