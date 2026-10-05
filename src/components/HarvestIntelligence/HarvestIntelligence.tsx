@@ -66,7 +66,7 @@ export function HarvestIntelligence({ fields, machines, demoMode }: Props) {
       }
 
       try {
-        const response = await fetch(`/api/weather?field_id=${encodeURIComponent(selectedWeatherField.id)}`, {
+        const response = await fetch(`/api/weather?field_id=${encodeURIComponent(selectedWeatherField.dbId || selectedWeatherField.id)}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const payload = await response.json();
