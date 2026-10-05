@@ -334,7 +334,7 @@ export const OpsMap: React.FC<OpsMapProps> = ({
   }, [selectedField]);
 
   return (
-    <div className="relative w-full h-[540px] lg:h-[620px] rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
+    <div className="ops-map-surface relative w-full h-[540px] lg:h-[620px] rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
       {/* Map Container */}
       {mapError ? (
         <div className="w-full h-full grid place-items-center bg-slate-950 p-6 text-center">
