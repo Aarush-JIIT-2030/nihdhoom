@@ -146,7 +146,7 @@ export const VRPDispatchPanel: React.FC<VRPDispatchPanelProps> = ({
         </div>
       )}
 
-      {/* Real-time Optimization Telemetry Tiles */
+      {/* Real-time Optimization Telemetry Tiles */}
       {optimizerResult && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
           <div className="bg-slate-900/90 border border-emerald-500/30 rounded-lg p-2.5">
