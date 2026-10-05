@@ -745,3 +745,116 @@ textarea:focus-visible {
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
+
+
+/* =========================================================
+   FIELD-FIRST POLISH PASS — calmer, clearer, more tactile
+   ========================================================= */
+html[data-theme="kisan"] body {
+  min-height:100vh;
+  font-family: 'DM Sans', 'Plus Jakarta Sans', system-ui, sans-serif;
+  letter-spacing:-.008em;
+}
+html[data-theme="kisan"] .field-main { max-width:1480px; }
+html[data-theme="kisan"] .field-page { animation: field-page-in .35s ease both; }
+@keyframes field-page-in { from { opacity:0; transform:translateY(5px) } to { opacity:1; transform:none } }
+
+html[data-theme="kisan"] .field-hero {
+  position:relative;
+  border-radius:30px !important;
+  overflow:hidden;
+  box-shadow:0 24px 70px -35px rgba(35,76,44,.28), 0 2px 0 rgba(255,255,255,.9) inset !important;
+}
+html[data-theme="kisan"] .field-hero::before {
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(circle at 76% 18%,rgba(63,157,85,.12),transparent 26%),radial-gradient(circle at 92% 82%,rgba(213,154,37,.11),transparent 28%);
+}
+html[data-theme="kisan"] .field-hero > * { position:relative; z-index:1; }
+html[data-theme="kisan"] .field-kicker {
+  display:inline-flex; align-items:center; gap:.5rem; padding:.42rem .68rem;
+  border:1px solid rgba(31,122,70,.13); border-radius:999px; background:#f1f8ed;
+  color:#2b7044; font-size:.67rem; font-weight:900; letter-spacing:.02em;
+}
+html[data-theme="kisan"] .field-hero h1 { letter-spacing:-.045em; }
+html[data-theme="kisan"] .field-hero p { max-width:48rem; }
+
+html[data-theme="kisan"] .field-button { min-height:44px; padding:.7rem 1rem; border-radius:14px; }
+html[data-theme="kisan"] .field-button-primary { background:linear-gradient(135deg,#207b47,#2e9554); }
+html[data-theme="kisan"] .field-button-primary:active,
+html[data-theme="kisan"] .field-button-secondary:active,
+html[data-theme="kisan"] .field-button-wheat:active { transform:translateY(1px); }
+
+html[data-theme="kisan"] .field-stat { transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease; }
+html[data-theme="kisan"] .field-stat:hover { transform:translateY(-2px); border-color:rgba(31,122,70,.2); box-shadow:0 10px 22px rgba(35,76,44,.07); }
+html[data-theme="kisan"] .field-step { min-height:58px; transition:all .18s ease; }
+html[data-theme="kisan"] .field-step:hover { transform:translateY(-1px); background:#fff; box-shadow:0 8px 20px rgba(35,76,44,.06); }
+
+html[data-theme="kisan"] .field-card {
+  overflow:hidden;
+  box-shadow:0 12px 34px rgba(35,76,44,.065), 0 1px 0 rgba(255,255,255,.9) inset !important;
+  transition:box-shadow .2s ease,border-color .2s ease,transform .2s ease;
+}
+html[data-theme="kisan"] .field-card:hover { border-color:rgba(31,122,70,.18); box-shadow:0 18px 44px rgba(35,76,44,.09),0 1px 0 rgba(255,255,255,.9) inset !important; }
+html[data-theme="kisan"] .field-card h2 { letter-spacing:-.025em; }
+html[data-theme="kisan"] .field-list-row { transition:background .18s ease,transform .18s ease; }
+html[data-theme="kisan"] .field-list-row:hover { background:#fff; transform:translateX(2px); }
+
+html[data-theme="kisan"] .field-theme-toggle {
+  min-height:40px; border-color:rgba(31,122,70,.14) !important; background:#fff !important;
+  color:#28623d !important; box-shadow:0 3px 12px rgba(35,76,44,.06);
+}
+html[data-theme="kisan"] .field-theme-toggle:hover { background:#eef7eb !important; }
+
+html[data-theme="kisan"] .nirdhoom-field-header { box-shadow:0 10px 28px rgba(35,76,44,.07); }
+html[data-theme="kisan"] .field-nav-item { min-height:40px; }
+html[data-theme="kisan"] .field-nav-item.is-active { box-shadow:0 6px 18px rgba(31,122,70,.18); }
+html[data-theme="kisan"] .field-more-menu { z-index:100; }
+
+/* Give legacy dark panels a coherent light surface when the field theme is active. */
+html[data-theme="kisan"] .nirdhoom-field-app .glass-panel,
+html[data-theme="kisan"] .nirdhoom-field-app .glass-panel-emerald,
+html[data-theme="kisan"] .nirdhoom-field-app .glass-panel-amber,
+html[data-theme="kisan"] .nirdhoom-field-app .glass-panel-crimson {
+  background:rgba(255,255,255,.96) !important;
+  border-color:rgba(31,122,70,.13) !important;
+  color:#173522 !important;
+  box-shadow:0 14px 38px rgba(35,76,44,.075) !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .leaflet-container {
+  background:#dfe9d8 !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .leaflet-popup-content-wrapper,
+html[data-theme="kisan"] .nirdhoom-field-app .leaflet-popup-tip {
+  background:#fff !important; color:#173522 !important; border-color:rgba(31,122,70,.12) !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .leaflet-control-zoom a {
+  background:#fff !important; color:#28623d !important; border-color:rgba(31,122,70,.13) !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .leaflet-control-zoom a:hover { background:#eef7eb !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .text-cyan-300,
+html[data-theme="kisan"] .nirdhoom-field-app .text-cyan-400 { color:#287789 !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .text-amber-300,
+html[data-theme="kisan"] .nirdhoom-field-app .text-amber-400 { color:#946514 !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .text-red-300,
+html[data-theme="kisan"] .nirdhoom-field-app .text-red-400 { color:#b33d35 !important; }
+
+@media (max-width: 1023px) {
+  html[data-theme="kisan"] .field-main { padding-top:1rem; }
+  html[data-theme="kisan"] .field-hero { border-radius:24px !important; }
+}
+@media (max-width: 639px) {
+  html[data-theme="kisan"] .field-main { padding-left:.75rem; padding-right:.75rem; padding-bottom:1.25rem; }
+  html[data-theme="kisan"] .field-hero { border-radius:21px !important; }
+  html[data-theme="kisan"] .field-hero h1 { font-size:2rem; line-height:1.05; }
+  html[data-theme="kisan"] .field-hero-side { border-left:0; border-top:1px solid rgba(31,122,70,.10); }
+  html[data-theme="kisan"] .field-button { width:100%; }
+  html[data-theme="kisan"] .field-step { min-height:54px; }
+  html[data-theme="kisan"] .field-card { border-radius:17px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme="kisan"] .field-page { animation:none; }
+  html[data-theme="kisan"] .field-card,
+  html[data-theme="kisan"] .field-stat,
+  html[data-theme="kisan"] .field-step,
+  html[data-theme="kisan"] .field-list-row { transition:none; }
+}
