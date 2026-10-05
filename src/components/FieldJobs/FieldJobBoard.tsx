@@ -30,7 +30,7 @@ type JobRecord = {
   booking?: { field_id: string } | { field_id: string }[] | null;
 };
 
-type EvidenceRecord = {
+type ProofRecord = {
   id: string;
   field_id: string;
   booking_id: string | null;
@@ -56,9 +56,9 @@ interface Props {
   machines: Machine[];
   demoMode: boolean;
   onSelectField: (field: Field) => void;
-  onOpenDispatch: () => void;
-  onOpenResidue: () => void;
-  onOpenImpact: () => void;
+  onOpenFind machine: () => void;
+  onOpenParali: () => void;
+  onOpenWhy it matters: () => void;
 }
 
 const stageFor = (field: Field, job?: JobRecord, lot?: LotRecord) => {
@@ -88,12 +88,12 @@ export function FieldJobBoard({
   machines,
   demoMode,
   onSelectField,
-  onOpenDispatch,
-  onOpenResidue,
-  onOpenImpact,
+  onOpenFind machine,
+  onOpenParali,
+  onOpenWhy it matters,
 }: Props) {
   const [jobs, setJobs] = useState<JobRecord[]>([]);
-  const [evidence, setEvidence] = useState<EvidenceRecord[]>([]);
+  const [evidence, setProof] = useState<ProofRecord[]>([]);
   const [lots, setLots] = useState<LotRecord[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -102,7 +102,7 @@ export function FieldJobBoard({
   useEffect(() => {
     if (demoMode || !supabase) {
       setJobs([]);
-      setEvidence([]);
+      setProof([]);
       setLots([]);
       setError(null);
       return;
@@ -127,7 +127,7 @@ export function FieldJobBoard({
         setError(firstError.message);
       } else {
         setJobs((jobsResult.data || []) as unknown as JobRecord[]);
-        setEvidence((evidenceResult.data || []) as EvidenceRecord[]);
+        setProof((evidenceResult.data || []) as ProofRecord[]);
         setLots((lotsResult.data || []) as LotRecord[]);
       }
       setLoading(false);
@@ -151,7 +151,7 @@ export function FieldJobBoard({
   }, [fields, jobs]);
 
   const evidenceByField = useMemo(() => {
-    const map = new Map<string, EvidenceRecord[]>();
+    const map = new Map<string, ProofRecord[]>();
     for (const item of evidence) {
       const current = map.get(item.field_id) || [];
       current.push(item);
@@ -171,16 +171,16 @@ export function FieldJobBoard({
   const rows = useMemo(() => fields.map((field) => {
     const liveFieldId = field.dbId || field.id;
     const job = jobByField.get(liveFieldId);
-    const fieldEvidence = evidenceByField.get(liveFieldId) || [];
+    const fieldProof = evidenceByField.get(liveFieldId) || [];
     const lot = lotByField.get(liveFieldId);
     const stage = stageFor(field, job, lot);
-    const hasLocationProof = fieldEvidence.some((e) => e.latitude !== null && e.longitude !== null);
-    const hasCompletionEvidence = fieldEvidence.some((e) => e.kind === 'field_photo' || e.kind === 'bale_photo' || e.kind === 'weighment');
+    const hasLocationProof = fieldProof.some((e) => e.latitude !== null && e.longitude !== null);
+    const hasCompletionProof = fieldProof.some((e) => e.kind === 'field_photo' || e.kind === 'bale_photo' || e.kind === 'weighment');
     const action =
       stage === 'REGISTERED' ||
       (stage === 'SCHEDULED' && !job) ||
       (job?.status === 'FAILED' || job?.status === 'CANCELLED') ||
-      (stage === 'EVIDENCE' && !hasCompletionEvidence) ||
+      (stage === 'EVIDENCE' && !hasCompletionProof) ||
       (stage === 'RESIDUE' && !lot?.assigned_buyer_id);
 
     const ready = stage === 'VERIFIED' && Boolean(lot?.assigned_buyer_id || field.residue_lot_id);
@@ -188,11 +188,11 @@ export function FieldJobBoard({
     return {
       field,
       job,
-      fieldEvidence,
+      fieldProof,
       lot,
       stage,
       hasLocationProof,
-      hasCompletionEvidence,
+      hasCompletionProof,
       action,
       ready,
       machine: job?.machine_id ? machineById.get(job.machine_id) : (field.assigned_machine_id ? machineById.get(field.assigned_machine_id) : undefined),
@@ -202,7 +202,7 @@ export function FieldJobBoard({
   const visibleRows = rows.filter((row) => filter === 'ALL' || (filter === 'ACTION' ? row.action : row.ready));
   const actionCount = rows.filter((r) => r.action).length;
   const readyCount = rows.filter((r) => r.ready).length;
-  const evidenceCount = rows.reduce((sum, r) => sum + r.fieldEvidence.length, 0);
+  const evidenceCount = rows.reduce((sum, r) => sum + r.fieldProof.length, 0);
   const lotCount = rows.filter((r) => r.lot).length;
 
   return (
@@ -211,23 +211,23 @@ export function FieldJobBoard({
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 text-emerald-300 text-[11px] font-black uppercase tracking-[0.18em]">
-              <Activity className="h-4 w-4" /> Field Job Control
+              <Activity className="h-4 w-4" /> My fields & pickup status
             </div>
-            <h1 className="mt-1 text-2xl sm:text-3xl font-black text-white">One operational chain, one source of truth</h1>
+            <h1 className="mt-1 text-2xl sm:text-3xl font-black text-white">Your fields, pickup and parali status</h1>
             <p className="mt-1 max-w-3xl text-sm text-slate-400">
-              Field → booking → machine → dispatch → baling → evidence → verification → residue lot → buyer readiness.
+              See what is happening to each field, what has been done, and what needs to happen next.
               This view surfaces the next operational action instead of only reporting totals.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <button onClick={onOpenDispatch} className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-3 py-2 text-xs font-bold text-white hover:bg-indigo-500">
-              <Route className="h-3.5 w-3.5" /> Dispatch
+            <button onClick={onOpenFind machine} className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-3 py-2 text-xs font-bold text-white hover:bg-indigo-500">
+              <Route className="h-3.5 w-3.5" /> Find machine
             </button>
-            <button onClick={onOpenResidue} className="inline-flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs font-bold text-amber-200 hover:bg-amber-500/20">
-              <PackageCheck className="h-3.5 w-3.5" /> Residue
+            <button onClick={onOpenParali} className="inline-flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs font-bold text-amber-200 hover:bg-amber-500/20">
+              <PackageCheck className="h-3.5 w-3.5" /> Parali
             </button>
-            <button onClick={onOpenImpact} className="inline-flex items-center gap-2 rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-2 text-xs font-bold text-cyan-200 hover:bg-cyan-500/20">
-              <ShieldCheck className="h-3.5 w-3.5" /> Impact
+            <button onClick={onOpenWhy it matters} className="inline-flex items-center gap-2 rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-2 text-xs font-bold text-cyan-200 hover:bg-cyan-500/20">
+              <ShieldCheck className="h-3.5 w-3.5" /> Why it matters
             </button>
           </div>
         </div>
@@ -235,11 +235,11 @@ export function FieldJobBoard({
 
       <section className="grid grid-cols-2 lg:grid-cols-5 gap-2.5">
         {[
-          ['Fields', rows.length, 'text-white'],
-          ['Needs action', actionCount, 'text-amber-300'],
-          ['Evidence', evidenceCount, 'text-violet-300'],
-          ['Residue lots', lotCount, 'text-orange-300'],
-          ['Buyer-ready', readyCount, 'text-emerald-300'],
+          ['My fields', rows.length, 'text-white'],
+          ['Needs your attention', actionCount, 'text-amber-300'],
+          ['Proof', evidenceCount, 'text-violet-300'],
+          ['Parali lots', lotCount, 'text-orange-300'],
+          ['Ready for buyer', readyCount, 'text-emerald-300'],
         ].map(([label, value, tone]) => (
           <div key={String(label)} className="rounded-xl border border-slate-800 bg-slate-950/65 p-3">
             <div className="text-[10px] uppercase tracking-wider text-slate-500">{label}</div>
@@ -257,13 +257,13 @@ export function FieldJobBoard({
                 onClick={() => setFilter(value)}
                 className={`rounded-md px-3 py-1.5 text-[11px] font-bold transition ${filter === value ? 'bg-emerald-600 text-white' : 'text-slate-400 hover:text-white'}`}
               >
-                {value === 'ALL' ? 'All jobs' : value === 'ACTION' ? 'Needs action' : 'Buyer-ready'}
+                {value === 'ALL' ? 'All fields' : value === 'ACTION' ? 'Needs your attention' : 'Ready for buyer'}
               </button>
             ))}
           </div>
           <div className="flex items-center gap-2 text-[11px] text-slate-500">
             {loading && <Clock3 className="h-3.5 w-3.5 animate-spin" />}
-            {demoMode ? 'Synthetic job chain' : 'Live Supabase job / evidence / residue records'}
+            {demoMode ? 'Example data' : 'Live records'}
           </div>
         </div>
 
@@ -281,7 +281,7 @@ export function FieldJobBoard({
           <div className="mt-3 grid gap-3">
             {visibleRows.map((row) => {
               const machine = row.machine;
-              const latestEvidence = row.fieldEvidence[0];
+              const latestProof = row.fieldProof[0];
               const deadline = row.field.clearance_deadline ? new Date(row.field.clearance_deadline).getTime() : 0;
               const deadlineRisk = deadline > 0 && deadline < Date.now() && row.stage !== 'VERIFIED';
               const stageTone = stageClasses[row.stage] || stageClasses.REGISTERED;
@@ -333,14 +333,14 @@ export function FieldJobBoard({
                         </div>
                       </div>
                       <div className="rounded-lg border border-slate-800 bg-slate-950/70 p-2">
-                        <div className="text-slate-500">Evidence</div>
+                        <div className="text-slate-500">Proof</div>
                         <div className="mt-1 flex items-center gap-1 text-slate-200 font-bold">
-                          {row.hasCompletionEvidence ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-300" /> : <FileCheck2 className="h-3.5 w-3.5 text-slate-500" />}
-                          {row.fieldEvidence.length} assets {row.hasLocationProof ? '· GPS' : ''}
+                          {row.hasCompletionProof ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-300" /> : <FileCheck2 className="h-3.5 w-3.5 text-slate-500" />}
+                          {row.fieldProof.length} assets {row.hasLocationProof ? '· GPS' : ''}
                         </div>
                       </div>
                       <div className="rounded-lg border border-slate-800 bg-slate-950/70 p-2">
-                        <div className="text-slate-500">Residue</div>
+                        <div className="text-slate-500">Parali</div>
                         <div className="mt-1 text-slate-200 font-bold">
                           {row.lot ? `${Number(row.lot.quantity_tonnes || 0).toFixed(1)} t · ${row.lot.status}` : 'No lot'}
                         </div>
@@ -350,14 +350,14 @@ export function FieldJobBoard({
 
                   <div className="mt-3 flex flex-col md:flex-row md:items-center md:justify-between gap-2 border-t border-slate-800 pt-3">
                     <div className="text-[10px] text-slate-500">
-                      {row.job?.last_transition_at ? `Last transition ${new Date(row.job.last_transition_at).toLocaleString()}` : latestEvidence?.created_at ? `Evidence received ${new Date(latestEvidence.created_at).toLocaleString()}` : 'No live transition/evidence timestamp available'}
+                      {row.job?.last_transition_at ? `Last transition ${new Date(row.job.last_transition_at).toLocaleString()}` : latestProof?.created_at ? `Proof received ${new Date(latestProof.created_at).toLocaleString()}` : 'No live transition/evidence timestamp available'}
                       {row.job?.failure_reason && <span className="ml-2 text-red-300">Failure: {row.job.failure_reason}</span>}
                     </div>
                     <div className="flex items-center gap-2">
-                      {row.action && <span className="text-[10px] font-bold text-amber-300">Next action required</span>}
-                      {row.ready && <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-300"><CheckCircle2 className="h-3.5 w-3.5" /> Ready for buyer workflow</span>}
+                      {row.action && <span className="text-[10px] font-bold text-amber-300">Next step</span>}
+                      {row.ready && <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-300"><CheckCircle2 className="h-3.5 w-3.5" /> Ready for buyer</span>}
                       <button onClick={() => onSelectField(row.field)} className="rounded-md border border-slate-700 px-2.5 py-1.5 text-[10px] font-bold text-slate-200 hover:bg-slate-800">
-                        Inspect field
+                        See field
                       </button>
                     </div>
                   </div>
@@ -370,7 +370,7 @@ export function FieldJobBoard({
 
       <div className="flex items-center gap-2 text-[11px] text-slate-500">
         <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
-        No payment status is inferred here. Buyer-ready means operational records are sufficiently linked; settlement remains intentionally disabled.
+        Payment is not shown here because payments are not connected. Ready for buyer means operational records are sufficiently linked; settlement remains intentionally disabled.
       </div>
     </div>
   );
