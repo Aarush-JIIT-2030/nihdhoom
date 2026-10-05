@@ -196,7 +196,7 @@ export const AgenticCommandCenter: React.FC<{
           </h1>
 
           <p className="text-sm sm:text-base text-slate-300 max-w-2xl mx-auto leading-relaxed mb-6 font-['Plus_Jakarta_Sans']">
-            We don't buy balers and we don't own straw. Nirdhoom orchestrates Punjab's tens of thousands of idle, 50-80% subsidised CRM machines with constrained OR-Tools VRP, backed by a penalty bond, &lt;90s UPI settlement, and NASA FIRMS satellite audit.
+            We don't buy balers and we don't own straw. Nirdhoom orchestrates Punjab's tens of thousands of idle, 50-80% subsidised CRM machines with constrained OR-Tools VRP, backed by operational evidence, constrained dispatch planning, and a verification layer. Payment and remote-sensing provider claims remain gated.
           </p>
 
           {/* 3D Agentic Neural Core Canvas */}
