@@ -272,7 +272,6 @@ export function App() {
   } = useAppController();
 
   const acresScheduled = fields.reduce((sum, field) => sum + (Number(field.acreage) || 0), 0);
-  const totalPayoutInr = fields.reduce((sum, field) => sum + (Number(field.payout_amount) || 0), 0);
   const verifiedCount = fields.filter((field) => field.is_verified_non_burn || field.status === 'VERIFIED_NON_BURN').length;
 
   useEffect(() => {
@@ -379,7 +378,6 @@ export function App() {
             <LiveKPIDashboard
               demoMode={demoMode}
               acresScheduled={acresScheduled}
-              totalPayoutInr={totalPayoutInr}
               co2Avoided={0}
               firmsZeroBurnCount={verifiedCount}
               activeMachines={machines.length}
