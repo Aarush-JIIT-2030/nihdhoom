@@ -160,7 +160,7 @@ export const JudgesQnAPanel: React.FC = () => {
                   Real constraint: 10–20 days between paddy harvest and wheat sowing. Miss it and wheat yield drops 1–1.5 q/acre/week.
                 </td>
                 <td className="py-2.5 px-3 text-emerald-300">
-                  "Reliability beats rate. Every time. We sell a slot clearance guarantee with teeth: backed by an automatic ₹4,500 UPI default penalty."
+                  "Reliability beats rate. Every time. We make the slot state and evidence visible; payment remains outside this release."
                 </td>
               </tr>
               <tr>
