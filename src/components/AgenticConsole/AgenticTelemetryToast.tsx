@@ -13,7 +13,7 @@ import {
 
 interface TelemetryEvent {
   id: string;
-  icon: 'satellite' | 'vrp' | 'upi' | 'auction';
+  icon: 'satellite' | 'vrp' | 'auction';
   title: string;
   detail: string;
   badge: string;
@@ -42,9 +42,9 @@ const STREAM_EVENTS: TelemetryEvent[] = [
   },
   {
     id: 'evt-3',
-    icon: 'upi',
-    title: 'Settlement workflow (simulated)',
-    detail: 'Synthetic payment event for the demo. No provider transaction or UTR is created.',
+    icon: 'vrp',
+    title: 'Completion workflow (simulated)',
+    detail: 'Synthetic completion event for the demo. No provider transaction or receipt is created.',
     badge: 'SIMULATED',
     time: '4m ago',
     targetTab: 'BALER_OPERATOR',
@@ -122,7 +122,6 @@ export const AgenticTelemetryToast: React.FC<{
               <div className="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 flex-shrink-0 mt-0.5">
                 {currentEvent.icon === 'satellite' && <Satellite className="w-4 h-4 text-emerald-400" />}
                 {currentEvent.icon === 'vrp' && <Radio className="w-4 h-4 text-cyan-400 animate-pulse" />}
-                {currentEvent.icon === 'upi' && <Zap className="w-4 h-4 text-amber-400" />}
                 {currentEvent.icon === 'auction' && <TrendingUp className="w-4 h-4 text-emerald-400" />}
               </div>
 
