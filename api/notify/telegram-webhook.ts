@@ -17,6 +17,49 @@ async function sendMessage(chatId: number, text: string, replyMarkup?: unknown) 
   return response.ok;
 }
 
+async function linkTelegramIdentity(token: string, message: any) {
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const supabaseUrl = process.env.SUPABASE_URL;
+  if (!serviceKey || !supabaseUrl || !token) return null;
+  const tokenHash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(token));
+  const hash = Array.from(new Uint8Array(tokenHash)).map((b) => b.toString(16).padStart(2, '0')).join('');
+  const response = await fetch(`${supabaseUrl}/rest/v1/rpc/consume_telegram_link_token`, {
+    method: 'POST',
+    headers: {
+      apikey: serviceKey,
+      Authorization: `Bearer ${serviceKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      p_token_hash: hash,
+      p_telegram_user_id: Number(message?.from?.id),
+      p_telegram_chat_id: Number(message?.chat?.id),
+      p_username: message?.from?.username || null,
+      p_first_name: message?.from?.first_name || null,
+      p_language_code: message?.from?.language_code || null,
+    }),
+    signal: AbortSignal.timeout(8000),
+  });
+  if (!response.ok) return null;
+  return response.json();
+}
+
+async function getLinkedProfile(chatId: number) {
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const supabaseUrl = process.env.SUPABASE_URL;
+  if (!serviceKey || !supabaseUrl) return null;
+  const response = await fetch(
+    `${supabaseUrl}/rest/v1/telegram_identities?telegram_chat_id=eq.${chatId}&select=profile_id,notification_enabled&limit=1`,
+    {
+      headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}` },
+      signal: AbortSignal.timeout(7000),
+    },
+  );
+  if (!response.ok) return null;
+  const rows = await response.json();
+  return rows?.[0] || null;
+}
+
 function menu() {
   return {
     inline_keyboard: [
@@ -67,6 +110,16 @@ async function handle(request: Request) {
   const firstName = String(message?.from?.first_name || 'farmer');
 
   if (/^\/start(?:\s|$)/i.test(text)) {
+    const startPayload = text.replace(/^\/start/i, '').trim();
+    if (startPayload) {
+      const linkedProfile = await linkTelegramIdentity(startPayload, message);
+      if (linkedProfile) {
+        await sendMessage(chatId, '✅ Your Telegram account is securely linked to your NIRDHOOM farmer profile. You can now receive approved field and booking updates here.', menu());
+        return Response.json({ ok: true, update_id: update.update_id, linked: true });
+      }
+      await sendMessage(chatId, 'This linking link is invalid or expired. Start a new link from your authenticated NIRDHOOM account.', menu());
+      return Response.json({ ok: true, update_id: update.update_id, linked: false });
+    }
     await sendMessage(
       chatId,
       `ਸਤ ਸ੍ਰੀ ਅਕਾਲ / नमस्ते ${firstName}! 🌾\n\nI’m NIRDHOOM Sathi. This Telegram channel is your field-first connection for clearance booking, machine status, evidence and verification.\n\nChoose an action below. Live capacity and operational status are only reported from authenticated NIRDHOOM records.`,
