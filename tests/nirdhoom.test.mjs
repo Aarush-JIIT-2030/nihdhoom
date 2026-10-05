@@ -144,3 +144,25 @@ test('verification UI cannot mint a registry-grade carbon certificate', () => {
   assert.match(source, /verra_vm0042_eligible: false/);
   assert.match(source, /NOT_A_CRYPTOGRAPHIC_CERTIFICATE/);
 });
+
+
+test('API public surfaces have lightweight abuse protection', () => {
+  const rateLimit = read('api/_lib/rateLimit.ts');
+  assert.match(rateLimit, /X-RateLimit-Limit/);
+  assert.match(rateLimit, /Retry-After/);
+  for (const file of ['api/assistant.ts', 'api/quote.ts', 'api/firms.ts', 'api/weather.ts']) {
+    assert.match(read(file), /rateLimit\(req, res/);
+  }
+});
+
+test('field evidence upload rejects unsafe file types and sizes', () => {
+  const validation = read('src/lib/evidenceValidation.ts');
+  assert.match(validation, /12 \* 1024 \* 1024/);
+  assert.match(validation, /image\/jpeg/);
+  assert.match(validation, /image\/png/);
+  assert.match(validation, /image\/webp/);
+  assert.match(validation, /isJpeg/);
+  assert.match(validation, /isPng/);
+  assert.match(validation, /isWebp/);
+  assert.match(read('src/components/FieldOperator/BalerPWA.tsx'), /validateEvidenceFile/);
+});
