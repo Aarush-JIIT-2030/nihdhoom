@@ -331,7 +331,7 @@ export function App() {
                   <span>View in 3D</span>
                 </button>
                 <span className="badge badge-emerald text-xs">
-                  Demo GPS feed
+                  {demoMode ? 'Demo GPS feed' : 'Live operator telemetry'}
                 </span>
                 <span className="text-xs text-slate-400">
                   {fields.length} Farms • {machines.length} Balers
