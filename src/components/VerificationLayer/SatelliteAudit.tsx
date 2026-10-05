@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { Field, BurnEvent } from '../../types';
-import { executeFirmsAudit, generateNonBurnRecord } from '../../utils/spatialVerification';
-import { CarbonRecord } from './CarbonRecord';
+import { executeFirmsAudit, generateNonBurnCertificate } from '../../utils/spatialVerification';
+import { CarbonRecord } from './CarbonCertificate';
 import { 
   Satellite, 
   ShieldCheck, 
@@ -317,7 +317,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
 
       {/* Record Modal */}
       {selectedFieldForCert && (
-        <CarbonRecord
+        <CarbonCertificate
           certificate={generateNonBurnRecord(selectedFieldForCert)}
           onClose={() => setSelectedFieldForCert(null)}
         />
