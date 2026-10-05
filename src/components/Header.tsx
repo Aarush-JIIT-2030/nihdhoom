@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
   Activity, BarChart3, Bot, ChevronDown, ClipboardList, HelpCircle, Leaf, Map,
   Menu, MessageSquare, Satellite, Search, ShieldCheck, Sparkles, Smartphone,
-  TrendingUp, UserCheck, Wheat, X, Tractor, CircleDollarSign
+  TrendingUp, UserCheck, Wheat, X, Tractor, CircleDollarSign, Trophy
 } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 
@@ -11,7 +11,7 @@ export type ActiveTab =
   | 'FIELD_PROVENANCE' | 'FIELD_JOBS' | 'AGENTIC_CONSOLE' | 'DEMO_RUNNER'
   | 'DIGITAL_TWIN_3D' | 'MACHINERY_3D' | 'OPS_CONSOLE' | 'FARMER_SURFACE'
   | 'BALER_OPERATOR' | 'SATELLITE_AUDIT' | 'OFFTAKE_AUCTION' | 'CARBON_MARKET'
-  | 'FARMER_ONBOARDING' | 'FARMER_KYC' | 'JUDGE_DEFENSE';
+  | 'FARMER_ONBOARDING' | 'FARMER_KYC' | 'JUDGE_DEFENSE' | 'COMPETITION_CENTER';
 
 interface HeaderProps {
   activeTab: ActiveTab;
@@ -50,6 +50,7 @@ const secondaryNav: NavItem[] = [
   { id: 'DIGITAL_TWIN_3D', label: '3D Field View', icon: Activity, description: 'Advanced 3D view of fields' },
   { id: 'MACHINERY_3D', label: '3D Machine View', icon: Activity, description: 'Advanced 3D machine view' },
   { id: 'DEMO_RUNNER', label: 'How NIRDHOOM Works', icon: Sparkles, description: 'See the complete journey step by step' },
+  { id: 'COMPETITION_CENTER', label: 'Competition Pitch', icon: Trophy, description: 'RIDE and WarriorHacks demo and submission guide' },
   { id: 'JUDGE_DEFENSE', label: 'Product Q&A', icon: HelpCircle, description: 'Questions and answers about the product' },
 ];
 
