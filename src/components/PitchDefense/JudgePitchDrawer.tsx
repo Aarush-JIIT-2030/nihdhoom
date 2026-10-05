@@ -59,14 +59,14 @@ export const JudgePitchDrawer: React.FC<JudgePitchDrawerProps> = ({
             <div className="bg-slate-950/70 p-3 rounded-lg border border-slate-800">
               <strong className="text-emerald-400 block mb-1">Wedge 1: Asset Strategy</strong>
               <p className="text-slate-300 text-[11px]">
-                Don’t buy balers. Route the idle ones. Tens of thousands of CRM subsidised balers sit in Punjab CHCs. We unlock stranded public infrastructure.
+                Don’t buy balers. Coordinate available machines. NIRDHOOM is designed to route registered CRM capacity without owning the fleet; actual local capacity must be verified.
               </p>
             </div>
 
             <div className="bg-slate-950/70 p-3 rounded-lg border border-slate-800">
-              <strong className="text-emerald-400 block mb-1">Wedge 2: Product Guarantee</strong>
+              <strong className="text-emerald-400 block mb-1">Wedge 2: Operational reliability</strong>
               <p className="text-slate-300 text-[11px]">
-                Sell certainty, not price. A pilot service-level commitment can carry a penalty once a real operator contract is executed; the current UI only models that policy.
+                Sell reliability, not a guarantee. A future pilot can define service levels after real operator capacity and contracts are validated; this release does not activate penalties.
               </p>
             </div>
 
