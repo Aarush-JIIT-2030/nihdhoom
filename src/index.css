@@ -2110,66 +2110,66 @@ html[data-theme="kisan"] .home-research-image figcaption {
    Keep shell + navigation tied to data-theme instead of hard-coded
    utility colors. This prevents the toggle from appearing broken.
    ========================================================= */
-html[data-theme="dark"] body {
+html[data-theme="legacy-disabled"] body {
   background: var(--bg-deep) !important;
   color: var(--text) !important;
 }
-html[data-theme="dark"] .nirdhoom-field-app {
+html[data-theme="legacy-disabled"] .nirdhoom-field-app {
   background: var(--bg-deep) !important;
   color: var(--text) !important;
 }
-html[data-theme="dark"] .nirdhoom-field-header {
+html[data-theme="legacy-disabled"] .nirdhoom-field-header {
   background: var(--nav-bg-solid) !important;
   border-color: var(--line) !important;
   box-shadow: 0 10px 34px rgba(0,0,0,.34);
 }
-html[data-theme="dark"] .nirdhoom-field-header .bg-white,
-html[data-theme="dark"] .nirdhoom-field-header .bg-emerald-50,
-html[data-theme="dark"] .nirdhoom-field-header .bg-amber-50 {
+html[data-theme="legacy-disabled"] .nirdhoom-field-header .bg-white,
+html[data-theme="legacy-disabled"] .nirdhoom-field-header .bg-emerald-50,
+html[data-theme="legacy-disabled"] .nirdhoom-field-header .bg-amber-50 {
   background: var(--panel-strong) !important;
 }
-html[data-theme="dark"] .nirdhoom-field-header .text-emerald-950,
-html[data-theme="dark"] .nirdhoom-field-header .text-emerald-900,
-html[data-theme="dark"] .nirdhoom-field-header .text-emerald-800,
-html[data-theme="dark"] .nirdhoom-field-header .text-emerald-700 {
+html[data-theme="legacy-disabled"] .nirdhoom-field-header .text-emerald-950,
+html[data-theme="legacy-disabled"] .nirdhoom-field-header .text-emerald-900,
+html[data-theme="legacy-disabled"] .nirdhoom-field-header .text-emerald-800,
+html[data-theme="legacy-disabled"] .nirdhoom-field-header .text-emerald-700 {
   color: var(--text) !important;
 }
-html[data-theme="dark"] .nirdhoom-field-header .text-emerald-800\/60,
-html[data-theme="dark"] .nirdhoom-field-header .text-emerald-900\/65,
-html[data-theme="dark"] .nirdhoom-field-header .text-emerald-900\/45,
-html[data-theme="dark"] .nirdhoom-field-header .text-emerald-900\/55 {
+html[data-theme="legacy-disabled"] .nirdhoom-field-header .text-emerald-800\/60,
+html[data-theme="legacy-disabled"] .nirdhoom-field-header .text-emerald-900\/65,
+html[data-theme="legacy-disabled"] .nirdhoom-field-header .text-emerald-900\/45,
+html[data-theme="legacy-disabled"] .nirdhoom-field-header .text-emerald-900\/55 {
   color: var(--muted) !important;
 }
-html[data-theme="dark"] .field-mobile-bottom-nav {
+html[data-theme="legacy-disabled"] .field-mobile-bottom-nav {
   background: rgba(4,9,20,.96) !important;
   border-color: rgba(52,211,153,.18) !important;
   box-shadow: 0 18px 48px rgba(0,0,0,.48) !important;
 }
-html[data-theme="dark"] .field-mobile-bottom-nav button { color: #8fa3bd !important; }
-html[data-theme="dark"] .field-mobile-bottom-nav button.is-active { background:#064e3b !important; color:#d1fae5 !important; }
-html[data-theme="dark"] footer { background: var(--nav-bg-solid) !important; border-color: var(--line) !important; }
-html[data-theme="dark"] input,
-html[data-theme="dark"] textarea,
-html[data-theme="dark"] select { color-scheme: dark; }
-html[data-theme="light"] body {
+html[data-theme="legacy-disabled"] .field-mobile-bottom-nav button { color: #8fa3bd !important; }
+html[data-theme="legacy-disabled"] .field-mobile-bottom-nav button.is-active { background:#064e3b !important; color:#d1fae5 !important; }
+html[data-theme="legacy-disabled"] footer { background: var(--nav-bg-solid) !important; border-color: var(--line) !important; }
+html[data-theme="legacy-disabled"] input,
+html[data-theme="legacy-disabled"] textarea,
+html[data-theme="legacy-disabled"] select { color-scheme: dark; }
+html[data-theme="legacy-disabled"] body {
   background: var(--bg-deep) !important;
   color: var(--text) !important;
 }
-html[data-theme="light"] .nirdhoom-field-app {
+html[data-theme="legacy-disabled"] .nirdhoom-field-app {
   background: var(--bg-deep) !important;
   color: var(--text) !important;
 }
-html[data-theme="light"] .nirdhoom-field-header {
+html[data-theme="legacy-disabled"] .nirdhoom-field-header {
   background: var(--nav-bg-solid) !important;
   border-color: var(--line) !important;
 }
-html[data-theme="light"] .field-mobile-bottom-nav {
+html[data-theme="legacy-disabled"] .field-mobile-bottom-nav {
   background: rgba(255,255,255,.97) !important;
   border-color: var(--line) !important;
 }
-html[data-theme="light"] .field-mobile-bottom-nav button { color: #607163 !important; }
-html[data-theme="light"] .field-mobile-bottom-nav button.is-active { background:#eaf4e7 !important; color:#1f7042 !important; }
-html[data-theme="light"] footer { background: var(--nav-bg-solid) !important; color: var(--muted) !important; }
+html[data-theme="legacy-disabled"] .field-mobile-bottom-nav button { color: #607163 !important; }
+html[data-theme="legacy-disabled"] .field-mobile-bottom-nav button.is-active { background:#eaf4e7 !important; color:#1f7042 !important; }
+html[data-theme="legacy-disabled"] footer { background: var(--nav-bg-solid) !important; color: var(--muted) !important; }
 
 
 /* =========================================================
@@ -2393,28 +2393,28 @@ html[data-theme="kisan"] .nirdhoom-field-app .text-emerald-400 {
 
 /* Dark theme: make legacy light farmer cards readable without forcing a
    neon aesthetic onto the entire product. */
-html[data-theme="dark"] .nirdhoom-field-app :is(.bg-white,.bg-white\/70,.bg-white\/75,.bg-white\/80,.bg-white\/90) {
+html[data-theme="legacy-disabled"] .nirdhoom-field-app :is(.bg-white,.bg-white\/70,.bg-white\/75,.bg-white\/80,.bg-white\/90) {
   background: var(--panel-strong) !important;
   color: var(--text);
 }
-html[data-theme="dark"] .nirdhoom-field-app :is(.text-slate-950,.text-slate-900,.text-emerald-950,.text-emerald-900) {
+html[data-theme="legacy-disabled"] .nirdhoom-field-app :is(.text-slate-950,.text-slate-900,.text-emerald-950,.text-emerald-900) {
   color: var(--text) !important;
 }
-html[data-theme="dark"] .nirdhoom-field-app :is(.text-slate-600,.text-slate-700,.text-emerald-800,.text-emerald-700) {
+html[data-theme="legacy-disabled"] .nirdhoom-field-app :is(.text-slate-600,.text-slate-700,.text-emerald-800,.text-emerald-700) {
   color: var(--muted) !important;
 }
-html[data-theme="dark"] .nirdhoom-field-app :is(.border-slate-200,.border-emerald-900\/10,.border-emerald-800\/15) {
+html[data-theme="legacy-disabled"] .nirdhoom-field-app :is(.border-slate-200,.border-emerald-900\/10,.border-emerald-800\/15) {
   border-color: var(--line) !important;
 }
-html[data-theme="dark"] .nirdhoom-field-app .bg-emerald-50,
-html[data-theme="dark"] .nirdhoom-field-app .bg-emerald-50\/70 {
+html[data-theme="legacy-disabled"] .nirdhoom-field-app .bg-emerald-50,
+html[data-theme="legacy-disabled"] .nirdhoom-field-app .bg-emerald-50\/70 {
   background: rgba(16,185,129,.10) !important;
 }
-html[data-theme="dark"] .nirdhoom-field-app .bg-amber-50 {
+html[data-theme="legacy-disabled"] .nirdhoom-field-app .bg-amber-50 {
   background: rgba(245,158,11,.10) !important;
 }
-html[data-theme="dark"] .nirdhoom-field-app .text-amber-950,
-html[data-theme="dark"] .nirdhoom-field-app .text-emerald-950 {
+html[data-theme="legacy-disabled"] .nirdhoom-field-app .text-amber-950,
+html[data-theme="legacy-disabled"] .nirdhoom-field-app .text-emerald-950 {
   color: var(--text) !important;
 }
 
@@ -3145,4 +3145,34 @@ html[data-theme="kisan"] .nirdhoom-field-app :is(button,a[role="button"]) {
   html[data-theme="kisan"] .nirdhoom-field-app :is(button,a[role="button"]) {
     min-height: 44px;
   }
+}
+
+/* Canonical field tokens win over legacy root tokens everywhere. */
+html[data-theme="kisan"] {
+  color-scheme: light;
+  --bg: #f7f5ec;
+  --bg-2: #eef4e7;
+  --bg-3: #e2ecd8;
+  --bg-deep: #f7f5ec;
+  --bg-surface: #ffffff;
+  --bg-card: rgba(255,255,255,.96);
+  --bg-card-hover: #f0f7ed;
+  --panel: rgba(255,255,255,.94);
+  --panel-strong: #ffffff;
+  --panel-soft: rgba(255,255,255,.78);
+  --border-subtle: rgba(38,82,48,.13);
+  --border-emerald: rgba(31,122,70,.25);
+  --border-gold: rgba(200,135,22,.25);
+  --line: rgba(38,82,48,.13);
+  --line-strong: rgba(31,122,70,.35);
+  --text-main: #173522;
+  --text-muted: #5e725f;
+  --text-dim: #7e917e;
+  --blue-bright: #237a48;
+  --grad: linear-gradient(135deg,#1f7a46 0%,#3f9d55 55%,#d59a25 100%);
+  --grad-agent: linear-gradient(135deg,#237a48 0%,#4d9e83 50%,#d59a25 100%);
+  --grad-dim: linear-gradient(135deg,rgba(63,157,85,.12),rgba(213,154,37,.10));
+  --title-grad: linear-gradient(180deg,#173522 0%,#247a46 100%);
+  --card-hover: rgba(63,157,85,.08);
+  --shadow: 0 18px 50px -28px rgba(27,67,40,.28);
 }
