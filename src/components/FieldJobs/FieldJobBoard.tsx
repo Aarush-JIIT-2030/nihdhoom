@@ -56,9 +56,9 @@ interface Props {
   machines: Machine[];
   demoMode: boolean;
   onSelectField: (field: Field) => void;
-  onOpenFind machine: () => void;
+  onOpenDispatch: () => void;
   onOpenParali: () => void;
-  onOpenWhy it matters: () => void;
+  onOpenImpact: () => void;
 }
 
 const stageFor = (field: Field, job?: JobRecord, lot?: LotRecord) => {
@@ -88,9 +88,9 @@ export function FieldJobBoard({
   machines,
   demoMode,
   onSelectField,
-  onOpenFind machine,
+  onOpenDispatch,
   onOpenParali,
-  onOpenWhy it matters,
+  onOpenImpact,
 }: Props) {
   const [jobs, setJobs] = useState<JobRecord[]>([]);
   const [evidence, setProof] = useState<ProofRecord[]>([]);
@@ -220,13 +220,13 @@ export function FieldJobBoard({
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <button onClick={onOpenFind machine} className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-3 py-2 text-xs font-bold text-white hover:bg-indigo-500">
+            <button onClick={onOpenDispatch} className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-3 py-2 text-xs font-bold text-white hover:bg-indigo-500">
               <Route className="h-3.5 w-3.5" /> Find machine
             </button>
             <button onClick={onOpenParali} className="inline-flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs font-bold text-amber-200 hover:bg-amber-500/20">
               <PackageCheck className="h-3.5 w-3.5" /> Parali
             </button>
-            <button onClick={onOpenWhy it matters} className="inline-flex items-center gap-2 rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-2 text-xs font-bold text-cyan-200 hover:bg-cyan-500/20">
+            <button onClick={onOpenImpact} className="inline-flex items-center gap-2 rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-2 text-xs font-bold text-cyan-200 hover:bg-cyan-500/20">
               <ShieldCheck className="h-3.5 w-3.5" /> Why it matters
             </button>
           </div>
