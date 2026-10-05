@@ -388,3 +388,17 @@ test('legacy visual shells cannot return to the product UI', () => {
   assert.ok(!exists('src/components/ThemeToggle.tsx'));
   assert.ok(!exists('src/styles/navbar.css'));
 });
+
+test('performance architecture keeps heavy workspace libraries off the shell', () => {
+  const app = read('src/App.tsx');
+  const header = read('src/components/Header.tsx');
+  const prefetch = read('src/lib/workspacePrefetch.ts');
+  const vite = read('vite.config.ts');
+  assert.match(app, /lazy\(\(\) => import\('\.\/components\/OpsConsole\/OpsMap'/);
+  assert.doesNotMatch(app, /import \{ OpsMap \}/);
+  assert.match(header, /startTransition/);
+  assert.match(header, /prefetchWorkspace/);
+  assert.match(prefetch, /OpsMap/);
+  assert.match(prefetch, /SatelliteEarth3D/);
+  assert.match(vite, /cssCodeSplit: true/);
+});
