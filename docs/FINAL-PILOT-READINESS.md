@@ -25,7 +25,7 @@ This document is the consolidated implementation checklist for taking the curren
 - [x] The obsolete monolithic HTML bundle and committed ZIP archive were removed.
 
 ### 2. Database and access control
-- [x] Apply the repository migrations to the dedicated NIRDHOOM Supabase project (`igqgtlmnwssjaoxkkzbm`); the project currently reports all 19 repository migrations applied.
+- [x] Apply the repository migrations to the dedicated NIRDHOOM Supabase project (`igqgtlmnwssjaoxkkzbm`); the repository contains 20 migrations; confirm the two Telegram migrations are applied in the connected project before pilot use.
 - [ ] Repeat migration testing against a disposable fresh project/branch before introducing pilot data.
 - [ ] Verify every foreign key, trigger, index, constraint and RPC executes as intended.
 - [ ] Test row-level security using separate farmer, operator, dispatcher, verifier and admin accounts.
@@ -159,7 +159,7 @@ This document is the consolidated implementation checklist for taking the curren
 - [ ] Dispatcher assigns a machine.
 - [ ] Operator arrives, records work and uploads evidence.
 - [ ] Verifier reviews evidence and records a decision.
-- [ ] Payment progresses through a provider sandbox.
+- [x] Payment remains outside this release; no provider sandbox is required for this release candidate.
 - [ ] Unauthorized users are blocked from restricted actions.
 - [ ] Mobile navigation and offline recovery work.
 
