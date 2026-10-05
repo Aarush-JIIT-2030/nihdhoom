@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '../../lib/supabase';
+import { HindiTextConverter } from './HindiTextConverter';
 import { Bell, CalendarCheck, Camera, CheckCircle2, MapPin, Send, ShieldCheck } from 'lucide-react';
 
 interface TelegramSimulatorProps {
@@ -220,6 +221,9 @@ export function TelegramSimulator({ onSlotConfirmed }: TelegramSimulatorProps) {
           {confirmed ? 'Demo slot confirmed' : 'Preview booking handoff'}
         </button>
       </div>
+    </section>
+
+      <HindiTextConverter />
     </section>
   );
 }
