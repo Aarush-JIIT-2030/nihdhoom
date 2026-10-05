@@ -9,9 +9,17 @@ type Demand = { id: string; buyer_name: string; target_tonnes: number; pickup_de
 interface Props { fields: Field[]; demoMode: boolean; }
 
 export function ResiduePooling({ fields, demoMode }: Props) {
-  const [pools, setPools] = useState<Pool[]>([]);
+  const [pools, setPools] = useState<Pool[]>(() => {
+    if (!demoMode || typeof window === 'undefined') return [];
+    try { const raw = window.localStorage.getItem('nirdhoom.demo.pools.v1'); return raw ? (JSON.parse(raw) as Pool[]) : []; } catch { return []; }
+  });
   const [demands, setDemands] = useState<Demand[]>([]);
   const [notice, setNotice] = useState('');
+
+  useEffect(() => {
+    if (!demoMode || typeof window === 'undefined') return;
+    try { window.localStorage.setItem('nirdhoom.demo.pools.v1', JSON.stringify(pools)); } catch { /* optional demo persistence */ }
+  }, [demoMode, pools]);
 
   const localSupply = useMemo(() => fields.filter((f) => demoMode || f.status === 'VERIFIED_NON_BURN' || f.is_verified_non_burn).map(f => ({
     fieldId: f.id,
@@ -53,7 +61,11 @@ export function ResiduePooling({ fields, demoMode }: Props) {
   }
 
   async function joinPool(poolId: string, tonnes: number) {
-    if (demoMode || !supabase) { setNotice('Demo mode: pool membership simulated locally.'); return; }
+    if (demoMode || !supabase) {
+      setPools(prev => prev.map(p => p.id === poolId ? { ...p, current_tonnes: Math.min(p.target_tonnes, p.current_tonnes + tonnes), status: Math.min(p.target_tonnes, p.current_tonnes + tonnes) >= p.target_tonnes ? 'READY' : 'FILLING' } : p));
+      setNotice(`Demo: committed ${tonnes.toFixed(1)} t to the pool. No sale or payment was executed.`);
+      return;
+    }
     const { error } = await (supabase as any).rpc('join_residue_pool', { p_pool_id: poolId, p_quantity_tonnes: tonnes });
     setNotice(error ? error.message : 'Residue committed to the pool.');
     if (!error) await load();
