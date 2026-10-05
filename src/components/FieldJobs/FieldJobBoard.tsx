@@ -98,6 +98,7 @@ export function FieldJobBoard({
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState<'ALL' | 'ACTION' | 'READY'>('ALL');
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     if (demoMode || !supabase) {
@@ -205,7 +206,21 @@ export function FieldJobBoard({
     };
   }), [fields, jobByField, evidenceByField, lotByField, machineById]);
 
-  const visibleRows = rows.filter((row) => filter === 'ALL' || (filter === 'ACTION' ? row.action : row.ready));
+  const normalizedSearch = searchTerm.trim().toLowerCase();
+  const visibleRows = rows.filter((row) => {
+    const matchesFilter = filter === 'ALL' || (filter === 'ACTION' ? row.action : row.ready);
+    if (!matchesFilter) return false;
+    if (!normalizedSearch) return true;
+    const haystack = [
+      row.field.khasra_no,
+      row.field.village,
+      row.field.id,
+      row.machine?.name,
+      row.machine?.operator_name,
+      row.stage,
+    ].filter(Boolean).join(' ').toLowerCase();
+    return haystack.includes(normalizedSearch);
+  });
   const actionCount = rows.filter((r) => r.action).length;
   const readyCount = rows.filter((r) => r.ready).length;
   const evidenceCount = rows.reduce((sum, r) => sum + r.fieldProof.length, 0);
@@ -255,7 +270,30 @@ export function FieldJobBoard({
       </section>
 
       <section className="rounded-2xl border border-slate-800 bg-slate-950/60 p-3">
-        <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-col gap-3">
+          <label className="flex min-h-11 items-center gap-2 rounded-lg border border-slate-800 bg-slate-950 px-3 sm:max-w-md">
+            <MapPin className="h-4 w-4 shrink-0 text-emerald-400" aria-hidden="true" />
+            <span className="sr-only">Search fields</span>
+            <input
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              placeholder="Search field, village or machine"
+              className="min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-slate-500"
+              type="search"
+              autoComplete="off"
+            />
+            {searchTerm && (
+              <button
+                type="button"
+                onClick={() => setSearchTerm('')}
+                className="rounded-md px-2 py-1 text-xs font-bold text-slate-400 hover:bg-slate-800 hover:text-white"
+                aria-label="Clear field search"
+              >
+                Clear
+              </button>
+            )}
+          </label>
+          <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex rounded-lg border border-slate-800 bg-slate-950 p-1">
             {(['ALL', 'ACTION', 'READY'] as const).map((value) => (
               <button
@@ -266,6 +304,7 @@ export function FieldJobBoard({
                 {value === 'ALL' ? 'All fields' : value === 'ACTION' ? 'Needs your attention' : 'Ready for buyer'}
               </button>
             ))}
+          </div>
           </div>
           <div className="flex items-center gap-2 text-[11px] text-slate-500">
             {loading && <Clock3 className="h-3.5 w-3.5 animate-spin" />}
