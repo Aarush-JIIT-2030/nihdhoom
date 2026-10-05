@@ -5,13 +5,13 @@ interface TelegramSimulatorProps {
   onSlotConfirmed?: (fieldId: string) => void;
 }
 
-const BOT_USERNAME = import.meta.env.VITE_TELEGRAM_BOT_USERNAME || 'NIRDHOOMBot';
+const BOT_USERNAME = import.meta.env.VITE_TELEGRAM_BOT_USERNAME || '';
 
 export function TelegramSimulator({ onSlotConfirmed }: TelegramSimulatorProps) {
   const [language, setLanguage] = useState<'pa' | 'hi' | 'en'>('pa');
   const [confirmed, setConfirmed] = useState(false);
 
-  const botUrl = useMemo(() => `https://t.me/${BOT_USERNAME}`, []);
+  const botUrl = useMemo(() => BOT_USERNAME ? `https://t.me/${BOT_USERNAME}` : 'https://t.me', []);
 
   const copy = {
     pa: {
