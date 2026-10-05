@@ -186,6 +186,14 @@ const WORKSPACE_META: Partial<Record<ActiveTab, {
     image: '/images/baling_dispatch_fleet_1790447115856.jpg',
     accent: 'amber',
   },
+  COMPETITION_CENTER: {
+    eyebrow: 'COMPETITION READY',
+    title: 'RIDE & WarriorHacks pitch center',
+    description: 'A focused judging workspace for the two competitions: startup/incubation for RIDE and community impact + technical craft for WarriorHacks.',
+    image: '/images/punjab_farmer_hero.jpg',
+    accent: 'amber',
+    action: { label: 'Start the 2-minute demo', tab: 'DEMO_RUNNER' },
+  },
   JUDGE_DEFENSE: {
     eyebrow: 'PITCH DEFENCE',
     title: 'Judge Q&A & product proof',
@@ -649,6 +657,10 @@ export function App() {
 
         {/* TAB: FARMER ONBOARDING KYC */}
         {/* TAB 7: JUDGE DEFENSE & UNIT ECONOMICS */}
+        {activeTab === 'COMPETITION_CENTER' && (
+          <CompetitionCenter onNavigate={setActiveTab} />
+        )}
+
         {activeTab === 'JUDGE_DEFENSE' && (
           <JudgesQnAPanel />
         )}
