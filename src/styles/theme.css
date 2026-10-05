@@ -317,3 +317,64 @@ html[data-theme="kisan"] .field-theme-toggle {
 }
 html[data-theme="kisan"] .field-theme-toggle:hover { background:#eef7eb !important; }
 html[data-theme="kisan"] .nirdhoom-field-app canvas { opacity:.10 !important; }
+
+
+/* =========================================================
+   PRODUCT UI POLISH
+   Calm hierarchy, accessible controls, less "dashboard chrome"
+   ========================================================= */
+html[data-theme="kisan"] .nirdhoom-field-app {
+  --ui-radius: 16px;
+  --ui-radius-sm: 12px;
+  --ui-shadow: 0 12px 32px rgba(31,73,43,.07);
+}
+html[data-theme="kisan"] .nirdhoom-field-app button,
+html[data-theme="kisan"] .nirdhoom-field-app a {
+  -webkit-tap-highlight-color: transparent;
+}
+html[data-theme="kisan"] .nirdhoom-field-app button:not([aria-hidden="true"]) {
+  min-height: 40px;
+}
+html[data-theme="kisan"] .nirdhoom-field-app input:not([type="checkbox"]):not([type="radio"]),
+html[data-theme="kisan"] .nirdhoom-field-app select,
+html[data-theme="kisan"] .nirdhoom-field-app textarea {
+  min-height: 42px;
+  border-radius: var(--ui-radius-sm);
+}
+html[data-theme="kisan"] .nirdhoom-field-app :is(button, a, input, select, textarea):focus-visible {
+  outline: 3px solid rgba(35,122,72,.22);
+  outline-offset: 2px;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .glass-panel,
+html[data-theme="kisan"] .nirdhoom-field-app [class*="rounded-2xl"][class*="border"] {
+  box-shadow: var(--ui-shadow);
+}
+html[data-theme="kisan"] .nirdhoom-field-app h1 {
+  letter-spacing: -.025em;
+}
+html[data-theme="kisan"] .nirdhoom-field-app h2 {
+  letter-spacing: -.02em;
+}
+html[data-theme="kisan"] .nirdhoom-field-app p {
+  max-width: 72ch;
+}
+@media (max-width: 720px) {
+  html[data-theme="kisan"] .nirdhoom-field-app .field-main {
+    padding-top: 14px;
+    padding-bottom: 24px;
+  }
+  html[data-theme="kisan"] .nirdhoom-field-app h1 {
+    font-size: clamp(1.45rem, 7vw, 2rem);
+    line-height: 1.08;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme="kisan"] .nirdhoom-field-app *,
+  html[data-theme="kisan"] .nirdhoom-field-app *::before,
+  html[data-theme="kisan"] .nirdhoom-field-app *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .001ms !important;
+  }
+}
