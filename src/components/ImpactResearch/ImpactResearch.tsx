@@ -19,7 +19,7 @@ export function ImpactResearch({ fields, demoMode }: Props) {
     ['Verified fields', verified.length, 'fields'],
   ];
 
-  return <div className="space-y-4">
+  return <div className="farmer-surface farmer-impact space-y-4">
     <section className="rounded-2xl border border-emerald-500/20 bg-slate-950/70 p-5">
       <div className="flex items-center gap-2 text-emerald-300 text-xs font-bold uppercase tracking-widest"><BarChart3 className="h-4 w-4" /> Impact + Research</div>
       <h1 className="mt-1 text-2xl font-black text-white">Evidence-derived impact, not invented impact</h1>
