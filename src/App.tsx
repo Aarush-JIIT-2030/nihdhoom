@@ -37,6 +37,193 @@ import { useAppController } from './state/useAppController';
 import { generateNonBurnCertificate } from './utils/spatialVerification';
 import { Globe, Box, Map, Sparkles, ShieldCheck, Zap, UserCheck, Leaf } from 'lucide-react';
 
+type WorkspaceHeaderProps = {
+  activeTab: ActiveTab;
+  demoMode: boolean;
+  onNavigate: (tab: ActiveTab) => void;
+};
+
+const WORKSPACE_META: Partial<Record<ActiveTab, {
+  eyebrow: string;
+  title: string;
+  description: string;
+  image: string;
+  accent: string;
+  action?: { label: string; tab: ActiveTab };
+}>> = {
+  FIELD_JOBS: {
+    eyebrow: 'FIELD OPERATIONS',
+    title: 'My Fields & Clearance Jobs',
+    description: 'See every registered field, its current state, evidence, machine assignment and next action in one readable workspace.',
+    image: '/images/punjab_farmer_hero.jpg',
+    accent: 'green',
+    action: { label: 'Book a clearance', tab: 'FARMER_ONBOARDING' },
+  },
+  FARMER_ONBOARDING: {
+    eyebrow: 'CLEARANCE',
+    title: 'Book crop-residue clearance',
+    description: 'Choose a field, confirm consent and request a clearance slot. Quotes and status are authoritative only when returned by the connected workflow.',
+    image: '/images/farmer_phone.jpg',
+    accent: 'amber',
+    action: { label: 'View my fields', tab: 'FIELD_JOBS' },
+  },
+  FARMER_KYC: {
+    eyebrow: 'FARMER ACCESS',
+    title: 'Farmer onboarding',
+    description: 'Set up your profile with phone OTP and consent before connecting field records or farmer communications.',
+    image: '/images/farmer_manpreet.jpg',
+    accent: 'green',
+    action: { label: 'Open Telegram', tab: 'FARMER_SURFACE' },
+  },
+  OPS_CONSOLE: {
+    eyebrow: 'LIVE OPERATIONS',
+    title: 'Track clearance',
+    description: 'Follow fields, machines, routes and operational evidence on the map. Live mode only shows records available from connected services.',
+    image: '/images/baling_dispatch_fleet_1790447115856.jpg',
+    accent: 'sky',
+    action: { label: 'Open operator PWA', tab: 'BALER_OPERATOR' },
+  },
+  BALER_OPERATOR: {
+    eyebrow: 'FIELD OPERATOR',
+    title: 'Operator field workspace',
+    description: 'Capture GPS, job progress and evidence from the field, including an offline queue when connectivity drops.',
+    image: '/images/baler_machine.jpg',
+    accent: 'sky',
+    action: { label: 'Track machines', tab: 'OPS_CONSOLE' },
+  },
+  RESIDUE_POOLS: {
+    eyebrow: 'RESIDUE MARKET',
+    title: 'Pool verified residue for offtake',
+    description: 'Group verified residue lots around real buyer demand, pickup constraints and quality requirements instead of showing speculative sales.',
+    image: '/images/offtake_facility.jpg',
+    accent: 'amber',
+    action: { label: 'Explore buyer offtake', tab: 'OFFTAKE_AUCTION' },
+  },
+  SATELLITE_AUDIT: {
+    eyebrow: 'FIELD TRUST',
+    title: 'Evidence & verification',
+    description: 'Review field evidence and remote-sensing observations as separate layers. Satellite observations support verification; they do not become proof by themselves.',
+    image: '/images/satellite_firms.jpg',
+    accent: 'sky',
+    action: { label: 'Open field trust', tab: 'FIELD_PROVENANCE' },
+  },
+  IMPACT_RESEARCH: {
+    eyebrow: 'IMPACT',
+    title: 'Impact & research',
+    description: 'Understand the evidence behind the residue problem, operational outcomes and methodology boundaries without mixing research statistics with live records.',
+    image: '/images/parali_burning.jpg',
+    accent: 'green',
+    action: { label: 'Harvest intelligence', tab: 'HARVEST_INTELLIGENCE' },
+  },
+  HARVEST_INTELLIGENCE: {
+    eyebrow: 'HARVEST INTELLIGENCE',
+    title: 'Harvest pressure & timing',
+    description: 'Turn harvest windows, field readiness and machine capacity into a clearer operational picture for the next few days.',
+    image: '/images/punjab_farm_hero.jpg',
+    accent: 'amber',
+    action: { label: 'Open dispatch', tab: 'OPS_CONSOLE' },
+  },
+  FIELD_PROVENANCE: {
+    eyebrow: 'FIELD TRUST',
+    title: 'Field provenance',
+    description: 'Trace the field record, boundary source, consent, evidence and verification state so every operational decision has a visible reason.',
+    image: '/images/farmer_phone.jpg',
+    accent: 'green',
+    action: { label: 'Verify fields', tab: 'SATELLITE_AUDIT' },
+  },
+  FARMER_SURFACE: {
+    eyebrow: 'FARMER CHANNEL',
+    title: 'NIRDHOOM on Telegram',
+    description: 'Connect a farmer account securely, use local-language messaging and move between booking, tracking and evidence without exposing secrets.',
+    image: '/images/farmer_phone.jpg',
+    accent: 'sky',
+    action: { label: 'Book clearance', tab: 'FARMER_ONBOARDING' },
+  },
+  OFFTAKE_AUCTION: {
+    eyebrow: 'BUYER NETWORK',
+    title: 'Buyer offtake & demand',
+    description: 'Compare conditional buyer requirements, residue quality and harvest forecasts. Nothing is presented as a confirmed contract until a real contract exists.',
+    image: '/images/cbg_mushroom_offtake_1790447167269.jpg',
+    accent: 'amber',
+    action: { label: 'Open residue pools', tab: 'RESIDUE_POOLS' },
+  },
+  CARBON_MARKET: {
+    eyebrow: 'CARBON & IMPACT',
+    title: 'Carbon marketplace',
+    description: 'Explore the registry pathway and evidence model without presenting illustrative credits as issued carbon assets.',
+    image: '/images/satellite_firms.jpg',
+    accent: 'green',
+    action: { label: 'View verification', tab: 'SATELLITE_AUDIT' },
+  },
+  AGENTIC_CONSOLE: {
+    eyebrow: 'AI OPERATIONS',
+    title: 'AI dispatch assistant',
+    description: 'Use bounded automation to inspect field conditions, propose routes and surface evidence. Human approval stays in the loop for consequential actions.',
+    image: '/images/baling_dispatch_fleet_1790447115856.jpg',
+    accent: 'sky',
+    action: { label: 'Open operations', tab: 'OPS_CONSOLE' },
+  },
+  DIGITAL_TWIN_3D: {
+    eyebrow: 'SPATIAL VIEW',
+    title: '3D field twin',
+    description: 'Explore the spatial model as an explanatory view of fields and operations. It is not a substitute for authoritative field geometry.',
+    image: '/images/punjab_farm_hero.jpg',
+    accent: 'sky',
+    action: { label: 'Open 2D map', tab: 'OPS_CONSOLE' },
+  },
+  MACHINERY_3D: {
+    eyebrow: 'MACHINE VIEW',
+    title: '3D baler twin',
+    description: 'Inspect the machinery concept and connect it back to the operator workflow and dispatch system.',
+    image: '/images/baler_machine.jpg',
+    accent: 'sky',
+    action: { label: 'Open operator PWA', tab: 'BALER_OPERATOR' },
+  },
+  DEMO_RUNNER: {
+    eyebrow: 'PRODUCT WALKTHROUGH',
+    title: 'NIRDHOOM end-to-end walkthrough',
+    description: 'A controlled demonstration of the field → machine → evidence → residue journey. Demo records are clearly separated from live records.',
+    image: '/images/baling_dispatch_fleet_1790447115856.jpg',
+    accent: 'amber',
+  },
+  JUDGE_DEFENSE: {
+    eyebrow: 'PITCH DEFENCE',
+    title: 'Judge Q&A & product proof',
+    description: 'Keep the story, constraints, evidence and release boundaries in one place for a clear technical demonstration.',
+    image: '/images/punjab_farm_hero.jpg',
+    accent: 'green',
+  },
+};
+
+function WorkspaceHeader({ activeTab, demoMode, onNavigate }: WorkspaceHeaderProps) {
+  const meta = WORKSPACE_META[activeTab];
+  if (!meta) return null;
+  const accentClass = meta.accent === 'amber' ? 'is-amber' : meta.accent === 'sky' ? 'is-sky' : 'is-green';
+
+  return (
+    <section className={`workspace-hero ${accentClass}`} aria-labelledby="workspace-title">
+      <div className="workspace-hero-copy">
+        <div className="workspace-eyebrow">
+          <span className="workspace-eyebrow-dot" />
+          {meta.eyebrow}
+          <span className="workspace-mode">{demoMode ? 'Demo records' : 'Live records'}</span>
+        </div>
+        <h1 id="workspace-title">{meta.title}</h1>
+        <p>{meta.description}</p>
+        {meta.action && (
+          <button type="button" onClick={() => onNavigate(meta.action!.tab)} className="workspace-action">
+            {meta.action.label} <span aria-hidden="true">→</span>
+          </button>
+        )}
+      </div>
+      <div className="workspace-hero-image" aria-hidden="true">
+        <img src={meta.image} alt="" loading="lazy" />
+        <div className="workspace-hero-image-scrim" />
+      </div>
+    </section>
+  );
+}
+
 export function App() {
   const {
     activeTab,
@@ -101,6 +288,8 @@ export function App() {
 
       {/* Main Content Area */}
       <main id="main-content" className="field-main flex-1 w-full max-w-[1480px] mx-auto px-3 sm:px-5 lg:px-7 py-5 sm:py-7 relative z-10">
+        {activeTab !== 'OVERVIEW' && <WorkspaceHeader activeTab={activeTab} demoMode={demoMode} onNavigate={setActiveTab} />}
+
         {/* PRIMARY PRODUCT SURFACE: RESIDUE-FIRST COMMAND CENTER */}
         {activeTab === 'OVERVIEW' && (
           <CommandCenter
