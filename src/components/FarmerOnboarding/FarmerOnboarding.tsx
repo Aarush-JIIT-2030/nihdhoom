@@ -39,7 +39,7 @@ export const FarmerOnboarding: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<KYCStep>('PHONE');
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
-  const [aadhaarNo, setAadhaarNo] = useState('');
+  const [aadhaarLast4, setAadhaarLast4] = useState('');
   const [name, setName] = useState('');
   const [village, setVillage] = useState('');
   const [block, setBlock] = useState('');
@@ -119,7 +119,7 @@ export const FarmerOnboarding: React.FC = () => {
 
   const reset = () => {
     setCurrentStep('PHONE');
-    setPhone(''); setOtp(''); setAadhaarNo(''); setName(''); setVillage('');
+    setPhone(''); setOtp(''); setAadhaarLast4(''); setName(''); setVillage('');
     setBlock(''); setUpiId(''); setKhasra(''); setAcreage('');
     setFaceScanned(false); setBankVerified(false); setOtpError(''); setConsentAccepted(false);
   };
@@ -387,26 +387,25 @@ export const FarmerOnboarding: React.FC = () => {
                   <strong>Demo consent screen:</strong> No UIDAI/Digilocker request is made by this prototype.
                 </div>
                 <div>
-                  <label className="text-xs text-slate-400 block mb-1">Aadhaar Number (12-digit)</label>
+                  <label className="text-xs text-slate-400 block mb-1">Aadhaar last 4 digits (demo reference only)</label>
                   <input
                     type="text"
-                    maxLength={14}
+                    maxLength={4}
                     className="w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-emerald-500 font-mono tracking-widest"
-                    placeholder="XXXX XXXX XXXX"
-                    value={aadhaarNo}
+                    placeholder="1234"
+                    value={aadhaarLast4}
                     onChange={(e) => {
-                      const val = e.target.value.replace(/\D/g, '').slice(0, 12);
-                      setAadhaarNo(val.replace(/(\d{4})(?=\d)/g, '$1 ').trim());
+                      setAadhaarLast4(e.target.value.replace(/\D/g, '').slice(0, 4));
                     }}
                   />
                 </div>
                 <div className="flex items-start gap-2 text-xs text-slate-400 bg-slate-900/60 p-3 rounded-lg border border-slate-800">
                   <Shield className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span>Live identity verification requires an authorized identity provider. This prototype does not process or store a real Aadhaar number.</span>
+                  <span>Live identity verification requires an authorized identity provider. This prototype does not collect or store a full Aadhaar number; only a four-digit demo reference is accepted.</span>
                 </div>
                 <button
                   onClick={advance}
-                  disabled={!DEMO_MODE || aadhaarNo.replace(/\s/g, '').length < 12 || loading}
+                  disabled={!DEMO_MODE || aadhaarLast4.length < 4 || loading}
                   className="mt-auto w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow transition-all"
                 >
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Fingerprint className="w-4 h-4" />}
