@@ -1,45 +1,17 @@
-import { 
-  Sparkles, 
-  Map, 
-  MessageSquare, 
-  Smartphone, 
-  Satellite, 
-  TrendingUp, 
-  HelpCircle, 
-  ShieldCheck, 
-  Zap, 
-  Box, 
-  Globe,
-  Leaf,
-  Wheat,
-  UserCheck,
-  Bot,
-  Layers3,
-  BarChart3,
-  ClipboardList
+import { useEffect, useRef, useState } from 'react';
+import {
+  Activity, BarChart3, Bot, ChevronDown, ClipboardList, HelpCircle, Leaf, Map, Menu,
+  MessageSquare, Satellite, Search, ShieldCheck, Sparkles, Smartphone, TrendingUp,
+  UserCheck, Wheat, X,
 } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 
-
-export type ActiveTab = 
-  | 'OVERVIEW'
-  | 'RESIDUE_POOLS'
-  | 'IMPACT_RESEARCH'
-  | 'HARVEST_INTELLIGENCE'
-  | 'FIELD_PROVENANCE'
-  | 'FIELD_JOBS'
-  | 'AGENTIC_CONSOLE'
-  | 'DEMO_RUNNER'
-  | 'DIGITAL_TWIN_3D'
-  | 'MACHINERY_3D'
-  | 'OPS_CONSOLE'
-  | 'FARMER_SURFACE'
-  | 'BALER_OPERATOR'
-  | 'SATELLITE_AUDIT'
-  | 'OFFTAKE_AUCTION'
-  | 'CARBON_MARKET'
-  | 'FARMER_ONBOARDING'
-  | 'JUDGE_DEFENSE';
+export type ActiveTab =
+  | 'OVERVIEW' | 'RESIDUE_POOLS' | 'IMPACT_RESEARCH' | 'HARVEST_INTELLIGENCE'
+  | 'FIELD_PROVENANCE' | 'FIELD_JOBS' | 'AGENTIC_CONSOLE' | 'DEMO_RUNNER'
+  | 'DIGITAL_TWIN_3D' | 'MACHINERY_3D' | 'OPS_CONSOLE' | 'FARMER_SURFACE'
+  | 'BALER_OPERATOR' | 'SATELLITE_AUDIT' | 'OFFTAKE_AUCTION' | 'CARBON_MARKET'
+  | 'FARMER_ONBOARDING' | 'JUDGE_DEFENSE';
 
 interface HeaderProps {
   activeTab: ActiveTab;
@@ -48,294 +20,165 @@ interface HeaderProps {
   demoMode: boolean;
 }
 
-export const Header: React.FC<HeaderProps> = ({
-  activeTab,
-  setActiveTab,
-  openPitchDrawer,
-  demoMode,
-}) => {
-  return (
-    <header className="sticky top-0 z-50 bg-[#03060f]/90 backdrop-blur-md border-b border-emerald-500/20 px-4 py-3 shadow-xl">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
-        {/* Logo & Pitch One-liner badge */}
-        <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
-          <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => setActiveTab('OVERVIEW')}>
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 via-teal-400 to-cyan-300 p-0.5 flex items-center justify-center shadow-lg shadow-emerald-500/25">
-              <div className="w-full h-full bg-[#03060f] rounded-[10px] flex items-center justify-center">
-                <span className="text-xl font-black bg-gradient-to-r from-emerald-400 to-teal-200 bg-clip-text text-transparent font-['Outfit']">
-                  ਨਿ
-                </span>
-              </div>
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-black text-lg tracking-tight text-white font-['Outfit']">
-                  NIRDHOOM
-                </span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-300 font-bold border border-amber-500/40">
-                  {demoMode ? 'DEMO / SIMULATION' : 'LIVE / OPERATIONAL'}
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-400 hidden sm:block">
-                {demoMode ? 'Field operations prototype • synthetic data' : 'Live field operations • provider-backed records'}
-              </p>
-            </div>
-          </div>
+type NavItem = {
+  id: ActiveTab;
+  label: string;
+  icon: typeof Activity;
+  description: string;
+};
 
-          {/* Quick Pitch One-Liner trigger & Theme Toggle */}
-          <div className="flex items-center gap-2">
-            <button
-              onClick={openPitchDrawer}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-xs font-bold border border-emerald-500/30 transition-all cursor-pointer shadow-sm shadow-emerald-500/20"
-              title="Read the 30-second Judge Pitch Deck"
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Judge Brief</span>
+const primaryNav: NavItem[] = [
+  { id: 'OVERVIEW', label: 'Command', icon: Activity, description: 'Operational overview and exceptions' },
+  { id: 'FIELD_JOBS', label: 'Jobs', icon: ClipboardList, description: 'Field bookings and machine work' },
+  { id: 'RESIDUE_POOLS', label: 'Pools', icon: Leaf, description: 'Residue supply and deal pools' },
+  { id: 'FIELD_PROVENANCE', label: 'Trust', icon: ShieldCheck, description: 'Field evidence and provenance' },
+  { id: 'IMPACT_RESEARCH', label: 'Impact', icon: BarChart3, description: 'Evidence-backed impact and research' },
+];
+
+const operationsNav: NavItem[] = [
+  { id: 'OPS_CONSOLE', label: 'Ops map', icon: Map, description: 'GIS dispatch and live operations' },
+  { id: 'HARVEST_INTELLIGENCE', label: 'Harvest intel', icon: Wheat, description: 'Harvest pressure and timing' },
+  { id: 'SATELLITE_AUDIT', label: 'Verification', icon: Satellite, description: 'Remote-sensing evidence review' },
+  { id: 'BALER_OPERATOR', label: 'Field PWA', icon: Smartphone, description: 'Operator field workflow' },
+  { id: 'FARMER_SURFACE', label: 'Farmer', icon: MessageSquare, description: 'Farmer WhatsApp and IVR surface' },
+];
+
+const strategyNav: NavItem[] = [
+  { id: 'OFFTAKE_AUCTION', label: 'Offtake', icon: TrendingUp, description: 'Buyer demand and procurement' },
+  { id: 'CARBON_MARKET', label: 'Carbon', icon: Leaf, description: 'Carbon marketplace prototype' },
+  { id: 'FARMER_ONBOARDING', label: 'Onboarding', icon: UserCheck, description: 'Farmer consent and onboarding' },
+  { id: 'AGENTIC_CONSOLE', label: 'AI console', icon: Bot, description: 'Agentic operations workspace' },
+  { id: 'DIGITAL_TWIN_3D', label: '3D twin', icon: Activity, description: 'Geospatial digital twin' },
+  { id: 'MACHINERY_3D', label: '3D baler', icon: Activity, description: 'Machine digital twin' },
+  { id: 'DEMO_RUNNER', label: 'Demo runner', icon: Sparkles, description: 'Pitch walkthrough' },
+  { id: 'JUDGE_DEFENSE', label: 'Judge Q&A', icon: HelpCircle, description: 'Pitch defence workspace' },
+];
+
+const allSecondary = [...operationsNav, ...strategyNav];
+
+export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: HeaderProps) {
+  const [moreOpen, setMoreOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const moreRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') { setMoreOpen(false); setMobileOpen(false); }
+    };
+    const onPointer = (event: MouseEvent) => {
+      if (moreRef.current && !moreRef.current.contains(event.target as Node)) setMoreOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    document.addEventListener('mousedown', onPointer);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.removeEventListener('mousedown', onPointer);
+    };
+  }, []);
+
+  const navigate = (id: ActiveTab) => {
+    setActiveTab(id);
+    setMoreOpen(false);
+    setMobileOpen(false);
+  };
+
+  const activeSecondary = allSecondary.find((item) => item.id === activeTab);
+
+  return (
+    <header className="sticky top-0 z-50 border-b border-white/[0.08] bg-[#05080f]/95 backdrop-blur-xl">
+      <div className="mx-auto max-w-[1440px] px-3 sm:px-5">
+        <div className="flex min-h-[68px] items-center gap-3">
+          <button onClick={() => navigate('OVERVIEW')} className="group flex min-w-0 items-center gap-3 rounded-xl px-1.5 py-1.5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400" aria-label="Go to NIRDHOOM Command Center">
+            <span className="relative grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-emerald-400/30 bg-emerald-400/[0.08] shadow-[0_0_30px_rgba(16,185,129,.08)]">
+              <span className="text-base font-black text-emerald-300">नि</span>
+              <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full border-2 border-[#05080f] bg-emerald-400" />
+            </span>
+            <span className="hidden min-w-0 sm:block">
+              <span className="flex items-center gap-2">
+                <span className="font-['Outfit'] text-[15px] font-black tracking-[0.12em] text-white">NIRDHOOM</span>
+                <span className={`rounded-full border px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider ${demoMode ? 'border-amber-400/20 bg-amber-400/10 text-amber-300' : 'border-emerald-400/20 bg-emerald-400/10 text-emerald-300'}`}>{demoMode ? 'Demo' : 'Live'}</span>
+              </span>
+              <span className="mt-0.5 block truncate text-[10px] text-slate-500">Field-first residue operations</span>
+            </span>
+          </button>
+
+          <div className="hidden h-7 w-px bg-white/[0.08] lg:block" />
+
+          <nav className="hidden min-w-0 flex-1 items-center gap-1 lg:flex" aria-label="Primary navigation">
+            {primaryNav.map((item) => {
+              const Icon = item.icon;
+              const active = activeTab === item.id;
+              return (
+                <button key={item.id} onClick={() => navigate(item.id)} title={item.description}
+                  className={`group flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${active ? 'bg-white/[0.09] text-white shadow-sm ring-1 ring-white/[0.08]' : 'text-slate-400 hover:bg-white/[0.05] hover:text-slate-100'}`}>
+                  <Icon className={`h-3.5 w-3.5 ${active ? 'text-emerald-300' : 'text-slate-500 group-hover:text-slate-300'}`} />
+                  {item.label}
+                </button>
+              );
+            })}
+
+            <div className="relative" ref={moreRef}>
+              <button onClick={() => setMoreOpen((value) => !value)} aria-expanded={moreOpen} aria-haspopup="menu"
+                className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${activeSecondary ? 'bg-emerald-400/[0.08] text-emerald-200 ring-1 ring-emerald-400/15' : 'text-slate-400 hover:bg-white/[0.05] hover:text-white'}`}>
+                <Menu className="h-3.5 w-3.5" /> More <ChevronDown className={`h-3 w-3 transition-transform ${moreOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {moreOpen && (
+                <div className="absolute left-0 top-[calc(100%+10px)] w-[340px] rounded-2xl border border-white/[0.10] bg-[#0a0f19]/98 p-2 shadow-2xl shadow-black/40 backdrop-blur-xl" role="menu">
+                  <div className="px-2.5 pb-2 pt-1">
+                    <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">Operations & tools</div>
+                    <div className="mt-1 text-[11px] text-slate-600">Keep the daily workflow focused; advanced surfaces live here.</div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-1">
+                    {allSecondary.map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <button key={item.id} role="menuitem" onClick={() => navigate(item.id)}
+                          className={`flex min-w-0 items-start gap-2 rounded-xl p-2.5 text-left transition ${activeTab === item.id ? 'bg-emerald-400/[0.10] text-white' : 'text-slate-300 hover:bg-white/[0.05] hover:text-white'}`}>
+                          <Icon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-300/80" />
+                          <span className="min-w-0"><span className="block truncate text-[11px] font-bold">{item.label}</span><span className="mt-0.5 block text-[9px] leading-3 text-slate-500">{item.description}</span></span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          </nav>
+
+          <div className="ml-auto flex shrink-0 items-center gap-1.5">
+            <div className="hidden xl:flex items-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.03] px-2.5 py-1.5 text-[10px]">
+              <span className={`h-1.5 w-1.5 rounded-full ${demoMode ? 'bg-amber-400' : 'bg-emerald-400'}`} />
+              <span className="font-semibold text-slate-400">{demoMode ? 'Synthetic data' : 'Live records'}</span>
+            </div>
+            <button onClick={openPitchDrawer} className="hidden sm:flex items-center gap-1.5 rounded-lg border border-emerald-400/15 bg-emerald-400/[0.06] px-2.5 py-2 text-xs font-bold text-emerald-200 transition hover:bg-emerald-400/[0.12] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400">
+              <Search className="h-3.5 w-3.5" /> Brief
             </button>
             <ThemeToggle />
+            <button onClick={() => setMobileOpen((value) => !value)} className="grid h-9 w-9 place-items-center rounded-lg border border-white/[0.08] bg-white/[0.03] text-slate-300 lg:hidden" aria-label={mobileOpen ? 'Close navigation' : 'Open navigation'} aria-expanded={mobileOpen}>
+              {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            </button>
           </div>
         </div>
 
-        {/* Real-time Ticker Metrics */}
-        <div className="hidden xl:flex items-center gap-3.5 text-xs font-medium bg-slate-900/80 px-4 py-1.5 rounded-full border border-emerald-500/25 shadow-inner">
-          <div className="flex items-center gap-1.5 text-emerald-400">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span className="font-semibold">NIRDHOOM Operations</span>
-          </div>
-          <span className="text-slate-700">|</span>
-          <div className="flex items-center gap-1 text-slate-300">
-            <span className="text-slate-500">Mode:</span>
-            <span className="text-emerald-300 font-mono font-bold">{demoMode ? 'Synthetic data' : 'Live records'}</span>
-          </div>
-          <span className="text-slate-700">|</span>
-          <div className="flex items-center gap-1 text-slate-300">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="text-slate-500">Remote sensing:</span>
-            <span className="text-amber-300 font-bold">{demoMode ? 'Simulation' : 'Evidence layer'}</span>
-          </div>
-          <span className="text-slate-700">|</span>
-          <div className="flex items-center gap-1 text-amber-400">
-            <Zap className="w-3.5 h-3.5" />
-            <span>Payments disabled</span>
-          </div>
+        <div className="flex items-center gap-1 overflow-x-auto border-t border-white/[0.05] py-1.5 lg:hidden scrollbar-none" aria-label="Primary navigation">
+          {primaryNav.map((item) => {
+            const Icon = item.icon;
+            return <button key={item.id} onClick={() => navigate(item.id)} className={`flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[10px] font-bold ${activeTab === item.id ? 'bg-emerald-400/10 text-emerald-200' : 'text-slate-500'}`}><Icon className="h-3 w-3" />{item.label}</button>;
+          })}
         </div>
 
-        {/* Navigation Tabs */}
-        <nav className="flex items-center gap-1 overflow-x-auto max-w-full pb-1 md:pb-0 scrollbar-none">
-          {/* Overview & Strategic Bento Hub */}
-          <button
-            onClick={() => setActiveTab('OVERVIEW')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-              activeTab === 'OVERVIEW'
-                ? 'bg-gradient-to-r from-emerald-600 to-teal-500 text-white shadow-md shadow-emerald-500/40 ring-1 ring-emerald-300'
-                : 'text-slate-300 hover:text-white hover:bg-slate-900'
-            }`}
-          >
-            <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Overview</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('RESIDUE_POOLS')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-              activeTab === 'RESIDUE_POOLS' ? 'bg-amber-600 text-white shadow-md shadow-amber-500/30' : 'text-amber-300 hover:text-amber-200 hover:bg-slate-900'
-            }`}
-          >
-            <Layers3 className="w-3.5 h-3.5" />
-            <span>Residue Pools</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('IMPACT_RESEARCH')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-              activeTab === 'IMPACT_RESEARCH' ? 'bg-cyan-600 text-white shadow-md shadow-cyan-500/30' : 'text-cyan-300 hover:text-cyan-200 hover:bg-slate-900'
-            }`}
-          >
-            <BarChart3 className="w-3.5 h-3.5" />
-            <span>Impact & Research</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('FIELD_JOBS')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-              activeTab === 'FIELD_JOBS' ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/30' : 'text-emerald-300 hover:text-emerald-200 hover:bg-slate-900'
-            }`}
-          >
-            <ClipboardList className="w-3.5 h-3.5" />
-            <span>Field Jobs</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('FIELD_PROVENANCE')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-              activeTab === 'FIELD_PROVENANCE' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30' : 'text-indigo-300 hover:text-indigo-200 hover:bg-slate-900'
-            }`}
-          >
-            <Map className="w-3.5 h-3.5" />
-            <span>Field Trust</span>
-          </button>
-
-          {/* Agentic AI Swarm Console Tab */}
-          <button
-            onClick={() => setActiveTab('HARVEST_INTELLIGENCE')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-              activeTab === 'HARVEST_INTELLIGENCE'
-                ? 'bg-gradient-to-r from-amber-600 to-orange-500 text-white shadow-md shadow-amber-500/30 ring-1 ring-amber-300'
-                : 'text-amber-300 hover:text-amber-200 hover:bg-slate-900'
-            }`}
-          >
-            <Wheat className="w-3.5 h-3.5" />
-            <span>Harvest Intel</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('AGENTIC_CONSOLE')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-              activeTab === 'AGENTIC_CONSOLE'
-                ? 'bg-gradient-to-r from-cyan-600 via-teal-600 to-emerald-600 text-white shadow-md shadow-cyan-500/40 ring-1 ring-cyan-300'
-                : 'text-cyan-400 hover:text-cyan-200 hover:bg-slate-900 border border-cyan-500/30'
-            }`}
-          >
-            <Bot className="w-3.5 h-3.5 animate-pulse text-cyan-300" />
-            <span>Agentic Swarm</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('DEMO_RUNNER')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-              activeTab === 'DEMO_RUNNER'
-                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/40 ring-1 ring-emerald-400'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
-            }`}
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>4-Beat Demo</span>
-          </button>
-
-          {/* 3D Digital Twin Tab */}
-          <button
-            onClick={() => setActiveTab('DIGITAL_TWIN_3D')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-              activeTab === 'DIGITAL_TWIN_3D'
-                ? 'bg-gradient-to-r from-emerald-600 to-teal-500 text-white shadow-md shadow-emerald-500/40 ring-1 ring-teal-400'
-                : 'text-emerald-400/90 hover:text-emerald-300 hover:bg-slate-900'
-            }`}
-          >
-            <Globe className="w-3.5 h-3.5" />
-            <span>3D Digital Twin</span>
-          </button>
-
-          {/* 3D Baler Machinery Tab */}
-          <button
-            onClick={() => setActiveTab('MACHINERY_3D')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-              activeTab === 'MACHINERY_3D'
-                ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md shadow-cyan-500/40 ring-1 ring-cyan-400'
-                : 'text-cyan-400/90 hover:text-cyan-300 hover:bg-slate-900'
-            }`}
-          >
-            <Box className="w-3.5 h-3.5" />
-            <span>3D Baler Model</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('OPS_CONSOLE')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-              activeTab === 'OPS_CONSOLE'
-                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
-            }`}
-          >
-            <Map className="w-3.5 h-3.5" />
-            <span>Ops Map</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('FARMER_SURFACE')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-              activeTab === 'FARMER_SURFACE'
-                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
-            }`}
-          >
-            <MessageSquare className="w-3.5 h-3.5" />
-            <span>WhatsApp</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('BALER_OPERATOR')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-              activeTab === 'BALER_OPERATOR'
-                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
-            }`}
-          >
-            <Smartphone className="w-3.5 h-3.5" />
-            <span>Field PWA</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('SATELLITE_AUDIT')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-              activeTab === 'SATELLITE_AUDIT'
-                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
-            }`}
-          >
-            <Satellite className="w-3.5 h-3.5" />
-            <span>Verification</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('OFFTAKE_AUCTION')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-              activeTab === 'OFFTAKE_AUCTION'
-                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
-            }`}
-          >
-            <TrendingUp className="w-3.5 h-3.5" />
-            <span>Auction</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('CARBON_MARKET')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-              activeTab === 'CARBON_MARKET'
-                ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-md shadow-teal-500/30 ring-1 ring-teal-400'
-                : 'text-teal-400/90 hover:text-teal-300 hover:bg-slate-900'
-            }`}
-          >
-            <Leaf className="w-3.5 h-3.5" />
-            <span>Carbon Market</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('FARMER_ONBOARDING')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-              activeTab === 'FARMER_ONBOARDING'
-                ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-md shadow-cyan-500/30 ring-1 ring-cyan-400'
-                : 'text-cyan-400/90 hover:text-cyan-300 hover:bg-slate-900'
-            }`}
-          >
-            <UserCheck className="w-3.5 h-3.5" />
-            <span>Onboarding</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('JUDGE_DEFENSE')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-              activeTab === 'JUDGE_DEFENSE'
-                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
-            }`}
-          >
-            <HelpCircle className="w-3.5 h-3.5" />
-            <span>Judge Q&A</span>
-          </button>
-        </nav>
+        {mobileOpen && (
+          <div className="border-t border-white/[0.06] py-3 lg:hidden">
+            <div className="mb-2 px-1 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-600">All surfaces</div>
+            <div className="grid grid-cols-2 gap-1">
+              {allSecondary.map((item) => {
+                const Icon = item.icon;
+                return <button key={item.id} onClick={() => navigate(item.id)} className={`flex items-center gap-2 rounded-xl p-2.5 text-left text-[11px] font-bold ${activeTab === item.id ? 'bg-emerald-400/10 text-white' : 'text-slate-400 hover:bg-white/[0.04]'}`}><Icon className="h-3.5 w-3.5 text-emerald-300/80" />{item.label}</button>;
+              })}
+            </div>
+          </div>
+        )}
       </div>
     </header>
   );
-};
+}
