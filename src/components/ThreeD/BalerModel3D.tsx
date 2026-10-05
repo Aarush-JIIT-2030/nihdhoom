@@ -339,9 +339,9 @@ export const BalerModel3D: React.FC = () => {
           <div>
             <div className="flex items-center gap-1.5">
               <span className="text-xs font-black text-white uppercase tracking-wider font-['Outfit']">
-                3D Subsidised Machinery Twin
+                3D Machinery Twin
               </span>
-              <span className="badge badge-emerald text-[9px]">50-80% CRM ASSET</span>
+              <span className="badge badge-emerald text-[9px]">DEMO MACHINE</span>
             </div>
             <div className="text-[10px] text-slate-400 font-mono">
               Claas / New Holland Baler Unit #14 • CHC Ubhawal • Reg: PB-2023-891
@@ -457,7 +457,7 @@ export const BalerModel3D: React.FC = () => {
           <div>
             <div className="flex items-center gap-2 text-purple-400 font-bold text-xs mb-1">
               <QrCode className="w-4 h-4" />
-              <span>Digital QR Lot Tagging & Settlement Workflow (Simulated)</span>
+              <span>Digital QR Lot Tagging & Completion Workflow (Demo)</span>
             </div>
             <p className="text-xs text-slate-300 leading-relaxed">
               Each discharged bale lot receives a weatherproof tamper-evident QR code linked to the farmer's Khasra polygon, creating an auditable settlement record; provider settlement is not connected.
