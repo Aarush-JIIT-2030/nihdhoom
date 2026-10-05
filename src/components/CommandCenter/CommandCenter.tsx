@@ -15,6 +15,7 @@ interface Props {
   onSelectField: (field: Field) => void;
   onOpenResidue: () => void;
   onOpenImpact: () => void;
+  onNavigate: (tab: string) => void;
 }
 
 const heroImage = '/images/punjab_farmer_hero.jpg';
@@ -42,10 +43,10 @@ export function CommandCenter({
   ];
 
   const audiences = [
-    { title: 'For farmers', text: 'Simple field registration, clearance booking and status updates.', icon: Wheat, accent: 'green' },
-    { title: 'For CHCs & operators', text: 'Jobs, routes, machines, evidence and completion in one workflow.', icon: Factory, accent: 'sky' },
-    { title: 'For buyers', text: 'Verified residue supply with field provenance and predictable dispatch.', icon: CircleDollarSign, accent: 'wheat' },
-    { title: 'For verification teams', text: 'Evidence-first audit trails before impact is counted.', icon: Satellite, accent: 'soil' },
+    { title: 'For farmers', text: 'Simple field registration, clearance booking and status updates.', icon: Wheat, accent: 'green', tab: 'FARMER_ONBOARDING' },
+    { title: 'For CHCs & operators', text: 'Jobs, routes, machines, evidence and completion in one workflow.', icon: Factory, accent: 'sky', tab: 'FIELD_JOBS' },
+    { title: 'For buyers', text: 'Verified residue supply with field provenance and predictable dispatch.', icon: CircleDollarSign, accent: 'wheat', tab: 'OFFTAKE_AUCTION' },
+    { title: 'For verification teams', text: 'Evidence-first audit trails before impact is counted.', icon: Satellite, accent: 'soil', tab: 'SATELLITE_AUDIT' },
   ];
 
   return (
@@ -127,13 +128,13 @@ export function CommandCenter({
         <div className="home-section-kicker">One platform, different jobs</div>
         <div className="home-role-heading"><h2>Everyone sees what they need.</h2><p>Keep the farmer experience simple while giving operators, buyers and verification teams the depth they need.</p></div>
         <div className="home-role-grid">
-          {audiences.map(({ title, text, icon: Icon, accent }) => (
-            <article key={title} className={`home-role-card ${accent}`}>
+          {audiences.map(({ title, text, icon: Icon, accent, tab }) => (
+            <button key={title} type="button" onClick={() => onNavigate(tab)} className={`home-role-card ${accent} text-left`}>
               <span className="home-role-icon"><Icon /></span>
               <h3>{title}</h3>
               <p>{text}</p>
               <span className="home-card-link">Open workspace <ChevronRight /></span>
-            </article>
+            </button>
           ))}
         </div>
       </section>
