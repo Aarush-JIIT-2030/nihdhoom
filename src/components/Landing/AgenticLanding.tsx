@@ -34,7 +34,6 @@ interface AgenticLandingProps {
   onNavigateTab: (tab: ActiveTab) => void;
   openPitchDrawer: () => void;
   acresScheduled?: number;
-  totalPayoutInr?: number;
   co2Avoided?: number;
   firmsZeroBurnCount?: number;
   activeMachines?: number;
@@ -43,10 +42,10 @@ interface AgenticLandingProps {
 
 const ROTATING_WORDS = [
   'Agentic Multi-Agent AI',
-  'Parametric Slot Guarantees',
+  'Capacity-aware dispatch',
   'OR-Tools Constrained VRP',
   'FIRMS / VIIRS thermal evidence',
-  'Payment workflow (simulated)',
+  'Payment disabled in this release',
   'Carbon accounting readiness',
 ];
 
@@ -63,7 +62,6 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
   onNavigateTab,
   openPitchDrawer,
   acresScheduled = 88.4,
-  totalPayoutInr = 128150,
   co2Avoided = 72.6,
   firmsZeroBurnCount = 5,
   activeMachines = 4,
@@ -135,7 +133,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
 
           {/* Hard-hitting subtitle based on the 1-liner brief */}
           <p className="text-sm sm:text-base lg:text-lg text-slate-300 max-w-3xl mx-auto leading-relaxed mb-8 font-['Plus_Jakarta_Sans'] font-normal">
-            We run an autonomous dispatch network over Punjab’s tens of thousands of idle, 50–80% subsidised crop residue machines. We sell farmers a <strong className="text-emerald-300 font-semibold">guaranteed clearance date backed by penalty</strong>, price it dynamically by how early they book, settle through a payment workflow that is currently simulated, and support field verification with <strong className="text-teal-300 font-semibold">NASA FIRMS satellite observations</strong> as one evidence source rather than absolute proof.
+            We run an autonomous dispatch network over Punjab’s tens of thousands of idle, 50–80% subsidised crop residue machines. We give farmers a <strong className="text-emerald-300 font-semibold">clearance estimate tied to the booking workflow</strong>, reserve capacity only when the server-authoritative booking path succeeds, and keep payment disabled in this release, and support field verification with <strong className="text-teal-300 font-semibold">NASA FIRMS satellite observations</strong> as one evidence source rather than absolute proof.
           </p>
 
           {/* Interactive CTAs Bar */}
@@ -325,7 +323,6 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
       <section>
         <LiveKPIDashboard
           acresScheduled={acresScheduled}
-          totalPayoutInr={totalPayoutInr}
           co2Avoided={co2Avoided}
           firmsZeroBurnCount={firmsZeroBurnCount}
           activeMachines={activeMachines}
