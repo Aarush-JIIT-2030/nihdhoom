@@ -76,7 +76,7 @@ const FARMER_TESTIMONIALS = [
     acres: 8.5,
     crop: 'PR-126',
     avatar: '/images/farmer_gurpreet.jpg',
-    savings: '₹4,500 penalty guarantee gave me peace of mind',
+    savings: 'Illustrative booking scenario; payment and penalties are disabled',
   },
   {
     name: 'Manpreet Kaur Sandhu',
