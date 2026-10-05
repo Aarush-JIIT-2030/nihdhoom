@@ -352,3 +352,11 @@ test('Telegram Mini App refreshes server-side identity activity after verificati
 });
 
 // Competition readiness guards are intentionally source-level and deployment-independent.
+
+test('residue pool RPC cannot over-commit a verified lot and definer search paths are pinned', () => {
+  const sql = read('supabase/migrations/20261006_nirdhoom_integrity_hardening.sql');
+  assert.match(sql, /l\.quantity_tonnes - coalesce/);
+  assert.match(sql, /no verified residue lot with sufficient uncommitted quantity/);
+  assert.match(sql, /set search_path = ''/);
+  assert.match(sql, /revoke execute on function public\.join_residue_pool/);
+});
