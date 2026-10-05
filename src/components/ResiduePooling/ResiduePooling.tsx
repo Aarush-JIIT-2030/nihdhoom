@@ -25,7 +25,7 @@ export function ResiduePooling({ fields, demoMode }: Props) {
     fieldId: f.id,
     farmer: f.farmer_name,
     village: f.village,
-    tonnes: Number(f.acreage || 0) * 1.8,
+    tonnes: Number(f.acreage || 0) * 1.8, // illustrative planning coefficient
     status: f.status,
   })), [fields]);
 
@@ -98,7 +98,7 @@ export function ResiduePooling({ fields, demoMode }: Props) {
             {localSupply.length === 0 ? <p className="text-sm text-slate-500">No field supply records yet.</p> : localSupply.map(s => (
               <div key={s.fieldId} className="flex items-center justify-between rounded-lg border border-slate-800 p-3">
                 <div><div className="text-xs font-bold text-white">{s.farmer}</div><div className="text-[10px] text-slate-500">{s.village} · {s.status}</div></div>
-                <div className="text-sm font-black text-emerald-300">{s.tonnes.toFixed(1)} t est.</div>
+                <div className="text-sm font-black text-emerald-300">{s.tonnes.toFixed(1)} t planning</div>
               </div>
             ))}
           </div>
