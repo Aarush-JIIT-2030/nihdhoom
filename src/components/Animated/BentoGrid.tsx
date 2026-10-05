@@ -38,7 +38,7 @@ const WEDGES: WedgeItem[] = [
     title: 'Wedge 1: Asset Strategy',
     tagline: "Don't buy balers. Route the idle ones.",
     category: 'CAPEX ELIMINATION',
-    description: "Punjab & Haryana already hold tens of thousands of CRM balers with 50–80% government subsidy sitting idle in Custom Hiring Centres (CHCs) and FPOs due to village politics and phone-call matching. We buy zero balers: we deploy an algorithmic dispatch layer over stranded public infrastructure.",
+    description: "Punjab & Haryana have distributed crop-residue machinery networks. NIRDHOOM's thesis is to coordinate available capacity without owning the fleet; machine availability must be verified in a pilot.",
     highlight: '₹0 Startup Capex • 100% Asset-Light Take Rate',
     metrics: [
       { label: 'Baler Machine Capex', value: '₹0 (Zero)' },
@@ -59,7 +59,7 @@ const WEDGES: WedgeItem[] = [
     tagline: 'Sell reliability, not a vague promise.',
     category: 'PARAMETRIC RISK UNDERWRITING',
     description: 'Farmers face a tight 10–20 day window between paddy harvest and wheat sowing. NIRDHOOM turns that time pressure into a capacity-aware booking workflow; a confirmed service commitment only exists after real capacity and operating terms are reserved.',
-    highlight: 'Capacity-aware logistics, not a fake guarantee',
+    highlight: 'Capacity-aware logistics, not a guarantee',
     metrics: [
       { label: 'Penalty policy', value: 'Not enabled' },
       { label: 'Clearance window', value: 'Capacity dependent' },
