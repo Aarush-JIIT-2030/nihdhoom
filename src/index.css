@@ -3085,3 +3085,15 @@ html[data-theme="dark"] .nirdhoom-field-app .text-emerald-950 {
 .competition-unit-economics span { display: block; }
 .competition-unit-economics b { color: #fcd34d; font-size: .68rem; }
 .competition-unit-economics span { margin-top: .25rem; color: #a8b3bd; font-size: .62rem; line-height: 1.5; }
+
+.competition-policy-note {
+  margin-top: .8rem;
+  padding: .75rem .85rem;
+  border-left: 3px solid #f59e0b;
+  border-radius: 8px;
+  background: rgba(245,158,11,.06);
+  color: #cbd5e1;
+  font-size: .68rem;
+  line-height: 1.55;
+}
+.competition-policy-note strong { color: #fbbf24; }
