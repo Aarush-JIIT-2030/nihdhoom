@@ -81,7 +81,7 @@ const FARMER_TESTIMONIALS = [
   {
     name: 'Manpreet Kaur Sandhu',
     village: 'Bhalwan, Dhuri',
-    quote: 'ਪਹਿਲਾਂ ਫ਼ੋਨ ਤੇ ਫ਼ੋਨ ਕਰਨੇ ਪੈਂਦੇ ਸੀ। ਹੁਣ Telegram ਤੇ ਬੁੱਕ ਕਰ ਲੈਂਦੇ ਹਾਂ, UPI ਤੇ ਪੈਸੇ 90 ਸਕਿੰਟ ਵਿਚ ਆ ਜਾਂਦੇ ਹਨ।',
+    quote: 'ਪਹਿਲਾਂ ਫ਼ੋਨ ਤੇ ਫ਼ੋਨ ਕਰਨੇ ਪੈਂਦੇ ਸੀ। ਹੁਣ Telegram ਤੇ ਬੁੱਕ ਕਰ ਲੈਂਦੇ ਹਾਂ, Telegram ਤੇ ਬੁਕਿੰਗ ਦਾ ਸਟੇਟਸ ਇਕ ਥਾਂ ਵੇਖ ਸਕਦੇ ਹਾਂ।',
     quoteEn: 'Earlier I had to make endless calls. Now I can send a booking request through Telegram and see the field status in one place.',
     acres: 6.2,
     crop: 'Basmati-1509',
