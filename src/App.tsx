@@ -14,6 +14,7 @@ const MultiOfftakeAuction = lazy(() => import('./components/OfftakeAndForecast/M
 const HarvestForecast = lazy(() => import('./components/OfftakeAndForecast/HarvestForecast').then((m) => ({ default: m.HarvestForecast })));
 const JudgesQnAPanel = lazy(() => import('./components/PitchDefense/JudgesQnAPanel').then((m) => ({ default: m.JudgesQnAPanel })));
 const JudgePitchDrawer = lazy(() => import('./components/PitchDefense/JudgePitchDrawer').then((m) => ({ default: m.JudgePitchDrawer })));
+const CompetitionCenter = lazy(() => import('./components/PitchDefense/CompetitionCenter').then((m) => ({ default: m.CompetitionCenter })));
 const SatelliteEarth3D = lazy(() => import('./components/ThreeD/SatelliteEarth3D').then((m) => ({ default: m.SatelliteEarth3D })));
 const BalerModel3D = lazy(() => import('./components/ThreeD/BalerModel3D').then((m) => ({ default: m.BalerModel3D })));
 const CardTilt3D = lazy(() => import('./components/ThreeD/CardTilt3D').then((m) => ({ default: m.CardTilt3D })));
