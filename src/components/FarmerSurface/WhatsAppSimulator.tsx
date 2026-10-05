@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { supabase } from '../../lib/supabase';
 import { Bell, CalendarCheck, Camera, CheckCircle2, MapPin, Send, ShieldCheck } from 'lucide-react';
 
 interface TelegramSimulatorProps {
@@ -10,6 +11,8 @@ const BOT_USERNAME = import.meta.env.VITE_TELEGRAM_BOT_USERNAME || '';
 export function TelegramSimulator({ onSlotConfirmed }: TelegramSimulatorProps) {
   const [language, setLanguage] = useState<'pa' | 'hi' | 'en'>('pa');
   const [confirmed, setConfirmed] = useState(false);
+  const [linking, setLinking] = useState(false);
+  const [linkError, setLinkError] = useState('');
 
   const botUrl = useMemo(() => BOT_USERNAME ? `https://t.me/${BOT_USERNAME}` : 'https://t.me', []);
 
@@ -55,6 +58,34 @@ export function TelegramSimulator({ onSlotConfirmed }: TelegramSimulatorProps) {
     },
   }[language];
 
+  const connectTelegram = async () => {
+    setLinking(true);
+    setLinkError('');
+    try {
+      const { data } = await supabase?.auth.getSession();
+      const accessToken = data?.session?.access_token;
+      if (!accessToken) {
+        setLinkError('Sign in to NIRDHOOM first, then generate a secure Telegram link.');
+        return;
+      }
+      const response = await fetch('/api/notify/telegram-link', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+        body: '{}',
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload.bot_url) {
+        setLinkError(payload.error || 'Unable to generate a secure Telegram link.');
+        return;
+      }
+      window.open(payload.bot_url, '_blank', 'noopener,noreferrer');
+    } catch {
+      setLinkError('Telegram linking service is temporarily unavailable.');
+    } finally {
+      setLinking(false);
+    }
+  };
+
   const confirmDemo = () => {
     setConfirmed(true);
     onSlotConfirmed?.('demo-field-1');
@@ -84,6 +115,15 @@ export function TelegramSimulator({ onSlotConfirmed }: TelegramSimulatorProps) {
             >
               <Send className="h-4 w-4" /> {copy.cta}
             </a>
+            <button
+              type="button"
+              onClick={connectTelegram}
+              disabled={linking}
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl border border-emerald-800/15 bg-white px-5 py-3 text-sm font-black text-emerald-900 shadow-sm transition hover:bg-emerald-50 disabled:cursor-wait disabled:opacity-60"
+            >
+              <ShieldCheck className="h-4 w-4" /> {linking ? 'Creating secure link…' : 'Connect securely to my NIRDHOOM account'}
+            </button>
+            {linkError && <p role="alert" className="text-center text-xs font-semibold text-red-700">{linkError}</p>}
             <div className="text-center text-[11px] font-semibold text-slate-500">
               @{BOT_USERNAME}
             </div>
