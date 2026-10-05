@@ -373,7 +373,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
               Explore All 10 Operational Surfaces
             </h3>
             <p className="text-xs text-slate-400 mt-0.5">
-              Section 06 of Brief: "Six personas. We must not build six apps." Ops console is our real product; field surfaces are streamlined thin PWAs and WhatsApp IVR bots.
+              Section 06 of Brief: "Six personas. We must not build six apps." Ops console is our real product; field surfaces are streamlined thin PWAs and Telegram IVR bots.
             </p>
           </div>
 
@@ -400,7 +400,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
             {
               tab: 'DEMO_RUNNER' as ActiveTab,
               title: '🎬 4-Beat Live Pitch Runner',
-              desc: 'Step-by-step hackathon pitch sequence: Farmer WhatsApp → OR-Tools Map → UPI Payout → Satellite 0-Burn.',
+              desc: 'Step-by-step hackathon pitch sequence: Farmer Telegram → OR-Tools Map → UPI Payout → Satellite 0-Burn.',
               tag: 'Hackathon Flow',
               badgeColor: 'text-emerald-300 bg-emerald-950/60 border-emerald-500/30',
             },
@@ -427,8 +427,8 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
             },
             {
               tab: 'FARMER_SURFACE' as ActiveTab,
-              title: '💬 Farmer WhatsApp & IVR Bot',
-              desc: 'Bilingual Punjabi WhatsApp bot with missed-call-to-IVR flow, instant slot contract, and voice notes.',
+              title: '💬 Farmer Telegram & IVR Bot',
+              desc: 'Bilingual Punjabi Telegram bot with missed-call-to-IVR flow, instant slot contract, and voice notes.',
               tag: 'Primary Surface',
               badgeColor: 'text-amber-300 bg-amber-950/60 border-amber-500/30',
             },
