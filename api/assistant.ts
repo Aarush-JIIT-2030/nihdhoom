@@ -1,4 +1,5 @@
 declare const process: { env: Record<string, string | undefined> };
+import { rateLimit } from './_lib/rateLimit';
 
 async function readLiveField(base:string, token:string, fieldId:string){
   const url=`${base}/rest/v1/fields?id=eq.${encodeURIComponent(fieldId)}&select=id,external_id,khasra_no,village,block,district,acreage,crop,variety,expected_harvest_date,clearance_deadline,status,moisture_pct,center_lat,center_lng`;
@@ -7,6 +8,8 @@ async function readLiveField(base:string, token:string, fieldId:string){
 }
 
 export default async function handler(req:any,res:any){
+  if (!rateLimit(req, res, 'api-assistant.ts', 20)) return res.status(429).json({ error: 'Too many requests; please retry shortly.' });
+
   if(req.method!=='POST')return res.status(405).json({error:'Method not allowed'});
   res.setHeader?.('Cache-Control','no-store');
   const body=typeof req.body==='object'&&req.body&&!Array.isArray(req.body)?req.body:{};const{question,field}=body;
