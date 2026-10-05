@@ -184,6 +184,11 @@ export function FieldJobBoard({
       (stage === 'RESIDUE' && !lot?.assigned_buyer_id);
 
     const ready = stage === 'VERIFIED' && Boolean(lot?.assigned_buyer_id || field.residue_lot_id);
+    const deadlineRisk = Boolean(
+      job?.slot_end &&
+      !['COMPLETED', 'CANCELLED', 'FAILED'].includes(job.status) &&
+      new Date(job.slot_end).getTime() - Date.now() < 24 * 60 * 60 * 1000
+    );
 
     return {
       field,
@@ -195,6 +200,7 @@ export function FieldJobBoard({
       hasCompletionProof,
       action,
       ready,
+      deadlineRisk,
       machine: job?.machine_id ? machineById.get(job.machine_id) : (field.assigned_machine_id ? machineById.get(field.assigned_machine_id) : undefined),
     };
   }), [fields, jobByField, evidenceByField, lotByField, machineById]);
@@ -354,6 +360,7 @@ export function FieldJobBoard({
                       {row.job?.failure_reason && <span className="ml-2 text-red-300">Failure: {row.job.failure_reason}</span>}
                     </div>
                     <div className="flex items-center gap-2">
+                      {row.deadlineRisk && <span className="text-[10px] font-bold text-red-400">Deadline risk</span>}
                       {row.action && <span className="text-[10px] font-bold text-amber-300">Next step</span>}
                       {row.ready && <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-300"><CheckCircle2 className="h-3.5 w-3.5" /> Ready for buyer</span>}
                       <button onClick={() => onSelectField(row.field)} className="rounded-md border border-slate-700 px-2.5 py-1.5 text-[10px] font-bold text-slate-200 hover:bg-slate-800">
