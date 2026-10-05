@@ -29,8 +29,8 @@ class AppErrorBoundary extends Component {
           display: 'grid',
           placeItems: 'center',
           padding: '24px',
-          background: '#020409',
-          color: '#f2f6fc',
+          background: 'var(--bg-deep, #f7f5ec)',
+          color: 'var(--text, #173522)',
           fontFamily: 'system-ui, sans-serif',
         }}>
           <section style={{
@@ -38,7 +38,7 @@ class AppErrorBoundary extends Component {
             border: '1px solid rgba(239,68,68,.35)',
             borderRadius: '16px',
             padding: '24px',
-            background: 'rgba(15,23,42,.9)',
+            background: 'var(--panel-strong, #ffffff)',
           }}>
             <div style={{ color: '#f87171', fontWeight: 800, fontSize: '12px', letterSpacing: '.12em', textTransform: 'uppercase' }}>
               NIRDHOOM UI ERROR
@@ -52,8 +52,8 @@ class AppErrorBoundary extends Component {
               overflowWrap: 'anywhere',
               padding: '12px',
               borderRadius: '10px',
-              background: '#020617',
-              color: '#fca5a5',
+              background: 'var(--panel-soft, #f8faf6)',
+              color: 'var(--accent-red, #c43f36)',
               fontSize: '12px',
             }}>{message}</pre>
             <button
@@ -63,7 +63,7 @@ class AppErrorBoundary extends Component {
                 border: 0,
                 borderRadius: '10px',
                 padding: '10px 14px',
-                background: '#059669',
+                background: 'var(--blue, #237a48)',
                 color: 'white',
                 fontWeight: 800,
                 cursor: 'pointer',
