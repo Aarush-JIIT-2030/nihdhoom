@@ -169,9 +169,10 @@ export function FieldJobBoard({
   }, [lots]);
 
   const rows = useMemo(() => fields.map((field) => {
-    const job = jobByField.get(field.id);
-    const fieldEvidence = evidenceByField.get(field.id) || [];
-    const lot = lotByField.get(field.id);
+    const liveFieldId = field.dbId || field.id;
+    const job = jobByField.get(liveFieldId);
+    const fieldEvidence = evidenceByField.get(liveFieldId) || [];
+    const lot = lotByField.get(liveFieldId);
     const stage = stageFor(field, job, lot);
     const hasLocationProof = fieldEvidence.some((e) => e.latitude !== null && e.longitude !== null);
     const hasCompletionEvidence = fieldEvidence.some((e) => e.kind === 'field_photo' || e.kind === 'bale_photo' || e.kind === 'weighment');
