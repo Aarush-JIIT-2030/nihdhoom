@@ -73,7 +73,7 @@ export default async function handler(req: any, res: any) {
   const dayPenalty = requested && new Date(`${requested}T00:00:00.000Z`).getUTCDay() === 0 ? 1.08 : 1;
   const distanceFactor = hasLat ? 1 : 1.05;
   const rate = Math.round(clamp(1500 * harvestUrgency * dayPenalty * distanceFactor, 1000, 3200) / 10) * 10;
-  const guaranteed = requested || new Date(Date.now() + 48 * 3600 * 1000).toISOString().slice(0, 10);
+  const planningDate = requested || new Date(Date.now() + 48 * 3600 * 1000).toISOString().slice(0, 10);
   const quotedAmount = Math.round(rate * acres * 100) / 100;
   // Keep the estimate compatible with the booking RPC's penalty <= quote invariant.
   const penalty = Math.round(Math.min(quotedAmount, Math.max(2500, acres * 2500)) * 100) / 100;
@@ -81,8 +81,8 @@ export default async function handler(req: any, res: any) {
   return res.status(200).json({
     rate_per_acre: rate,
     quoted_amount: quotedAmount,
-    guaranteed_by_date: guaranteed,
-    penalty_amount: penalty,
+    guaranteed_by_date: planningDate,
+    penalty_amount: 0,
     pricing_band: harvestUrgency >= 1.2 ? 'urgent' : harvestUrgency >= 1 ? 'standard' : 'early-booking',
     reason_codes: ['days_to_harvest', 'target_date', 'machine_capacity_window'],
     engine: 'nirdhoom-pricing-v1',
