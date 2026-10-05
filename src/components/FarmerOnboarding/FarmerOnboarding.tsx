@@ -167,7 +167,8 @@ export const FarmerOnboarding: React.FC = () => {
               const done = isComplete(step.id);
               const current = isCurrent(step.id);
               return (
-                <div
+    <div
+      className="farmer-onboarding-surface"
                   key={step.id}
                   className={`flex items-center gap-3 p-2.5 rounded-lg transition-all ${
                     current
