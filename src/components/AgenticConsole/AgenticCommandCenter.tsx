@@ -109,9 +109,9 @@ export const AgenticCommandCenter: React.FC<{
     },
     {
       id: 'step-4',
-      agent: 'Voice NLP Agent',
-      action: 'dispatch_punjabi_whatsapp_and_audio()',
-      toolCall: 'whatsapp_cloud_api.send_template(phone="+919876543210", lang="pa_IN")',
+      agent: 'Voice & Language Agent',
+      action: 'dispatch_punjabi_telegram_and_audio()',
+      toolCall: 'telegram_bot.send_farmer_update(lang="pa_IN")',
       reasoning: 'Generated bilingual Punjabi confirmation with slot time, driver contact, and locked simulated payout estimate. Synthesized 12-second voice note for offline listening.',
       output: 'WhatsApp/audio delivery is simulated; no provider message ID is claimed.',
       status: 'DONE',
@@ -305,7 +305,7 @@ export const AgenticCommandCenter: React.FC<{
                 Tranche Authorized & Signed
               </span>
               <p className="text-xs text-slate-300">
-                Dispatches routed to field balers; UPI ref #UPI9982401 queued on NPCI switch.
+                Dispatch proposal approved for the demo; no payment provider is called.
               </p>
             </div>
           </div>
@@ -411,8 +411,8 @@ export const AgenticCommandCenter: React.FC<{
               <span className="text-[10px] text-slate-500">14 constraints solved</span>
             </div>
             <div className="glass-panel p-3 rounded-xl border-cyan-500/20">
-              <span className="text-[10px] font-mono text-slate-400 uppercase">UPI Disbursal SLA</span>
-              <div className="text-xl font-black text-cyan-300 font-mono mt-0.5">42 sec</div>
+              <span className="text-[10px] font-mono text-slate-400 uppercase">Settlement readiness</span>
+              <div className="text-xl font-black text-cyan-300 font-mono mt-0.5">Demo only</div>
               <span className="text-[10px] text-slate-500">&lt;90s contractual SLA</span>
             </div>
           </div>
