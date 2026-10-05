@@ -799,12 +799,6 @@ html[data-theme="kisan"] .field-card h2 { letter-spacing:-.025em; }
 html[data-theme="kisan"] .field-list-row { transition:background .18s ease,transform .18s ease; }
 html[data-theme="kisan"] .field-list-row:hover { background:#fff; transform:translateX(2px); }
 
-html[data-theme="kisan"] .field-theme-toggle {
-  min-height:40px; border-color:rgba(31,122,70,.14) !important; background:#fff !important;
-  color:#28623d !important; box-shadow:0 3px 12px rgba(35,76,44,.06);
-}
-html[data-theme="kisan"] .field-theme-toggle:hover { background:#eef7eb !important; }
-
 html[data-theme="kisan"] .nirdhoom-field-header { box-shadow:0 10px 28px rgba(35,76,44,.07); }
 html[data-theme="kisan"] .field-nav-item { min-height:40px; }
 html[data-theme="kisan"] .field-nav-item.is-active { box-shadow:0 6px 18px rgba(31,122,70,.18); }
@@ -2146,12 +2140,6 @@ html[data-theme="dark"] .nirdhoom-field-header .text-emerald-900\/45,
 html[data-theme="dark"] .nirdhoom-field-header .text-emerald-900\/55 {
   color: var(--muted) !important;
 }
-html[data-theme="dark"] .field-theme-toggle {
-  color: var(--text) !important;
-  background: var(--panel-strong) !important;
-  border-color: var(--line-strong) !important;
-}
-html[data-theme="dark"] .field-theme-toggle:hover { background: var(--card-hover) !important; }
 html[data-theme="dark"] .field-mobile-bottom-nav {
   background: rgba(4,9,20,.96) !important;
   border-color: rgba(52,211,153,.18) !important;
@@ -2174,11 +2162,6 @@ html[data-theme="light"] .nirdhoom-field-app {
 html[data-theme="light"] .nirdhoom-field-header {
   background: var(--nav-bg-solid) !important;
   border-color: var(--line) !important;
-}
-html[data-theme="light"] .field-theme-toggle {
-  color: var(--text) !important;
-  background: var(--panel-strong) !important;
-  border-color: var(--line-strong) !important;
 }
 html[data-theme="light"] .field-mobile-bottom-nav {
   background: rgba(255,255,255,.97) !important;
