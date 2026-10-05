@@ -98,7 +98,7 @@ export function App() {
       {!demoMode && liveDataError && <div className="mx-auto w-full max-w-7xl px-4 pt-2 text-xs text-amber-300">Live data unavailable: {liveDataError}</div>}
 
       {/* Main Content Area */}
-      <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-4 py-4 relative z-10">
+      <main className="field-main flex-1 w-full max-w-[1480px] mx-auto px-3 sm:px-5 lg:px-7 py-5 sm:py-7 relative z-10">
         {/* PRIMARY PRODUCT SURFACE: RESIDUE-FIRST COMMAND CENTER */}
         {activeTab === 'OVERVIEW' && (
           <CommandCenter
