@@ -22,7 +22,6 @@ const CarbonMarketplace = lazy(() => import('./components/CarbonMarketplace/Carb
 const FarmerOnboarding = lazy(() => import('./components/FarmerOnboarding/FarmerOnboarding').then((m) => ({ default: m.FarmerOnboarding })));
 const AgenticCommandCenter = lazy(() => import('./components/AgenticConsole/AgenticCommandCenter').then((m) => ({ default: m.AgenticCommandCenter })));
 const AgenticTelemetryToast = lazy(() => import('./components/AgenticConsole/AgenticTelemetryToast').then((m) => ({ default: m.AgenticTelemetryToast })));
-import { ParticleField } from './components/Effects/ParticleField';
 import { CommandCenter } from './components/CommandCenter/CommandCenter';
 const ResiduePooling = lazy(() => import('./components/ResiduePooling/ResiduePooling').then((m) => ({ default: m.ResiduePooling })));
 const ImpactResearch = lazy(() => import('./components/ImpactResearch/ImpactResearch').then((m) => ({ default: m.ImpactResearch })));
@@ -304,9 +303,6 @@ export function App() {
   return (
     <div className="nirdhoom-field-app min-h-screen bg-[var(--bg-deep)] text-[var(--text)] flex flex-col font-sans selection:bg-emerald-500 selection:text-slate-950 relative overflow-x-hidden">
       <a href="#main-content" className="skip-link">Skip to main content</a>
-      {/* Ambient Interactive Particle Field with Mouse Repulsion (Agentic AI design) */}
-      <ParticleField />
-
       {/* Top Header */}
       <Header
         activeTab={activeTab}
