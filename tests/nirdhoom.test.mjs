@@ -47,7 +47,7 @@ test('operational writes have role and ownership gates', () => {
 test('notification endpoints require dispatcher/admin authentication', () => {
   const telegram = read('api/notify/telegram.ts');
   assert.match(telegram, /verifyDispatcher\(req\)/);
-  assert.match(telegram, /validChatId\(chatId\)/);
+  assert.match(telegram, /validChatId\(chat_id\)/);
   assert.match(telegram, /AbortSignal\.timeout\(10000\)/);
 
   const ivr = read('api/notify/ivr.ts');
@@ -214,7 +214,7 @@ test('Telegram Mini App identity is verified server-side', () => {
   assert.match(source, /10 \* 60/);
   assert.match(source, /TELEGRAM_BOT_TOKEN/);
   assert.match(source, /telegram_user_id/);
-  assert.match(source, /const verified = verifyInitData\\(initData\\)/);
+  assert.match(source, /const verified = verifyInitData\(initData\)/);
   assert.doesNotMatch(source, /async function verifyInitData/);
   assert.match(source, /Telegram account is not linked to a NIRDHOOM profile/);
 });
