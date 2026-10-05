@@ -1,12 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 
-const REPEL_RADIUS = 120;
-const REPEL_STRENGTH = 0.45;
+const REPEL_RADIUS = 90;
+const REPEL_STRENGTH = 0.25;
 
 function countFor(width: number): number {
-  if (width < 640) return 40;
-  if (width < 1024) return 75;
-  return 120;
+  if (width < 640) return 18;
+  if (width < 1024) return 30;
+  return 48;
 }
 
 interface Particle {
@@ -145,7 +145,7 @@ export const ParticleField: React.FC = () => {
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-0 opacity-70"
+      className="pointer-events-none fixed inset-0 z-0 opacity-35"
     />
   );
 };
