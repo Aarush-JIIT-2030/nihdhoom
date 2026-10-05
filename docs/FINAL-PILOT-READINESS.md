@@ -6,9 +6,9 @@ This document is the consolidated implementation checklist for taking the curren
 
 - The active Vite browser entry is `src/main.jsx`, which mounts the modular `src/App.tsx` application.
 - The duplicate `src/main.tsx` entrypoint has been removed.
-- The repository contains API routes for assistant, quote, dispatch, FIRMS, payment initiation/webhook, WhatsApp and IVR.
+- The repository contains API routes for assistant, quote, dispatch, FIRMS, Telegram and IVR; payment routes are intentionally absent.
 - The database contains the sequential core migrations plus V7.1–V7.5 integrity migrations; the later migrations add operational tables, transactional functions and client-write protections.
-- The payment initiation route is intentionally a stub and returns 501 when a provider adapter would be needed. Do not describe payouts as live.
+- Payment is explicitly outside this release. Do not add provider credentials or describe payouts as live.
 - The dispatch route has a local heuristic fallback. It is not equivalent to a validated OR-Tools optimizer.
 - Demo field, machine and buyer records are not live operational data.
 - The service worker is an app-shell/offline foundation, not proof of complete offline transaction synchronization.
@@ -63,8 +63,10 @@ This document is the consolidated implementation checklist for taking the curren
 - [ ] Never treat absence of a FIRMS detection as proof that no burning occurred.
 - [ ] Provide a human review and appeal path for disputed verification.
 
-### 6. Payment
-- [ ] Select and onboard the actual payout provider and confirm its supported payout contract.
+### 6. Payment — deferred by release scope
+- [x] Keep real payment/provider integration out of this release.
+- [x] Keep payment UI explicitly labelled as simulation/non-money-moving.
+- [ ] If payment is brought into a future release, add provider-specific initiation, signature verification, reconciliation, idempotency and replay protection before enabling it.
 - [ ] Implement provider-specific initiation, authentication, amount validation and provider reference storage.
 - [ ] Implement provider-specific webhook signature verification over the exact raw request bytes.
 - [ ] Validate event types, account/merchant identity, amount, currency and payment reference.
@@ -176,7 +178,7 @@ A pilot should not be called production-ready until:
 1. A clean install, build and all required CI checks pass on the release commit.
 2. Migrations run successfully on a dedicated project.
 3. RLS and authorization tests pass for all roles.
-4. One complete booking-to-payment sandbox journey passes end to end.
+4. One complete booking-to-verification-to-residue journey passes end to end; payment remains outside this release.
 5. Offline operator recovery is tested on a real device.
 6. Provider, machine and buyer capacity are confirmed by the responsible partners.
 7. Privacy, consent, support, monitoring and rollback procedures are in place.
