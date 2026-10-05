@@ -10,7 +10,7 @@ export const ThemeToggle: React.FC = () => {
     try {
       const stored = window.localStorage.getItem(STORAGE_KEY) as ThemeMode;
       if (stored === 'light' || stored === 'kisan') return stored;
-      if (stored === 'dark') return 'kisan';
+      if (stored === 'dark') return 'dark';
     } catch {
       // ignore storage error
     }
