@@ -5,6 +5,9 @@ export type PaddyVariety = 'PR-126' | 'Pusa-44' | 'Basmati-1509' | 'Basmati-1121
 
 export type FieldStatus = 
   | 'REGISTERED' 
+  | 'BOOKED'
+  | 'MACHINE_ASSIGNED'
+  | 'ON_THE_WAY'
   | 'SCHEDULED' 
   | 'BALING_IN_PROGRESS' 
   | 'CLEARED_PENDING_AUDIT' 
