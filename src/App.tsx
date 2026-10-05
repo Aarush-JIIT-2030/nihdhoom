@@ -1,34 +1,34 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { Header, ActiveTab } from './components/Header';
-import { DemoWalkthrough } from './components/DemoWalkthrough';
+const DemoWalkthrough = lazy(() => import('./components/DemoWalkthrough').then((m) => ({ default: m.DemoWalkthrough })));
 import { LiveKPIDashboard } from './components/LiveKPIDashboard';
 import { OpsMap } from './components/OpsConsole/OpsMap';
-import { VRPDispatchPanel } from './components/OpsConsole/VRPDispatchPanel';
-import { FieldDetailDrawer } from './components/OpsConsole/FieldDetailDrawer';
-import { TelegramSimulator } from './components/FarmerSurface/TelegramSimulator';
-import { BalerPWA } from './components/FieldOperator/BalerPWA';
-import { UpiSettlementModal } from './components/FieldOperator/UpiSettlementModal';
-import { SatelliteAudit } from './components/VerificationLayer/SatelliteAudit';
-import { CarbonCertificate } from './components/VerificationLayer/CarbonCertificate';
-import { MultiOfftakeAuction } from './components/OfftakeAndForecast/MultiOfftakeAuction';
-import { HarvestForecast } from './components/OfftakeAndForecast/HarvestForecast';
-import { JudgesQnAPanel } from './components/PitchDefense/JudgesQnAPanel';
-import { JudgePitchDrawer } from './components/PitchDefense/JudgePitchDrawer';
-import { SatelliteEarth3D } from './components/ThreeD/SatelliteEarth3D';
-import { BalerModel3D } from './components/ThreeD/BalerModel3D';
-import { CardTilt3D } from './components/ThreeD/CardTilt3D';
-import { CarbonMarketplace } from './components/CarbonMarketplace/CarbonMarketplace';
-import { FarmerOnboarding } from './components/FarmerOnboarding/FarmerOnboarding';
-import { AgenticCommandCenter } from './components/AgenticConsole/AgenticCommandCenter';
-import { AgenticTelemetryToast } from './components/AgenticConsole/AgenticTelemetryToast';
+const VRPDispatchPanel = lazy(() => import('./components/OpsConsole/VRPDispatchPanel').then((m) => ({ default: m.VRPDispatchPanel })));
+const FieldDetailDrawer = lazy(() => import('./components/OpsConsole/FieldDetailDrawer').then((m) => ({ default: m.FieldDetailDrawer })));
+const TelegramSimulator = lazy(() => import('./components/FarmerSurface/TelegramSimulator').then((m) => ({ default: m.TelegramSimulator })));
+const BalerPWA = lazy(() => import('./components/FieldOperator/BalerPWA').then((m) => ({ default: m.BalerPWA })));
+const UpiSettlementModal = lazy(() => import('./components/FieldOperator/UpiSettlementModal').then((m) => ({ default: m.UpiSettlementModal })));
+const SatelliteAudit = lazy(() => import('./components/VerificationLayer/SatelliteAudit').then((m) => ({ default: m.SatelliteAudit })));
+const CarbonCertificate = lazy(() => import('./components/VerificationLayer/CarbonCertificate').then((m) => ({ default: m.CarbonCertificate })));
+const MultiOfftakeAuction = lazy(() => import('./components/OfftakeAndForecast/MultiOfftakeAuction').then((m) => ({ default: m.MultiOfftakeAuction })));
+const HarvestForecast = lazy(() => import('./components/OfftakeAndForecast/HarvestForecast').then((m) => ({ default: m.HarvestForecast })));
+const JudgesQnAPanel = lazy(() => import('./components/PitchDefense/JudgesQnAPanel').then((m) => ({ default: m.JudgesQnAPanel })));
+const JudgePitchDrawer = lazy(() => import('./components/PitchDefense/JudgePitchDrawer').then((m) => ({ default: m.JudgePitchDrawer })));
+const SatelliteEarth3D = lazy(() => import('./components/ThreeD/SatelliteEarth3D').then((m) => ({ default: m.SatelliteEarth3D })));
+const BalerModel3D = lazy(() => import('./components/ThreeD/BalerModel3D').then((m) => ({ default: m.BalerModel3D })));
+const CardTilt3D = lazy(() => import('./components/ThreeD/CardTilt3D').then((m) => ({ default: m.CardTilt3D })));
+const CarbonMarketplace = lazy(() => import('./components/CarbonMarketplace/CarbonMarketplace').then((m) => ({ default: m.CarbonMarketplace })));
+const FarmerOnboarding = lazy(() => import('./components/FarmerOnboarding/FarmerOnboarding').then((m) => ({ default: m.FarmerOnboarding })));
+const AgenticCommandCenter = lazy(() => import('./components/AgenticConsole/AgenticCommandCenter').then((m) => ({ default: m.AgenticCommandCenter })));
+const AgenticTelemetryToast = lazy(() => import('./components/AgenticConsole/AgenticTelemetryToast').then((m) => ({ default: m.AgenticTelemetryToast })));
 import { ParticleField } from './components/Effects/ParticleField';
 import { CommandCenter } from './components/CommandCenter/CommandCenter';
-import { ResiduePooling } from './components/ResiduePooling/ResiduePooling';
-import { ImpactResearch } from './components/ImpactResearch/ImpactResearch';
-import { HarvestIntelligence } from './components/HarvestIntelligence/HarvestIntelligence';
-import { FieldProvenancePanel } from './components/FieldProvenance/FieldProvenancePanel';
-import { FieldJobBoard } from './components/FieldJobs/FieldJobBoard';
-import { ClearanceBooking } from './components/ClearanceBooking/ClearanceBooking';
+const ResiduePooling = lazy(() => import('./components/ResiduePooling/ResiduePooling').then((m) => ({ default: m.ResiduePooling })));
+const ImpactResearch = lazy(() => import('./components/ImpactResearch/ImpactResearch').then((m) => ({ default: m.ImpactResearch })));
+const HarvestIntelligence = lazy(() => import('./components/HarvestIntelligence/HarvestIntelligence').then((m) => ({ default: m.HarvestIntelligence })));
+const FieldProvenancePanel = lazy(() => import('./components/FieldProvenance/FieldProvenancePanel').then((m) => ({ default: m.FieldProvenancePanel })));
+const FieldJobBoard = lazy(() => import('./components/FieldJobs/FieldJobBoard').then((m) => ({ default: m.FieldJobBoard })));
+const ClearanceBooking = lazy(() => import('./components/ClearanceBooking/ClearanceBooking').then((m) => ({ default: m.ClearanceBooking })));
 
 
 import { INITIAL_STORAGE_YARDS, INITIAL_BUYERS } from './data/mockData';
@@ -311,6 +311,7 @@ export function App() {
 
       {/* Main Content Area */}
       <main id="main-content" className="field-main flex-1 w-full max-w-[1480px] mx-auto px-3 sm:px-5 lg:px-7 py-5 sm:py-7 relative z-10">
+        <Suspense fallback={<div className="workspace-loading" role="status" aria-live="polite"><span className="workspace-loading-spinner" aria-hidden="true" /> Loading this workspace…</div>}>
         {activeTab !== 'OVERVIEW' && <WorkspaceHeader activeTab={activeTab} demoMode={demoMode} onNavigate={setActiveTab} />}
 
         {/* PRIMARY PRODUCT SURFACE: RESIDUE-FIRST COMMAND CENTER */}
@@ -651,6 +652,7 @@ export function App() {
         {activeTab === 'JUDGE_DEFENSE' && (
           <JudgesQnAPanel />
         )}
+        </Suspense>
       </main>
 
       {/* Global Modals */}
