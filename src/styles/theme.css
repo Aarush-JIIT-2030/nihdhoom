@@ -132,3 +132,180 @@ html[data-theme="light"] {
   --grain-alpha: 0.06;
   --scroll-thumb: linear-gradient(#059669, #d8ece4);
 }
+
+
+/* =========================================================
+   NIRDHOOM FIELD-FIRST DESIGN SYSTEM
+   Farmer-first visual language: cream, field green, wheat, sky
+   ========================================================= */
+
+html[data-theme="kisan"] {
+  color-scheme: light;
+  --bg: #f7f5ec;
+  --bg-2: #eef4e7;
+  --bg-3: #e2ecd8;
+  --bg-deep: #f7f5ec;
+  --panel: rgba(255,255,255,.94);
+  --panel-strong: #ffffff;
+  --panel-soft: rgba(255,255,255,.78);
+  --nav-bg: rgba(255,255,255,.92);
+  --nav-bg-solid: #ffffff;
+  --backdrop: rgba(24,55,35,.12);
+  --line: rgba(38,82,48,.13);
+  --line-strong: rgba(31,122,70,.35);
+  --grid-line: rgba(31,122,70,.06);
+  --text: #173522;
+  --muted: #5e725f;
+  --muted-2: #7e917e;
+  --blue: #20844b;
+  --blue-bright: #2fa65f;
+  --blue-deep: #14532d;
+  --blue-dim: #23864e;
+  --accent-cyan: #2b8ea3;
+  --accent-amber: #c88716;
+  --accent-red: #c43f36;
+  --on-accent: #ffffff;
+  --grad: linear-gradient(135deg,#1f7a46 0%,#3f9d55 55%,#d59a25 100%);
+  --grad-cyan: linear-gradient(135deg,#2b8ea3,#4d9e83);
+  --grad-dim: linear-gradient(135deg,rgba(63,157,85,.12),rgba(213,154,37,.10));
+  --card-hover: rgba(63,157,85,.08);
+  --title-grad: linear-gradient(180deg,#173522 0%,#247a46 100%);
+  --stat-num: #17623a;
+  --scrim-soft: rgba(247,245,236,.88);
+  --scrim-strong: rgba(247,245,236,.97);
+  --hero-edge: rgba(247,245,236,.98);
+  --hero-top: rgba(255,255,255,.92);
+  --shadow: 0 18px 50px -28px rgba(27,67,40,.28);
+  --grain-alpha: .035;
+  --scroll-thumb: linear-gradient(#2f8b4d,#d5b15a);
+}
+
+html[data-theme="kisan"] body {
+  background:
+    radial-gradient(circle at 8% 8%, rgba(73,137,72,.09), transparent 28%),
+    radial-gradient(circle at 92% 18%, rgba(213,154,37,.08), transparent 24%),
+    linear-gradient(180deg,#fbfaf4 0%,#f4f7ef 48%,#edf4e8 100%);
+  color: #173522;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-header {
+  background: rgba(255,255,255,.94);
+  border-color: rgba(32,92,49,.12);
+  box-shadow: 0 8px 30px rgba(36,78,46,.08);
+  backdrop-filter: blur(16px);
+}
+
+html[data-theme="kisan"] .field-nav-item {
+  display:inline-flex; align-items:center; gap:.45rem; white-space:nowrap;
+  border-radius:12px; padding:.62rem .72rem; font-size:.72rem; font-weight:800;
+  color:#58705e; transition:all .2s ease;
+}
+html[data-theme="kisan"] .field-nav-item:hover { background:#eef6ec; color:#174d2d; }
+html[data-theme="kisan"] .field-nav-item.is-active { background:#1f7a46; color:#fff; box-shadow:0 5px 16px rgba(31,122,70,.18); }
+
+html[data-theme="kisan"] .field-more-button {
+  display:inline-flex; align-items:center; gap:.4rem; border-radius:12px; padding:.62rem .75rem;
+  font-size:.72rem; font-weight:800; color:#56705b; border:1px solid rgba(32,92,49,.10); background:#f7faf5;
+}
+html[data-theme="kisan"] .field-more-button:hover, html[data-theme="kisan"] .field-more-button.is-active { background:#eaf4e7; color:#174d2d; }
+html[data-theme="kisan"] .field-more-menu {
+  position:absolute; left:0; top:calc(100% + 10px); width:380px; padding:.55rem;
+  border:1px solid rgba(32,92,49,.13); border-radius:20px; background:rgba(255,255,255,.98);
+  box-shadow:0 24px 60px rgba(32,68,42,.16); backdrop-filter:blur(18px);
+}
+html[data-theme="kisan"] .field-more-item {
+  display:flex; min-width:0; align-items:flex-start; gap:.55rem; border-radius:14px; padding:.65rem;
+  text-align:left; color:#506a57; transition:all .18s ease;
+}
+html[data-theme="kisan"] .field-more-item svg { color:#2b8250; }
+html[data-theme="kisan"] .field-more-item:hover { background:#f0f7ed; color:#173522; }
+html[data-theme="kisan"] .field-more-item.is-active { background:#e5f2e3; color:#155b35; }
+
+html[data-theme="kisan"] .field-mobile-tabs { border-color:rgba(32,92,49,.10); }
+html[data-theme="kisan"] .field-mobile-tab {
+  display:inline-flex; align-items:center; gap:.35rem; white-space:nowrap; border-radius:999px;
+  padding:.45rem .72rem; font-size:.68rem; font-weight:800; color:#6c7f6d; background:#f5f8f1;
+}
+html[data-theme="kisan"] .field-mobile-tab.is-active { color:#fff; background:#237a48; box-shadow:0 4px 12px rgba(35,122,72,.16); }
+html[data-theme="kisan"] .field-mobile-panel {
+  border-top:1px solid rgba(32,92,49,.10); padding:.8rem 0 .9rem;
+}
+html[data-theme="kisan"] .field-mobile-item {
+  display:flex; align-items:center; gap:.55rem; border-radius:13px; padding:.7rem; text-align:left;
+  font-size:.72rem; font-weight:800; color:#506a57; background:#f7faf5; border:1px solid rgba(32,92,49,.07);
+}
+html[data-theme="kisan"] .field-mobile-item.is-active { background:#e5f2e3; color:#155b35; border-color:rgba(35,122,72,.18); }
+
+html[data-theme="kisan"] .field-page { color:#173522; }
+html[data-theme="kisan"] .field-hero {
+  border-color:rgba(31,122,70,.13); box-shadow:0 22px 55px rgba(38,76,43,.10);
+  background:linear-gradient(135deg,#ffffff 0%,#fbfcf7 62%,#eef6e9 100%);
+}
+html[data-theme="kisan"] .field-hero-side {
+  background:linear-gradient(160deg,#e9f3e4 0%,#f7f2df 100%);
+  border-left:1px solid rgba(31,122,70,.10);
+}
+html[data-theme="kisan"] .field-card {
+  border:1px solid rgba(31,122,70,.12); border-radius:20px; background:rgba(255,255,255,.93);
+  box-shadow:0 14px 38px rgba(38,76,43,.07);
+}
+html[data-theme="kisan"] .field-stat, html[data-theme="kisan"] .field-mini {
+  border:1px solid rgba(31,122,70,.10); border-radius:15px; padding:.7rem; background:rgba(255,255,255,.68);
+}
+html[data-theme="kisan"] .field-step {
+  display:flex; align-items:center; gap:.55rem; border:1px solid rgba(31,122,70,.10); border-radius:14px;
+  padding:.65rem; background:#f7faf5; color:#5d735f;
+}
+html[data-theme="kisan"] .field-step.is-done { background:#e7f4e7; color:#1b7040; border-color:rgba(31,122,70,.18); }
+html[data-theme="kisan"] .field-chip {
+  display:inline-flex; align-items:center; gap:.3rem; border:1px solid rgba(31,122,70,.12); border-radius:999px;
+  padding:.35rem .6rem; background:#f1f7ee; color:#356244;
+}
+html[data-theme="kisan"] .field-chip-wheat { background:#fbf2dc; color:#8b6419; border-color:rgba(200,135,22,.20); }
+html[data-theme="kisan"] .field-chip-sky { background:#e5f3f7; color:#2c7180; border-color:rgba(43,142,163,.18); }
+html[data-theme="kisan"] .field-chip-green { background:#e4f3e8; color:#257044; }
+html[data-theme="kisan"] .field-chip-amber { background:#fff0dc; color:#9a6111; border-color:rgba(213,154,37,.20); }
+html[data-theme="kisan"] .field-button {
+  display:inline-flex; align-items:center; justify-content:center; gap:.45rem; min-height:40px; border-radius:13px;
+  padding:.65rem .9rem; font-size:.72rem; font-weight:900; transition:all .18s ease;
+}
+html[data-theme="kisan"] .field-button-primary { color:#fff; background:#237a48; box-shadow:0 7px 18px rgba(35,122,72,.18); }
+html[data-theme="kisan"] .field-button-primary:hover { background:#1d683e; transform:translateY(-1px); }
+html[data-theme="kisan"] .field-button-secondary { color:#1c5d38; background:#eff6ec; border:1px solid rgba(31,122,70,.14); }
+html[data-theme="kisan"] .field-button-secondary:hover { background:#e5f1e1; }
+html[data-theme="kisan"] .field-button-wheat { color:#805d15; background:#fbf1d9; border:1px solid rgba(200,135,22,.18); }
+html[data-theme="kisan"] .field-button-wheat:hover { background:#f8eac6; }
+html[data-theme="kisan"] .field-list-row { display:flex; align-items:center; justify-content:space-between; gap:.75rem; border:1px solid rgba(31,122,70,.08); border-radius:13px; padding:.65rem; background:#f8faf6; }
+html[data-theme="kisan"] .field-status { border-radius:999px; padding:.3rem .5rem; background:#e5f3e8; color:#257044; font-size:9px; font-weight:900; text-transform:uppercase; }
+html[data-theme="kisan"] .field-empty { border:1px dashed rgba(31,122,70,.16); border-radius:14px; padding:1rem; color:#708271; background:#f8faf6; font-size:.75rem; }
+
+html[data-theme="kisan"] .nirdhoom-field-app { background:#f7f5ec !important; color:#173522 !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .bg-\[\#03060f\] { background:transparent !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .text-slate-100 { color:#173522 !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .text-white { color:#173522 !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .text-slate-300 { color:#4f6855 !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .text-slate-400 { color:#617564 !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .text-slate-500 { color:#78897a !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .bg-slate-950 { background:#f9fbf6 !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .bg-slate-900 { background:#f1f6ee !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .border-slate-800 { border-color:rgba(31,122,70,.12) !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .border-slate-700 { border-color:rgba(31,122,70,.18) !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .bg-emerald-600 { background:#237a48 !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .bg-emerald-500 { background:#2b8b52 !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .text-emerald-400,
+html[data-theme="kisan"] .nirdhoom-field-app .text-emerald-300 { color:#237a48 !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .text-cyan-300,
+html[data-theme="kisan"] .nirdhoom-field-app .text-cyan-400 { color:#2b7d8d !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .text-amber-300,
+html[data-theme="kisan"] .nirdhoom-field-app .text-amber-400 { color:#8b6419 !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .text-red-400 { color:#b53b35 !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .bg-slate-950\/70 { background:rgba(249,251,246,.94) !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .bg-slate-900\/60 { background:rgba(241,246,238,.94) !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .bg-slate-900\/80 { background:rgba(246,249,242,.96) !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .bg-slate-800 { background:#e8f0e5 !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .bg-slate-950\/95 { background:rgba(255,255,255,.97) !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .shadow-black\/40 { --tw-shadow-color:rgba(37,72,43,.12) !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .glass-panel {
+  background:rgba(255,255,255,.94) !important; border-color:rgba(31,122,70,.12) !important;
+  box-shadow:0 14px 38px rgba(38,76,43,.07) !important; color:#173522 !important;
+}
