@@ -246,7 +246,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
               <div className="absolute bottom-2.5 left-3 right-3">
                 <div className="flex items-center justify-between text-[10px] font-mono text-amber-300 mb-0.5">
                   <span>STRANDED PUBLIC CRM INFRASTRUCTURE</span>
-                  <span className="text-teal-300 font-bold">50-80% Subsidised</span>
+                  <span className="text-teal-300 font-bold">Existing CRM network</span>
                 </div>
                 <div className="text-xs font-bold text-white">
                   Dispatching Idle CHC &amp; FPO Fleet with Zero Startup Capex
@@ -430,7 +430,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
             {
               tab: 'BALER_OPERATOR' as ActiveTab,
               title: '📱 Field Operator Offline PWA',
-              desc: 'Low-connectivity field app with IndexedDB sync queue, QR lot weighment, and simulated settlement workflow.',
+              desc: 'Low-connectivity field app with IndexedDB evidence queue and residue-lot workflow; payment is disabled.',
               tag: 'Offline-First',
               badgeColor: 'text-blue-300 bg-blue-950/60 border-blue-500/30',
             },
