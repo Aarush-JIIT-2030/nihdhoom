@@ -42,7 +42,7 @@ const WEDGES: WedgeItem[] = [
     highlight: '₹0 Startup Capex • 100% Asset-Light Take Rate',
     metrics: [
       { label: 'Baler Machine Capex', value: '₹0 (Zero)' },
-      { label: 'Subsidised CRM Pool', value: '14,200+ Balers' },
+      { label: 'Registered CRM Capacity', value: 'Demo capacity pool' },
       { label: 'Take Rate Margin', value: 'Asset-Light Take Rate' },
     ],
     actionLabel: 'Inspect Idle Fleet Dispatch',
@@ -57,7 +57,7 @@ const WEDGES: WedgeItem[] = [
     id: 2,
     title: 'Wedge 2: The Core Product',
     tagline: 'Sell reliability, not a vague promise.',
-    category: 'PARAMETRIC RISK UNDERWRITING',
+    category: 'CAPACITY-AWARE OPERATIONS',
     description: 'Farmers face a tight 10–20 day window between paddy harvest and wheat sowing. NIRDHOOM turns that time pressure into a capacity-aware booking workflow; a confirmed service commitment only exists after real capacity and operating terms are reserved.',
     highlight: 'Capacity-aware logistics, not a guarantee',
     metrics: [
