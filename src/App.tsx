@@ -84,7 +84,8 @@ export function App() {
 
   return (
     <div className="nirdhoom-field-app min-h-screen bg-[#03060f] text-slate-100 flex flex-col font-sans selection:bg-emerald-500 selection:text-slate-950 relative overflow-x-hidden">
-      {/* Ambient Interactive Particle Field with Mouse Repulsion (Agentic AI design) */}
+      <a href="#main-content" className="skip-link">Skip to main content</a>
+      {/* Ambient Interactive Particle Field with Mouse Repulsion (Agentic AI design) */
       <ParticleField />
 
       {/* Top Header */}
@@ -99,7 +100,7 @@ export function App() {
       {!demoMode && liveDataError && <div className="mx-auto w-full max-w-7xl px-4 pt-2 text-xs text-amber-300">Live data unavailable: {liveDataError}</div>}
 
       {/* Main Content Area */}
-      <main className="field-main flex-1 w-full max-w-[1480px] mx-auto px-3 sm:px-5 lg:px-7 py-5 sm:py-7 relative z-10">
+      <main id="main-content" className="field-main flex-1 w-full max-w-[1480px] mx-auto px-3 sm:px-5 lg:px-7 py-5 sm:py-7 relative z-10">
         {/* PRIMARY PRODUCT SURFACE: RESIDUE-FIRST COMMAND CENTER */}
         {activeTab === 'OVERVIEW' && (
           <CommandCenter
