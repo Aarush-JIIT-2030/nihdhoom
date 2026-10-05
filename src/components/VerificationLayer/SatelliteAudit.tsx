@@ -45,7 +45,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
       }
       if (!supabase) throw new Error('Live Supabase is not configured.');
       const { error } = await supabase.rpc('record_verification_review', {
-        p_field_id: field.id,
+        p_field_id: field.dbId || field.id,
         p_result: 'VERIFIED_NON_BURN',
         p_confidence: 92,
         p_metadata: { source: 'nirdhoom-review-console', observation_mode: auditReport.dataAvailability },
