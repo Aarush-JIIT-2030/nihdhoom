@@ -163,7 +163,7 @@ export const HarvestForecast: React.FC = () => {
               src="/images/punjab_farm_hero.jpg" 
               alt="PAU PR-126 Golden Harvest" 
               className="w-full h-full object-cover object-center max-h-24"
-            / loading="lazy" decoding="async">
+             loading="lazy" decoding="async" />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
             <div className="absolute bottom-1.5 left-2.5 right-2.5 flex items-center justify-between text-[10px] font-mono">
               <span className="text-amber-300 font-bold">PAU LUDHIANA ADVISORY</span>
