@@ -252,6 +252,18 @@ test('competition demo ends with a field clearance passport and avoids unsupport
   assert.match(passport, /payment receipt/);
 });
 
+
+test('research-backed competition story', () => {
+  const home = read('src/components/CommandCenter/CommandCenter.tsx');
+  const center = read('src/components/PitchDefense/CompetitionCenter.tsx');
+  assert.match(home, /86%/);
+  assert.match(home, /15%/);
+  assert.match(center, /WHY THIS PROBLEM, WHY NOW/);
+  assert.match(center, /Impact/);
+  assert.match(center, /Feasibility/);
+  assert.match(center, /Technical craft/);
+});
+
 test('competition center is wired for both RIDE and WarriorHacks', () => {
   const header = read('src/components/Header.tsx');
   const app = read('src/App.tsx');
