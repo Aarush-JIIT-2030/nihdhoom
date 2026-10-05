@@ -76,6 +76,14 @@ export function ClearanceBooking({ fields, demoMode, onBooked }: Props) {
         </div>
       </section>
 
+      <section className="farmer-step-strip" aria-label="Booking steps">
+        <div className="is-current"><span>1</span><strong>Choose field</strong><small>Pick your registered field</small></div>
+        <i aria-hidden="true" />
+        <div><span>2</span><strong>Choose date</strong><small>Tell us when to clear it</small></div>
+        <i aria-hidden="true" />
+        <div><span>3</span><strong>Confirm</strong><small>Review and book</small></div>
+      </section>
+
       <section className="grid gap-4 lg:grid-cols-[1.2fr_.8fr]">
         <div className="rounded-2xl border border-slate-800 bg-slate-950/65 p-5">
           <label className="mb-2 block text-xs font-bold text-slate-400">Field</label>
