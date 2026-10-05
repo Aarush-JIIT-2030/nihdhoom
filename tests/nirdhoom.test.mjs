@@ -278,6 +278,22 @@ test('competition center is wired for both RIDE and WarriorHacks', () => {
   assert.match(center, /Real payment or payout movement/);
 });
 
+test('visible competition surfaces stay claim-safe', () => {
+  const sources = [
+    read('src/components/OpsConsole/OpsMap.tsx'),
+    read('src/components/Animated/BentoGrid.tsx'),
+    read('src/components/PitchDefense/JudgePitchDrawer.tsx'),
+    read('src/components/AgenticConsole/AgenticCommandCenter.tsx'),
+    read('src/components/ThreeD/BalerModel3D.tsx'),
+  ].join('\n');
+  assert.doesNotMatch(sources, /50-80% CRM ASSET/i);
+  assert.doesNotMatch(sources, /14,200\+ Balers/i);
+  assert.doesNotMatch(sources, /already-subsidised crop residue machinery/i);
+  assert.doesNotMatch(sources, /UPI payout/i);
+  assert.match(read('src/components/CarbonMarketplace/CarbonMarketplace.tsx'), /Carbon Market Simulator/);
+});
+
+
 test('theme preference is applied before React boot and themes are shell-safe', () => {
   const html = read('index.html');
   const toggle = read('src/components/ThemeToggle.tsx');
