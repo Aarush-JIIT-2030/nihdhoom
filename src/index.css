@@ -3073,3 +3073,15 @@ html[data-theme="dark"] .nirdhoom-field-app .text-emerald-950 {
 @media (max-width: 560px) {
   .competition-proof-grid, .competition-score-grid { grid-template-columns: 1fr; }
 }
+
+.competition-unit-economics {
+  margin: .8rem 0 0;
+  padding: .75rem;
+  border-radius: 12px;
+  border: 1px dashed rgba(251,191,36,.28);
+  background: rgba(245,158,11,.05);
+}
+.competition-unit-economics b,
+.competition-unit-economics span { display: block; }
+.competition-unit-economics b { color: #fcd34d; font-size: .68rem; }
+.competition-unit-economics span { margin-top: .25rem; color: #a8b3bd; font-size: .62rem; line-height: 1.5; }
