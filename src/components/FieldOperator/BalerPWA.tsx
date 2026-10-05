@@ -128,7 +128,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
 
     if (!navigator.onLine) {
       await queueEvidence({
-        fieldId: currentField.id,
+        fieldId: currentField.dbId || currentField.id,
         fileName: file.name,
         fileType: file.type,
         blob: file,
@@ -143,7 +143,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
     }
 
     const id = crypto.randomUUID();
-    const path = `${user.id}/${currentField.id}/${id}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+    const path = `${user.id}/${currentField.dbId || currentField.id}/${id}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
     const upload = await client.storage.from('evidence').upload(path, file, { contentType: file.type, upsert: false });
     if (upload.error) {
       await queueEvidence({
