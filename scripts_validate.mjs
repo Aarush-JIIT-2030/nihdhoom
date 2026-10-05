@@ -109,6 +109,7 @@ const checks = [
   ['Telegram webhook secret', read('api/notify/telegram-webhook.ts').includes('x-telegram-bot-api-secret-token')],
   ['Telegram secure linking', read('api/notify/telegram-link.ts').includes('SUPABASE_SERVICE_ROLE_KEY') && read('api/notify/telegram-link.ts').includes('10 * 60 * 1000')],
   ['Telegram Mini App identity verification', read('api/notify/telegram-miniapp-auth.ts').includes('WebAppData') && read('api/notify/telegram-miniapp-auth.ts').includes('auth_date') && read('api/notify/telegram-miniapp-auth.ts').includes('TELEGRAM_BOT_TOKEN')],
+  ['Telegram Mini App verifier is synchronous', !read('api/notify/telegram-miniapp-auth.ts').includes('async function verifyInitData') && read('api/notify/telegram-miniapp-auth.ts').includes('const verified = verifyInitData(initData)')],
   ['Telegram outbound auth boundary', /verifyDispatcher\(req\)/.test(read('api/notify/telegram.ts'))],
   ['Telegram webhook idempotency', telegramWebhook.includes('claimTelegramUpdate') && telegramWebhook.includes('telegram_webhook_updates') && telegramWebhook.includes('duplicate: true') && telegramDedupe.includes('update_id bigint primary key')],
   ['API auth boundary', /verifyDispatcher\(req\)/.test(read('api/notify/whatsapp.ts')) && /verifyDispatcher\(req\)/.test(read('api/notify/ivr.ts'))],
