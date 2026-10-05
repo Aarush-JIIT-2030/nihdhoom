@@ -311,8 +311,8 @@ export const JudgesQnAPanel: React.FC = () => {
                   <span className="font-mono text-emerald-300">₹{(nirdhoomDispatchFee / 100000).toFixed(1)} L</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Carbon accounting (methodology not configured):</span>
-                  <span className="font-mono text-emerald-300">₹{(nirdhoomCarbonRevenue / 100000).toFixed(1)} L</span>
+                  <span>Carbon revenue (excluded from release):</span>
+                  <span className="font-mono text-slate-400">Not counted</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Agri-Input Retail Margin (Wheat Seed/Diesel):</span>
