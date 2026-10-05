@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { Field, BurnEvent } from '../../types';
-import { executeFirmsAudit, generateNonBurnCertificate } from '../../utils/spatialVerification';
-import { CarbonCertificate } from './CarbonCertificate';
+import { executeFirmsAudit, generateNonBurnRecord } from '../../utils/spatialVerification';
+import { CarbonRecord } from './CarbonRecord';
 import { 
   Satellite, 
   ShieldCheck, 
@@ -60,7 +60,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
     }
   };
 
-  const handleOpenCertificate = (fieldId: string) => {
+  const handleOpenRecord = (fieldId: string) => {
     const f = fields.find((item) => item.id === fieldId);
     if (f) {
       setSelectedFieldForCert(f);
@@ -79,7 +79,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-extrabold text-lg text-white font-['Outfit']">
-                  Verification & Evidence Layer
+                  Check field proof
                 </h3>
                 <span className="badge badge-emerald text-xs">
                   {demoMode ? 'Synthetic observation demo' : auditReport.dataAvailability === 'NO_OBSERVATIONS' ? 'Awaiting observations' : 'Observation review'}
@@ -93,7 +93,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
 
           <div className="bg-slate-900/90 border border-emerald-500/40 px-4 py-3 rounded-xl flex items-center gap-3 shrink-0">
             <div>
-              <span className="text-[10px] text-slate-400 uppercase font-bold block">Observation coverage</span>
+              <span className="text-[10px] text-slate-400 uppercase font-bold block">Fields checked</span>
               <div className="text-2xl font-black text-emerald-400 font-mono">
                 {auditReport.complianceRate}%
               </div>
@@ -138,12 +138,12 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="glass-panel p-4 border-emerald-500/30">
           <div className="flex items-center justify-between text-slate-400 text-xs mb-1">
-            <span>Customer Fires</span>
+            <span>Fire points in this field</span>
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
           </div>
           <div className="text-2xl font-extrabold text-emerald-400 font-mono">
             {auditReport.firesInRegisteredFields}{' '}
-            <span className="text-xs text-emerald-300 font-normal">Fires (0%)</span>
+            <span className="text-xs text-emerald-300 font-normal">fire points</span>
           </div>
           <p className="text-[11px] text-emerald-400/90 mt-1 font-semibold">
             No-fire observations do not equal absolute non-burn proof
@@ -152,12 +152,12 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
 
         <div className="glass-panel p-4 border-red-500/30">
           <div className="flex items-center justify-between text-slate-400 text-xs mb-1">
-            <span>Neighbor Fire Storm</span>
+            <span>Nearby fire points</span>
             <Flame className="w-4 h-4 text-red-500 animate-pulse" />
           </div>
           <div className="text-2xl font-extrabold text-red-400 font-mono">
             {auditReport.firesInSurroundingBuffer}{' '}
-            <span className="text-xs text-slate-400 font-normal">Thermal Points</span>
+            <span className="text-xs text-slate-400 font-normal">fire points</span>
           </div>
           <p className="text-[11px] text-red-400/90 mt-1 font-semibold">
             {demoMode ? 'Synthetic demo observations' : 'Only provider-returned observations are shown'}
@@ -166,7 +166,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
 
         <div className="glass-panel p-4 border-cyan-500/30">
           <div className="flex items-center justify-between text-slate-400 text-xs mb-1">
-            <span>Emissions Avoided</span>
+            <span>Estimated emissions avoided</span>
             <Sparkles className="w-4 h-4 text-cyan-400" />
           </div>
           <div className="text-2xl font-extrabold text-cyan-300 font-mono">
@@ -180,14 +180,14 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
 
         <div className="glass-panel p-4 border-amber-500/30">
           <div className="flex items-center justify-between text-slate-400 text-xs mb-1">
-            <span>Carbon Credit Claim</span>
+            <span>Carbon credit</span>
             <Award className="w-4 h-4 text-amber-400" />
           </div>
           <div className="text-2xl font-extrabold text-amber-300 font-mono">
             {auditReport.carbonCreditValueInr === 0 ? '—' : `₹${auditReport.carbonCreditValueInr.toLocaleString()}`}
           </div>
           <p className="text-[11px] text-amber-400/90 mt-1 font-semibold">
-            Methodology not configured
+            Not available in this version
           </p>
         </div>
       </div>
@@ -198,7 +198,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
           <div className="flex items-center gap-2">
             <FileText className="w-4 h-4 text-emerald-400" />
             <h4 className="font-bold text-sm text-white">
-              Field-Level Spatial Verification Ledger (ST_Contains Audit)
+              Field proof records
             </h4>
           </div>
           <span className="text-xs text-slate-400">
@@ -214,9 +214,9 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
                 <th className="py-2.5 px-3">Farmer & Village</th>
                 <th className="py-2.5 px-3">Acreage</th>
                 <th className="py-2.5 px-3">FIRMS Fires In Polygon</th>
-                <th className="py-2.5 px-3">Operational / remote-sensing evidence</th>
-                <th className="py-2.5 px-3">Audit Outcome</th>
-                <th className="py-2.5 px-3 text-right">Certificate</th>
+                <th className="py-2.5 px-3">Field & satellite proof</th>
+                <th className="py-2.5 px-3">What we found</th>
+                <th className="py-2.5 px-3 text-right">Record</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/80">
@@ -256,14 +256,14 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
                             disabled={reviewingFieldId === field.id}
                             className="px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-semibold border border-emerald-500 transition-all"
                           >
-                            {reviewingFieldId === field.id ? 'Reviewing…' : 'Verify field'}
+                            {reviewingFieldId === field.id ? 'Reviewing…' : 'Confirm field proof'}
                           </button>
                         )}
                         <button
-                          onClick={() => handleOpenCertificate(field.id)}
+                          onClick={() => handleOpenRecord(field.id)}
                           className="px-2.5 py-1 rounded bg-slate-800 hover:bg-emerald-600 hover:text-white text-emerald-300 text-xs font-semibold border border-slate-700 transition-all cursor-pointer"
                         >
-                          View record
+                          See record
                         </button>
                       </div>
                     </td>
@@ -281,44 +281,44 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
       <div className="glass-panel p-4 bg-slate-950/60 flex flex-col gap-3">
         <h4 className="font-bold text-xs uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
           <Layers className="w-4 h-4 text-emerald-400" />
-          <span>Why This Survives Cross-Examination: The 4-Input Defense Layer</span>
+          <span>How we check a field</span>
         </h4>
 
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
           <div className="bg-slate-900/90 p-3 rounded-lg border border-slate-800">
-            <div className="text-emerald-400 font-bold mb-1">1. Registered Polygons</div>
+            <div className="text-emerald-400 font-bold mb-1">1. Field boundary</div>
             <p className="text-slate-400 text-[11px]">
-              Field boundaries carry a source and verification state; manually drawn geometry is not treated as authoritative cadastral truth.
+              We keep the field boundary source and its verification status. A hand-drawn boundary is not treated as official land-record proof.
             </p>
           </div>
 
           <div className="bg-slate-900/90 p-3 rounded-lg border border-slate-800">
-            <div className="text-emerald-400 font-bold mb-1">2. NASA FIRMS VIIRS</div>
+            <div className="text-emerald-400 font-bold mb-1">2. Satellite check</div>
             <p className="text-slate-400 text-[11px]">
-              Remote-sensing observations are stored with provider/time metadata and interpreted as supporting evidence, not absolute proof.
+              Satellite observations are supporting evidence. They do not by themselves prove that no burning happened.
             </p>
           </div>
 
           <div className="bg-slate-900/90 p-3 rounded-lg border border-slate-800">
-            <div className="text-emerald-400 font-bold mb-1">3. Weighment Receipts</div>
+            <div className="text-emerald-400 font-bold mb-1">3. Pickup & weight proof</div>
             <p className="text-slate-400 text-[11px]">
-              Evidence assets and residue lots link quantity, custody and quality information when those records exist.
+              Photos, pickup records and weight records can be linked when they are available.
             </p>
           </div>
 
           <div className="bg-slate-900/90 p-3 rounded-lg border border-slate-800">
-            <div className="text-emerald-400 font-bold mb-1">4. UPI Payout Ledger</div>
+            <div className="text-emerald-400 font-bold mb-1">4. Payment status</div>
             <p className="text-slate-400 text-[11px]">
-              Payment is intentionally out of scope; production workflow state is audited without claiming money movement.
+              Payment is not connected in this release, so we never show a payment as completed when it is not.
             </p>
           </div>
         </div>
       </div>
 
-      {/* Certificate Modal */}
+      {/* Record Modal */}
       {selectedFieldForCert && (
-        <CarbonCertificate
-          certificate={generateNonBurnCertificate(selectedFieldForCert)}
+        <CarbonRecord
+          certificate={generateNonBurnRecord(selectedFieldForCert)}
           onClose={() => setSelectedFieldForCert(null)}
         />
       )}
