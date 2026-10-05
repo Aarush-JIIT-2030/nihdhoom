@@ -221,8 +221,8 @@ export function TelegramSimulator({ onSlotConfirmed }: TelegramSimulatorProps) {
           {confirmed ? 'Demo slot confirmed' : 'Preview booking handoff'}
         </button>
       </div>
-    </section>
 
-    <HindiTextConverter />
+      <HindiTextConverter />
+    </section>
   );
 }
