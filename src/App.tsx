@@ -5,7 +5,7 @@ import { LiveKPIDashboard } from './components/LiveKPIDashboard';
 import { OpsMap } from './components/OpsConsole/OpsMap';
 import { VRPDispatchPanel } from './components/OpsConsole/VRPDispatchPanel';
 import { FieldDetailDrawer } from './components/OpsConsole/FieldDetailDrawer';
-import { WhatsAppSimulator } from './components/FarmerSurface/WhatsAppSimulator';
+import { TelegramSimulator } from './components/FarmerSurface/TelegramSimulator';
 import { BalerPWA } from './components/FieldOperator/BalerPWA';
 import { UpiSettlementModal } from './components/FieldOperator/UpiSettlementModal';
 import { SatelliteAudit } from './components/VerificationLayer/SatelliteAudit';
@@ -377,9 +377,9 @@ export function App() {
           </div>
         )}
 
-        {/* TAB 3: FARMER WHATSAPP & IVR SURFACE */}
+        {/* TAB 3: FARMER TELEGRAM & IVR SURFACE */}
         {activeTab === 'FARMER_SURFACE' && (
-          <WhatsAppSimulator
+          <TelegramSimulator
             onSlotConfirmed={(fId) => handleUpdateFieldStatus(fId, 'SCHEDULED')}
           />
         )}
