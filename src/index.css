@@ -2109,3 +2109,81 @@ html[data-theme="kisan"] .home-research-image figcaption {
     grid-row:auto;
   }
 }
+
+
+/* =========================================================
+   THEME RELIABILITY PASS — dark/light/kisan
+   Keep shell + navigation tied to data-theme instead of hard-coded
+   utility colors. This prevents the toggle from appearing broken.
+   ========================================================= */
+html[data-theme="dark"] body {
+  background: var(--bg-deep) !important;
+  color: var(--text) !important;
+}
+html[data-theme="dark"] .nirdhoom-field-app {
+  background: var(--bg-deep) !important;
+  color: var(--text) !important;
+}
+html[data-theme="dark"] .nirdhoom-field-header {
+  background: var(--nav-bg-solid) !important;
+  border-color: var(--line) !important;
+  box-shadow: 0 10px 34px rgba(0,0,0,.34);
+}
+html[data-theme="dark"] .nirdhoom-field-header .bg-white,
+html[data-theme="dark"] .nirdhoom-field-header .bg-emerald-50,
+html[data-theme="dark"] .nirdhoom-field-header .bg-amber-50 {
+  background: var(--panel-strong) !important;
+}
+html[data-theme="dark"] .nirdhoom-field-header .text-emerald-950,
+html[data-theme="dark"] .nirdhoom-field-header .text-emerald-900,
+html[data-theme="dark"] .nirdhoom-field-header .text-emerald-800,
+html[data-theme="dark"] .nirdhoom-field-header .text-emerald-700 {
+  color: var(--text) !important;
+}
+html[data-theme="dark"] .nirdhoom-field-header .text-emerald-800\/60,
+html[data-theme="dark"] .nirdhoom-field-header .text-emerald-900\/65,
+html[data-theme="dark"] .nirdhoom-field-header .text-emerald-900\/45,
+html[data-theme="dark"] .nirdhoom-field-header .text-emerald-900\/55 {
+  color: var(--muted) !important;
+}
+html[data-theme="dark"] .field-theme-toggle {
+  color: var(--text) !important;
+  background: var(--panel-strong) !important;
+  border-color: var(--line-strong) !important;
+}
+html[data-theme="dark"] .field-theme-toggle:hover { background: var(--card-hover) !important; }
+html[data-theme="dark"] .field-mobile-bottom-nav {
+  background: rgba(4,9,20,.96) !important;
+  border-color: rgba(52,211,153,.18) !important;
+  box-shadow: 0 18px 48px rgba(0,0,0,.48) !important;
+}
+html[data-theme="dark"] .field-mobile-bottom-nav button { color: #8fa3bd !important; }
+html[data-theme="dark"] .field-mobile-bottom-nav button.is-active { background:#064e3b !important; color:#d1fae5 !important; }
+html[data-theme="dark"] footer { background: var(--nav-bg-solid) !important; border-color: var(--line) !important; }
+html[data-theme="dark"] input,
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] select { color-scheme: dark; }
+html[data-theme="light"] body {
+  background: var(--bg-deep) !important;
+  color: var(--text) !important;
+}
+html[data-theme="light"] .nirdhoom-field-app {
+  background: var(--bg-deep) !important;
+  color: var(--text) !important;
+}
+html[data-theme="light"] .nirdhoom-field-header {
+  background: var(--nav-bg-solid) !important;
+  border-color: var(--line) !important;
+}
+html[data-theme="light"] .field-theme-toggle {
+  color: var(--text) !important;
+  background: var(--panel-strong) !important;
+  border-color: var(--line-strong) !important;
+}
+html[data-theme="light"] .field-mobile-bottom-nav {
+  background: rgba(255,255,255,.97) !important;
+  border-color: var(--line) !important;
+}
+html[data-theme="light"] .field-mobile-bottom-nav button { color: #607163 !important; }
+html[data-theme="light"] .field-mobile-bottom-nav button.is-active { background:#eaf4e7 !important; color:#1f7042 !important; }
+html[data-theme="light"] footer { background: var(--nav-bg-solid) !important; color: var(--muted) !important; }
