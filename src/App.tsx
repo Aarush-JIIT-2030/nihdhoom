@@ -110,6 +110,7 @@ export function App() {
             onSelectField={handleSelectField}
             onOpenResidue={() => setActiveTab('RESIDUE_POOLS')}
             onOpenImpact={() => setActiveTab('IMPACT_RESEARCH')}
+            onNavigate={(tab) => setActiveTab(tab as ActiveTab)}
           />
         )}
 
