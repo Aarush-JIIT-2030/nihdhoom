@@ -15,7 +15,6 @@ import {
   Smartphone,
   Camera,
   Wheat,
-  IndianRupee,
   Loader2,
 } from 'lucide-react';
 
@@ -43,7 +42,6 @@ export const FarmerOnboarding: React.FC = () => {
   const [name, setName] = useState('');
   const [village, setVillage] = useState('');
   const [block, setBlock] = useState('');
-  const [upiId, setUpiId] = useState('');
   const [khasra, setKhasra] = useState('');
   const [acreage, setAcreage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -128,7 +126,7 @@ export const FarmerOnboarding: React.FC = () => {
   const reset = () => {
     setCurrentStep('PHONE');
     setPhone(''); setOtp(''); setAadhaarLast4(''); setName(''); setVillage('');
-    setBlock(''); setUpiId(''); setKhasra(''); setAcreage('');
+    setBlock(''); setKhasra(''); setAcreage('');
     setFaceScanned(false); setBankVerified(false); setOtpError(''); setConsentAccepted(false);
   };
 
@@ -494,42 +492,33 @@ export const FarmerOnboarding: React.FC = () => {
               <>
                 <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
                   <Landmark className="w-4 h-4 text-amber-400" />
-                  <h4 className="font-bold text-sm text-white">Step 5: UPI / Bank Account Linking</h4>
+                  <h4 className="font-bold text-sm text-white">Step 5: Bank details (demo)</h4>
                 </div>
-                <p className="text-xs text-slate-400">Bank-linking is a provider integration step. This prototype does not initiate a penny drop or move money.</p>
-                <div className="flex flex-col gap-3">
-                  <div>
-                    <label className="text-xs text-slate-400 block mb-1">UPI ID (Preferred)</label>
-                    <input
-                      className="w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-emerald-500 font-mono"
-                      placeholder="gurpreet.brar@oksbi"
-                      value={upiId}
-                      onChange={(e) => setUpiId(e.target.value)}
-                    />
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Bank and payment-provider verification are not connected in this release. We do not ask for a real UPI ID or bank account here.
+                </p>
+                {!bankVerified ? (
+                  <button
+                    onClick={() => { if (DEMO_MODE) setBankVerified(true); }}
+                    disabled={!DEMO_MODE || loading}
+                    className="py-2.5 rounded-lg bg-amber-600/80 hover:bg-amber-500 disabled:opacity-40 text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow transition-all"
+                  >
+                    <CreditCard className="w-3.5 h-3.5" />
+                    {DEMO_MODE ? 'Mark demo bank step complete' : 'Bank provider not configured'}
+                  </button>
+                ) : (
+                  <div className="p-3 bg-emerald-950/50 border border-emerald-500/40 rounded-lg text-sm text-emerald-300 flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    Demo bank step complete — no financial details were collected and no transaction was performed.
                   </div>
-                  {!bankVerified ? (
-                    <button
-                      onClick={() => { if (DEMO_MODE) setBankVerified(true); }}
-                      disabled={!DEMO_MODE || !upiId || loading}
-                      className="py-2 rounded-lg bg-amber-600/80 hover:bg-amber-500 disabled:opacity-40 text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow transition-all"
-                    >
-                      <IndianRupee className="w-3.5 h-3.5" />
-                      {DEMO_MODE ? 'Simulate bank-link state' : 'Bank provider not configured'}
-                    </button>
-                  ) : (
-                    <div className="p-2.5 bg-emerald-950/50 border border-emerald-500/40 rounded-lg text-xs text-emerald-300 flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                      Demo bank-link state recorded for {upiId}; no bank transaction was performed
-                    </div>
-                  )}
-                </div>
+                )}
                 <button
                   onClick={advance}
                   disabled={!DEMO_MODE || !bankVerified || loading}
                   className="mt-auto w-full py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 disabled:opacity-40 disabled:cursor-not-allowed text-slate-950 font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow transition-all"
                 >
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CreditCard className="w-4 h-4" />}
-                  {DEMO_MODE ? 'Confirm demo bank-link state' : 'Bank verification unavailable'}
+                  {DEMO_MODE ? 'Continue' : 'Bank verification unavailable'}
                 </button>
               </>
             )}
