@@ -82,8 +82,8 @@ const WEDGES: WedgeItem[] = [
     highlight: 'Flattens the 30-day Supply Spike Before It Hits',
     metrics: [
       { label: 'Booking Horizon', value: '21 Days Ahead' },
-      { label: 'Early Bird Subsidy', value: '+40% Top Rate' },
-      { label: 'Farmgate Disputes', value: 'Zero (Polygon Based)' },
+      { label: 'Early-booking incentive (demo)', value: 'Illustrative only' },
+      { label: 'Farmgate Disputes', value: 'Evidence-linked (demo)' },
     ],
     actionLabel: 'Simulate Dynamic Quote',
     targetTab: 'AGENTIC_CONSOLE',
