@@ -71,6 +71,8 @@ const stageFor = (field: Field, job?: JobRecord, lot?: LotRecord) => {
   return 'REGISTERED';
 };
 
+const journeyStages = ['REGISTERED', 'SCHEDULED', 'DISPATCH', 'BALING', 'EVIDENCE', 'VERIFIED', 'RESIDUE'] as const;
+
 const stageClasses: Record<string, string> = {
   REGISTERED: 'border-slate-700 bg-slate-900/70 text-slate-300',
   SCHEDULED: 'border-cyan-500/30 bg-cyan-500/10 text-cyan-200',
@@ -298,6 +300,17 @@ export function FieldJobBoard({
                           </span>
                         )}
                       </div>
+                      <div className="field-journey" aria-label={`Field journey currently at ${row.stage}`}>
+                        {journeyStages.map((step, index) => {
+                          const currentIndex = journeyStages.indexOf(row.stage as typeof journeyStages[number]);
+                          const complete = index <= currentIndex;
+                          return <span key={step} className={complete ? 'is-complete' : ''}>
+                            <i />
+                            <b>{step === 'SCHEDULED' ? 'BOOKED' : step}</b>
+                          </span>;
+                        })}
+                      </div>
+
                       <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500">
                         <span>{row.field.village || 'Village unknown'}</span>
                         <span>{Number(row.field.acreage || 0).toFixed(2)} acres</span>
