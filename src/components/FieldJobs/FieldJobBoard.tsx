@@ -67,7 +67,7 @@ const stageFor = (field: Field, job?: JobRecord, lot?: LotRecord) => {
   if (job?.status === 'COMPLETED' || field.status === 'CLEARED_PENDING_AUDIT') return 'EVIDENCE';
   if (job?.status === 'BALING' || field.status === 'BALING_IN_PROGRESS') return 'BALING';
   if (job?.status === 'ARRIVED' || job?.status === 'ASSIGNED' || job?.status === 'DISPATCHED') return 'DISPATCH';
-  if (field.status === 'SCHEDULED') return 'SCHEDULED';
+  if (field.status === 'BOOKED' || field.status === 'SCHEDULED') return 'SCHEDULED';
   return 'REGISTERED';
 };
 
