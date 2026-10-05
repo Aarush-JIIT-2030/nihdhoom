@@ -12,6 +12,9 @@ export function clientKey(req: any): string {
 
 export function rateLimit(req: any, res: any, name: string, limit: number, windowMs = 60_000): boolean {
   const now = Date.now();
+  if (buckets.size > 5000) {
+    for (const [bucketKey, bucket] of buckets) if (bucket.resetAt <= now) buckets.delete(bucketKey);
+  }
   const key = `${name}:${clientKey(req)}`;
   const current = buckets.get(key);
   if (!current || current.resetAt <= now) {
