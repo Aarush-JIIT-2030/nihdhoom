@@ -68,11 +68,11 @@ Date: 2026-09-27
 6. `src/main.jsx`: dispatch reads live booking rows and creates/upserts jobs after the solver returns a route.
 7. `src/main.jsx`: buyer offer acceptance uses an atomic database RPC so one lot cannot be accepted twice.
 8. `src/main.jsx`: verification loads evidence/lots, stores FIRMS observations and records a verifier decision through a controlled RPC.
-9. `src/main.jsx`: payment screen polls the authoritative ledger and only offers provider initiation; it does not fabricate settlement.
+9. `src/main.jsx`: payment-related demo surfaces are explicitly non-money-moving; live payment integration is outside this release.
 10. `api/dispatch.ts`: dispatcher/admin authentication is required before route planning.
 11. `api/firms.ts`: authentication can be enforced with `REQUIRE_AUTH_FOR_FIRMS=true`.
-12. `api/payments/webhook.ts`: signed webhook verification plus server-only Supabase reconciliation was added.
-13. `api/payments/initiate.ts`: provider initiation explicitly refuses live money movement until a configured provider adapter exists.
+12. Payment API routes were subsequently removed from the release; no browser route can move money.
+13. `docs/NON-PAYMENT-RELEASE-SCOPE.md` is now the source of truth for the intentionally deferred payment boundary.
 14. `supabase/migrations/202609270004_nirdhoom_v7.sql`: booking reservation, job transition, verification review, offer acceptance and cancellation are controlled server-side transactions.
 15. `supabase/migrations/202609270004_nirdhoom_v7.sql`: direct farmer booking mutation was removed; dispatcher job/assignment and operator residue-lot write policies were added.
 16. `supabase/migrations/202609270004_nirdhoom_v7.sql`: evidence hashes, field geometry area, lot custody and payment idempotency metadata were added.
