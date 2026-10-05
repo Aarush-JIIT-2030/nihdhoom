@@ -49,7 +49,7 @@ export function ClearanceBooking({ fields, demoMode, onBooked }: Props) {
       }
       if (!supabase) throw new Error('Live Supabase is not configured.');
       const { data, error: rpcError } = await supabase.rpc('reserve_clearance_booking_v2', {
-        p_field_id: selected.id,
+        p_field_id: selected.dbId || selected.id,
         p_requested_date: date,
       });
       if (rpcError) throw new Error(rpcError.message);
