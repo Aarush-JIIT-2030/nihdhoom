@@ -1,7 +1,7 @@
 // Domain helpers shared by the active Vite application.
 export const STATUS = [
   'REGISTERED','BOOKED','MACHINE_ASSIGNED','ON_THE_WAY','BALING_IN_PROGRESS',
-  'CLEARED_PENDING_AUDIT','VERIFIED_NON_BURN','PAYMENT_PROCESSING','PAID',
+  'CLEARED_PENDING_AUDIT','VERIFIED_NON_BURN',
 ] as const;
 
 export type Status = typeof STATUS[number];
