@@ -1213,3 +1213,36 @@ html[data-theme="kisan"] .nirdhoom-field-app .ops-map-surface > :where(.absolute
     height: 68vh;
   }
 }
+
+/* Single supported product shell: Field/Kisan mode. The theme switcher is intentionally removed. */
+html[data-theme="kisan"] .field-menu-button {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-color: rgba(32,92,49,.12);
+  background: #fff;
+  color: #174d2d;
+  box-shadow: 0 4px 14px rgba(36,78,46,.06);
+}
+html[data-theme="kisan"] .field-menu-button:hover {
+  background: #f0f7ed;
+  border-color: rgba(31,122,70,.22);
+}
+@media (max-width: 640px) {
+  html[data-theme="kisan"] .nirdhoom-field-header {
+    padding-left: .65rem;
+    padding-right: .65rem;
+  }
+  html[data-theme="kisan"] .nirdhoom-field-header > div > div:first-child {
+    min-height: 64px;
+    gap: .5rem;
+  }
+  html[data-theme="kisan"] .nirdhoom-field-header .group {
+    gap: .55rem;
+  }
+  html[data-theme="kisan"] .nirdhoom-field-header .group > span:first-child {
+    width: 42px;
+    height: 42px;
+    border-radius: 15px;
+  }
+}
