@@ -74,27 +74,8 @@ export const LiveKPIDashboard: React.FC<LiveKPIDashboardProps> = ({
   fireEventsOutsideCount = 8,
   demoMode = true,
 }) => {
-  const [upiFlash, setUpiFlash] = useState(false);
-  const [upiMessage, setUpiMessage] = useState('');
-
-  const upiFlashes = [
-    'SIMULATED → farmer settlement example',
-    'SIMULATED → settlement example',
-    'SIMULATED → settlement example',
-    'SIMULATED → settlement example',
-  ];
-  const flashRef = useRef(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const msg = upiFlashes[flashRef.current % upiFlashes.length];
-      flashRef.current += 1;
-      setUpiMessage(msg);
-      setUpiFlash(true);
-      setTimeout(() => setUpiFlash(false), 2200);
-    }, 7000);
-    return () => clearInterval(interval);
-  }, []);
+  const upiFlash = false;
+  const upiMessage = 'Payments disabled in this release';
 
   const kpiCards = [
     {
@@ -110,16 +91,16 @@ export const LiveKPIDashboard: React.FC<LiveKPIDashboardProps> = ({
       subColor: 'text-emerald-400',
     },
     {
-      label: demoMode ? 'Settlement ledger (sim.)' : 'Settlement ledger',
-      value: totalPayoutInr,
-      prefix: '₹',
+      label: 'Payments',
+      value: 0,
+      prefix: '',
       suffix: '',
       decimals: 0,
       icon: IndianRupee,
       color: 'text-amber-400',
       borderColor: 'border-amber-500/30',
       bgColor: 'bg-amber-500/5',
-      sub: demoMode ? 'No money movement' : 'Provider state only',
+      sub: 'Disabled in this release',
       subColor: 'text-amber-400',
     },
     {
@@ -208,7 +189,7 @@ export const LiveKPIDashboard: React.FC<LiveKPIDashboardProps> = ({
             </div>
           </div>
 
-          {/* UPI flash notification */}
+          {/* Payment status */}
           <div
             className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border transition-all duration-500 min-w-[220px] ${
               upiFlash
@@ -219,10 +200,10 @@ export const LiveKPIDashboard: React.FC<LiveKPIDashboardProps> = ({
             <Zap className={`w-4 h-4 shrink-0 ${upiFlash ? 'text-amber-400' : 'text-slate-500'}`} />
             <div className="text-xs overflow-hidden">
               <div className={`font-bold truncate ${upiFlash ? 'text-amber-300' : 'text-slate-400'}`}>
-                {upiFlash ? upiMessage : 'Settlement workflow: disabled'}
+                {upiMessage}
               </div>
               <div className="text-slate-500 text-[10px]">
-                {upiFlash ? 'Simulation only · no provider event' : 'Provider integration disabled'}
+                Payment provider is not connected
               </div>
             </div>
           </div>
