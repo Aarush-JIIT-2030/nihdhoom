@@ -35,7 +35,7 @@ export function CommandCenter({
   const verified = fields.filter(f => f.status === 'VERIFIED_NON_BURN' || f.is_verified_non_burn).length;
   const machineActive = machines.filter(m => m.status !== 'MAINTENANCE').length;
   const acreage = fields.reduce((sum, f) => sum + (Number(f.acreage) || 0), 0);
-  const estimatedResidue = acreage * 1.8;
+  const estimatedResidue = acreage * 1.8; // illustrative planning coefficient; not a measured recovery factor
   const cleared = fields.filter(f => ['CLEARED_PENDING_AUDIT', 'VERIFIED_NON_BURN'].includes(f.status)).length;
 
   const workflow = [
@@ -246,7 +246,7 @@ export function CommandCenter({
       <section className="home-proof">
         <div><span>FIELD NETWORK</span><strong>{fields.length}</strong><small>registered fields</small></div>
         <div><span>OPERATIONS</span><strong>{cleared}</strong><small>cleared fields</small></div>
-        <div><span>RESIDUE</span><strong>{estimatedResidue.toFixed(1)} t</strong><small>estimated from registered acreage</small></div>
+        <div><span>RESIDUE</span><strong>{estimatedResidue.toFixed(1)} t</strong><small>illustrative planning estimate</small></div>
         <div><span>VERIFIED</span><strong>{verified}</strong><small>verified non-burn fields</small></div>
       </section>
 
