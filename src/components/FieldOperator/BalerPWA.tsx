@@ -238,7 +238,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
             <div className="bg-slate-900/80 p-2 rounded border border-slate-800">
               <span className="text-slate-400 text-[10px] block">Daily Capacity</span>
               <strong className="text-emerald-400 text-xs">{activeMachine.capacity_acres_day} Acres / day</strong>
-              <span className="text-slate-500 text-[10px] block">50-80% Subsidy CRM</span>
+              <span className="text-slate-500 text-[10px] block">CRM programme reference</span>
             </div>
           </div>
         </div>
