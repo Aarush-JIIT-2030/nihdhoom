@@ -53,8 +53,8 @@ This document is the consolidated implementation checklist for taking the curren
 - [ ] Verify GPS source, freshness and accuracy before displaying a machine as live.
 
 ### 5. Evidence and verification
-- [ ] Enforce booking/field ownership and evidence upload limits server-side.
-- [ ] Validate MIME type and actual file content; keep evidence objects private.
+- [x] Enforce booking/field ownership through RLS/RPC boundaries and add client-side evidence size/type/content validation; storage remains private. Server-side byte-level content enforcement should remain a pilot verification gate.
+- [x] Validate MIME type and actual image signatures before evidence upload; evidence objects remain private through storage policies.
 - [ ] Verify SHA-256 on trusted server-side bytes, not only a browser-provided digest.
 - [ ] Record capture time, upload time, GPS accuracy, actor and sync source separately.
 - [ ] Keep field geometry, operator evidence, satellite detections and human review as distinct evidence sources.
@@ -75,7 +75,7 @@ This document is the consolidated implementation checklist for taking the curren
 - [ ] Do not claim live UPI settlement until test and live provider flows have been verified.
 
 ### 7. API security and reliability
-- [ ] Add request-size limits, rate limits and safe error responses to public endpoints.
+- [x] Add lightweight rate limits and safe 429 responses to the public assistant, quote, FIRMS and weather endpoints; request-size limits remain a provider/runtime gate.
 - [ ] Validate all inputs with shared schemas and reject unexpected values.
 - [ ] Apply authorization consistently to every endpoint that reads or changes private data.
 - [ ] Add timeouts and bounded retries to external service calls.
@@ -116,7 +116,7 @@ This document is the consolidated implementation checklist for taking the curren
 - [ ] Version and test service-worker cache updates and recovery.
 - [ ] Do not cache authenticated API responses or sensitive farmer data indiscriminately.
 - [ ] Test install, update, offline launch and reconnection.
-- [ ] Add keyboard focus, semantic labels, contrast checks and reduced-motion behavior.
+- [x] Add keyboard focus, semantic labels, skip navigation, contrast-oriented farmer surfaces and reduced-motion behavior; full device accessibility audit remains a pilot gate.
 - [ ] Compress imagery and add useful alt text.
 
 ## P2 — Add only after the core loop is proven
@@ -199,10 +199,10 @@ This addendum records additional source-level changes made after the V7 checklis
 - The OR-Tools service is now authenticated, but it still needs deployment, secret provisioning, realistic travel-time/shift constraints, robust request validation, and integration tests. The heuristic fallback is not a production scheduling guarantee.
 - The webhook adapter still needs provider-specific signature formats, merchant/account validation, amount/currency matching, replay protection, idempotent event storage and out-of-order reconciliation before live payouts.
 - The UI and schema contain a broad feature surface, but several capabilities remain data-model/UI foundations rather than complete workflows (including offline synchronization, buyer settlement, satellite ingestion and carbon accounting).
-- The two application entry paths (src/main.jsx and src/main.tsx/src/App.tsx) remain a maintenance risk. The Vite entry is src/main.jsx; the TSX application is not automatically part of that runtime.
+- The canonical browser entry is `src/main.jsx`, which mounts the modular `src/App.tsx` application. Repository audits should continue to reject a second active browser entry.
 - The repository includes large generated HTML/ZIP artifacts and duplicate image assets. Confirm which are release deliverables before keeping them in source control.
 - SQL migrations have not been executed against a fresh PostgreSQL/Supabase instance in this session. Static checks cannot establish that all policies, grants, triggers and functions execute correctly or enforce the intended access matrix.
-- No live NIRDHOOM Supabase project is connected. Do not apply migrations to the unrelated JYC project.
+- A dedicated NIRDHOOM Supabase project is the intended live integration boundary. Migration/RLS behavior still requires a fresh-schema rehearsal and role-by-role verification before a pilot.
 
 ### Verification boundary
 The source tree and key active application, API, service, PWA, test, configuration and migration files were inspected through the repository connection. This was not a literal review of every byte in binary assets or generated archives, and no local dependency install, browser session, disposable database, provider sandbox or real Android-device test was run as part of this addendum. Check GitHub Actions on the latest commit before treating the changes as green.
