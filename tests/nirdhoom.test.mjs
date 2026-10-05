@@ -402,3 +402,22 @@ test('performance architecture keeps heavy workspace libraries off the shell', (
   assert.match(prefetch, /SatelliteEarth3D/);
   assert.match(vite, /cssCodeSplit: true/);
 });
+
+test('image optimization keeps JSX valid and the primary hero eager', () => {
+  const files = [
+    'src/components/CommandCenter/CommandCenter.tsx',
+    'src/components/Landing/ImpactStats.tsx',
+    'src/components/Landing/AgenticLanding.tsx',
+    'src/components/FieldOperator/BalerPWA.tsx',
+    'src/components/OpsConsole/FieldDetailDrawer.tsx',
+    'src/components/OfftakeAndForecast/HarvestForecast.tsx',
+    'src/components/VerificationLayer/SatelliteAudit.tsx',
+    'src/components/FarmerOnboarding/FarmerOnboarding.tsx',
+    'src/components/OfftakeAndForecast/MultiOfftakeAuction.tsx',
+    'src/components/FieldOperator/UpiSettlementModal.tsx',
+  ];
+  for (const file of files) {
+    assert.doesNotMatch(read(file), /\/ loading=/);
+  }
+  assert.doesNotMatch(read('src/components/CommandCenter/CommandCenter.tsx'), /home-hero-image"[^>]*loading="lazy"/);
+});
