@@ -332,7 +332,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
                   src="/images/baling_fleet.jpg" 
                   alt="Assigned Baler in Sangrur Field" 
                   className="w-full h-24 object-cover object-center"
-                />
+                / loading="lazy" decoding="async">
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
                 <div className="absolute bottom-2 left-2.5 right-2.5 flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -340,7 +340,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
                       src="/images/farmer_gurpreet.jpg" 
                       alt="Gurpreet Singh" 
                       className="w-7 h-7 rounded-full border border-emerald-400 object-cover"
-                    />
+                    / loading="lazy" decoding="async">
                     <span className="text-xs font-bold text-white drop-shadow">
                       {currentField.farmer_name}
                     </span>
