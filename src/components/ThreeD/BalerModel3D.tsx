@@ -448,7 +448,7 @@ export const BalerModel3D: React.FC = () => {
               <span>High-Density Hydraulic Ram</span>
             </div>
             <p className="text-xs text-slate-300 leading-relaxed">
-              Compacts low-density loose straw into 180 kg/m³ high-density bales. Solves the transport penalty (Rs 400-800/t) by maximizing truck payloads to 16 tonnes.
+              Illustrative bale-density model. Actual bale density, truck payload and transport economics depend on machine settings, material moisture and the verified logistics partner.
             </p>
           </div>
         )}
