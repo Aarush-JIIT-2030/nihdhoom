@@ -462,7 +462,7 @@ export const FarmerOnboarding: React.FC = () => {
                         src="/images/farmer_gurpreet.jpg" 
                         alt="Farmer Verified Selfie" 
                         className="w-full h-full object-cover"
-                      />
+                      / loading="lazy" decoding="async">
                       <div className="absolute inset-0 bg-emerald-500/10 pointer-events-none" />
                       <div className="absolute bottom-1 right-1 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center border-2 border-[#03060f]">
                         <CheckCircle2 className="w-4 h-4 text-slate-950 font-bold" />
@@ -578,7 +578,7 @@ export const FarmerOnboarding: React.FC = () => {
                       src="/images/farmer_gurpreet.jpg" 
                       alt="Gurpreet Singh Brar" 
                       className="w-full h-full object-cover"
-                    />
+                    / loading="lazy" decoding="async">
                   </div>
                   <div className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-emerald-500 border-2 border-[#03060f] flex items-center justify-center shadow">
                     <CheckCircle2 className="w-5 h-5 text-slate-950 font-black" />
