@@ -69,6 +69,22 @@ export default async function handler(req: any, res: any) {
     return res.status(403).json({ error: 'Telegram account is not linked to a NIRDHOOM profile' });
   }
 
+  // Refresh activity server-side after Telegram identity has been authenticated.
+  await fetch(
+    supabaseUrl + '/rest/v1/telegram_identities?telegram_user_id=eq.' + verified.telegram_user_id,
+    {
+      method: 'PATCH',
+      headers: {
+        apikey: serviceKey,
+        Authorization: 'Bearer ' + serviceKey,
+        'Content-Type': 'application/json',
+        Prefer: 'return=minimal',
+      },
+      body: JSON.stringify({ last_seen_at: new Date().toISOString() }),
+      signal: AbortSignal.timeout(7000),
+    },
+  ).catch(() => {});
+
   return res.status(200).json({
     ok: true,
     profile_id: identity.profile_id,
