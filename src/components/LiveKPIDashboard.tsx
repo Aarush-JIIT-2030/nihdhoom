@@ -57,7 +57,6 @@ const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
 
 interface LiveKPIDashboardProps {
   acresScheduled?: number;
-  totalPayoutInr?: number;
   co2Avoided?: number;
   firmsZeroBurnCount?: number;
   activeMachines?: number;
@@ -67,16 +66,12 @@ interface LiveKPIDashboardProps {
 
 export const LiveKPIDashboard: React.FC<LiveKPIDashboardProps> = ({
   acresScheduled = 88.4,
-  totalPayoutInr = 128150,
   co2Avoided = 72.6,
   firmsZeroBurnCount = 5,
   activeMachines = 4,
   fireEventsOutsideCount = 8,
   demoMode = true,
 }) => {
-  const upiFlash = false;
-  const upiMessage = 'Payments disabled in this release';
-
   const kpiCards = [
     {
       label: 'Acres Scheduled',
@@ -192,15 +187,13 @@ export const LiveKPIDashboard: React.FC<LiveKPIDashboardProps> = ({
           {/* Payment status */}
           <div
             className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border transition-all duration-500 min-w-[220px] ${
-              upiFlash
-                ? 'bg-amber-500/20 border-amber-500/60 shadow-lg shadow-amber-500/20'
-                : 'bg-slate-900/80 border-slate-700/50'
+bg-slate-900/80 border-slate-700/50
             }`}
           >
-            <Zap className={`w-4 h-4 shrink-0 ${upiFlash ? 'text-amber-400' : 'text-slate-500'}`} />
+            <Zap className="w-4 h-4 shrink-0 text-slate-500" />
             <div className="text-xs overflow-hidden">
-              <div className={`font-bold truncate ${upiFlash ? 'text-amber-300' : 'text-slate-400'}`}>
-                {upiMessage}
+              <div className="font-bold truncate text-slate-400">
+                Payments disabled in this release
               </div>
               <div className="text-slate-500 text-[10px]">
                 Payment provider is not connected
