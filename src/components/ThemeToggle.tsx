@@ -27,7 +27,7 @@ export const ThemeToggle: React.FC = () => {
     const meta = document.querySelector('meta[name="theme-color"]');
     if (meta) {
       const colorMap: Record<ThemeMode, string> = {
-        kisan: '#0d130a',
+        kisan: '#f7f5ec',
         dark: '#03060f',
         light: '#f5f8f3',
       };
