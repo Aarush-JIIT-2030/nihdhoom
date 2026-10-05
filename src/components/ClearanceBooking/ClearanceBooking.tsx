@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { CalendarDays, CheckCircle2, ClipboardCheck, Loader2, MapPin, ShieldCheck, Tractor } from 'lucide-react';
 import { Field } from '../../types';
 import { supabase } from '../../lib/supabase';
@@ -19,6 +19,11 @@ export function ClearanceBooking({ fields, demoMode, onBooked }: Props) {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!fieldId && bookable[0]?.id) setFieldId(bookable[0].id);
+    if (fieldId && !bookable.some((field) => field.id === fieldId)) setFieldId(bookable[0]?.id || '');
+  }, [bookable, fieldId]);
 
   const selected = bookable.find((f) => f.id === fieldId);
   const estimate = selected ? Math.round(Math.max(0, Number(selected.acreage || 0)) * 1500) : 0;
