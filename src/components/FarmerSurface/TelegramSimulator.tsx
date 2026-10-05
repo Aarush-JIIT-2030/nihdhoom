@@ -58,7 +58,7 @@ export function TelegramSimulator({ onSlotConfirmed }: TelegramSimulatorProps) {
       title: 'NIRDHOOM Telegram',
       subtitle: 'One farmer channel for booking, machine status and evidence',
       welcome: 'Hello! I am NIRDHOOM Sathi. I can help with clearance booking and field status.',
-      cta: 'Open NIRDHOOM in Telegram',
+      cta: 'Open NIRDHOOM on Telegram',
       slot: 'Clearance slot',
       slotValue: 'Next available slot — live capacity is checked before confirmation',
       evidence: 'Field evidence',
@@ -140,7 +140,7 @@ export function TelegramSimulator({ onSlotConfirmed }: TelegramSimulatorProps) {
               disabled={linking}
               className="inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl border border-emerald-800/15 bg-white px-5 py-3 text-sm font-black text-emerald-900 shadow-sm transition hover:bg-emerald-50 disabled:cursor-wait disabled:opacity-60"
             >
-              <ShieldCheck className="h-4 w-4" /> {linking ? 'Creating secure link…' : 'Connect securely to my NIRDHOOM account'}
+              <ShieldCheck className="h-4 w-4" /> {linking ? 'Creating secure link…' : 'Connect my NIRDHOOM account'}
             </button>
             {linkError && <p role="alert" className="text-center text-xs font-semibold text-red-700">{linkError}</p>}
             <div className="text-center text-[11px] font-semibold text-slate-500">
