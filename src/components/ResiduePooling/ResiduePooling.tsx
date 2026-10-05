@@ -76,7 +76,7 @@ export function ResiduePooling({ fields, demoMode }: Props) {
     : pools;
 
   return (
-    <div className="space-y-4">
+    <div className="farmer-surface farmer-market space-y-4">
       <div className="rounded-2xl border border-emerald-500/20 bg-slate-950/70 p-5">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div><div className="flex items-center gap-2 text-emerald-300 text-xs font-bold uppercase tracking-widest"><Layers3 className="h-4 w-4" /> Residue-first marketplace</div><h1 className="mt-1 text-2xl font-black text-white">Residue Supply & Deal Pools</h1><p className="text-sm text-slate-400 mt-1">Pool fragmented, verified residue against buyer requirements before discussing impact or carbon value.</p></div>
