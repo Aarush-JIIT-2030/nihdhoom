@@ -58,7 +58,7 @@ export function ClearanceBooking({ fields, demoMode, onBooked }: Props) {
   }
 
   return (
-    <div className="mx-auto max-w-5xl space-y-4">
+    <div className="farmer-surface farmer-booking mx-auto max-w-5xl space-y-4">
       <section className="rounded-2xl border border-emerald-500/20 bg-slate-950/75 p-5 shadow-xl shadow-emerald-950/10">
         <div className="flex items-start gap-3">
           <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-emerald-500/15 text-emerald-300">
