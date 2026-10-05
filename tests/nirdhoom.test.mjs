@@ -45,12 +45,15 @@ test('operational writes have role and ownership gates', () => {
 });
 
 test('notification endpoints require dispatcher/admin authentication', () => {
-  for (const file of ['api/notify/whatsapp.ts', 'api/notify/ivr.ts']) {
-    const source = read(file);
-    assert.match(source, /verifyDispatcher\(req\)/);
-    assert.match(source, /validPhone\(to\)/);
-    assert.match(source, /AbortSignal\.timeout\(10000\)/);
-  }
+  const telegram = read('api/notify/telegram.ts');
+  assert.match(telegram, /verifyDispatcher\(req\)/);
+  assert.match(telegram, /validChatId\(chatId\)/);
+  assert.match(telegram, /AbortSignal\.timeout\(10000\)/);
+
+  const ivr = read('api/notify/ivr.ts');
+  assert.match(ivr, /verifyDispatcher\(req\)/);
+  assert.match(ivr, /validPhone\(to\)/);
+  assert.match(ivr, /AbortSignal\.timeout\(10000\)/);
 });
 
 test('payment integration remains explicitly fail-closed', () => {
@@ -176,6 +179,7 @@ test('Telegram identity linking is authenticated and server-owned', () => {
   assert.match(migration, /telegram_link_tokens/);
   assert.match(migration, /consume_telegram_link_token/);
   assert.match(migration, /revoke all on function public\.consume_telegram_link_token/);
+  assert.match(migration, /grant execute on function public\.consume_telegram_link_token[\s\S]*to service_role/);
   assert.match(linkApi, /auth\/v1\/user/);
   assert.match(linkApi, /SUPABASE_SERVICE_ROLE_KEY/);
   assert.match(linkApi, /10 \* 60 \* 1000/);
