@@ -95,6 +95,28 @@ export function CommandCenter({
         </button>
       </section>
 
+      {/* RESEARCH-BACKED GAP: why another booking app is not enough */}
+      <section className="home-gap-story" aria-labelledby="home-gap-title">
+        <div className="home-gap-heading">
+          <div>
+            <div className="home-section-kicker">The gap we are attacking</div>
+            <h2 id="home-gap-title">The machinery exists. The coordination layer is weak.</h2>
+          </div>
+          <p>Recent CEEW research points to a practical adoption gap: farmers and machinery centres still rely heavily on informal, phone-based coordination. NIRDHOOM is designed around that missing operational layer.</p>
+        </div>
+        <div className="home-gap-grid">
+          <article><strong>86%</strong><span>of surveyed Punjab farmers had never heard of the Unnat Kisan machinery app.</span><small>CEEW, 2026 survey • 102 farmers</small></article>
+          <article><strong>1%</strong><span>of farmers in a cited Punjab study reported using digital machinery-rental apps.</span><small>CEEW, 2025/2026 synthesis</small></article>
+          <article><strong>15%</strong><span>of farmers practising in-situ CRM accessed CHC services in the cited CEEW research.</span><small>CEEW, 2025 CHC study</small></article>
+          <article><strong>45%</strong><span>of surveyed CHCs offering in-situ rental reported packaged machine + tractor + driver services.</span><small>CEEW, 2025 CHC study</small></article>
+        </div>
+        <div className="home-gap-answer">
+          <div><b>NIRDHOOM's response</b><span>Farmer request → capacity match → route → field evidence → verified residue.</span></div>
+          <a href="https://www.ceew.in/publications/improving-access-to-crop-residue-management-solutions-with-custom-hiring-centres-in-agriculture" target="_blank" rel="noreferrer">Read the CEEW CHC research ↗</a>
+          <a href="https://www.ceew.in/publications/how-can-punjab-adopt-crop-residue-management-methods-and-tackle-paddy-stubble-burning?page=1" target="_blank" rel="noreferrer">Read the Punjab adoption research ↗</a>
+        </div>
+      </section>
+
       {/* QUICK CONTEXT: plain language, no dashboard overload */}
       <section className="home-intro">
         <div>
