@@ -107,6 +107,10 @@ export const CompetitionCenter: React.FC<CompetitionCenterProps> = ({ onNavigate
           <li>Moat: field records + operational evidence + verified residue workflows.</li>
           <li>Scale: start in North India, then reuse the workflow in other residue regions.</li>
         </ul>
+        <div className="competition-unit-economics">
+          <b>RIDE unit-economics hypothesis</b>
+          <span>CEEW reports an all-inclusive CRM package around ₹2,000/acre in Punjab. A future 5–10% coordination fee would be ₹100–₹200/acre — a hypothesis to validate with CHCs, not current revenue.</span>
+        </div>
         <button type="button" onClick={() => onNavigate('JUDGE_DEFENSE')} className="competition-link">
           Prepare the startup defence <ArrowRight className="h-4 w-4" />
         </button>
