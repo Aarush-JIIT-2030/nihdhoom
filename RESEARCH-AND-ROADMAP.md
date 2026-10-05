@@ -57,7 +57,7 @@ NIRDHOOM's verification UI should always show:
 5. Machine assignment
 6. Operator job state machine
 7. Evidence uploads
-8. Payment ledger + provider webhook reconciliation
+8. Evidence, notification and operational reconciliation; payment provider integration is deferred
 
 ### P1 — make operations reliable
 
@@ -91,7 +91,7 @@ NIRDHOOM's verification UI should always show:
 
 28. NIRDHOOM Sathi connected to live records
 29. Punjabi/Hindi/English text
-30. Voice/WhatsApp channel
+30. Telegram + Punjabi voice/IVR channel
 31. Weather + harvest-window reasoning
 32. Explainable answers: “I said this because your booking/machine/weather record says…”
 
