@@ -154,7 +154,7 @@ export const UpiSettlementModal: React.FC<UpiSettlementModalProps> = ({
                 src="/images/farmer_gurpreet.jpg" 
                 alt={field.farmer_name} 
                 className="w-5 h-5 rounded-full border border-emerald-400 object-cover" 
-              / loading="lazy" decoding="async">
+               loading="lazy" decoding="async" />
               <strong className="text-white font-medium">{field.farmer_name}</strong>
             </div>
           </div>
