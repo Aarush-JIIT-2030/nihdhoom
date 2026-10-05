@@ -75,6 +75,7 @@ export const CompetitionCenter: React.FC<CompetitionCenterProps> = ({ onNavigate
         <div><strong>1%</strong><span>reported using digital machinery-rental apps in the cited Punjab research.</span><small>CEEW evidence synthesis</small></div>
         <div><strong>45%</strong><span>of surveyed CHCs offering in-situ rental reported packaged services.</span><small>CEEW 2025 CHC study</small></div>
       </div>
+      <div className="competition-policy-note"><strong>Official context:</strong> CAQM's action plan calls for farm mapping, timely CRM machinery, IT for planning/booking/utilisation, inter-district baler movement and a continuous paddy-straw supply chain. NIRDHOOM is designed around that coordination gap.</div>
       <p className="competition-source-note">These are survey/research findings, not NIRDHOOM performance claims. Our pilot should measure booking completion, machine arrival, clearance time, evidence completeness and residue handoff.</p>
     </section>
 
