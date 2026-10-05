@@ -15,7 +15,7 @@ import {
   Award
 } from 'lucide-react';
 import { Field, Machine, BurnEvent, LatLng } from '../types';
-import { WhatsAppSimulator } from './FarmerSurface/WhatsAppSimulator';
+import { TelegramSimulator } from './FarmerSurface/TelegramSimulator';
 import { OpsMap } from './OpsConsole/OpsMap';
 import { VRPDispatchPanel } from './OpsConsole/VRPDispatchPanel';
 import { BalerPWA } from './FieldOperator/BalerPWA';
@@ -46,8 +46,8 @@ export const DemoWalkthrough: React.FC<DemoWalkthroughProps> = ({
   const beats = [
     {
       step: 1,
-      title: 'Beat 1: Farmer WhatsApp & Parametric Slot Guarantee',
-      oneLiner: 'Book via Punjabi WhatsApp; get confirmed clearance slot + late penalty guarantee in seconds.',
+      title: 'Beat 1: Farmer Telegram & Parametric Slot Guarantee',
+      oneLiner: 'Book via Punjabi Telegram; get confirmed clearance slot + late penalty guarantee in seconds.',
       badge: 'Demand Capture & Pricing',
       icon: MessageSquare,
       color: 'text-emerald-400',
@@ -171,7 +171,7 @@ export const DemoWalkthrough: React.FC<DemoWalkthroughProps> = ({
           <div className="flex flex-col gap-3">
             <div className="p-3 bg-emerald-950/40 border border-emerald-500/30 rounded-xl text-xs text-slate-200 flex items-center justify-between">
               <div>
-                <strong>Beat 1 in Action:</strong> Farmer Gurpreet Singh books 3.5 acres via Punjabi WhatsApp. Notice the dynamic rate (₹1,450/ac) and the contractual late penalty of ₹4,500. Click <em>"Lock Slot"</em> or <em>"Listen to Punjabi Voice Note"</em>!
+                <strong>Beat 1 in Action:</strong> Farmer Gurpreet Singh books 3.5 acres via Punjabi Telegram. Notice the dynamic rate (₹1,450/ac) and the contractual late penalty of ₹4,500. Click <em>"Lock Slot"</em> or <em>"Listen to Punjabi Voice Note"</em>!
               </div>
               <button
                 onClick={() => setCurrentBeat(2)}
@@ -180,7 +180,7 @@ export const DemoWalkthrough: React.FC<DemoWalkthroughProps> = ({
                 Proceed to Beat 2 →
               </button>
             </div>
-            <WhatsAppSimulator
+            <TelegramSimulator
               onSlotConfirmed={(fId) => onUpdateFieldStatus(fId, 'SCHEDULED')}
             />
           </div>
