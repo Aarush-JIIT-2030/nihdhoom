@@ -310,3 +310,5 @@ test('Telegram Mini App refreshes server-side identity activity after verificati
   assert.match(source, /method: 'PATCH'/);
   assert.match(source, /telegram_user_id=eq\./);
 });
+
+// Competition readiness guards are intentionally source-level and deployment-independent.
