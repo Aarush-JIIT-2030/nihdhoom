@@ -2797,3 +2797,166 @@ html[data-theme="dark"] .nirdhoom-field-app .text-emerald-950 {
 @media (prefers-reduced-motion: reduce) {
   .competition-center * { scroll-behavior: auto !important; }
 }
+
+/* Competition trust artifact */
+.clearance-passport {
+  border: 1px solid rgba(52, 211, 153, .28);
+  border-radius: 20px;
+  padding: 1rem;
+  background: linear-gradient(145deg, rgba(6, 78, 59, .34), rgba(15, 23, 42, .88));
+  color: #f8fafc;
+  box-shadow: 0 16px 50px rgba(2, 44, 34, .22);
+}
+.clearance-passport-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: .85rem;
+  border-bottom: 1px solid rgba(148, 163, 184, .15);
+}
+.clearance-passport-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  color: #6ee7b7;
+  font-size: .66rem;
+  font-weight: 900;
+  letter-spacing: .13em;
+}
+.clearance-passport h3 {
+  margin: .3rem 0 .25rem;
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+.clearance-passport-head p {
+  margin: 0;
+  color: #a7b6ad;
+  font-size: .78rem;
+  line-height: 1.5;
+}
+.clearance-passport-state {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  padding: .35rem .65rem;
+  font-size: .68rem;
+  font-weight: 900;
+  border: 1px solid rgba(148,163,184,.2);
+}
+.clearance-passport-state.is-good { color: #86efac; background: rgba(34,197,94,.1); border-color: rgba(34,197,94,.3); }
+.clearance-passport-state.is-warn { color: #fcd34d; background: rgba(245,158,11,.1); border-color: rgba(245,158,11,.3); }
+.clearance-passport-state.is-muted { color: #cbd5e1; background: rgba(148,163,184,.08); }
+.clearance-passport-grid {
+  display: grid;
+  grid-template-columns: minmax(190px, .7fr) minmax(0, 1.6fr);
+  gap: 1rem;
+  padding: 1rem 0;
+}
+.clearance-passport-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .55rem;
+  align-content: start;
+}
+.clearance-passport-summary > div {
+  border: 1px solid rgba(148,163,184,.14);
+  border-radius: 12px;
+  padding: .65rem;
+  background: rgba(15,23,42,.5);
+}
+.clearance-passport-summary span,
+.clearance-passport-summary strong {
+  display: block;
+}
+.clearance-passport-summary span {
+  color: #94a3b8;
+  font-size: .62rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.clearance-passport-summary strong {
+  margin-top: .2rem;
+  font-size: .78rem;
+  overflow-wrap: anywhere;
+}
+.clearance-passport-chain {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: .55rem;
+}
+.clearance-passport-step {
+  position: relative;
+  min-width: 0;
+  padding: .7rem;
+  border: 1px solid rgba(148,163,184,.14);
+  border-radius: 13px;
+  background: rgba(15,23,42,.45);
+  opacity: .7;
+}
+.clearance-passport-step.is-complete {
+  opacity: 1;
+  border-color: rgba(52,211,153,.3);
+  background: rgba(6,78,59,.24);
+}
+.clearance-passport-step-icon {
+  display: grid;
+  width: 26px;
+  height: 26px;
+  place-items: center;
+  margin-bottom: .45rem;
+  border-radius: 50%;
+  background: rgba(148,163,184,.1);
+  color: #94a3b8;
+}
+.clearance-passport-step.is-complete .clearance-passport-step-icon {
+  background: rgba(52,211,153,.13);
+  color: #6ee7b7;
+}
+.clearance-passport-step strong,
+.clearance-passport-step span:last-child {
+  display: block;
+}
+.clearance-passport-step strong { font-size: .72rem; }
+.clearance-passport-step div > span:last-child {
+  margin-top: .18rem;
+  color: #94a3b8;
+  font-size: .62rem;
+  line-height: 1.4;
+}
+.clearance-passport-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .55rem;
+  padding-top: .8rem;
+  border-top: 1px solid rgba(148,163,184,.15);
+}
+.clearance-passport-footer span {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  border-radius: 999px;
+  padding: .35rem .55rem;
+  background: rgba(15,23,42,.55);
+  color: #b6c3bc;
+  font-size: .62rem;
+}
+.clearance-passport-note {
+  display: flex;
+  align-items: flex-start;
+  gap: .4rem;
+  margin-top: .7rem;
+  padding-top: .65rem;
+  border-top: 1px dashed rgba(148,163,184,.16);
+  color: #94a3b8;
+  font-size: .62rem;
+  line-height: 1.45;
+}
+@media (max-width: 900px) {
+  .clearance-passport-grid { grid-template-columns: 1fr; }
+  .clearance-passport-chain { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 560px) {
+  .clearance-passport-head { flex-direction: column; }
+  .clearance-passport-summary { grid-template-columns: 1fr 1fr; }
+  .clearance-passport-chain { grid-template-columns: 1fr; }
+}
