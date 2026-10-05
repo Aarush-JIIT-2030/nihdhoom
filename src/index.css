@@ -3080,3 +3080,69 @@ html[data-theme="dark"] .nirdhoom-field-app .text-emerald-950 {
   line-height: 1.55;
 }
 .competition-policy-note strong { color: #fbbf24; }
+
+/* =========================================================
+   SINGLE FIELD UI NORMALIZATION
+   Legacy utility classes may remain in feature components, but
+   they must render as the same NIRDHOOM field system.
+   ========================================================= */
+html[data-theme="kisan"] .nirdhoom-field-app {
+  background: #f7f5ec !important;
+  color: #173522 !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .glass-panel,
+html[data-theme="kisan"] .nirdhoom-field-app .glass-panel-emerald,
+html[data-theme="kisan"] .nirdhoom-field-app .glass-panel-amber,
+html[data-theme="kisan"] .nirdhoom-field-app .glass-panel-crimson {
+  background: rgba(255,255,255,.96) !important;
+  color: #173522 !important;
+  border-color: rgba(31,122,70,.14) !important;
+  box-shadow: 0 14px 36px rgba(38,76,43,.07) !important;
+  backdrop-filter: none !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :is([class*="bg-slate-950"],[class*="bg-slate-900"],[class*="bg-slate-800"]) {
+  background: #f7faf5 !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :is([class*="border-slate-800"],[class*="border-slate-700"],[class*="border-white\/"]) {
+  border-color: rgba(31,122,70,.12) !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :is([class*="text-slate-100"],[class*="text-slate-200"],[class*="text-slate-300"]) {
+  color: #234a31 !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :is([class*="text-slate-400"],[class*="text-slate-500"]) {
+  color: #627766 !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :is([class*="text-cyan-300"],[class*="text-cyan-400"],[class*="text-cyan-500"]) {
+  color: #2b7180 !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :is([class*="bg-cyan-500\/"],[class*="bg-cyan-400\/"]) {
+  background: #e5f3f7 !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :is([class*="text-emerald-300"],[class*="text-emerald-400"],[class*="text-emerald-500"]) {
+  color: #237a48 !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :is([class*="bg-emerald-950"],[class*="bg-emerald-900"]) {
+  background: #e7f4e7 !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app input,
+html[data-theme="kisan"] .nirdhoom-field-app select,
+html[data-theme="kisan"] .nirdhoom-field-app textarea {
+  background: #fff !important;
+  color: #173522 !important;
+  border-color: rgba(31,122,70,.18) !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app input::placeholder,
+html[data-theme="kisan"] .nirdhoom-field-app textarea::placeholder {
+  color: #829184 !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app :is(button,a[role="button"]) {
+  -webkit-tap-highlight-color: transparent;
+}
+@media (max-width: 640px) {
+  html[data-theme="kisan"] .nirdhoom-field-app :is(.glass-panel,.glass-panel-emerald,.glass-panel-amber,.glass-panel-crimson) {
+    border-radius: 18px;
+  }
+  html[data-theme="kisan"] .nirdhoom-field-app :is(button,a[role="button"]) {
+    min-height: 44px;
+  }
+}
