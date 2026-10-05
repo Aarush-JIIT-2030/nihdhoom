@@ -33,7 +33,7 @@ The attached six-page **Parali: The Reframe** brief is the source of the product
 | NASA FIRMS | 5 | Server-side API adapter using MAP_KEY |
 | Sentinel-2/Bhuvan | 5 | Forecast model + connector placeholder, no invented satellite result |
 | OR-Tools VRPTW | 5 | Dispatch service hook and fallback; production solver can be mounted at `DISPATCH_SERVICE_URL` |
-| WhatsApp Cloud API + IVR | 5 | WhatsApp server adapter; IVR still needs a telephony provider account |
+| Telegram + IVR | 5 | Telegram server adapter/webhook/linking; IVR still needs a telephony provider account |
 | Four demo beats | 5 | Booking, dispatch, operator proof/GPS, verification surfaces now exist as one connected narrative |
 | Pilot geography | 6 | Demo records remain Sangrur-focused; pilot scope should be explicitly selected before production |
 | CBG + mushroom offtake | 6 | Both are represented in demo buyer pathways |
