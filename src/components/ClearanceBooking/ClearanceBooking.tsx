@@ -21,7 +21,7 @@ export function ClearanceBooking({ fields, demoMode, onBooked }: Props) {
   const [error, setError] = useState('');
 
   const selected = bookable.find((f) => f.id === fieldId);
-  const estimate = selected ? Math.round(Math.max(1000, Math.min(3200, 1500)) * Number(selected.acreage || 0) / 10) * 10 : 0;
+  const estimate = selected ? Math.round(Math.max(0, Number(selected.acreage || 0)) * 1500) : 0;
 
   async function book() {
     setError('');
