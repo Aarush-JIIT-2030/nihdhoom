@@ -1,7 +1,84 @@
-import { StrictMode } from 'react';
+import { StrictMode, Component } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import { App } from './App.tsx';
+
+class AppErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { error };
+  }
+
+  componentDidCatch(error, info) {
+    console.error('[NIRDHOOM] Unhandled UI error:', error, info);
+  }
+
+  render() {
+    if (this.state.error) {
+      const message = this.state.error instanceof Error
+        ? this.state.error.message
+        : String(this.state.error);
+
+      return (
+        <main style={{
+          minHeight: '100vh',
+          display: 'grid',
+          placeItems: 'center',
+          padding: '24px',
+          background: '#020409',
+          color: '#f2f6fc',
+          fontFamily: 'system-ui, sans-serif',
+        }}>
+          <section style={{
+            width: 'min(720px, 100%)',
+            border: '1px solid rgba(239,68,68,.35)',
+            borderRadius: '16px',
+            padding: '24px',
+            background: 'rgba(15,23,42,.9)',
+          }}>
+            <div style={{ color: '#f87171', fontWeight: 800, fontSize: '12px', letterSpacing: '.12em', textTransform: 'uppercase' }}>
+              NIRDHOOM UI ERROR
+            </div>
+            <h1 style={{ margin: '8px 0', fontSize: '24px' }}>The dashboard could not render.</h1>
+            <p style={{ color: '#94a3b8', margin: '0 0 16px' }}>
+              Refresh once. If the problem persists, send this error to the developer:
+            </p>
+            <pre style={{
+              whiteSpace: 'pre-wrap',
+              overflowWrap: 'anywhere',
+              padding: '12px',
+              borderRadius: '10px',
+              background: '#020617',
+              color: '#fca5a5',
+              fontSize: '12px',
+            }}>{message}</pre>
+            <button
+              onClick={() => window.location.reload()}
+              style={{
+                marginTop: '16px',
+                border: 0,
+                borderRadius: '10px',
+                padding: '10px 14px',
+                background: '#059669',
+                color: 'white',
+                fontWeight: 800,
+                cursor: 'pointer',
+              }}
+            >
+              Reload NIRDHOOM
+            </button>
+          </section>
+        </main>
+      );
+    }
+
+    return this.props.children;
+  }
+}
 
 const root = document.getElementById('root');
 
@@ -11,6 +88,8 @@ if (!root) {
 
 createRoot(root).render(
   <StrictMode>
-    <App />
+    <AppErrorBoundary>
+      <App />
+    </AppErrorBoundary>
   </StrictMode>,
 );
