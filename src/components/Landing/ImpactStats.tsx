@@ -81,8 +81,8 @@ const FARMER_TESTIMONIALS = [
   {
     name: 'Manpreet Kaur Sandhu',
     village: 'Bhalwan, Dhuri',
-    quote: 'ਪਹਿਲਾਂ ਫ਼ੋਨ ਤੇ ਫ਼ੋਨ ਕਰਨੇ ਪੈਂਦੇ ਸੀ। ਹੁਣ WhatsApp ਤੇ ਬੁੱਕ ਕਰ ਲੈਂਦੇ ਹਾਂ, UPI ਤੇ ਪੈਸੇ 90 ਸਕਿੰਟ ਵਿਚ ਆ ਜਾਂਦੇ ਹਨ।',
-    quoteEn: 'Earlier I had to make endless calls. Now I book on WhatsApp, money comes in 90 seconds via UPI.',
+    quote: 'ਪਹਿਲਾਂ ਫ਼ੋਨ ਤੇ ਫ਼ੋਨ ਕਰਨੇ ਪੈਂਦੇ ਸੀ। ਹੁਣ Telegram ਤੇ ਬੁੱਕ ਕਰ ਲੈਂਦੇ ਹਾਂ, UPI ਤੇ ਪੈਸੇ 90 ਸਕਿੰਟ ਵਿਚ ਆ ਜਾਂਦੇ ਹਨ।',
+    quoteEn: 'Earlier I had to make endless calls. Now I book on Telegram, money comes in 90 seconds via UPI.',
     acres: 6.2,
     crop: 'Basmati-1509',
     avatar: '/images/farmer_manpreet.jpg',
