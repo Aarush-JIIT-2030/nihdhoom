@@ -84,6 +84,13 @@ export function ResiduePooling({ fields, demoMode }: Props) {
         </div>
       </div>
 
+      <section className="market-journey" aria-label="Residue journey">
+        <div><span>01</span><b>Field</b><small>Verified source</small></div><i />
+        <div><span>02</span><b>Pool</b><small>Aggregate supply</small></div><i />
+        <div><span>03</span><b>Buyer</b><small>Match demand</small></div><i />
+        <div><span>04</span><b>Dispatch</b><small>Move material</small></div>
+      </section>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <section className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
           <h2 className="font-bold text-white">Field-derived supply (pooling requires verified lots)</h2>
