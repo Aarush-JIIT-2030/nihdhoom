@@ -177,13 +177,6 @@ html[data-theme="kisan"] .nirdhoom-field-app .glass-panel {
   background:rgba(255,255,255,.94) !important; border-color:rgba(31,122,70,.12) !important;
   box-shadow:0 14px 38px rgba(38,76,43,.07) !important; color:#173522 !important;
 }
-
-html[data-theme="kisan"] .field-theme-toggle {
-  border-color: rgba(31,122,70,.14) !important;
-  background: #fff !important;
-  color: #28623d !important;
-}
-html[data-theme="kisan"] .field-theme-toggle:hover { background:#eef7eb !important; }
 html[data-theme="kisan"] .nirdhoom-field-app canvas { opacity:.10 !important; }
 
 
