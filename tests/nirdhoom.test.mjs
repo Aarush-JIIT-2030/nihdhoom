@@ -54,10 +54,11 @@ test('notification endpoints require dispatcher/admin authentication', () => {
 });
 
 test('payment integration remains explicitly fail-closed', () => {
-  const source = read('api/payments/initiate.ts');
-  assert.match(source, /status\(501\)/);
-  assert.match(source, /No money movement was attempted/);
-  assert.doesNotMatch(source, /status:\s*['"]PAID['"]/);
+  const scope = read('docs/NON-PAYMENT-RELEASE-SCOPE.md');
+  assert.match(scope, /explicitly excludes integrating a real payment or payout provider/);
+  assert.match(scope, /Do not add provider credentials/);
+  assert.ok(!exists('api/payments/initiate.ts'));
+  assert.ok(!exists('api/payments/webhook.ts'));
 });
 
 test('CI runs audit, tests and production build on Node 24', () => {
