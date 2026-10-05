@@ -280,3 +280,19 @@ test('live field identity keeps the Supabase UUID separate from the display id',
   assert.match(weather, /selectedWeatherField\.dbId \|\| selectedWeatherField\.id/);
   assert.match(audit, /p_field_id: field\.dbId \|\| field\.id/);
 });
+
+
+test('Telegram health endpoint is fail-closed when server configuration is missing', () => {
+  const source = read('api/notify/telegram-webhook.ts');
+  assert.match(source, /const configured = Boolean\(/);
+  assert.match(source, /TELEGRAM_WEBHOOK_SECRET/);
+  assert.match(source, /SUPABASE_SERVICE_ROLE_KEY/);
+  assert.match(source, /res\.status\(configured \? 200 : 503\)/);
+});
+
+test('Telegram Mini App refreshes server-side identity activity after verification', () => {
+  const source = read('api/notify/telegram-miniapp-auth.ts');
+  assert.match(source, /last_seen_at/);
+  assert.match(source, /method: 'PATCH'/);
+  assert.match(source, /telegram_user_id=eq\./);
+});
