@@ -30,7 +30,17 @@ export const ParticleField: React.FC = () => {
     if (!ctx) return;
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+    const saveData = 'connection' in navigator && Boolean((navigator as Navigator & {
+      connection?: { saveData?: boolean };
+    }).connection?.saveData);
+    const lowMemory = 'deviceMemory' in navigator && Number((navigator as Navigator & {
+      deviceMemory?: number;
+    }).deviceMemory || 8) <= 2;
+    const lowCpu = 'hardwareConcurrency' in navigator && navigator.hardwareConcurrency <= 4;
+    const constrainedDevice = saveData || lowMemory || lowCpu;
+    const motionEnabled = !reduced && !document.hidden;
+    const dpr = Math.min(window.devicePixelRatio || 1, constrainedDevice ? 1 : 2);
     const mouse = { x: -9999, y: -9999 };
     let particles: Particle[] = [];
     let W = 0;
@@ -66,7 +76,9 @@ export const ParticleField: React.FC = () => {
       canvas.style.width = `${W}px`;
       canvas.style.height = `${H}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      particles = Array.from({ length: countFor(W) }, makeParticle);
+      const baseCount = countFor(W);
+      const deviceMultiplier = constrainedDevice ? 0.5 : coarsePointer ? 0.7 : 1;
+      particles = Array.from({ length: Math.max(8, Math.round(baseCount * deviceMultiplier)) }, makeParticle);
       if (reduced) draw(0);
     };
 
@@ -120,7 +132,7 @@ export const ParticleField: React.FC = () => {
 
     const onVisibility = () => {
       if (document.hidden) cancelAnimationFrame(raf);
-      else if (!reduced) raf = requestAnimationFrame(loop);
+      else if (!reduced && !constrainedDevice) raf = requestAnimationFrame(loop);
     };
 
     resize();
@@ -129,7 +141,7 @@ export const ParticleField: React.FC = () => {
     document.documentElement.addEventListener('mouseleave', onLeave);
     document.addEventListener('visibilitychange', onVisibility);
 
-    if (!reduced) loop();
+    if (motionEnabled && !constrainedDevice) loop();
     else draw(0);
 
     return () => {
