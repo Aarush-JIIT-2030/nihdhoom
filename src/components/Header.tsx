@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, startTransition } from 'react';
+import { prefetchWorkspace } from '../lib/workspacePrefetch';
 import {
   Activity, BarChart3, Bot, ChevronDown, ClipboardList, HelpCircle, Leaf, Map,
   Menu, MessageSquare, Satellite, Search, ShieldCheck, Sparkles, Smartphone,
@@ -74,7 +75,7 @@ export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: H
   }, []);
 
   const navigate = (id: ActiveTab) => {
-    setActiveTab(id);
+    startTransition(() => setActiveTab(id));
     setMoreOpen(false);
     setMobileOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -88,7 +89,7 @@ export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: H
       <div className="mx-auto max-w-[1480px]">
         <div className="flex min-h-[72px] items-center gap-3">
           <button
-            onClick={() => navigate('OVERVIEW')}
+            onClick={() => navigate('OVERVIEW')} onMouseEnter={() => prefetchWorkspace('OVERVIEW')}
             className="group flex min-w-0 items-center gap-3 rounded-2xl px-1 py-1.5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
             aria-label="Go to NIRDHOOM Home"
           >
@@ -114,7 +115,7 @@ export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: H
               const Icon = item.icon;
               const active = activeTab === item.id;
               return (
-                <button key={item.id} onClick={() => navigate(item.id)} title={item.description}
+                <button key={item.id} onClick={() => navigate(item.id)} onMouseEnter={() => prefetchWorkspace(item.id)} onFocus={() => prefetchWorkspace(item.id)} title={item.description}
                   className={`field-nav-item ${active ? 'is-active' : ''}`}>
                   <Icon className="h-4 w-4" />
                   <span>{item.label}</span>
@@ -137,7 +138,7 @@ export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: H
                     {secondaryNav.map((item) => {
                       const Icon = item.icon;
                       return (
-                        <button key={item.id} role="menuitem" onClick={() => navigate(item.id)}
+                        <button key={item.id} role="menuitem" onClick={() => navigate(item.id)} onMouseEnter={() => prefetchWorkspace(item.id)} onFocus={() => prefetchWorkspace(item.id)}
                           className={`field-more-item ${activeTab === item.id ? 'is-active' : ''}`}>
                           <Icon className="mt-0.5 h-4 w-4 shrink-0" />
                           <span className="min-w-0"><span className="block truncate text-[11px] font-bold">{item.label}</span><span className="mt-0.5 block text-[9px] leading-3 opacity-65">{item.description}</span></span>
