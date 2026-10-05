@@ -1402,3 +1402,64 @@ html[data-theme="kisan"] .field-mobile-bottom-nav button:focus-visible {
     backdrop-filter:none;
   }
 }
+
+
+html[data-theme="kisan"] .field-journey {
+  display:flex;
+  align-items:flex-start;
+  gap:0;
+  margin-top:.8rem;
+  padding:.65rem .7rem;
+  overflow-x:auto;
+  border:1px solid rgba(31,122,70,.09);
+  border-radius:14px;
+  background:#f8faf6;
+}
+html[data-theme="kisan"] .field-journey > span {
+  position:relative;
+  min-width:72px;
+  display:flex;
+  flex:1;
+  flex-direction:column;
+  align-items:center;
+  gap:.28rem;
+  color:#9aa79b;
+  font-size:.47rem;
+  font-weight:900;
+  text-align:center;
+}
+html[data-theme="kisan"] .field-journey > span:not(:last-child)::after {
+  content:"";
+  position:absolute;
+  top:4px;
+  left:calc(50% + 6px);
+  width:calc(100% - 12px);
+  height:1px;
+  background:#d8e0d5;
+}
+html[data-theme="kisan"] .field-journey > span.is-complete {
+  color:#2b7747;
+}
+html[data-theme="kisan"] .field-journey > span.is-complete::after {
+  background:#8cba96;
+}
+html[data-theme="kisan"] .field-journey i {
+  position:relative;
+  z-index:1;
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  border:2px solid #d4ddd1;
+  background:#fff;
+}
+html[data-theme="kisan"] .field-journey .is-complete i {
+  border-color:#2f8b50;
+  background:#2f8b50;
+  box-shadow:0 0 0 3px rgba(47,139,80,.10);
+}
+html[data-theme="kisan"] .field-journey b {
+  white-space:nowrap;
+}
+@media(max-width:639px) {
+  html[data-theme="kisan"] .field-journey > span { min-width:66px; }
+}
