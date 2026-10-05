@@ -36,6 +36,7 @@ export const OpsMap: React.FC<OpsMapProps> = ({
   const [showFields, setShowFields] = useState(true);
   const [showYards, setShowYards] = useState(true);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
+  const [mapError, setMapError] = useState<string | null>(null);
   const [animatedPositions, setAnimatedPositions] = useState<Record<string, { lat: number; lng: number }>>(
     () => Object.fromEntries(machines.map(m => [m.id, m.current_location]))
   );
@@ -47,13 +48,21 @@ export const OpsMap: React.FC<OpsMapProps> = ({
     if (mapInstanceRef.current) return;
 
     // Centered at Sangrur, Punjab
-    const map = L.map(mapContainerRef.current, {
+    let map: L.Map;
+    try {
+      map = L.map(mapContainerRef.current, {
       center: [30.2458, 75.8421],
       zoom: 11,
       zoomControl: true,
       attributionControl: false,
     });
+    } catch (error) {
+      console.error('[NIRDHOOM] Leaflet initialization failed:', error);
+      setMapError(error instanceof Error ? error.message : 'Unable to initialize the operational map.');
+      return;
+    }
 
+    setMapError(null);
     mapInstanceRef.current = map;
     layerGroupRef.current = L.layerGroup().addTo(map);
 
@@ -129,7 +138,10 @@ export const OpsMap: React.FC<OpsMapProps> = ({
     if (showFields) {
       fields.forEach((field) => {
         const isSelected = selectedField?.id === field.id;
-        const coords: [number, number][] = field.geometry.map((p) => [p.lat, p.lng]);
+        const coords: [number, number][] = (field.geometry || [])
+          .filter((p) => Number.isFinite(Number(p?.lat)) && Number.isFinite(Number(p?.lng)))
+          .map((p) => [Number(p.lat), Number(p.lng)] as [number, number]);
+        if (coords.length < 3) return;
 
         let fillColor = '#10b981'; // Green: Cleared / Verified
         let strokeColor = '#34d399';
@@ -188,7 +200,8 @@ export const OpsMap: React.FC<OpsMapProps> = ({
         });
 
         const pos = animatedPositions[machine.id] || machine.current_location;
-        const marker = L.marker([pos.lat, pos.lng], {
+        if (!Number.isFinite(Number(pos?.lat)) || !Number.isFinite(Number(pos?.lng))) return;
+        const marker = L.marker([Number(pos.lat), Number(pos.lng)], {
           icon: customIcon,
         });
 
@@ -226,7 +239,8 @@ export const OpsMap: React.FC<OpsMapProps> = ({
           iconAnchor: [14, 14],
         });
 
-        const marker = L.marker([fire.firms_point.lat, fire.firms_point.lng], {
+        if (!Number.isFinite(Number(fire.firms_point?.lat)) || !Number.isFinite(Number(fire.firms_point?.lng))) return;
+        const marker = L.marker([Number(fire.firms_point.lat), Number(fire.firms_point.lng)], {
           icon: fireIcon,
         });
 
@@ -262,7 +276,8 @@ export const OpsMap: React.FC<OpsMapProps> = ({
           iconAnchor: [13, 13],
         });
 
-        const marker = L.marker([yard.location.lat, yard.location.lng], {
+        if (!Number.isFinite(Number(yard.location?.lat)) || !Number.isFinite(Number(yard.location?.lng))) return;
+        const marker = L.marker([Number(yard.location.lat), Number(yard.location.lng)], {
           icon: yardIcon,
         });
 
@@ -319,7 +334,19 @@ export const OpsMap: React.FC<OpsMapProps> = ({
   return (
     <div className="relative w-full h-[540px] lg:h-[620px] rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
       {/* Map Container */}
-      <div ref={mapContainerRef} className="w-full h-full z-0" />
+      {mapError ? (
+        <div className="w-full h-full grid place-items-center bg-slate-950 p-6 text-center">
+          <div className="max-w-md">
+            <div className="text-sm font-bold text-amber-300">Operational map unavailable</div>
+            <p className="mt-2 text-xs text-slate-400">
+              The rest of NIRDHOOM is still available. Check your network/map tile access and reload.
+            </p>
+            <p className="mt-2 text-[10px] text-slate-600 break-words">{mapError}</p>
+          </div>
+        </div>
+      ) : (
+        <div ref={mapContainerRef} className="w-full h-full z-0" />
+      )}
 
       {/* GPS Live Ticker Top-Left */}
       <div className="absolute top-3 left-3 z-10 bg-slate-900/90 backdrop-blur-md border border-emerald-500/30 rounded-lg px-3 py-1.5 flex items-center gap-2 text-xs shadow-lg">
