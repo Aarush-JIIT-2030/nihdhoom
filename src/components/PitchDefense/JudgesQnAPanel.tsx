@@ -111,74 +111,25 @@ export const JudgesQnAPanel: React.FC = () => {
         </div>
       </div>
 
-      {/* IITM DSS Reality Table: Section 01 Fix */}
+      {/* Evidence boundary for judging */} 
       <div className="glass-panel p-4 flex flex-col gap-3">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
-          <div className="flex items-center gap-2">
-            <ShieldAlert className="w-4 h-4 text-amber-400" />
-            <h4 className="font-bold text-sm text-white">
-              Fix 1: The Defensible Pollution Number (IITM DSS / Peer-Reviewed Data)
-            </h4>
-          </div>
-          <span className="text-xs text-slate-400">Section 01 Internal Brief</span>
+        <div className="flex items-center gap-2 border-b border-slate-800 pb-2.5">
+          <ShieldAlert className="w-4 h-4 text-amber-400" />
+          <h4 className="font-bold text-sm text-white">Evidence boundary: what we will and will not claim</h4>
         </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs text-left">
-            <thead className="bg-slate-900/80 text-slate-400 uppercase text-[10px]">
-              <tr>
-                <th className="py-2 px-3">Claim (Folk Wisdom)</th>
-                <th className="py-2 px-3">Reality (IITM DSS Data)</th>
-                <th className="py-2 px-3">Our Winning Pitch Framing</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800/80 text-slate-300">
-              <tr>
-                <td className="py-2.5 px-3 text-red-400 font-semibold">
-                  "Causes 50-75% of Delhi smog across Nov-Jan"
-                </td>
-                <td className="py-2.5 px-3 font-mono">
-                  Peak single-day: ~46% • Season avg: 9% (2024), 16% (2023), 18% (2022) • Dec/Jan: ~0% (Local sources dominate)
-                </td>
-                <td className="py-2.5 px-3 text-emerald-300">
-                  "Parali is the sharpest, most attributable 40-day spike driver (Oct 10–Nov 20), and the worst health burden falls on Punjab &amp; Haryana residents standing next to the field, not Delhi."
-                </td>
-              </tr>
-              <tr>
-                <td className="py-2.5 px-3 text-red-400 font-semibold">
-                  "Farmers burn because nobody pays them"
-                </td>
-                <td className="py-2.5 px-3 font-mono">
-                  Real constraint: 10–20 days between paddy harvest and wheat sowing. Miss it and wheat yield drops 1–1.5 q/acre/week.
-                </td>
-                <td className="py-2.5 px-3 text-emerald-300">
-                  "Reliability beats rate. Every time. We make the slot state and evidence visible; payment remains outside this release."
-                </td>
-              </tr>
-              <tr>
-                <td className="py-2.5 px-3 text-red-400 font-semibold">
-                  "Just give more CRM subsidies to buy more balers"
-                </td>
-                <td className="py-2.5 px-3 font-mono">
-                  CAQM &amp; Punjab Govt have already disbursed ₹395 Cr (2025) and allocated ₹576 Cr (2026), creating 1.25 lakh machines (50-80% subsidized) that sit idle in village CHCs.
-                </td>
-                <td className="py-2.5 px-3 text-emerald-300">
-                  "Don't buy balers. Route the idle ones. We build a dispatch network unlocking stranded public CRM infrastructure at ₹0 capex."
-                </td>
-              </tr>
-              <tr>
-                <td className="py-2.5 px-3 text-red-400 font-semibold">
-                  "Satellite FIRMS counts dropped 53% in 2025 (5,114 vs 10,909 in 2024), problem is solved"
-                </td>
-                <td className="py-2.5 px-3 font-mono">
-                  FIRMS polar satellites pass 10:30 AM–1:30 PM. Farmers shifted burns to late afternoon/evening, leaving burnt area stubbornly high despite lower count.
-                </td>
-                <td className="py-2.5 px-3 text-emerald-300">
-                  "Simple fire counts fail. Nirdhoom combines FIRMS active thermal points with Sentinel-2 NDVI burn-scar and polygon clearance receipts for auditable proof."
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+          <div className="rounded-xl border border-emerald-500/25 bg-emerald-950/20 p-3">
+            <strong className="text-emerald-300">Implemented foundations</strong>
+            <p className="mt-1 text-slate-300 leading-relaxed">Supabase-backed auth/data boundaries, server-owned booking, Telegram linking/webhook logic, GPS/evidence primitives, dispatch integration and verification workflows.</p>
+          </div>
+          <div className="rounded-xl border border-amber-500/25 bg-amber-950/20 p-3">
+            <strong className="text-amber-300">Demo / illustrative</strong>
+            <p className="mt-1 text-slate-300 leading-relaxed">Seeded scenarios, 3D views, indicative economics and the payment simulation. These are clearly labelled and are not presented as live outcomes.</p>
+          </div>
+          <div className="rounded-xl border border-cyan-500/25 bg-cyan-950/20 p-3">
+            <strong className="text-cyan-300">Pilot dependencies</strong>
+            <p className="mt-1 text-slate-300 leading-relaxed">Real machine availability, cadastral verification, production telemetry, external provider operations and field-level outcome measurement still need supervised validation.</p>
+          </div>
         </div>
       </div>
 
