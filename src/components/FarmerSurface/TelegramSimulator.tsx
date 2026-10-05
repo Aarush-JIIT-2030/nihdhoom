@@ -223,7 +223,6 @@ export function TelegramSimulator({ onSlotConfirmed }: TelegramSimulatorProps) {
       </div>
     </section>
 
-      <HindiTextConverter />
-    </section>
+    <HindiTextConverter />
   );
 }
