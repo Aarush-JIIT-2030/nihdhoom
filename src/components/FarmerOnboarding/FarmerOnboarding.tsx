@@ -350,7 +350,7 @@ export const FarmerOnboarding: React.FC = () => {
                     }
                     const { error: consentError } = await supabase.from('consents').insert({
                       profile_id: userData.user.id,
-                      consent_type: 'NIRDHOOM_OPERATIONAL_RECORD',
+                      consent_type: 'farmer_network',
                       version: '2026-10-04',
                       source: 'WEB_OTP_ONBOARDING',
                     });
