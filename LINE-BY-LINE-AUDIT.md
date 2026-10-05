@@ -20,8 +20,8 @@ The executable JS/TS files were parsed with TypeScript's parser. The project aud
 2. **Runtime icon error:** `Upload` was rendered in the operator flow but was not imported from `lucide-react`. V6 imports it.
 3. **Auth mismatch:** V5 used email magic-link authentication. The brief explicitly says phone OTP with no passwords. V6 uses Supabase phone OTP + OTP verification and a separate consent record.
 4. **Boundary data was not geospatial:** V5's drawing mode stored screen-space `x/y` points. V6 converts map taps to latitude/longitude and stores GeoJSON plus a PostGIS geography polygon on the backend.
-5. **Booking was a fixed demo rate:** V5 hard-coded ₹1,500/acre. V6 calls `/api/quote` and stores rate, quote, guaranteed-by date, penalty basis, pricing band and quote metadata.
-6. **Guarantee was only copy:** V6 creates an explicit guarantee/penalty object in the booking payload. It is still labelled demo until underwriting and service-area capacity are connected.
+5. **Booking was a fixed demo rate:** V5 hard-coded ₹1,500/acre. The current release calls `/api/quote` for a bounded planning estimate and keeps the booking path server-authoritative.
+6. **Guarantees are not active in this release:** booking data retains legacy compatibility fields, but the farmer UI and quote path do not promise a guaranteed date or penalty payout.
 7. **Dispatch was a toast:** V5's dispatch button did not solve anything. V6 calls `/api/dispatch`, supports a production `DISPATCH_SERVICE_URL`, and includes a deterministic fallback. A separate OR-Tools service can be connected without changing the farmer UI.
 8. **GPS was only a label:** V5 displayed GPS-ready text. V6 uses `navigator.geolocation.watchPosition()` and writes authenticated operator pings to `machine_locations`.
 9. **Proof was only localStorage:** V6 adds Supabase Storage evidence upload, linked `evidence_assets` records, offline queue fallback and role-aware RLS.
@@ -71,7 +71,7 @@ Date: 2026-09-27
 9. `src/main.jsx`: payment-related demo surfaces are explicitly non-money-moving; live payment integration is outside this release.
 10. `api/dispatch.ts`: dispatcher/admin authentication is required before route planning.
 11. `api/firms.ts`: authentication can be enforced with `REQUIRE_AUTH_FOR_FIRMS=true`.
-12. Payment API routes were subsequently removed from the release; no browser route can move money.
+12. Payment API routes were subsequently removed from the release; no browser route can move money. Legacy migration fields remain only for schema compatibility.
 13. `docs/NON-PAYMENT-RELEASE-SCOPE.md` is now the source of truth for the intentionally deferred payment boundary.
 14. `supabase/migrations/202609270004_nirdhoom_v7.sql`: booking reservation, job transition, verification review, offer acceptance and cancellation are controlled server-side transactions.
 15. `supabase/migrations/202609270004_nirdhoom_v7.sql`: direct farmer booking mutation was removed; dispatcher job/assignment and operator residue-lot write policies were added.
