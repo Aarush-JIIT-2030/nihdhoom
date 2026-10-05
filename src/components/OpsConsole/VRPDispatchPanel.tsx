@@ -32,10 +32,12 @@ export const VRPDispatchPanel: React.FC<VRPDispatchPanelProps> = ({
     runVRPOptimizer(fields, machines)
   );
   const [isSolving, setIsSolving] = useState(false);
+  const [dispatchError, setDispatchError] = useState('');
   const [selectedMachineId, setSelectedMachineId] = useState<string>(machines[0]?.id || '');
 
   const handleRunOptimizer = async () => {
     setIsSolving(true);
+    setDispatchError('');
     try {
       if (supabase && import.meta.env.VITE_NIRDHOOM_DEMO_MODE !== 'true') {
         const { data: sessionData } = await supabase.auth.getSession();
@@ -81,7 +83,7 @@ export const VRPDispatchPanel: React.FC<VRPDispatchPanelProps> = ({
       }
     } catch (error) {
       setOptimizerResult(null);
-      window.alert(error instanceof Error ? error.message : 'Unable to run dispatch planner.');
+      setDispatchError(error instanceof Error ? error.message : 'Unable to run dispatch planner. Try again or review the dispatch inputs.');
     } finally {
       setIsSolving(false);
     }
@@ -134,7 +136,17 @@ export const VRPDispatchPanel: React.FC<VRPDispatchPanelProps> = ({
         </button>
       </div>
 
-      {/* Real-time Optimization Telemetry Tiles */}
+      {dispatchError && (
+        <div role="alert" className="rounded-xl border border-red-500/30 bg-red-950/30 px-3.5 py-3 text-sm text-red-200 flex items-start gap-2">
+          <ShieldAlert className="w-4 h-4 shrink-0 mt-0.5 text-red-300" />
+          <div>
+            <strong className="block text-red-100">Dispatch planner could not run</strong>
+            <span className="text-red-200/80">{dispatchError}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Real-time Optimization Telemetry Tiles */
       {optimizerResult && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
           <div className="bg-slate-900/90 border border-emerald-500/30 rounded-lg p-2.5">
