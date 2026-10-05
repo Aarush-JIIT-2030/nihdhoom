@@ -109,10 +109,30 @@ test('demo operational data is opt-in and production starts empty', () => {
 test('live dashboard KPIs are derived from current records', () => {
   const app = read('src/App.tsx');
   assert.match(app, /const acresScheduled = fields\.reduce/);
-  assert.match(app, /const totalPayoutInr = fields\.reduce/);
   assert.match(app, /acresScheduled=\{acresScheduled\}/);
   assert.doesNotMatch(app, /acresScheduled=\{88\.4\}/);
-  assert.doesNotMatch(app, /totalPayoutInr=\{128150\}/);
+});
+
+test('payment KPI plumbing and browser alerts stay out of the release UI', () => {
+  const dashboard = read('src/components/LiveKPIDashboard.tsx');
+  const landing = read('src/components/Landing/AgenticLanding.tsx');
+  const dispatch = read('src/components/OpsConsole/VRPDispatchPanel.tsx');
+  assert.doesNotMatch(dashboard, /totalPayoutInr/);
+  assert.doesNotMatch(landing, /totalPayoutInr/);
+  assert.doesNotMatch(dispatch, /window\.alert/);
+  assert.match(dispatch, /role="alert"/);
+});
+
+test('Telegram is the primary farmer channel and legacy WhatsApp webhook is absent', () => {
+  assert.ok(!exists('api/notify/whatsapp-webhook.ts'));
+  assert.match(read('docs/TELEGRAM-INTEGRATION.md'), /primary conversational farmer channel/);
+  assert.match(read('.env.example'), /TELEGRAM_BOT_TOKEN/);
+});
+
+test('onboarding does not collect financial identifiers while payment is disabled', () => {
+  const onboarding = read('src/components/FarmerOnboarding/FarmerOnboarding.tsx');
+  assert.doesNotMatch(onboarding, /UPI ID \(Preferred\)/);
+  assert.match(onboarding, /does not ask for a real UPI ID or bank account/);
 });
 
 test('live field normalization does not invent Punjab coordinates', () => {
