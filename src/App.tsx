@@ -34,6 +34,7 @@ const ClearanceBooking = lazy(() => import('./components/ClearanceBooking/Cleara
 import { INITIAL_STORAGE_YARDS, INITIAL_BUYERS } from './data/mockData';
 import { Field } from './types';
 import { prefetchWorkspace } from './lib/workspacePrefetch';
+import { WorkspaceLoading } from './components/WorkspaceLoading';
 import { useAppController } from './state/useAppController';
 import { generateNonBurnCertificate } from './utils/spatialVerification';
 import { Globe, Box, Map, Sparkles, ShieldCheck, Zap, UserCheck, Leaf } from 'lucide-react';
