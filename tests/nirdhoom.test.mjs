@@ -218,3 +218,31 @@ test('Telegram Mini App identity is verified server-side', () => {
   assert.doesNotMatch(source, /async function verifyInitData/);
   assert.match(source, /Telegram account is not linked to a NIRDHOOM profile/);
 });
+
+
+test('theme preference is applied before React boot and themes are shell-safe', () => {
+  const html = read('index.html');
+  const toggle = read('src/components/ThemeToggle.tsx');
+  const css = read('src/index.css');
+  assert.match(html, /localStorage\.getItem\('nirdhoom-theme'\)/);
+  assert.doesNotMatch(html, /data-theme="kisan" style="background:/);
+  assert.match(toggle, /localStorage\.setItem\(STORAGE_KEY, theme\)/);
+  assert.match(css, /html\[data-theme="dark"\] \.nirdhoom-field-app/);
+  assert.match(css, /html\[data-theme="light"\] \.nirdhoom-field-app/);
+});
+
+test('Hindi text converter is present and uses bounded transliteration requests', () => {
+  const converter = read('src/components/FarmerSurface/HindiTextConverter.tsx');
+  const telegram = read('src/components/FarmerSurface/TelegramSimulator.tsx');
+  assert.match(converter, /hi-t-i0-und/);
+  assert.match(converter, /AbortController/);
+  assert.match(converter, /7000/);
+  assert.match(converter, /Roman Hindi/);
+  assert.match(telegram, /HindiTextConverter/);
+});
+
+test('farmer onboarding does not render two competing surfaces for one tab', () => {
+  const app = read('src/App.tsx');
+  const matches = app.match(/activeTab === 'FARMER_ONBOARDING'/g) || [];
+  assert.equal(matches.length, 1);
+});
