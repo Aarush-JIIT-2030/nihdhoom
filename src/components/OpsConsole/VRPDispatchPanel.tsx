@@ -105,11 +105,11 @@ export const VRPDispatchPanel: React.FC<VRPDispatchPanelProps> = ({
           <div className="flex items-center gap-2">
             <Cpu className="w-5 h-5 text-emerald-400" />
             <h3 className="font-bold text-base text-white tracking-tight">
-              OR-Tools VRP Dispatch Engine (Time-Windows)
+              Capacity Match & Route Planner
             </h3>
           </div>
           <p className="text-xs text-slate-400 mt-0.5">
-            Constrained scheduling using machine capacity, field coordinates and recorded clearance deadlines
+            Match available machine capacity to field demand, then optimise the route. Live capacity is authoritative only when returned by the connected service.
           </p>
         </div>
 
@@ -208,9 +208,9 @@ export const VRPDispatchPanel: React.FC<VRPDispatchPanelProps> = ({
       {/* Machine Fleet Schedule Cards */}
       <div className="flex flex-col gap-2">
         <div className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
-          <span>Active Machines & Sequenced Routes</span>
+          <span>Machine matches & sequenced routes</span>
           <span className="text-[11px] text-emerald-400 font-normal">
-            Click a machine to inspect the computed route
+            Click a match to inspect why the route was selected
           </span>
         </div>
 
