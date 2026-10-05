@@ -189,3 +189,13 @@ test('Telegram outbound notifications remain dispatcher/admin-only', () => {
   assert.match(source, /validChatId/);
   assert.match(source, /AbortSignal\.timeout\(10000\)/);
 });
+
+test('Telegram Mini App identity is verified server-side', () => {
+  const source = read('api/notify/telegram-miniapp-auth.ts');
+  assert.match(source, /WebAppData/);
+  assert.match(source, /auth_date/);
+  assert.match(source, /10 \* 60/);
+  assert.match(source, /TELEGRAM_BOT_TOKEN/);
+  assert.match(source, /telegram_user_id/);
+  assert.match(source, /Telegram account is not linked to a NIRDHOOM profile/);
+});
