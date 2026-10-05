@@ -163,7 +163,7 @@ export const CarbonMarketplace: React.FC = () => {
             <div>
               <div className="flex items-center gap-2 flex-wrap">
                 <h3 className="font-extrabold text-lg text-white font-['Outfit']">
-                  Carbon Credit Marketplace
+                  Carbon Market Simulator
                 </h3>
                 <span className="badge badge-emerald text-xs">Verra · Gold Standard · ART</span>
               </div>
@@ -331,7 +331,7 @@ export const CarbonMarketplace: React.FC = () => {
             <div className="glass-panel p-4 flex flex-col gap-3 border-emerald-500/30">
               <div className="flex items-center gap-2 border-b border-slate-800 pb-2.5">
                 <DollarSign className="w-4 h-4 text-emerald-400" />
-                <h4 className="font-bold text-sm text-white">Credit Purchase Simulator</h4>
+                <h4 className="font-bold text-sm text-white">Credit Retirement Simulator</h4>
               </div>
 
               <div className="bg-slate-950/70 p-3 rounded-lg border border-slate-800 text-xs flex flex-col gap-1.5">
