@@ -28,6 +28,7 @@ import { ImpactResearch } from './components/ImpactResearch/ImpactResearch';
 import { HarvestIntelligence } from './components/HarvestIntelligence/HarvestIntelligence';
 import { FieldProvenancePanel } from './components/FieldProvenance/FieldProvenancePanel';
 import { FieldJobBoard } from './components/FieldJobs/FieldJobBoard';
+import { ClearanceBooking } from './components/ClearanceBooking/ClearanceBooking';
 
 
 import { INITIAL_STORAGE_YARDS, INITIAL_BUYERS } from './data/mockData';
@@ -112,6 +113,10 @@ export function App() {
             onOpenImpact={() => setActiveTab('IMPACT_RESEARCH')}
             onNavigate={(tab) => setActiveTab(tab as ActiveTab)}
           />
+        )}
+
+        {activeTab === 'FARMER_ONBOARDING' && (
+          <ClearanceBooking fields={fields} demoMode={demoMode} onBooked={(fieldId, amount) => handleUpdateFieldStatus(fieldId, 'SCHEDULED', amount)} />
         )}
 
         {activeTab === 'RESIDUE_POOLS' && (
