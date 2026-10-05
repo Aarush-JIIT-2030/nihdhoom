@@ -26,6 +26,9 @@ const required = [
   'api/notify/telegram-webhook.ts',
   'api/notify/telegram-link.ts',
   'api/notify/telegram-miniapp-auth.ts',
+  'src/components/FarmerSurface/TelegramSimulator.tsx',
+  'supabase/migrations/202610050001_nirdhoom_telegram_identity.sql',
+  'supabase/migrations/202610050002_nirdhoom_telegram_webhook_idempotency.sql',
   'supabase/migrations/202609270001_nirdhoom_core.sql',
   'supabase/migrations/202609270002_nirdhoom_production.sql',
   'supabase/migrations/202609270003_nirdhoom_v6.sql',
@@ -64,6 +67,8 @@ const v78 = read('supabase/migrations/202610020011_nirdhoom_residue_pooling_secu
 const v79 = read('supabase/migrations/202610020012_nirdhoom_residue_pool_verification_gate.sql');
 const v80 = read('supabase/migrations/202610040001_machine_privacy_and_pool_member_visibility.sql');
 const v81 = read('supabase/migrations/202610040002_revoke_trigger_function_execute.sql');
+const telegramWebhook = read('api/notify/telegram-webhook.ts');
+const telegramDedupe = read('supabase/migrations/202610050002_nirdhoom_telegram_webhook_idempotency.sql');
 const controller = read('src/state/useAppController.ts');
 const envExample = read('.env.example');
 
@@ -105,6 +110,7 @@ const checks = [
   ['Telegram secure linking', read('api/notify/telegram-link.ts').includes('SUPABASE_SERVICE_ROLE_KEY') && read('api/notify/telegram-link.ts').includes('10 * 60 * 1000')],
   ['Telegram Mini App identity verification', read('api/notify/telegram-miniapp-auth.ts').includes('WebAppData') && read('api/notify/telegram-miniapp-auth.ts').includes('auth_date') && read('api/notify/telegram-miniapp-auth.ts').includes('TELEGRAM_BOT_TOKEN')],
   ['Telegram outbound auth boundary', /verifyDispatcher\(req\)/.test(read('api/notify/telegram.ts'))],
+  ['Telegram webhook idempotency', telegramWebhook.includes('claimTelegramUpdate') && telegramWebhook.includes('telegram_webhook_updates') && telegramWebhook.includes('duplicate: true') && telegramDedupe.includes('update_id bigint primary key')],
   ['API auth boundary', /verifyDispatcher\(req\)/.test(read('api/notify/whatsapp.ts')) && /verifyDispatcher\(req\)/.test(read('api/notify/ivr.ts'))],
   ['dispatch solver secret', read('api/dispatch.ts').includes('DISPATCH_SERVICE_TOKEN')],
   ['payment remains non-money-moving', read('api/payments/initiate.ts').includes('status(501)') && read('api/payments/initiate.ts').includes('No money movement was attempted')],
