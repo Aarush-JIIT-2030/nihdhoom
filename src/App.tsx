@@ -241,6 +241,8 @@ function WorkspaceHeader({ activeTab, demoMode, onNavigate }: WorkspaceHeaderPro
               type="button"
               className={`workspace-journey-step ${index === journeyIndex ? 'is-current' : ''} ${index < journeyIndex ? 'is-done' : ''}`}
               onClick={() => onNavigate(item.tab)}
+              onMouseEnter={() => prefetchWorkspace(item.tab)}
+              onFocus={() => prefetchWorkspace(item.tab)}
               title={item.label}
             >
               <span className="workspace-journey-number">{index + 1}</span>
