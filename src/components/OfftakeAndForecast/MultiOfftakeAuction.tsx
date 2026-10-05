@@ -90,7 +90,7 @@ export const MultiOfftakeAuction: React.FC = () => {
             </h4>
           </div>
           <span className="text-xs text-slate-400">
-            Real-time Quality Matching Engine
+            Demo quality-matching simulator
           </span>
         </div>
 
