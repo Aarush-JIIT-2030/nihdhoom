@@ -302,6 +302,7 @@ test('application uses one field-first theme and no theme switcher', () => {
   assert.match(html, /<html lang="en" data-theme="kisan">/);
   assert.doesNotMatch(html, /nirdhoom-theme/);
   assert.doesNotMatch(header, /ThemeToggle/);
+  assert.ok(!exists('src/components/ThemeToggle.tsx'));
   assert.match(css, /html\[data-theme="kisan"\]/);
   assert.match(theme, /html\[data-theme="kisan"\]/);
   assert.doesNotMatch(theme, /html\[data-theme="dark"\] \{/);
