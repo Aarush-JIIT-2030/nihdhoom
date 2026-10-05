@@ -858,3 +858,132 @@ html[data-theme="kisan"] .nirdhoom-field-app .text-red-400 { color:#b33d35 !impo
   html[data-theme="kisan"] .field-step,
   html[data-theme="kisan"] .field-list-row { transition:none; }
 }
+
+
+/* =========================================================
+   NIRDHOOM HOME — visual storytelling + layered navigation
+   ========================================================= */
+html[data-theme="kisan"] .home-hero { position:relative; min-height:560px; border-radius:30px; overflow:hidden; margin-bottom:2rem; box-shadow:0 26px 80px -38px rgba(27,67,40,.30); background:#173522; }
+html[data-theme="kisan"] .home-hero-image { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center 48%; }
+html[data-theme="kisan"] .home-hero-overlay { position:absolute; inset:0; background:linear-gradient(90deg,rgba(10,39,23,.88) 0%,rgba(17,56,31,.66) 42%,rgba(17,56,31,.20) 76%,rgba(17,56,31,.10) 100%),linear-gradient(0deg,rgba(8,33,20,.48),transparent 48%); }
+html[data-theme="kisan"] .home-hero-content { position:relative; z-index:1; min-height:560px; max-width:760px; display:flex; flex-direction:column; justify-content:center; padding:clamp(1.5rem,5vw,4.8rem); color:white; }
+html[data-theme="kisan"] .home-eyebrow { display:inline-flex; align-items:center; gap:.5rem; width:max-content; padding:.45rem .72rem; border:1px solid rgba(255,255,255,.25); border-radius:999px; background:rgba(255,255,255,.11); backdrop-filter:blur(10px); font-size:.68rem; font-weight:900; letter-spacing:.03em; }
+html[data-theme="kisan"] .home-hero h1 { margin-top:1.1rem; font-family:'Outfit','DM Sans',sans-serif; font-size:clamp(2.7rem,6vw,5.5rem); line-height:.96; letter-spacing:-.055em; font-weight:900; }
+html[data-theme="kisan"] .home-hero h1 span { color:#d9edbd; }
+html[data-theme="kisan"] .home-hero p { max-width:650px; margin-top:1.3rem; font-size:clamp(.9rem,1.4vw,1.08rem); line-height:1.7; color:rgba(255,255,255,.82); }
+html[data-theme="kisan"] .home-actions { display:flex; flex-wrap:wrap; gap:.7rem; margin-top:1.6rem; }
+html[data-theme="kisan"] .home-primary,.home-secondary { display:inline-flex; align-items:center; justify-content:center; gap:.45rem; min-height:46px; padding:.75rem 1rem; border-radius:14px; font-size:.74rem; font-weight:900; transition:transform .18s ease,background .18s ease; }
+html[data-theme="kisan"] .home-primary { background:#f2c45e; color:#24451f; box-shadow:0 10px 28px rgba(0,0,0,.16); }
+html[data-theme="kisan"] .home-primary:hover { transform:translateY(-2px); background:#f6d37d; }
+html[data-theme="kisan"] .home-secondary { color:white; border:1px solid rgba(255,255,255,.25); background:rgba(255,255,255,.10); backdrop-filter:blur(10px); }
+html[data-theme="kisan"] .home-secondary:hover { transform:translateY(-2px); background:rgba(255,255,255,.16); }
+html[data-theme="kisan"] .home-trust-row { display:flex; flex-wrap:wrap; gap:.8rem 1.2rem; margin-top:1.5rem; padding-top:1rem; border-top:1px solid rgba(255,255,255,.16); font-size:.66rem; color:rgba(255,255,255,.72); }
+html[data-theme="kisan"] .home-trust-row span { display:inline-flex; align-items:center; gap:.35rem; }
+html[data-theme="kisan"] .home-trust-row svg { width:14px; height:14px; color:#d8eebf; }
+
+html[data-theme="kisan"] .home-intro { display:grid; grid-template-columns:minmax(0,1fr) minmax(280px,.7fr); gap:2rem; align-items:end; padding:2.5rem .25rem 1.2rem; }
+html[data-theme="kisan"] .home-section-kicker { color:#317348; font-size:.67rem; font-weight:900; letter-spacing:.14em; text-transform:uppercase; }
+html[data-theme="kisan"] .home-intro h2,.home-role-heading h2,.home-product-layer h2,.home-story-copy h2,.home-evidence-copy h2,.home-bottom-cta h2 { margin-top:.35rem; color:#173522; font-family:'Outfit','DM Sans',sans-serif; font-size:clamp(1.65rem,3vw,2.6rem); line-height:1.08; letter-spacing:-.045em; font-weight:900; }
+html[data-theme="kisan"] .home-intro p,.home-role-heading p,.home-product-layer p,.home-story-copy p,.home-evidence-copy p,.home-bottom-cta p { color:#607563; font-size:.88rem; line-height:1.75; }
+
+html[data-theme="kisan"] .home-workflow { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1rem; margin-top:1.1rem; }
+html[data-theme="kisan"] .home-workflow-card { overflow:hidden; border:1px solid rgba(31,122,70,.12); border-radius:20px; background:#fff; box-shadow:0 14px 38px rgba(35,76,44,.065); transition:transform .2s ease,box-shadow .2s ease; }
+html[data-theme="kisan"] .home-workflow-card:hover { transform:translateY(-4px); box-shadow:0 22px 48px rgba(35,76,44,.12); }
+html[data-theme="kisan"] .home-workflow-image { position:relative; height:155px; overflow:hidden; background:#e8efe2; }
+html[data-theme="kisan"] .home-workflow-image img { width:100%; height:100%; object-fit:cover; transition:transform .45s ease; }
+html[data-theme="kisan"] .home-workflow-card:hover .home-workflow-image img { transform:scale(1.04); }
+html[data-theme="kisan"] .home-workflow-image > span { position:absolute; left:.75rem; top:.75rem; display:grid; place-items:center; width:34px; height:34px; border-radius:11px; background:rgba(255,255,255,.92); color:#24643b; font-size:.68rem; font-weight:900; box-shadow:0 5px 15px rgba(0,0,0,.12); }
+html[data-theme="kisan"] .home-workflow-body { padding:1rem; }
+html[data-theme="kisan"] .home-card-icon { width:17px; height:17px; color:#2c8050; }
+html[data-theme="kisan"] .home-workflow-body h3,.home-role-card h3 { margin-top:.45rem; color:#183b25; font-size:.92rem; font-weight:900; }
+html[data-theme="kisan"] .home-workflow-body p,.home-role-card p { margin-top:.35rem; min-height:48px; color:#6b7c6c; font-size:.72rem; line-height:1.55; }
+html[data-theme="kisan"] .home-card-link { display:inline-flex; align-items:center; gap:.2rem; margin-top:.7rem; color:#287346; font-size:.66rem; font-weight:900; }
+html[data-theme="kisan"] .home-card-link svg { width:13px; height:13px; }
+
+html[data-theme="kisan"] .home-product-layer { display:grid; grid-template-columns:minmax(270px,.72fr) minmax(0,1.28fr); gap:1rem; margin-top:4rem; padding:1.2rem; border-radius:26px; background:linear-gradient(135deg,#e9f2e4,#f7f2df); border:1px solid rgba(31,122,70,.11); }
+html[data-theme="kisan"] .home-layer-copy { padding:1.4rem; align-self:center; }
+html[data-theme="kisan"] .home-layer-copy p { margin-top:.8rem; max-width:480px; }
+html[data-theme="kisan"] .home-mini-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:.55rem; margin-top:1.2rem; }
+html[data-theme="kisan"] .home-mini-grid > div { display:grid; grid-template-columns:auto 1fr; column-gap:.5rem; padding:.72rem; border:1px solid rgba(31,122,70,.10); border-radius:14px; background:rgba(255,255,255,.72); }
+html[data-theme="kisan"] .home-mini-grid svg { grid-row:span 2; width:16px; height:16px; color:#2b7a49; margin-top:.15rem; }
+html[data-theme="kisan"] .home-mini-grid strong { color:#174c2c; font-size:1.15rem; line-height:1; }
+html[data-theme="kisan"] .home-mini-grid span { color:#6c7e6e; font-size:.58rem; margin-top:.2rem; }
+html[data-theme="kisan"] .home-map-card { overflow:hidden; min-width:0; border:1px solid rgba(31,122,70,.12); border-radius:21px; background:#fff; box-shadow:0 14px 35px rgba(35,76,44,.07); }
+html[data-theme="kisan"] .home-map-header { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:.85rem 1rem; border-bottom:1px solid rgba(31,122,70,.09); }
+html[data-theme="kisan"] .home-map-header div { display:flex; flex-direction:column; gap:.12rem; }
+html[data-theme="kisan"] .home-map-header span:first-child { color:#779079; font-size:.55rem; font-weight:900; letter-spacing:.13em; }
+html[data-theme="kisan"] .home-map-header strong { color:#173522; font-size:.78rem; }
+html[data-theme="kisan"] .home-live-pill { display:inline-flex; align-items:center; gap:.35rem; padding:.35rem .55rem; border-radius:999px; background:#eef7eb; color:#317348; font-size:.58rem; font-weight:800; }
+html[data-theme="kisan"] .home-live-pill i { width:6px; height:6px; border-radius:50%; background:#3b9a5c; }
+
+html[data-theme="kisan"] .home-role-section { margin-top:4rem; }
+html[data-theme="kisan"] .home-role-heading { display:flex; justify-content:space-between; align-items:end; gap:2rem; margin-top:.3rem; }
+html[data-theme="kisan"] .home-role-heading p { max-width:510px; }
+html[data-theme="kisan"] .home-role-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-top:1.2rem; }
+html[data-theme="kisan"] .home-role-card { min-height:205px; padding:1.15rem; border:1px solid rgba(31,122,70,.11); border-radius:20px; background:#fff; box-shadow:0 12px 32px rgba(35,76,44,.055); }
+html[data-theme="kisan"] .home-role-icon { display:grid; place-items:center; width:40px; height:40px; border-radius:13px; }
+html[data-theme="kisan"] .home-role-icon svg { width:19px; height:19px; }
+html[data-theme="kisan"] .home-role-card.green .home-role-icon { background:#e5f3e6; color:#2b7a49; }
+html[data-theme="kisan"] .home-role-card.sky .home-role-icon { background:#e5f3f7; color:#2d7787; }
+html[data-theme="kisan"] .home-role-card.wheat .home-role-icon { background:#fbf1dc; color:#93691a; }
+html[data-theme="kisan"] .home-role-card.soil .home-role-icon { background:#f3e8dc; color:#8a5c35; }
+
+html[data-theme="kisan"] .home-split-story,.home-evidence { display:grid; grid-template-columns:1fr 1fr; min-height:390px; overflow:hidden; margin-top:4rem; border-radius:26px; border:1px solid rgba(31,122,70,.11); background:#fff; box-shadow:0 16px 40px rgba(35,76,44,.07); }
+html[data-theme="kisan"] .home-story-image,.home-evidence-image { min-height:320px; }
+html[data-theme="kisan"] .home-story-image img,.home-evidence-image img { width:100%; height:100%; object-fit:cover; }
+html[data-theme="kisan"] .home-story-copy,.home-evidence-copy { padding:clamp(1.4rem,4vw,3rem); align-self:center; }
+html[data-theme="kisan"] .home-value-list { display:grid; gap:.7rem; margin-top:1.2rem; }
+html[data-theme="kisan"] .home-value-list div { display:flex; gap:.65rem; align-items:flex-start; padding:.65rem; border-radius:13px; background:#f7faf5; color:#617461; font-size:.7rem; line-height:1.5; }
+html[data-theme="kisan"] .home-value-list svg { flex:none; width:16px; height:16px; color:#2d7c4b; margin-top:.1rem; }
+html[data-theme="kisan"] .home-text-button { display:inline-flex; align-items:center; gap:.45rem; margin-top:1.2rem; padding:0; color:#287346; font-size:.72rem; font-weight:900; }
+html[data-theme="kisan"] .home-text-button svg { width:15px; height:15px; }
+html[data-theme="kisan"] .home-evidence { background:#edf5e9; }
+html[data-theme="kisan"] .home-evidence-copy { order:1; }
+html[data-theme="kisan"] .home-evidence-image { order:2; }
+html[data-theme="kisan"] .home-evidence-points { display:grid; grid-template-columns:1fr 1fr; gap:.55rem; margin-top:1.2rem; }
+html[data-theme="kisan"] .home-evidence-points span { display:flex; align-items:center; gap:.4rem; padding:.55rem .65rem; border-radius:11px; background:rgba(255,255,255,.72); color:#52705a; font-size:.62rem; font-weight:800; }
+html[data-theme="kisan"] .home-evidence-points svg { width:14px; height:14px; color:#2b7a49; }
+
+html[data-theme="kisan"] .home-proof { display:grid; grid-template-columns:repeat(4,1fr); margin-top:3rem; border-top:1px solid rgba(31,122,70,.12); border-bottom:1px solid rgba(31,122,70,.12); }
+html[data-theme="kisan"] .home-proof > div { padding:1.3rem 1rem; border-right:1px solid rgba(31,122,70,.10); }
+html[data-theme="kisan"] .home-proof > div:last-child { border-right:0; }
+html[data-theme="kisan"] .home-proof span,.home-proof small { display:block; color:#80917f; font-size:.55rem; font-weight:900; letter-spacing:.12em; text-transform:uppercase; }
+html[data-theme="kisan"] .home-proof strong { display:block; margin-top:.3rem; color:#1c633a; font-size:1.7rem; letter-spacing:-.04em; }
+html[data-theme="kisan"] .home-proof small { margin-top:.15rem; font-size:.58rem; letter-spacing:0; text-transform:none; font-weight:600; }
+
+html[data-theme="kisan"] .home-bottom-cta { display:grid; grid-template-columns:1fr 1fr; gap:2rem; align-items:center; margin-top:4rem; padding:2rem; border-radius:26px; background:#173522; color:white; }
+html[data-theme="kisan"] .home-bottom-cta h2 { color:white; }
+html[data-theme="kisan"] .home-bottom-cta p { margin-top:.6rem; color:rgba(255,255,255,.68); max-width:580px; }
+html[data-theme="kisan"] .home-bottom-cta .home-section-kicker { color:#cfe7ba; }
+html[data-theme="kisan"] .home-cta-links { display:grid; grid-template-columns:1fr 1fr; gap:.55rem; }
+html[data-theme="kisan"] .home-cta-links span { display:flex; align-items:center; gap:.5rem; padding:.72rem; border:1px solid rgba(255,255,255,.11); border-radius:13px; background:rgba(255,255,255,.06); color:rgba(255,255,255,.8); font-size:.66rem; font-weight:800; }
+html[data-theme="kisan"] .home-cta-links svg { width:15px; height:15px; color:#d5e9c0; }
+
+@media(max-width:1050px){
+ html[data-theme="kisan"] .home-workflow{grid-template-columns:repeat(2,1fr)}
+ html[data-theme="kisan"] .home-role-grid{grid-template-columns:repeat(2,1fr)}
+ html[data-theme="kisan"] .home-product-layer{grid-template-columns:1fr}
+}
+@media(max-width:720px){
+ html[data-theme="kisan"] .home-hero,.home-hero-content{min-height:590px}
+ html[data-theme="kisan"] .home-hero-content{padding:1.35rem}
+ html[data-theme="kisan"] .home-hero h1{font-size:2.75rem}
+ html[data-theme="kisan"] .home-hero-overlay{background:linear-gradient(180deg,rgba(10,39,23,.38),rgba(10,39,23,.86) 60%,rgba(10,39,23,.94))}
+ html[data-theme="kisan"] .home-actions{flex-direction:column}
+ html[data-theme="kisan"] .home-primary,.home-secondary{width:100%}
+ html[data-theme="kisan"] .home-intro,.home-role-heading,.home-split-story,.home-evidence,.home-bottom-cta{grid-template-columns:1fr}
+ html[data-theme="kisan"] .home-intro{padding-top:1.6rem}
+ html[data-theme="kisan"] .home-workflow{grid-template-columns:1fr}
+ html[data-theme="kisan"] .home-workflow-image{height:190px}
+ html[data-theme="kisan"] .home-role-grid{grid-template-columns:1fr}
+ html[data-theme="kisan"] .home-role-card{min-height:0}
+ html[data-theme="kisan"] .home-split-story,.home-evidence{margin-top:2.5rem}
+ html[data-theme="kisan"] .home-story-image,.home-evidence-image{min-height:230px}
+ html[data-theme="kisan"] .home-evidence-copy{order:1}
+ html[data-theme="kisan"] .home-evidence-image{order:2}
+ html[data-theme="kisan"] .home-proof{grid-template-columns:1fr 1fr}
+ html[data-theme="kisan"] .home-proof > div:nth-child(2){border-right:0}
+ html[data-theme="kisan"] .home-proof > div{border-bottom:1px solid rgba(31,122,70,.10)}
+ html[data-theme="kisan"] .home-bottom-cta{padding:1.35rem}
+}
+@media(prefers-reduced-motion:reduce){html[data-theme="kisan"] .home-workflow-card,.home-workflow-image img,.home-primary,.home-secondary{transition:none}}
