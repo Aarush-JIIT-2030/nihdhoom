@@ -219,7 +219,7 @@ Configure only the values needed for the feature you are testing.
 | `FIRMS_MAP_KEY` | Server only | NASA FIRMS integration credential, if enabled |
 | `REQUIRE_AUTH_FOR_FIRMS` | Server only | Set to `true` when requiring authenticated access |
 | `DISPATCH_SERVICE_URL` | Server only | URL of a separately deployed dispatch service, if configured |
-| WhatsApp / IVR variables | Server only | Configure only after provider setup and consent flow are verified |
+| IVR variables | Server only | Configure only after provider setup and consent flow are verified; Telegram is the primary farmer channel |
 
 See `.env.example` for the repository's current variable names. Never commit `.env.local`, tokens, private keys, or real farmer data.
 
