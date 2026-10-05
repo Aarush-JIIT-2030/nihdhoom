@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, startTransition } from 'react';
+import { useEffect, useRef, useState, startTransition } from 'react';
 import { prefetchWorkspace } from '../lib/workspacePrefetch';
 import {
   Activity, BarChart3, Bot, ChevronDown, ClipboardList, HelpCircle, Leaf, Map,
