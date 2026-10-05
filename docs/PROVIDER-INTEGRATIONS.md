@@ -35,19 +35,20 @@ These portals expose district/tehsil/village/Khasra-oriented cadastral viewing. 
 
 NIRDHOOM therefore does **not** scrape or treat the public viewer as an authoritative API. The repository has an authenticated adapter endpoint that returns the official source references. Automatic polygon ingestion should be switched on only after the relevant state authority provides an authorized API/export or approved data feed. Until then, `boundary_source=cadastral` must only be set by an authorized ingestion workflow.
 
-## 4. WhatsApp — Meta WhatsApp Business Cloud API
+## 4. Telegram — primary farmer channel
 
-NIRDHOOM uses Meta's official Cloud API for outbound operational messaging and now includes a signature-verified webhook endpoint at `/api/notify/whatsapp-webhook`.
+NIRDHOOM uses Telegram as the primary farmer communication channel in this release. The repository includes a secret-verified webhook, authenticated one-time account linking and server-side Mini App identity verification.
 
 Required secrets:
 
-- `WHATSAPP_ACCESS_TOKEN`
-- `WHATSAPP_PHONE_NUMBER_ID`
-- `WHATSAPP_GRAPH_API_VERSION`
-- `WHATSAPP_APP_SECRET`
-- `WHATSAPP_VERIFY_TOKEN`
+- `TELEGRAM_BOT_TOKEN`
+- `TELEGRAM_WEBHOOK_SECRET`
+- `TELEGRAM_BOT_USERNAME`
+- `SUPABASE_SERVICE_ROLE_KEY`
 
-The webhook validates `x-hub-signature-256` before accepting events. Do not log message bodies or tokens.
+The webhook validates Telegram's `x-telegram-bot-api-secret-token` header. Link tokens are single-use, expire after 10 minutes and are stored only as SHA-256 hashes. Mini App `initData` is verified server-side before a linked profile is returned.
+
+See `docs/TELEGRAM-INTEGRATION.md` for setup and operational checks.
 
 ## 5. Weather — Open-Meteo
 
