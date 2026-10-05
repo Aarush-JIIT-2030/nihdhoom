@@ -198,7 +198,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
               src="/images/punjab_farmer_hero.jpg" 
               alt="Punjabi Farmer in Sangrur Field using Nirdhoom Dispatch"
               className="w-full h-72 sm:h-80 object-cover object-center group-hover:scale-105 transition-transform duration-500"
-            />
+            / loading="lazy" decoding="async">
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
             <div className="absolute bottom-4 left-4 right-4">
               <div className="flex items-center gap-2 mb-1.5">
@@ -223,7 +223,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
                 src="/images/satellite_firms.jpg" 
                 alt="NASA FIRMS Satellite Thermal Observation of Punjab Indo-Gangetic Plains"
                 className="w-full h-40 sm:h-44 object-cover object-center group-hover:scale-105 transition-transform duration-500"
-              />
+              / loading="lazy" decoding="async">
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
               <div className="absolute bottom-3 left-3 right-3">
                 <div className="flex items-center justify-between text-[10px] font-mono text-cyan-300 mb-1">
@@ -241,7 +241,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
                 src="/images/baling_fleet.jpg" 
                 alt="Subsidised CRM Baler Fleet Active in Sangrur Fields"
                 className="w-full h-32 sm:h-36 object-cover object-center group-hover:scale-105 transition-transform duration-500"
-              />
+              / loading="lazy" decoding="async">
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
               <div className="absolute bottom-2.5 left-3 right-3">
                 <div className="flex items-center justify-between text-[10px] font-mono text-amber-300 mb-0.5">
