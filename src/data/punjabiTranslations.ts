@@ -7,7 +7,7 @@ export interface ChatMessage {
   hasVoiceNote?: boolean;
   voiceNoteDuration?: string;
   voiceNoteScript?: string;
-  hasInteractiveCard?: 'SLOT_GUARANTEE' | 'UPI_RECEIPT' | 'VARIETY_SELECTOR';
+  hasInteractiveCard?: 'BOOKING_ESTIMATE' | 'VARIETY_SELECTOR';
   metadata?: Record<string, unknown>;
 }
 
