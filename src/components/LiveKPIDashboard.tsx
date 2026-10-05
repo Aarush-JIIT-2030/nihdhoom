@@ -186,9 +186,7 @@ export const LiveKPIDashboard: React.FC<LiveKPIDashboardProps> = ({
 
           {/* Payment status */}
           <div
-            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border transition-all duration-500 min-w-[220px] ${
-bg-slate-900/80 border-slate-700/50
-            }`}
+            className="flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-700/50 bg-slate-900/80 min-w-[220px]"
           >
             <Zap className="w-4 h-4 shrink-0 text-slate-500" />
             <div className="text-xs overflow-hidden">
