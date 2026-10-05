@@ -240,6 +240,18 @@ test('Telegram Mini App identity is verified server-side', () => {
 });
 
 
+test('competition demo ends with a field clearance passport and avoids unsupported claims', () => {
+  const demo = read('src/components/DemoWalkthrough.tsx');
+  const passport = read('src/components/VerificationLayer/ClearancePassport.tsx');
+  assert.match(demo, /ClearancePassport/);
+  assert.match(demo, /trust proof/i);
+  assert.doesNotMatch(demo, /subsidised balers/);
+  assert.doesNotMatch(demo, /late-sowing penalty exposure/);
+  assert.match(passport, /Field Clearance Passport/);
+  assert.match(passport, /not a legal certificate/);
+  assert.match(passport, /payment receipt/);
+});
+
 test('competition center is wired for both RIDE and WarriorHacks', () => {
   const header = read('src/components/Header.tsx');
   const app = read('src/App.tsx');
