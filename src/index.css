@@ -3024,3 +3024,52 @@ html[data-theme="dark"] .nirdhoom-field-app .text-emerald-950 {
 @media (max-width: 560px) {
   .home-gap-grid { grid-template-columns: 1fr; }
 }
+
+.competition-proof-grid,
+.competition-score-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: .65rem;
+  margin-top: 1rem;
+}
+.competition-proof-grid > div,
+.competition-score-grid > div {
+  padding: .9rem;
+  border: 1px solid rgba(148,163,184,.16);
+  border-radius: 15px;
+  background: rgba(15,23,42,.48);
+}
+.competition-proof-grid strong {
+  display: block;
+  color: #fbbf24;
+  font-size: 1.55rem;
+  line-height: 1;
+}
+.competition-proof-grid span,
+.competition-score-grid span {
+  display: block;
+  margin-top: .45rem;
+  color: #cbd5e1;
+  font-size: .7rem;
+  line-height: 1.45;
+}
+.competition-proof-grid small {
+  display: block;
+  margin-top: .5rem;
+  color: #94a3b8;
+  font-size: .58rem;
+}
+.competition-source-note {
+  margin: .85rem 0 0;
+  color: #94a3b8;
+  font-size: .64rem;
+  line-height: 1.5;
+}
+.competition-score-grid b { display: block; color: #6ee7b7; font-size: .8rem; }
+.competition-score-grid strong { display: block; margin-top: .6rem; color: #f8fafc; font-size: .62rem; }
+@media (max-width: 900px) {
+  .competition-proof-grid, .competition-score-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 560px) {
+  .competition-proof-grid, .competition-score-grid { grid-template-columns: 1fr; }
+}
