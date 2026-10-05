@@ -246,3 +246,17 @@ test('farmer onboarding does not render two competing surfaces for one tab', () 
   const matches = app.match(/activeTab === 'FARMER_ONBOARDING'/g) || [];
   assert.equal(matches.length, 1);
 });
+
+
+test('live field identity keeps the Supabase UUID separate from the display id', () => {
+  const types = read('src/types/index.ts');
+  const controller = read('src/state/useAppController.ts');
+  const booking = read('src/components/ClearanceBooking/ClearanceBooking.tsx');
+  const weather = read('src/components/HarvestIntelligence/HarvestIntelligence.tsx');
+  const audit = read('src/components/VerificationLayer/SatelliteAudit.tsx');
+  assert.match(types, /dbId\?: string/);
+  assert.match(controller, /dbId: f\.dbId/);
+  assert.match(booking, /p_field_id: selected\.dbId \|\| selected\.id/);
+  assert.match(weather, /selectedWeatherField\.dbId \|\| selectedWeatherField\.id/);
+  assert.match(audit, /p_field_id: field\.dbId \|\| field\.id/);
+});
