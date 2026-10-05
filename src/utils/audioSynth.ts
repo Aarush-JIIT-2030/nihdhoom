@@ -93,7 +93,7 @@ class AudioManager {
     }
   }
 
-  // Play Punjabi Voice Note for Farmer WhatsApp interface
+  // Play Punjabi Voice Note for Farmer Telegram interface
   speakPunjabiVoiceNote(text: string, onEnd?: () => void) {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
