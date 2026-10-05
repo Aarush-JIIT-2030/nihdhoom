@@ -1,4 +1,4 @@
-import { Activity, MapPinned, Truck, Users, Factory, ShieldCheck, Leaf, Search, AlertTriangle, Clock } from 'lucide-react';
+import { Activity, MapPinned, Truck, Users, Factory, ShieldCheck, Leaf, ArrowRight, CalendarDays, IndianRupee, CheckCircle2, Map, Wheat } from 'lucide-react';
 import { Field, Machine, BurnEvent, StorageYard, Buyer } from '../../types';
 import { OpsMap } from '../OpsConsole/OpsMap';
 
@@ -17,158 +17,100 @@ export function CommandCenter({ fields, machines, fireEvents, storageYards, buye
   const activeJobs = fields.filter(f => ['SCHEDULED','BALING_IN_PROGRESS'].includes(f.status)).length;
   const verified = fields.filter(f => f.status === 'VERIFIED_NON_BURN' || f.is_verified_non_burn).length;
   const machineActive = machines.filter(m => m.status !== 'MAINTENANCE').length;
-  const estimatedResidue = fields.reduce((sum, f) => sum + ((Number(f.acreage) || 0) * 1.8), 0);
+  const acreage = fields.reduce((sum, f) => sum + (Number(f.acreage) || 0), 0);
+  const estimatedResidue = acreage * 1.8;
+  const cleared = fields.filter(f => ['CLEARED_PENDING_AUDIT','VERIFIED_NON_BURN'].includes(f.status)).length;
+
+  const steps = [
+    { label: 'Register field', icon: MapPinned, done: fields.length > 0, tab: 'fields' },
+    { label: 'Book clearance', icon: CalendarDays, done: activeJobs > 0, tab: 'book' },
+    { label: 'Track machine', icon: Truck, done: machines.length > 0, tab: 'track' },
+    { label: 'Verify evidence', icon: CheckCircle2, done: verified > 0, tab: 'verify' },
+  ];
 
   return (
-    <div className="space-y-4">
-      <section className="rounded-2xl border border-emerald-500/20 bg-slate-950/70 p-4 md:p-5">
-        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <div>
-            <div className="flex items-center gap-2 text-emerald-300 text-xs font-bold uppercase tracking-widest">
-              <Activity className="h-4 w-4" /> NIRDHOOM Command Center
+    <div className="field-page space-y-5 pb-8">
+      <section className="field-hero overflow-hidden rounded-[28px] border bg-white">
+        <div className="grid lg:grid-cols-[1.25fr_.75fr]">
+          <div className="relative p-5 sm:p-7 lg:p-9">
+            <div className="field-kicker"><Wheat className="h-4 w-4" /> NIRDHOOM • Field-first crop residue management</div>
+            <h1 className="mt-3 max-w-3xl font-['Outfit'] text-3xl font-black leading-tight text-emerald-950 sm:text-4xl lg:text-5xl">
+              Clear the field.<br /><span className="text-emerald-600">Keep the value.</span>
+            </h1>
+            <p className="mt-4 max-w-2xl text-sm leading-6 text-emerald-950/65 sm:text-base">
+              Book residue clearance, track the machine, capture evidence and move verified residue to the right buyer — all from one simple field workflow.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-2.5">
+              <button onClick={() => onOpenResidue()} className="field-button field-button-primary"><Leaf className="h-4 w-4" /> Open residue market <ArrowRight className="h-4 w-4" /></button>
+              <button onClick={() => onOpenImpact()} className="field-button field-button-secondary"><ShieldCheck className="h-4 w-4" /> View verified impact</button>
             </div>
-            <h1 className="mt-1 text-2xl md:text-3xl font-black text-white">Field → Residue → Operations → Offtake</h1>
-            <p className="mt-1 max-w-3xl text-sm text-slate-400">One operational surface for CHCs, mapping, residue supply, verification and buyer demand. Impact is calculated downstream from verified evidence.</p>
+            <div className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+              {steps.map((step) => {
+                const Icon = step.icon;
+                return <div key={step.label} className={`field-step ${step.done ? 'is-done' : ''}`}><Icon className="h-4 w-4" /><div><div className="text-[11px] font-bold">{step.label}</div><div className="text-[9px] opacity-65">{step.done ? 'Ready' : 'Next step'}</div></div></div>;
+              })}
+            </div>
           </div>
-          <div className="flex gap-2">
-            <button onClick={onOpenResidue} className="rounded-lg bg-emerald-600 px-3 py-2 text-xs font-bold text-white hover:bg-emerald-500">Open Residue & Pools</button>
-            <button onClick={onOpenImpact} className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs font-bold text-slate-200 hover:bg-slate-800">Impact & Research</button>
+          <div className="field-hero-side p-5 sm:p-7">
+            <div className="flex items-center justify-between">
+              <div><div className="text-xs font-bold uppercase tracking-wider text-emerald-900/45">Today at a glance</div><div className="mt-1 text-lg font-black text-emerald-950">Field network</div></div>
+              <div className="rounded-2xl bg-emerald-700 p-3 text-white shadow-lg"><Leaf className="h-5 w-5" /></div>
+            </div>
+            <div className="mt-5 grid grid-cols-2 gap-2.5">
+              {[
+                ['Fields', fields.length, MapPinned],
+                ['Active jobs', activeJobs, Truck],
+                ['Machines', machineActive, Factory],
+                ['Verified', verified, ShieldCheck],
+                ['Area', `${acreage.toFixed(1)} ac`, Map],
+                ['Residue', `${estimatedResidue.toFixed(1)} t`, Leaf],
+              ].map(([label, value, Icon]: any) => <div key={String(label)} className="field-stat"><Icon className="h-4 w-4 text-emerald-700" /><div className="mt-1 text-xl font-black text-emerald-950">{value}</div><div className="text-[10px] font-medium text-emerald-900/50">{label}</div></div>)}
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="grid grid-cols-2 lg:grid-cols-6 gap-3">
-        {[
-          ['Fields', fields.length, MapPinned],
-          ['Active jobs', activeJobs, Truck],
-          ['CHC machines', machineActive, Factory],
-          ['Verified fields', verified, ShieldCheck],
-          ['Est. residue', `${estimatedResidue.toFixed(1)} t`, Leaf],
-          ['Fire context', fireEvents.length, Search],
-        ].map(([label, value, Icon]: any) => (
-          <div key={String(label)} className="rounded-xl border border-slate-800 bg-slate-900/60 p-3">
-            <Icon className="h-4 w-4 text-emerald-400" />
-            <div className="mt-2 text-xl font-black text-white">{value}</div>
-            <div className="text-[11px] text-slate-500">{label}</div>
+      <section className="grid gap-4 lg:grid-cols-[1.35fr_.65fr]">
+        <div className="field-card overflow-hidden">
+          <div className="flex flex-col gap-2 border-b border-emerald-900/10 p-4 sm:flex-row sm:items-center sm:justify-between">
+            <div><div className="flex items-center gap-2 text-sm font-black text-emerald-950"><Map className="h-4 w-4 text-emerald-600" /> Field & machine map</div><p className="mt-0.5 text-xs text-emerald-900/55">See fields, machines and operational context together.</p></div>
+            <span className="field-chip"><Activity className="h-3 w-3" /> Live operational layer</span>
           </div>
-        ))}
-      </section>
-
-      <section className="rounded-2xl border border-cyan-500/20 bg-slate-950/60 p-4">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-          <div>
-            <div className="flex items-center gap-2 text-cyan-300">
-              <ShieldCheck className="h-4 w-4" />
-              <h2 className="font-bold text-white">Evidence → Impact readiness</h2>
-            </div>
-            <p className="mt-1 text-xs text-slate-500">Impact is downstream of verified operational evidence. This panel never treats planned residue as verified impact.</p>
+          <div className="p-2 sm:p-3">
+            <OpsMap fields={fields} machines={machines} fireEvents={fireEvents} storageYards={storageYards} buyers={buyers} selectedField={null} onSelectField={onSelectField} activeRoutePolyline={[]} />
           </div>
-          <button onClick={onOpenImpact} className="rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-2 text-xs font-bold text-cyan-200 hover:bg-cyan-500/15">Open research workspace</button>
         </div>
 
-        <div className="mt-4 grid grid-cols-2 lg:grid-cols-5 gap-2">
-          {[
-            ['Registered', fields.length, 'field records'],
-            ['Scheduled / active', activeJobs, 'operations'],
-            ['Cleared for audit', fields.filter(f => f.status === 'CLEARED_PENDING_AUDIT').length, 'awaiting verification'],
-            ['Verified', verified, 'non-burn fields'],
-            ['Impact-ready', verified, 'verified records'],
-          ].map(([label, value, note]) => (
-            <div key={String(label)} className="rounded-xl border border-slate-800 bg-slate-900/60 p-3">
-              <div className="text-lg font-black text-white">{value}</div>
-              <div className="text-[11px] font-semibold text-slate-300">{label}</div>
-              <div className="mt-0.5 text-[10px] text-slate-500">{note}</div>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-3 rounded-lg border border-amber-500/20 bg-amber-500/5 px-3 py-2 text-[11px] text-amber-200">
-          Residue estimate is a planning coefficient only ({'1.8 t/acre'} in the current prototype). It must not be presented as measured recovery or a carbon claim without a versioned methodology and evidence.
-        </div>
-      </section>
-
-      <section className="rounded-2xl border border-rose-500/20 bg-slate-950/70 p-4">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <div className="flex items-center gap-2 text-rose-300">
-              <AlertTriangle className="h-4 w-4" />
-              <h2 className="font-bold text-white">Exceptions & action queue</h2>
-            </div>
-            <p className="mt-1 text-xs text-slate-500">Operational exceptions are more actionable than vanity counters. Resolve these before expanding capacity.</p>
-          </div>
-          <span className="rounded-full border border-rose-500/20 bg-rose-500/10 px-2 py-1 text-[10px] font-bold text-rose-300">
-            {fields.filter(f => f.status === 'REGISTERED').length + machines.filter(m => m.status === 'MAINTENANCE').length} open signals
-          </span>
-        </div>
-        <div className="mt-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-          {[
-            ...fields.filter(f => f.status === 'REGISTERED').slice(0, 3).map(f => ({
-              key: `field-${f.id}`,
-              title: 'Needs dispatch',
-              detail: `${f.khasra_no} • ${f.acreage} ac • ${f.village}`,
-              icon: Truck,
-            })),
-            ...machines.filter(m => m.status === 'MAINTENANCE').slice(0, 3).map(m => ({
-              key: `machine-${m.id}`,
-              title: 'Machine unavailable',
-              detail: `${m.name} • ${m.home_chc}`,
-              icon: Factory,
-            })),
-            ...fields.filter(f => new Date(f.clearance_deadline).getTime() < Date.now() && !['VERIFIED_NON_BURN'].includes(f.status)).slice(0, 3).map(f => ({
-              key: `deadline-${f.id}`,
-              title: 'Deadline risk',
-              detail: `${f.khasra_no} • deadline ${new Date(f.clearance_deadline).toLocaleDateString()}`,
-              icon: Clock,
-            })),
-          ].slice(0, 6).map(item => {
-            const Icon = item.icon;
-            return (
-              <div key={item.key} className="rounded-xl border border-slate-800 bg-slate-900/60 p-3">
-                <div className="flex items-center gap-2">
-                  <Icon className="h-4 w-4 text-rose-300" />
-                  <span className="text-xs font-bold text-white">{item.title}</span>
-                </div>
-                <div className="mt-1 text-[11px] text-slate-400">{item.detail}</div>
-              </div>
-            );
-          })}
-          {fields.filter(f => f.status === 'REGISTERED').length === 0 && machines.filter(m => m.status === 'MAINTENANCE').length === 0 && (
-            <div className="md:col-span-2 lg:col-span-3 rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3 text-xs text-emerald-200">
-              No current registration or maintenance exceptions. Deadline risk is still evaluated from the latest field records.
-            </div>
-          )}
-        </div>
-      </section>
-
-      <section className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        <div className="lg:col-span-8 rounded-2xl border border-slate-800 bg-slate-950/60 p-3">
-          <div className="mb-3 flex items-center justify-between">
-            <div>
-              <h2 className="font-bold text-white">Live Operational Map</h2>
-              <p className="text-xs text-slate-500">Fields, machines, routes and supply-demand context.</p>
-            </div>
-            <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-1 text-[10px] text-emerald-300">MAP = SOURCE OF TRUTH</span>
-          </div>
-          <OpsMap fields={fields} machines={machines} fireEvents={fireEvents} storageYards={storageYards} buyers={buyers} selectedField={null} onSelectField={onSelectField} activeRoutePolyline={[]} />
-        </div>
-
-        <div className="lg:col-span-4 space-y-3">
-          <div className="rounded-2xl border border-cyan-500/20 bg-slate-950/70 p-4">
-            <div className="flex items-center gap-2 text-cyan-300"><Factory className="h-4 w-4" /><h2 className="font-bold">CHC Operations</h2></div>
+        <div className="space-y-4">
+          <div className="field-card p-4 sm:p-5">
+            <div className="flex items-center gap-2"><Factory className="h-4 w-4 text-emerald-700" /><h2 className="font-black text-emerald-950">CHC & machines</h2></div>
+            <p className="mt-1 text-xs text-emerald-900/55">Community machines available for field clearance.</p>
             <div className="mt-4 space-y-2">
-              {machines.length === 0 ? <p className="text-sm text-slate-500">No live machine records assigned yet.</p> : machines.slice(0, 6).map(m => (
-                <div key={m.id} className="flex items-center justify-between rounded-lg border border-slate-800 bg-slate-900/60 p-2.5">
-                  <div><div className="text-xs font-bold text-white">{m.name}</div><div className="text-[10px] text-slate-500">{m.home_chc}</div></div>
-                  <span className="text-[10px] font-bold text-cyan-300">{m.status}</span>
-                </div>
-              ))}
+              {machines.length === 0 ? <div className="field-empty">No live machine assigned yet.</div> : machines.slice(0, 5).map(m => <div key={m.id} className="field-list-row"><div><div className="text-xs font-bold text-emerald-950">{m.name}</div><div className="text-[10px] text-emerald-900/50">{m.home_chc}</div></div><span className="field-status">{m.status}</span></div>)}
             </div>
           </div>
 
-          <div className="rounded-2xl border border-amber-500/20 bg-slate-950/70 p-4">
-            <div className="flex items-center gap-2 text-amber-300"><Users className="h-4 w-4" /><h2 className="font-bold">Supply → Demand</h2></div>
-            <p className="mt-2 text-sm text-slate-400">Residue is pooled only after field-level evidence and quantity are established. Buyer demand can then trigger a procurement pool.</p>
-            <button onClick={onOpenResidue} className="mt-3 w-full rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs font-bold text-amber-200">Manage Deal Pools</button>
+          <div className="field-card p-4 sm:p-5">
+            <div className="flex items-center gap-2"><Leaf className="h-4 w-4 text-amber-700" /><h2 className="font-black text-emerald-950">Residue pathway</h2></div>
+            <p className="mt-1 text-xs leading-5 text-emerald-900/60">Field → baling → evidence → verified residue → buyer pool. Planned residue is never counted as verified impact.</p>
+            <button onClick={onOpenResidue} className="field-button field-button-wheat mt-4 w-full"><Leaf className="h-4 w-4" /> Open residue pools <ArrowRight className="h-4 w-4" /></button>
+          </div>
+
+          <div className="field-card p-4 sm:p-5">
+            <div className="flex items-center gap-2"><IndianRupee className="h-4 w-4 text-sky-700" /><h2 className="font-black text-emerald-950">Farmer value</h2></div>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <div className="field-mini"><div className="text-[10px] text-emerald-900/50">Cleared fields</div><div className="text-lg font-black text-emerald-950">{cleared}</div></div>
+              <div className="field-mini"><div className="text-[10px] text-emerald-900/50">Verified fields</div><div className="text-lg font-black text-emerald-950">{verified}</div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="field-card p-4 sm:p-5">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div><h2 className="text-base font-black text-emerald-950">Built around the field, not the dashboard</h2><p className="mt-1 text-xs text-emerald-900/55">Every layer has a clear job: register → book → operate → prove → pool → sell → measure.</p></div>
+          <div className="flex flex-wrap gap-2 text-[10px] font-bold">
+            <span className="field-chip">Field</span><span className="field-chip field-chip-wheat">Residue</span><span className="field-chip field-chip-sky">Operations</span><span className="field-chip field-chip-green">Evidence</span><span className="field-chip field-chip-amber">Offtake</span>
           </div>
         </div>
       </section>
