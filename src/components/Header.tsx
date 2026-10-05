@@ -164,32 +164,7 @@ export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: H
           </div>
         </div>
 
-        <div className="field-mobile-tabs flex items-center gap-1 overflow-x-auto border-t py-2 lg:hidden scrollbar-none" aria-label="Main NIRDHOOM sections">
-          {primaryNav.map((item) => {
-            const Icon = item.icon;
-            return (
-              <button key={item.id} onClick={() => navigate(item.id)} className={`field-mobile-tab ${activeTab === item.id ? 'is-active' : ''}`}>
-                <Icon className="h-3.5 w-3.5" /><span>{item.short}</span>
-              </button>
-            );
-          })}
-        </div>
 
-        {/* Mobile task navigation: keep the five farmer actions one tap away. */}
-        <nav className="field-mobile-bottom-nav lg:hidden" aria-label="Farmer quick navigation">
-          {[
-            ['OVERVIEW', 'Home', Activity],
-            ['FIELD_JOBS', 'Fields', ClipboardList],
-            ['FARMER_ONBOARDING', 'Book', Tractor],
-            ['OPS_CONSOLE', 'Track', Map],
-            ['RESIDUE_POOLS', 'Market', Leaf],
-          ].map(([id, label, Icon]) => {
-            const NavIcon = Icon as typeof Activity;
-            return <button key={String(id)} type="button" onClick={() => navigate(id as ActiveTab)} className={activeTab === id ? 'is-active' : ''} aria-current={activeTab === id ? 'page' : undefined}>
-              <NavIcon className="h-4 w-4" /><span>{String(label)}</span>
-            </button>;
-          })}
-        </nav>
 
         {mobileOpen && (
           <div className="field-mobile-panel lg:hidden">
@@ -204,5 +179,29 @@ export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: H
         )}
       </div>
     </header>
+
+    <nav className="field-mobile-bottom-nav lg:hidden" aria-label="Farmer quick navigation">
+      {[
+        ['OVERVIEW', 'Home', Activity],
+        ['FIELD_JOBS', 'Fields', ClipboardList],
+        ['FARMER_ONBOARDING', 'Book', Tractor],
+        ['OPS_CONSOLE', 'Track', Map],
+        ['RESIDUE_POOLS', 'Market', Leaf],
+      ].map(([id, label, Icon]) => {
+        const NavIcon = Icon as typeof Activity;
+        return (
+          <button
+            key={String(id)}
+            type="button"
+            onClick={() => navigate(id as ActiveTab)}
+            className={activeTab === id ? 'is-active' : ''}
+            aria-current={activeTab === id ? 'page' : undefined}
+          >
+            <NavIcon className="h-4 w-4" />
+            <span>{String(label)}</span>
+          </button>
+        );
+      })}
+    </nav>
   );
 }
