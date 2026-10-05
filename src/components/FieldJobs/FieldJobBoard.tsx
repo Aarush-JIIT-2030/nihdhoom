@@ -242,7 +242,7 @@ export function FieldJobBoard({
       <section className="grid grid-cols-2 lg:grid-cols-5 gap-2.5">
         {[
           ['My fields', rows.length, 'text-white'],
-          ['Needs your attention', actionCount, 'text-amber-300'],
+          ['Needs action', actionCount, 'text-amber-300'],
           ['Proof', evidenceCount, 'text-violet-300'],
           ['Parali lots', lotCount, 'text-orange-300'],
           ['Ready for buyer', readyCount, 'text-emerald-300'],
