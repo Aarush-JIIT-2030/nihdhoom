@@ -1595,3 +1595,341 @@ html[data-theme="kisan"] .evidence-language span {
     grid-template-columns:1fr 1fr;
   }
 }
+
+
+/* =========================================================
+   READABILITY + SAFFRON ACCESSIBILITY PASS — Oct 2026
+   Farmer-facing screens prioritize readable type, contrast and
+   generous touch targets. Saffron is an accent, not a text color.
+   ========================================================= */
+html[data-theme="kisan"] {
+  --saffron: #F28C28;
+  --saffron-deep: #D96F18;
+  --saffron-soft: #FFF1DF;
+  --saffron-pale: #FFF8EF;
+  --ink: #173522;
+  --ink-muted: #536657;
+  --ink-soft: #6B7A6C;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app p,
+html[data-theme="kisan"] .nirdhoom-field-app li {
+  line-height: 1.65;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app button,
+html[data-theme="kisan"] .nirdhoom-field-app input,
+html[data-theme="kisan"] .nirdhoom-field-app select,
+html[data-theme="kisan"] .nirdhoom-field-app textarea {
+  font-size: .92rem;
+}
+
+html[data-theme="kisan"] .nirdhoom-field-app button {
+  min-height: 44px;
+}
+
+html[data-theme="kisan"] .field-nav-item,
+html[data-theme="kisan"] .field-more-button {
+  font-size: .78rem !important;
+  min-height: 44px !important;
+}
+
+html[data-theme="kisan"] .field-mobile-tab {
+  min-height: 44px !important;
+  padding:.55rem .75rem !important;
+  font-size:.78rem !important;
+}
+
+html[data-theme="kisan"] .field-mobile-bottom-nav {
+  bottom: max(10px, env(safe-area-inset-bottom));
+  padding:6px;
+  gap:4px;
+}
+
+html[data-theme="kisan"] .field-mobile-bottom-nav button {
+  min-height:56px;
+  font-size:.72rem;
+  gap:4px;
+  color:#526656;
+}
+
+html[data-theme="kisan"] .field-mobile-bottom-nav button svg {
+  width:19px;
+  height:19px;
+}
+
+html[data-theme="kisan"] .home-section-kicker {
+  color:var(--saffron-deep);
+  font-size:.78rem;
+  line-height:1.35;
+  letter-spacing:.10em;
+}
+
+html[data-theme="kisan"] .home-eyebrow {
+  font-size:.78rem;
+  line-height:1.35;
+}
+
+html[data-theme="kisan"] .home-hero p {
+  font-size:clamp(1rem,2.2vw,1.12rem);
+  line-height:1.72;
+  color:rgba(255,255,255,.94);
+}
+
+html[data-theme="kisan"] .home-primary {
+  background:var(--saffron);
+  color:#2B261B;
+  font-size:.9rem;
+  min-height:50px;
+  padding:.8rem 1.05rem;
+}
+
+html[data-theme="kisan"] .home-primary:hover {
+  background:#F6A24A;
+}
+
+html[data-theme="kisan"] .home-secondary {
+  font-size:.9rem;
+  min-height:50px;
+  padding:.8rem 1.05rem;
+}
+
+html[data-theme="kisan"] .home-trust-row {
+  font-size:.78rem;
+  line-height:1.5;
+}
+
+html[data-theme="kisan"] .home-intro p,
+html[data-theme="kisan"] .home-role-heading p,
+html[data-theme="kisan"] .home-product-layer p,
+html[data-theme="kisan"] .home-story-copy p,
+html[data-theme="kisan"] .home-evidence-copy p,
+html[data-theme="kisan"] .home-bottom-cta p {
+  font-size:.98rem;
+  color:#536657;
+  line-height:1.7;
+}
+
+html[data-theme="kisan"] .home-workflow-body h3,
+html[data-theme="kisan"] .home-role-card h3 {
+  font-size:1.02rem;
+  line-height:1.3;
+}
+
+html[data-theme="kisan"] .home-workflow-body p,
+html[data-theme="kisan"] .home-role-card p {
+  min-height:0;
+  font-size:.9rem;
+  line-height:1.6;
+  color:#5D6E60;
+}
+
+html[data-theme="kisan"] .home-card-link {
+  font-size:.82rem;
+  color:var(--saffron-deep);
+}
+
+html[data-theme="kisan"] .home-farmer-actions-intro strong {
+  font-size:1rem;
+}
+
+html[data-theme="kisan"] .home-farmer-actions-intro > span:last-child,
+html[data-theme="kisan"] .home-farmer-actions > button small {
+  font-size:.76rem;
+  line-height:1.4;
+}
+
+html[data-theme="kisan"] .home-farmer-actions > button b {
+  font-size:.84rem;
+}
+
+html[data-theme="kisan"] .home-farmer-actions > button {
+  min-height:62px;
+}
+
+html[data-theme="kisan"] .home-mini-grid span {
+  font-size:.74rem;
+  color:#607163;
+}
+
+html[data-theme="kisan"] .home-mini-grid strong {
+  font-size:1.25rem;
+}
+
+html[data-theme="kisan"] .home-map-header span:first-child,
+html[data-theme="kisan"] .home-live-pill {
+  font-size:.68rem;
+}
+
+html[data-theme="kisan"] .home-map-header strong {
+  font-size:.92rem;
+}
+
+html[data-theme="kisan"] .home-value-list div {
+  font-size:.9rem;
+  line-height:1.55;
+}
+
+html[data-theme="kisan"] .home-text-button {
+  min-height:44px;
+  font-size:.86rem;
+  color:var(--saffron-deep);
+}
+
+html[data-theme="kisan"] .home-evidence-points span {
+  min-height:44px;
+  font-size:.78rem;
+}
+
+html[data-theme="kisan"] .home-proof span,
+html[data-theme="kisan"] .home-proof small {
+  font-size:.68rem;
+}
+
+html[data-theme="kisan"] .home-proof strong {
+  font-size:clamp(1.55rem,4vw,1.9rem);
+}
+
+html[data-theme="kisan"] .farmer-surface p,
+html[data-theme="kisan"] .farmer-surface label,
+html[data-theme="kisan"] .farmer-surface li {
+  font-size:.92rem;
+  line-height:1.6;
+}
+
+html[data-theme="kisan"] .farmer-surface small {
+  font-size:.78rem !important;
+  line-height:1.45;
+}
+
+html[data-theme="kisan"] .farmer-surface .text-xs {
+  font-size:.82rem !important;
+  line-height:1.45 !important;
+}
+
+html[data-theme="kisan"] .farmer-surface .text-\[11px\],
+html[data-theme="kisan"] .farmer-surface .text-\[10px\] {
+  font-size:.76rem !important;
+  line-height:1.4 !important;
+}
+
+html[data-theme="kisan"] .farmer-surface .text-\[9px\],
+html[data-theme="kisan"] .farmer-surface .text-\[8px\] {
+  font-size:.7rem !important;
+  line-height:1.35 !important;
+}
+
+html[data-theme="kisan"] .farmer-surface button {
+  min-height:44px;
+}
+
+html[data-theme="kisan"] .farmer-surface input,
+html[data-theme="kisan"] .farmer-surface select,
+html[data-theme="kisan"] .farmer-surface textarea {
+  min-height:46px;
+  font-size:.95rem !important;
+}
+
+html[data-theme="kisan"] .farmer-step-strip strong,
+html[data-theme="kisan"] .market-journey b,
+html[data-theme="kisan"] .evidence-language b {
+  font-size:.86rem;
+}
+
+html[data-theme="kisan"] .farmer-step-strip small,
+html[data-theme="kisan"] .market-journey small,
+html[data-theme="kisan"] .evidence-language span {
+  font-size:.72rem;
+  line-height:1.45;
+}
+
+html[data-theme="kisan"] .field-journey > span {
+  font-size:.65rem;
+}
+
+html[data-theme="kisan"] .field-journey i {
+  width:11px;
+  height:11px;
+}
+
+html[data-theme="kisan"] .field-journey > span:not(:last-child)::after {
+  top:5px;
+}
+
+html[data-theme="kisan"] .saffron-accent {
+  color:var(--saffron-deep) !important;
+}
+
+html[data-theme="kisan"] .saffron-surface {
+  background:var(--saffron-soft) !important;
+  border-color:rgba(242,140,40,.25) !important;
+}
+
+@media(max-width:639px) {
+  html[data-theme="kisan"] .nirdhoom-field-app {
+    font-size:16px;
+  }
+  html[data-theme="kisan"] .home-hero,
+  html[data-theme="kisan"] .home-hero-content {
+    min-height:620px;
+  }
+  html[data-theme="kisan"] .home-hero h1 {
+    font-size:clamp(2.55rem,12vw,3.35rem);
+    line-height:1.02;
+  }
+  html[data-theme="kisan"] .home-hero p {
+    font-size:1rem;
+  }
+  html[data-theme="kisan"] .home-section-kicker {
+    font-size:.75rem;
+  }
+  html[data-theme="kisan"] .home-intro p,
+  html[data-theme="kisan"] .home-role-heading p,
+  html[data-theme="kisan"] .home-product-layer p,
+  html[data-theme="kisan"] .home-story-copy p,
+  html[data-theme="kisan"] .home-evidence-copy p,
+  html[data-theme="kisan"] .home-bottom-cta p {
+    font-size:.98rem;
+  }
+  html[data-theme="kisan"] .home-workflow-body p,
+  html[data-theme="kisan"] .home-role-card p {
+    font-size:.92rem;
+  }
+  html[data-theme="kisan"] .home-farmer-actions > button {
+    min-height:72px;
+  }
+  html[data-theme="kisan"] .home-farmer-actions > button b {
+    font-size:.86rem;
+  }
+  html[data-theme="kisan"] .home-farmer-actions > button small {
+    font-size:.75rem;
+  }
+  html[data-theme="kisan"] .home-evidence-points {
+    grid-template-columns:1fr;
+  }
+  html[data-theme="kisan"] .home-evidence-points span {
+    font-size:.82rem;
+  }
+  html[data-theme="kisan"] .home-proof strong {
+    font-size:1.65rem;
+  }
+  html[data-theme="kisan"] .field-mobile-tabs {
+    padding-bottom:3.25rem !important;
+  }
+}
+
+/* Saffron is reserved for actions, provenance notes and important context. */
+html[data-theme="kisan"] .home-hero .home-primary,
+html[data-theme="kisan"] .field-button-wheat {
+  background:var(--saffron) !important;
+  color:#2B261B !important;
+}
+html[data-theme="kisan"] .home-hero .home-eyebrow {
+  border-color:rgba(242,140,40,.55);
+  box-shadow:0 0 0 1px rgba(242,140,40,.10) inset;
+}
