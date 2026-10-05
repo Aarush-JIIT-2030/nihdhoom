@@ -173,7 +173,7 @@ export const ImpactStats: React.FC<ImpactStatsProps> = ({ onNavigateTab }) => {
                   1.25 lakh CRM machines already deployed — we dispatch idle ones with zero capex
                 </h4>
                 <p className="text-[11px] text-slate-300 mt-1 leading-relaxed">
-                  50-80% subsidised baler fleet sitting in CHCs &amp; FPOs. Capacity-aware dispatch + layered evidence review + simulated settlement workflow.
+                  Existing CRM machinery network. NIRDHOOM adds capacity-aware dispatch, layered evidence review and a payment-disabled completion workflow.
                 </p>
               </div>
             </div>
