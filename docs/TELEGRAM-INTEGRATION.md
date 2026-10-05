@@ -34,7 +34,7 @@ Use it for booking confirmation, operator assignment, machine status, verificati
 
 ## Website handoff
 
-The farmer surface links to https://t.me/<BOT_USERNAME>. The website now has an authenticated one-time Telegram link flow: a signed-in NIRDHOOM user requests `/api/notify/telegram-link`, which creates a 10-minute single-use token stored only as a SHA-256 hash. The bot consumes that token through a server-only Supabase RPC and records the Telegram user/chat against the farmer profile. Knowing a Telegram chat ID alone never grants field access. The next stage is a Telegram Mini App using the same NIRDHOOM frontend. The Mini App must verify Telegram initialization data server-side before exposing the farmer's live records.
+The farmer surface links to https://t.me/<BOT_USERNAME>. The website now has an authenticated one-time Telegram link flow: a signed-in NIRDHOOM user requests `/api/notify/telegram-link`, which creates a 10-minute single-use token stored only as a SHA-256 hash. The bot consumes that token through a server-only Supabase RPC and records the Telegram user/chat against the farmer profile. Knowing a Telegram chat ID alone never grants field access. The Mini App identity endpoint is `/api/notify/telegram-miniapp-auth`. It validates Telegram `initData` using the Bot API WebAppData HMAC scheme, rejects stale data, resolves the verified Telegram user against `telegram_identities`, and only then returns the linked NIRDHOOM profile ID. The same NIRDHOOM frontend can therefore be embedded as the Mini App without trusting a client-supplied user ID.
 
 ## Security before pilot
 
