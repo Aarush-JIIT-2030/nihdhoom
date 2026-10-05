@@ -4,7 +4,6 @@ import {
   Menu, MessageSquare, Satellite, Search, ShieldCheck, Sparkles, Smartphone,
   TrendingUp, UserCheck, Wheat, X, Tractor, CircleDollarSign, Trophy
 } from 'lucide-react';
-import { ThemeToggle } from './ThemeToggle';
 
 export type ActiveTab =
   | 'OVERVIEW' | 'RESIDUE_POOLS' | 'IMPACT_RESEARCH' | 'HARVEST_INTELLIGENCE'
@@ -159,8 +158,10 @@ export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: H
             <button onClick={openPitchDrawer} className="hidden sm:flex items-center gap-1.5 rounded-xl border border-emerald-700/15 bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-800 transition hover:bg-emerald-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500">
               <Search className="h-3.5 w-3.5" /> Brief
             </button>
-            <ThemeToggle />
-            <button onClick={() => setMobileOpen((value) => !value)} className="grid h-10 w-10 place-items-center rounded-xl border border-emerald-900/10 bg-white text-emerald-900 lg:hidden" aria-label={mobileOpen ? 'Close navigation' : 'Open navigation'} aria-expanded={mobileOpen}>
+            <button onClick={() => setMobileOpen((value) => !value)} className="field-menu-button grid h-11 w-11 place-items-center rounded-xl border border-emerald-900/10 bg-white text-emerald-900 lg:hidden" aria-label={mobileOpen ? 'Close navigation' : 'Open navigation'} aria-expanded={mobileOpen}>
+              {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            </button>
+            <button onClick={() => setMobileOpen((value) => !value)} className="hidden" aria-label={mobileOpen ? 'Close navigation' : 'Open navigation'} aria-expanded={mobileOpen}>
               {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
             </button>
           </div>
