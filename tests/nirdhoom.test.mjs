@@ -442,3 +442,20 @@ test('farmer OTP uses React Bits CodeSlots with live Supabase verification wirin
   assert.match(lock, /node_modules\/motion/);
   assert.match(lock, /node_modules\/@hugeicons\/react/);
 });
+
+
+test('React Bits Stepper is integrated into farmer onboarding progress', () => {
+  const onboarding = read('src/components/FarmerOnboarding/FarmerOnboarding.tsx');
+  const stepper = read('src/components/FarmerOnboarding/Stepper.tsx');
+  const css = read('src/components/FarmerOnboarding/Stepper.css');
+  assert.match(onboarding, /import Stepper, \{ Step \} from '\.\/Stepper'/);
+  assert.match(onboarding, /<Stepper/);
+  assert.match(onboarding, /initialStep=\{stepIndex \+ 1\}/);
+  assert.match(onboarding, /disableStepIndicators/);
+  assert.match(onboarding, /STEPS\.map\(\(step\) => \(/);
+  assert.match(stepper, /from 'motion\/react'/);
+  assert.match(stepper, /onFinalStepCompleted/);
+  assert.match(stepper, /export function Step/);
+  assert.match(css, /farmer-onboarding-stepper/);
+  assert.match(css, /prefers-reduced-motion/);
+});
