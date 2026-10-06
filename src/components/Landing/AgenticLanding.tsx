@@ -78,33 +78,28 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
 
   return (
     <div className="flex flex-col gap-10">
-      {/* HERO SECTION WITH SPOTLIGHT & AGENTIC STYLING */}
-      <section className="relative rounded-3xl overflow-hidden bg-gradient-to-b from-[#020409] via-[#050c18] to-[#0a1424] border border-emerald-500/25 p-6 sm:p-10 lg:p-14 shadow-2xl">
+      {/* HERO — field-first, with React Bits spotlight kept as a subtle interaction layer */}
+      <section className="relative rounded-3xl overflow-hidden border border-emerald-900/10 bg-gradient-to-br from-[#f7fbf1] via-white to-[#fff6df] p-5 sm:p-8 lg:p-12 shadow-[0_26px_80px_-38px_rgba(35,76,44,.28)]">
         {/* Aceternity Conic Spotlight */}
-        <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="#10b981" />
-        <Spotlight className="top-10 -right-20" fill="#22d3ee" />
-
-        {/* Cyber grid & glowing radial orbs */}
-        <div className="grid-bg" />
-        <div className="orb w-96 h-96 bg-emerald-500/10 top-0 left-1/4 -translate-y-1/2" />
-        <div className="orb w-96 h-96 bg-cyan-500/10 bottom-0 right-1/4 translate-y-1/2" />
+        <Spotlight className="-top-24 left-1/4 opacity-30" fill="#f2a900" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_78%_18%,rgba(242,169,0,.12),transparent_26%),radial-gradient(circle_at_88%_80%,rgba(46,149,84,.12),transparent_30%)]" aria-hidden="true" />
 
         <div className="relative z-10 flex flex-col items-center text-center max-w-5xl mx-auto">
           {/* Top Pill / Badge with animated radar dot */}
-          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-slate-900/80 border border-emerald-500/40 text-emerald-300 text-xs font-mono mb-6 shadow-lg shadow-emerald-500/10 backdrop-blur-md">
+          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/85 border border-emerald-900/10 text-emerald-800 text-xs font-mono mb-6 shadow-lg shadow-emerald-500/10 backdrop-blur-md">
             <span className="badge--dot" />
             <span className="font-bold tracking-wider uppercase">
               FIELD-FIRST CROP-RESIDUE NETWORK
             </span>
-            <span className="text-slate-600">|</span>
-            <span className="text-cyan-300 font-semibold">NIRDHOOM</span>
+            <span className="text-emerald-900/25">|</span>
+            <span className="text-amber-700 font-semibold">NIRDHOOM</span>
           </div>
 
           {/* Main Kinetic Headline */}
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white font-['Outfit'] leading-[1.12] mb-6">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-emerald-950 font-['DM_Sans'] leading-[1.08] mb-6">
             From Field to Verified Parali —{' '}
             <span className="hero-word block sm:inline mt-2 sm:mt-0">
-              <span className="text-gradient">
+              <span className="text-amber-700">
                 {ROTATING_WORDS[wordIndex]}
               </span>
               <svg
@@ -132,15 +127,15 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
           </h1>
 
           {/* Hard-hitting subtitle based on the 1-liner brief */}
-          <p className="text-sm sm:text-base lg:text-lg text-slate-300 max-w-3xl mx-auto leading-relaxed mb-8 font-['Plus_Jakarta_Sans'] font-normal">
-            NIRDHOOM connects the practical chain behind non-burning crop-residue management: <strong className="text-emerald-300 font-semibold">field → booking → machine → proof → parali</strong>. The prototype combines farmer-first workflows, operational dispatch, GPS/evidence capture and layered verification. Demo records are labelled; live capacity, commercial contracts and payment movement are not claimed.
+          <p className="text-sm sm:text-base lg:text-lg text-emerald-950/70 max-w-3xl mx-auto leading-relaxed mb-8 font-['DM_Sans'] font-normal">
+            NIRDHOOM connects the practical chain behind non-burning crop-residue management: <strong className="text-emerald-800 font-semibold">field → booking → machine → proof → parali</strong>. The prototype combines farmer-first workflows, operational dispatch, GPS/evidence capture and layered verification. Demo records are labelled; live capacity, commercial contracts and payment movement are not claimed.
           </p>
 
           {/* Interactive CTAs Bar */}
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-10">
             <button
               onClick={() => onNavigateTab('DEMO_RUNNER')}
-              className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-extrabold text-sm flex items-center gap-2.5 cursor-pointer shadow-xl shadow-emerald-500/30 hover:scale-[1.02] transition-all"
+              className="px-6 py-3.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-emerald-950 font-extrabold text-sm flex items-center gap-2.5 cursor-pointer shadow-xl shadow-emerald-500/30 hover:scale-[1.02] transition-all"
             >
               <Play className="w-4 h-4 fill-slate-950" />
               <span>Start the 2-Minute Competition Demo</span>
@@ -148,7 +143,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
 
             <button
               onClick={() => onNavigateTab('OPS_CONSOLE')}
-              className="px-6 py-3.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-cyan-300 hover:text-cyan-200 border border-cyan-500/40 font-bold text-sm flex items-center gap-2 cursor-pointer shadow-lg shadow-cyan-500/10 hover:scale-[1.02] transition-all"
+              className="px-6 py-3.5 rounded-xl bg-emerald-800 hover:bg-emerald-700 text-white border border-emerald-900/20 font-bold text-sm flex items-center gap-2 cursor-pointer shadow-lg shadow-cyan-500/10 hover:scale-[1.02] transition-all"
             >
               <Bot className="w-4 h-4 text-cyan-400 animate-pulse" />
               <span>Operations & Dispatch</span>
@@ -156,7 +151,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
 
             <button
               onClick={() => onNavigateTab('SATELLITE_AUDIT')}
-              className="px-5 py-3.5 rounded-xl bg-slate-900/70 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/80 font-semibold text-sm flex items-center gap-2 cursor-pointer hover:scale-[1.02] transition-all"
+              className="px-5 py-3.5 rounded-xl bg-white hover:bg-emerald-50 text-emerald-900 border border-emerald-900/10 font-semibold text-sm flex items-center gap-2 cursor-pointer hover:scale-[1.02] transition-all"
             >
               <Globe className="w-4 h-4 text-emerald-400" />
               <span>Field Proof View</span>
@@ -164,7 +159,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
 
             <button
               onClick={() => onNavigateTab('COMPETITION_CENTER')}
-              className="px-5 py-3.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-semibold text-sm flex items-center gap-2 cursor-pointer transition-all"
+              className="px-5 py-3.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-900/10 font-semibold text-sm flex items-center gap-2 cursor-pointer transition-all"
             >
               <Sparkles className="w-4 h-4" />
               <span>Competition Pitch Center</span>
@@ -173,19 +168,19 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
 
           {/* Quick Metrics Bar in Hero with subtle borders */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full max-w-4xl">
-            <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 text-center hover:border-emerald-500/40 transition-colors">
+            <div className="p-3.5 rounded-xl bg-white/85 border border-emerald-900/10 text-center hover:border-emerald-700/30 transition-colors">
               <div className="text-xl sm:text-2xl font-black font-mono text-emerald-400">5 steps</div>
-              <div className="text-[11px] font-mono text-slate-400 mt-1 uppercase">Field → proof journey</div>
+              <div className="text-[11px] font-semibold text-emerald-950/55 mt-1 uppercase">Field → proof journey</div>
             </div>
-            <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 text-center hover:border-cyan-500/40 transition-colors">
-              <div className="text-xl sm:text-2xl font-black font-mono text-cyan-300">GPS + proof</div>
-              <div className="text-[11px] font-mono text-slate-400 mt-1 uppercase">Operator evidence layer</div>
+            <div className="p-3.5 rounded-xl bg-white/85 border border-emerald-900/10 text-center hover:border-emerald-700/30 transition-colors">
+              <div className="text-xl sm:text-2xl font-black font-mono text-emerald-700">GPS + proof</div>
+              <div className="text-[11px] font-mono text-emerald-950/55 mt-1 uppercase">Operator evidence layer</div>
             </div>
-            <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 text-center hover:border-amber-500/40 transition-colors">
+            <div className="p-3.5 rounded-xl bg-white/85 border border-emerald-900/10 text-center hover:border-amber-500/40 transition-colors">
               <div className="text-xl sm:text-2xl font-black font-mono text-amber-400">₹0</div>
               <div className="text-[11px] font-mono text-slate-400 mt-1 uppercase">Payment movement in release</div>
             </div>
-            <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 text-center hover:border-teal-500/40 transition-colors">
+            <div className="p-3.5 rounded-xl bg-white/85 border border-emerald-900/10 text-center hover:border-emerald-700/30 transition-colors">
               <div className="text-xl sm:text-2xl font-black font-mono text-teal-300">Asset-light</div>
               <div className="text-[11px] font-mono text-slate-400 mt-1 uppercase">Coordinate existing machines</div>
             </div>
@@ -195,13 +190,13 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
         {/* Real Ground Reality Visual Showcase: Farmer Hero & Verification */}
         <div className="relative z-10 mt-10 grid grid-cols-1 lg:grid-cols-12 gap-4 max-w-6xl mx-auto">
           {/* Main Visual: Punjab Farmer & Real Field Baler */}
-          <div className="lg:col-span-7 rounded-2xl overflow-hidden border border-emerald-500/30 relative group bg-slate-950">
+          <div className="lg:col-span-7 rounded-2xl overflow-hidden border border-emerald-900/10 relative group bg-white">
             <img 
               src="/images/punjab_farmer_hero.jpg" 
               alt="Punjabi Farmer in Sangrur Field using Nirdhoom Dispatch"
               className="w-full h-72 sm:h-80 object-cover object-center group-hover:scale-105 transition-transform duration-500"
              loading="lazy" decoding="async" />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-emerald-950 via-emerald-950/35 to-transparent" />
             <div className="absolute bottom-4 left-4 right-4">
               <div className="flex items-center gap-2 mb-1.5">
                 <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/30 text-emerald-300 border border-emerald-500/50">
@@ -212,7 +207,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
               <h4 className="text-base sm:text-lg font-bold text-white font-['Outfit']">
                 "Reliability beats rate. Every single time."
               </h4>
-              <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+              <p className="text-xs text-white/80 mt-1 leading-relaxed">
                 Illustrative booking scenario. The displayed farmer, timing, penalty and dispatch details are synthetic demo values, not live service commitments.
               </p>
             </div>
@@ -220,7 +215,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
 
           {/* Secondary Visual: NASA FIRMS 375m Satellite Confirmation */}
           <div className="lg:col-span-5 flex flex-col gap-4">
-            <div className="rounded-2xl overflow-hidden border border-cyan-500/30 relative group bg-slate-950 flex-1">
+            <div className="rounded-2xl overflow-hidden border border-emerald-900/10 relative group bg-slate-950 flex-1">
               <img 
                 src="/images/satellite_firms.jpg" 
                 alt="NASA FIRMS Satellite Thermal Observation of Punjab Indo-Gangetic Plains"
@@ -238,7 +233,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
               </div>
             </div>
 
-            <div className="rounded-2xl overflow-hidden border border-amber-500/30 relative group bg-slate-950 flex-1">
+            <div className="rounded-2xl overflow-hidden border border-amber-900/15 relative group bg-slate-950 flex-1">
               <img 
                 src="/images/baling_fleet.jpg" 
                 alt="Registered baler fleet operating across Sangrur fields"
@@ -246,7 +241,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
                loading="lazy" decoding="async" />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
               <div className="absolute bottom-2.5 left-3 right-3">
-                <div className="flex items-center justify-between text-[10px] font-mono text-amber-300 mb-0.5">
+                <div className="flex items-center justify-between text-[10px] font-mono text-amber-700 mb-0.5">
                   <span>STRANDED PUBLIC CRM INFRASTRUCTURE</span>
                   <span className="text-teal-300 font-bold">Existing CRM network</span>
                 </div>
@@ -261,11 +256,11 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
         {/* Full-Width Interactive 3D Geospatial Digital Twin Banner */}
         <div 
           onClick={() => onNavigateTab('DIGITAL_TWIN_3D')}
-          className="relative z-10 mt-4 rounded-2xl overflow-hidden border border-emerald-500/40 group bg-gradient-to-r from-emerald-950/70 via-slate-900/90 to-teal-950/70 p-4 max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 cursor-pointer hover:border-emerald-400 transition-all shadow-xl hover:shadow-emerald-500/20"
+          className="relative z-10 mt-4 rounded-2xl overflow-hidden border border-emerald-500/40 group bg-gradient-to-r from-emerald-50 via-white to-amber-50 p-4 max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 cursor-pointer hover:border-emerald-400 transition-all shadow-xl hover:shadow-emerald-500/20"
         >
           <div className="flex items-center gap-3.5">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-emerald-500 to-cyan-400 p-0.5 shrink-0 flex items-center justify-center shadow-lg shadow-emerald-500/30">
-              <div className="w-full h-full bg-[#03060f] rounded-[10px] flex items-center justify-center">
+              <div className="w-full h-full bg-emerald-950 rounded-[10px] flex items-center justify-center">
                 <Globe className="w-6 h-6 text-emerald-400 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300" />
               </div>
             </div>
@@ -274,11 +269,11 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
                 <span className="text-base font-bold text-white font-['Outfit']">
                   Interactive 3D Geospatial Digital Twin
                 </span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono font-bold border border-emerald-500/40">
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-800 font-mono font-bold border border-emerald-700/20">
                   Three.js WebGL
                 </span>
               </div>
-              <p className="text-xs text-slate-300 mt-0.5 leading-relaxed">
+              <p className="text-xs text-emerald-950/65 mt-0.5 leading-relaxed">
                 Illustrative geospatial visualization of field and remote-sensing concepts; live observations appear only when a provider-backed data source is configured.
               </p>
             </div>
@@ -293,21 +288,21 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
         </div>
       </section>
 
-      {/* INFINITE MARQUEE TELEMETRY TICKER */}
-      <section className="relative overflow-hidden rounded-2xl bg-slate-950/90 border border-slate-800 py-2.5 shadow-xl">
-        <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#03060f] to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#03060f] to-transparent z-10 pointer-events-none" />
+      {/* DEMO / LIVE SIGNAL TICKER */}
+      <section className="relative overflow-hidden rounded-2xl bg-[#f3f8ed] border border-emerald-900/10 py-2.5 shadow-sm">
+        <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#f3f8ed] to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#f3f8ed] to-transparent z-10 pointer-events-none" />
 
         <Marquee speed={28} pauseOnHover={true}>
           {PUNJAB_DISTRICT_TICKERS.map((t, idx) => (
             <div
               key={idx}
-              className="flex items-center gap-3 px-4 py-1.5 rounded-lg bg-slate-900/80 border border-slate-800 text-xs font-mono shrink-0 hover:border-emerald-500/40 transition-colors"
+              className="flex items-center gap-3 px-4 py-1.5 rounded-lg bg-white border border-emerald-900/10 text-xs font-semibold shrink-0 hover:border-emerald-700/30 transition-colors"
             >
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-              <span className="font-bold text-white">{t.district}</span>
-              <span className="text-slate-600">|</span>
-              <span className="text-emerald-400 font-semibold">{t.status}</span>
+              <span className="font-bold text-emerald-950">{t.district}</span>
+              <span className="text-emerald-900/20">|</span>
+              <span className="text-emerald-800 font-semibold">{t.status}</span>
               <span className="text-slate-600">|</span>
               <span className="text-cyan-300">{t.balers}</span>
               <span className="text-slate-600">|</span>
