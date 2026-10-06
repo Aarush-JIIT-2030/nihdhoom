@@ -16,7 +16,11 @@ Required Vercel variables should be configured in the Vercel dashboard, not comm
 - `DISPATCH_SERVICE_URL`
 - `DISPATCH_SERVICE_TOKEN`
 
-## 2. Farmer OTP — Supabase Auth + Twilio SMS
+## 2. AI assistant — Groq + OpenAI fallback
+
+NIRDHOOM Sathi supports Groq through the OpenAI-compatible Chat Completions API. Configure `GROQ_API_KEY` and optionally `GROQ_MODEL`; when Groq is unavailable, a configured `OPENAI_API_KEY` is used as a fallback. Both providers are server-only and are never exposed to the browser.
+
+## 3. Farmer OTP — Supabase Auth + Twilio SMS
 
 NIRDHOOM uses Supabase Phone Auth for the real farmer OTP flow. The frontend calls `signInWithOtp({ phone })` and `verifyOtp({ phone, token, type: 'sms' })`.
 
@@ -24,7 +28,7 @@ For production, enable Phone authentication in Supabase and configure Twilio as 
 
 The live flow creates/updates a farmer `profiles` row only after successful OTP verification.
 
-## 3. Cadastral / Khasra — Punjab official sources
+## 4. Cadastral / Khasra — Punjab official sources
 
 The integration boundary uses Punjab's official land-record sources:
 
@@ -35,7 +39,7 @@ These portals expose district/tehsil/village/Khasra-oriented cadastral viewing. 
 
 NIRDHOOM therefore does **not** scrape or treat the public viewer as an authoritative API. The repository has an authenticated adapter endpoint that returns the official source references. Automatic polygon ingestion should be switched on only after the relevant state authority provides an authorized API/export or approved data feed. Until then, `boundary_source=cadastral` must only be set by an authorized ingestion workflow.
 
-## 4. Telegram — primary farmer channel
+## 5. Telegram — primary farmer channel
 
 NIRDHOOM uses Telegram as the primary farmer communication channel in this release. The repository includes a secret-verified webhook, authenticated one-time account linking and server-side Mini App identity verification.
 
@@ -50,13 +54,13 @@ The webhook validates Telegram's `x-telegram-bot-api-secret-token` header. Link 
 
 See `docs/TELEGRAM-INTEGRATION.md` for setup and operational checks.
 
-## 5. Weather — Open-Meteo
+## 6. Weather — Open-Meteo
 
 The weather adapter uses Open-Meteo's forecast API for prototype/evaluation use. It requests temperature, humidity, precipitation probability/amount, wind, gusts and shallow soil moisture and persists a snapshot to Supabase when the server service-role key is configured.
 
 Open-Meteo's free endpoint is for non-commercial use and requires CC-BY attribution. For a commercial NIRDHOOM deployment, configure a paid Open-Meteo endpoint/API key (or replace the provider adapter with another commercial weather provider).
 
-## 6. Dispatch — Render + FastAPI + OR-Tools
+## 7. Dispatch — Render + FastAPI + OR-Tools
 
 The OR-Tools service is configured for Render in `render.yaml`. It runs from `services/dispatch-ortools`, exposes `/health` and `/solve`, and requires `DISPATCH_SERVICE_TOKEN`.
 
