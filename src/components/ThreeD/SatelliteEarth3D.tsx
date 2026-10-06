@@ -529,7 +529,7 @@ export const SatelliteEarth3D: React.FC<SatelliteEarth3DProps> = ({
   };
 
   return (
-    <div className="relative w-full h-[520px] lg:h-[640px] rounded-2xl overflow-hidden border border-emerald-500/40 shadow-2xl bg-[#040711]">
+    <div className="satellite-3d-surface relative w-full h-[520px] lg:h-[640px] rounded-2xl overflow-hidden border border-emerald-500/40 shadow-2xl bg-[#040711]">
       {/* 3D WebGL Canvas */}
       <div ref={mountRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
 
@@ -542,12 +542,12 @@ export const SatelliteEarth3D: React.FC<SatelliteEarth3DProps> = ({
           <div>
             <div className="flex items-center gap-1.5">
               <span className="text-xs font-black text-white uppercase tracking-wider font-['Outfit']">
-                3D Agricultural Digital Twin
+                3D spatial evidence view
               </span>
               <span className="badge badge-emerald text-[9px]">FIRMS / VIIRS layer</span>
             </div>
             <div className="text-[10px] text-slate-400 font-mono">
-              VIIRS 375m reference • orbital visualization • event records shown below
+              Illustrative spatial model • event records shown below
             </div>
           </div>
         </div>
@@ -561,7 +561,7 @@ export const SatelliteEarth3D: React.FC<SatelliteEarth3DProps> = ({
           <span className="text-slate-700">|</span>
           <div className="flex items-center gap-1.5 text-red-400">
             <Flame className="w-3.5 h-3.5 animate-pulse" />
-            <span>8 Active Fires (Unregistered)</span>
+            <span>{fireEvents.length} thermal observations in current record</span>
           </div>
         </div>
       </div>
@@ -598,7 +598,7 @@ export const SatelliteEarth3D: React.FC<SatelliteEarth3DProps> = ({
           onClick={focusSangrur}
           className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold cursor-pointer"
         >
-          Focus Hotspot
+          Focus field area
         </button>
 
         <button
@@ -636,7 +636,7 @@ export const SatelliteEarth3D: React.FC<SatelliteEarth3DProps> = ({
           </p>
 
           <div className="flex justify-between items-center pt-2 border-t border-slate-800/80 text-[11px]">
-            <span className="text-slate-400">Metric Telemetry:</span>
+            <span className="text-slate-400">Record metric:</span>
             <strong
               className={`font-mono font-bold ${
                 selectedBeacon.type === 'FIELD' ? 'text-emerald-400' : 'text-red-400'
@@ -652,12 +652,12 @@ export const SatelliteEarth3D: React.FC<SatelliteEarth3DProps> = ({
       <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 hidden md:flex items-center gap-3 bg-slate-950/80 backdrop-blur-md px-3.5 py-1 rounded-full border border-slate-800 text-[11px] text-slate-300 pointer-events-none">
         <span className="flex items-center gap-1.5">
           <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block shadow shadow-emerald-400"></span>
-          <span>Nirdhoom Shield (0 Fires)</span>
+          <span>Registered fields / evidence boundary</span>
         </span>
         <span className="text-slate-700">|</span>
         <span className="flex items-center gap-1.5">
           <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping inline-block shadow shadow-red-500"></span>
-          <span className="text-red-400">VIIRS Active Fire Flare</span>
+          <span className="text-red-400">FIRMS / VIIRS thermal observation</span>
         </span>
         <span className="text-slate-700">|</span>
         <span className="text-slate-400">Drag to Orbit • Scroll to Zoom</span>
