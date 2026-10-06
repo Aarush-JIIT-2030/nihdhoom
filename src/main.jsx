@@ -35,16 +35,16 @@ class AppErrorBoundary extends Component {
         }}>
           <section style={{
             width: 'min(720px, 100%)',
-            border: '1px solid rgba(239,68,68,.35)',
+            border: '1px solid rgba(196,63,54,.25)',
             borderRadius: '16px',
             padding: '24px',
             background: 'var(--panel-strong, #ffffff)',
           }}>
-            <div style={{ color: '#f87171', fontWeight: 800, fontSize: '12px', letterSpacing: '.12em', textTransform: 'uppercase' }}>
+            <div style={{ color: '#a95404', fontWeight: 800, fontSize: '12px', letterSpacing: '.12em', textTransform: 'uppercase' }}>
               NIRDHOOM UI ERROR
             </div>
             <h1 style={{ margin: '8px 0', fontSize: '24px' }}>The dashboard could not render.</h1>
-            <p style={{ color: '#94a3b8', margin: '0 0 16px' }}>
+            <p style={{ color: '#536658', margin: '0 0 16px', lineHeight: 1.6 }}>
               Refresh once. If the problem persists, send this error to the developer:
             </p>
             <pre style={{
