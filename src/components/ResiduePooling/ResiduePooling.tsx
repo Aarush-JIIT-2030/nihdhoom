@@ -102,7 +102,7 @@ export function ResiduePooling({ fields, demoMode }: Props) {
             {localSupply.length === 0 ? <p className="text-sm text-emerald-950/50">No field supply records yet.</p> : localSupply.map(s => (
               <div key={s.fieldId} className="flex items-center justify-between rounded-lg border border-emerald-900/10 bg-emerald-50/30 p-3">
                 <div><div className="text-xs font-bold text-emerald-950">{s.farmer}</div><div className="text-[10px] text-emerald-950/50">{s.village} · {s.status}</div></div>
-                <div className="text-sm font-black text-emerald-800">{s.tonnes.toFixed(1)} t planning</div>
+                <div className="text-sm font-black text-emerald-800">{s.tonnes.toFixed(1)} t {demoMode ? 'planning' : 'recorded'}</div>
               </div>
             ))}
           </div>
