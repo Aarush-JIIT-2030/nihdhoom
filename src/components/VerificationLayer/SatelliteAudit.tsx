@@ -102,7 +102,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
           </div>
         </div>
 
-        {/* Real NASA FIRMS Geospatial Thermal Sensor Visual */}
+        {/* Remote-sensing evidence context */}
         <div className="mt-4 rounded-xl overflow-hidden border border-emerald-500/30 relative max-h-56 bg-slate-950">
           <img 
             src="/images/satellite_firms.jpg" 
@@ -113,7 +113,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
           <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between">
             <div>
               <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                NASA FIRMS S-NPP / NOAA-20 VIIRS 375m NRT SENSOR
+                FIRMS / VIIRS thermal observations
               </span>
               <p className="text-xs font-bold text-white mt-1">
                 {auditReport.dataAvailability === 'NO_OBSERVATIONS' ? 'No remote-sensing observations are currently available for field screening' : `Matched ${auditReport.cleanFieldsCount} field(s) without a detected fire point in the supplied observations`}
@@ -121,7 +121,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
             </div>
             <div className="text-right hidden sm:block">
               <span className="text-xs font-mono text-emerald-400 font-bold block">{demoMode ? 'Synthetic demo only' : auditReport.dataAvailability === 'NO_OBSERVATIONS' ? 'No observations available' : 'Supporting evidence only'}</span>
-              <span className="text-[10px] text-slate-400">No registry issuance</span>
+              <span className="text-[10px] text-slate-400">No registry issuance or retirement</span>
             </div>
           </div>
         </div>
@@ -166,7 +166,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
 
         <div className="glass-panel p-4 border-cyan-500/30">
           <div className="flex items-center justify-between text-slate-400 text-xs mb-1">
-            <span>Estimated emissions avoided</span>
+            <span>Illustrative emissions estimate</span>
             <Sparkles className="w-4 h-4 text-cyan-400" />
           </div>
           <div className="text-2xl font-extrabold text-cyan-300 font-mono">
@@ -180,7 +180,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
 
         <div className="glass-panel p-4 border-amber-500/30">
           <div className="flex items-center justify-between text-slate-400 text-xs mb-1">
-            <span>Carbon credit</span>
+            <span>Carbon market</span>
             <Award className="w-4 h-4 text-amber-400" />
           </div>
           <div className="text-2xl font-extrabold text-amber-300 font-mono">
@@ -256,7 +256,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
                             disabled={reviewingFieldId === field.id}
                             className="px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-semibold border border-emerald-500 transition-all"
                           >
-                            {reviewingFieldId === field.id ? 'Reviewing…' : 'Confirm field proof'}
+                            {reviewingFieldId === field.id ? 'Reviewing…' : 'Review field record'}
                           </button>
                         )}
                         <button
