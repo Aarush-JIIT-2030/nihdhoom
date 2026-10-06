@@ -43,18 +43,18 @@ interface ExecutionStep {
 
 const PRESET_PROMPTS = [
   {
-    title: '⚡ Re-balance Sangrur Cluster',
-    prompt: 'Evaluate 12 fields approaching 48-hr harvest window in Bhawanigarh block and execute OR-Tools VRP re-route for idle CHC balers.',
+    title: '⚡ Plan Sangrur cluster capacity',
+    prompt: 'Review a demo cluster approaching a harvest window and propose an OR-Tools-style route for registered machine capacity; live execution requires verified availability and approval.',
     agentSequence: ['vrp', 'sentinel', 'voice'],
   },
   {
-    title: '🛰️ FIRMS / VIIRS Thermal Sweep',
+    title: '🛰️ Review thermal observations',
     prompt: 'Query configured FIRMS / VIIRS observations and intersect them with registered field polygons. Treat matches as supporting thermal evidence, not proof of burn or non-burn.',
     agentSequence: ['sentinel', 'audit'],
   },
   {
-    title: '🌾 Multi-Offtake Dynamic Auction',
-    prompt: 'Run instant dynamic auction for 50 tonnes PR-126 straw (moisture 14%) between Craste Moulded Pulp (₹2,800/T) and Verbio CBG.',
+    title: '🌾 Compare illustrative offtake options',
+    prompt: 'Compare an illustrative 50-tonne PR-126 residue scenario against buyer requirements; no live bid or contract is created.',
     agentSequence: ['pricing', 'voice'],
   },
   {
@@ -161,14 +161,14 @@ export const AgenticCommandCenter: React.FC<{
           {/* Agentic Badge */}
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-950/60 border border-cyan-500/40 text-cyan-300 text-xs font-mono mb-4 shadow-lg shadow-cyan-500/10">
             <span className="badge--dot" />
-            <span>AGENTIC DISPATCH NETWORK • STATE OF PUNJAB</span>
+            <span>BOUNDED OPERATIONS ASSISTANT</span>
             <span className="text-slate-500">|</span>
-            <span className="text-emerald-400 font-bold">5 COOPERATING AGENTS</span>
+            <span className="text-emerald-400 font-bold">HUMAN APPROVAL REQUIRED</span>
           </div>
 
           {/* Heading with Vector Underline */}
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white font-['Outfit'] leading-tight mb-4">
-            Zero Burning. Autonomous Dispatch.{' '}
+            Field readiness. Bounded dispatch planning.{' '}
             <span className="hero-word">
               <span className="text-gradient">Capacity-aware Dispatch.</span>
               <svg
@@ -284,7 +284,7 @@ export const AgenticCommandCenter: React.FC<{
               className="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs cursor-pointer shadow-lg shadow-emerald-500/20 flex items-center gap-1.5"
             >
               <CheckCircle2 className="w-4 h-4" />
-              <span>Authorize Batch</span>
+              <span>Approve demo proposal</span>
             </button>
             <button
               onClick={() => setHumanApprovalState('NONE')}
@@ -302,7 +302,7 @@ export const AgenticCommandCenter: React.FC<{
             <CheckCircle2 className="w-6 h-6 text-emerald-400" />
             <div>
               <span className="font-bold text-emerald-300 text-sm">
-                Tranche Authorized & Signed
+                Demo proposal approved
               </span>
               <p className="text-xs text-slate-300">
                 Dispatch proposal approved for the demo; no payment provider is called.
