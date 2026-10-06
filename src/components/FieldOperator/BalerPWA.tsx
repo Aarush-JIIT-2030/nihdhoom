@@ -217,7 +217,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
     setJobBusy(true);
     setJobMessage('');
     try {
-      const lookup = await supabase.from('jobs').select('id,status').eq('field_id', currentField.dbId || currentField.id)
+      const lookup = await supabase.from('jobs').select('id,status,booking_id').eq('field_id', currentField.dbId || currentField.id)
         .eq('status', jobStatus).order('created_at', { ascending: false }).limit(1).maybeSingle();
       if (lookup.error || !lookup.data?.id) throw new Error(lookup.error?.message || 'Active job not found.');
       const { error } = await supabase.rpc('transition_job', {
