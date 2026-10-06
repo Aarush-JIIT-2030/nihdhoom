@@ -3380,3 +3380,28 @@ html[data-theme="kisan"] .home-visual-card-wide { grid-row:span 1; }
   html[data-theme="kisan"] .home-visual-card:hover img { transform:none; }
   html[data-theme="kisan"] .home-hero-spotlight { animation:none; opacity:.7; }
 }
+
+
+/* Final field-first compatibility layer for older component classes. */
+html[data-theme="kisan"] .nirdhoom-field-app .bg-slate-950,
+html[data-theme="kisan"] .nirdhoom-field-app .bg-slate-950\/70,
+html[data-theme="kisan"] .nirdhoom-field-app .bg-slate-950\/60 {
+  background-color:#fff !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .bg-slate-900\/60,
+html[data-theme="kisan"] .nirdhoom-field-app .bg-slate-900\/80 {
+  background-color:#f7faf4 !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .border-slate-800,
+html[data-theme="kisan"] .nirdhoom-field-app .border-slate-700\/80 {
+  border-color:rgba(31,122,70,.12) !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .text-white { color:#173522 !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .text-slate-300 { color:#52665a !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .text-slate-400 { color:#6b7c6c !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .text-slate-500 { color:#758477 !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .font-mono { font-family:'DM Sans','Plus Jakarta Sans',system-ui,sans-serif !important; }
+html[data-theme="kisan"] .nirdhoom-field-app .font-\['Outfit'\],
+html[data-theme="kisan"] .nirdhoom-field-app .font-\['Plus_Jakarta_Sans'\] {
+  font-family:'DM Sans','Plus Jakarta Sans',system-ui,sans-serif !important;
+}
