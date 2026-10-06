@@ -443,7 +443,7 @@ export const OpsMap: React.FC<OpsMapProps> = ({
           <label className="flex items-center justify-between gap-3 text-slate-300 hover:text-white cursor-pointer">
             <span className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-              <span>Subsidised Balers ({machines.length})</span>
+              <span>Registered / available balers ({machines.length})</span>
             </span>
             <input
               type="checkbox"
