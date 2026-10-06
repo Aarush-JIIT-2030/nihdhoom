@@ -50,11 +50,11 @@ const ROTATING_WORDS = [
 
 const PUNJAB_DISTRICT_TICKERS = [
   { district: 'Sangrur (Bhawanigarh)', status: 'DEMO DISPATCH', balers: '4 CHC Balers', acres: '88.4 ac', firms: 'Thermal observations reviewed', time: 'Demo' },
-  { district: 'Patiala (Nabaha)', status: 'VRP RE-ROUTING', balers: '6 CHC Balers', acres: '142.0 ac', firms: 'Thermal observations reviewed', time: '1m ago' },
-  { district: 'Barnala (Mehal Kalan)', status: 'HARVEST SPIKE', balers: '3 CHC Balers', acres: '64.8 ac', firms: 'Thermal observations reviewed', time: '2m ago' },
-  { district: 'Mansa (Budhlada)', status: 'READINESS SIGNAL · DEMO', balers: '5 CHC Balers', acres: '110.5 ac', firms: 'Thermal observations reviewed', time: '3m ago' },
-  { district: 'Ludhiana (Jagraon)', status: 'BUYER PATHWAY · DEMO', balers: '4 CHC Balers', acres: '92.0 ac', firms: 'Thermal observations reviewed', time: '5m ago' },
-  { district: 'Bathinda (Rampura)', status: 'CLEARANCE ESTIMATE · DEMO', balers: '3 CHC Balers', acres: '78.2 ac', firms: 'Thermal observations reviewed', time: '7m ago' },
+  { district: 'Patiala (Nabaha)', status: 'DEMO RE-ROUTING', balers: '6 CHC Balers', acres: '142.0 ac', firms: 'Thermal observations reviewed', time: 'Demo' },
+  { district: 'Barnala (Mehal Kalan)', status: 'DEMO HARVEST SIGNAL', balers: '3 CHC Balers', acres: '64.8 ac', firms: 'Thermal observations reviewed', time: 'Demo' },
+  { district: 'Mansa (Budhlada)', status: 'DEMO READINESS SIGNAL', balers: '5 CHC Balers', acres: '110.5 ac', firms: 'Thermal observations reviewed', time: 'Demo' },
+  { district: 'Ludhiana (Jagraon)', status: 'DEMO BUYER PATHWAY', balers: '4 CHC Balers', acres: '92.0 ac', firms: 'Thermal observations reviewed', time: 'Demo' },
+  { district: 'Bathinda (Rampura)', status: 'DEMO CLEARANCE ESTIMATE', balers: '3 CHC Balers', acres: '78.2 ac', firms: 'Thermal observations reviewed', time: 'Demo' },
 ];
 
 export const AgenticLanding: React.FC<AgenticLandingProps> = ({
