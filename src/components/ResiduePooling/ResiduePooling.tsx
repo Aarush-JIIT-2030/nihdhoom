@@ -5,6 +5,7 @@ import { supabase } from '../../lib/supabase';
 
 type Pool = { id: string; name: string; target_tonnes: number; current_tonnes: number; status: string; buyer_demand_id?: string | null };
 type Demand = { id: string; buyer_name: string; target_tonnes: number; pickup_deadline: string; radius_km: number; status: string };
+type LiveLot = { id: string; field_id: string; quantity_tonnes: number | null; status: string; moisture_pct: number | null; quality_grade: string | null };
 
 interface Props { fields: Field[]; demoMode: boolean; }
 
@@ -14,6 +15,7 @@ export function ResiduePooling({ fields, demoMode }: Props) {
     try { const raw = window.localStorage.getItem('nirdhoom.demo.pools.v1'); return raw ? (JSON.parse(raw) as Pool[]) : []; } catch { return []; }
   });
   const [demands, setDemands] = useState<Demand[]>([]);
+  const [liveLots, setLiveLots] = useState<LiveLot[]>([]);
   const [notice, setNotice] = useState('');
 
   useEffect(() => {
@@ -21,23 +23,25 @@ export function ResiduePooling({ fields, demoMode }: Props) {
     try { window.localStorage.setItem('nirdhoom.demo.pools.v1', JSON.stringify(pools)); } catch { /* optional demo persistence */ }
   }, [demoMode, pools]);
 
-  const localSupply = useMemo(() => fields.filter((f) => demoMode || f.status === 'VERIFIED_NON_BURN' || f.is_verified_non_burn).map(f => ({
-    fieldId: f.id,
-    farmer: f.farmer_name,
-    village: f.village,
-    tonnes: Number(f.acreage || 0) * 1.8, // illustrative planning coefficient
-    status: f.status,
-  })), [fields]);
+  const localSupply = useMemo(() => {
+    if (demoMode) return fields.map((f) => ({ fieldId: f.id, farmer: f.farmer_name, village: f.village, tonnes: Number(f.acreage || 0) * 1.8, status: 'DEMO / PLANNING' }));
+    return liveLots.map((lot) => {
+      const field = fields.find((f) => (f.dbId || f.id) === lot.field_id);
+      return { fieldId: lot.field_id, farmer: field?.farmer_name || 'Farmer record', village: field?.village || 'Field record', tonnes: Number(lot.quantity_tonnes || 0), status: lot.status };
+    }).filter((row) => row.tonnes > 0);
+  }, [demoMode, fields, liveLots]);
 
   async function load() {
     if (demoMode || !supabase) return;
     const db = supabase as any;
-    const [p, d] = await Promise.all([
+    const [p, d, l] = await Promise.all([
       db.from('residue_pools').select('id,name,target_tonnes,current_tonnes,status,buyer_demand_id').order('created_at', { ascending: false }),
       db.from('buyer_demands').select('id,buyer_name,target_tonnes,pickup_deadline,radius_km,status').eq('status','OPEN').order('created_at', { ascending: false }),
+      db.from('residue_lots').select('id,field_id,quantity_tonnes,status,moisture_pct,quality_grade').in('status',['AVAILABLE','VERIFIED','VERIFIED_NON_BURN']).order('created_at', { ascending: false }),
     ]);
     if (!p.error) setPools(p.data || []);
     if (!d.error) setDemands(d.data || []);
+    if (!l.error) setLiveLots(l.data || []);
   }
 
   useEffect(() => { void load(); }, [demoMode]);
