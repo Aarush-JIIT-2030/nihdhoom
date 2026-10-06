@@ -121,7 +121,7 @@ export function CommandCenter({
           <Truck /><span><b>Track machine</b><small>See today's operation</small></span><ChevronRight />
         </button>
         <button type="button" onClick={onOpenResidue}>
-          <Leaf /><span><b>Sell residue</b><small>Explore verified buyers</small></span><ChevronRight />
+          <Leaf /><span><b>Find residue demand</b><small>Explore verified pathways</small></span><ChevronRight />
         </button>
       </section>
 
