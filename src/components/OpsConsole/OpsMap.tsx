@@ -517,7 +517,7 @@ export const OpsMap: React.FC<OpsMapProps> = ({
       {mapMode === 'field' && <div className="absolute bottom-3 right-3 z-10 hidden sm:flex items-center gap-3 bg-slate-950/85 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-800 text-[11px] text-slate-300">
         <span className="flex items-center gap-1">
           <span className="w-3 h-2 rounded bg-emerald-500 border border-emerald-300 inline-block"></span>
-          <span>Nirdhoom 0-Burn Field</span>
+          <span>Field status / verified evidence</span>
         </span>
         <span className="flex items-center gap-1">
           <span className="w-3 h-2 rounded bg-amber-500 border border-amber-300 inline-block"></span>
