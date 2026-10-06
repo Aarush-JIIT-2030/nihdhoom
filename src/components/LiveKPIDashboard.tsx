@@ -65,12 +65,12 @@ interface LiveKPIDashboardProps {
 }
 
 export const LiveKPIDashboard: React.FC<LiveKPIDashboardProps> = ({
-  acresScheduled = 88.4,
-  co2Avoided = 72.6,
-  firmsZeroBurnCount = 5,
-  activeMachines = 4,
-  fireEventsOutsideCount = 8,
-  demoMode = true,
+  acresScheduled = 0,
+  co2Avoided = 0,
+  firmsZeroBurnCount = 0,
+  activeMachines = 0,
+  fireEventsOutsideCount = 0,
+  demoMode = false,
 }) => {
   const kpiCards = [
     {
@@ -171,7 +171,7 @@ export const LiveKPIDashboard: React.FC<LiveKPIDashboardProps> = ({
             <div>
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-sm font-black text-white font-['Outfit'] tracking-tight">
-                  NIRDHOOM Live Ops Telemetry
+                  NIRDHOOM Ops Telemetry
                 </span>
                 <span className="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-bold">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />
@@ -179,7 +179,7 @@ export const LiveKPIDashboard: React.FC<LiveKPIDashboardProps> = ({
                 </span>
               </div>
               <p className="text-[11px] text-slate-400 mt-0.5">
-                Punjab Malwa Hotspot · Sangrur Cluster · Oct–Nov 2026 Season
+                Punjab Malwa · connected operational records
               </p>
             </div>
           </div>
