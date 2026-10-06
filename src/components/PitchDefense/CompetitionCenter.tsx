@@ -3,7 +3,7 @@ import {
   ArrowRight,
   CheckCircle2,
   ExternalLink,
-  Github,
+  GitBranch,
   Play,
   ShieldCheck,
   Smartphone,
@@ -179,7 +179,7 @@ export const CompetitionCenter: React.FC<CompetitionCenterProps> = ({ onNavigate
 
     <section className="competition-footer-card">
       <div>
-        <Github className="h-5 w-5" />
+        <GitBranch className="h-5 w-5" />
         <div>
           <strong>Submission assets live in the repository</strong>
           <p>Use the RIDE and WarriorHacks submission briefs in <code>docs/</code> as the source of truth for the application copy, demo order and evidence boundaries.</p>
