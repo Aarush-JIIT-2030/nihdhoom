@@ -131,7 +131,8 @@ export function TelegramSimulator({ onSlotConfirmed }: TelegramSimulatorProps) {
               target="_blank"
               rel="noreferrer"
               aria-disabled={!BOT_USERNAME}
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#229ED9] px-5 py-3 text-sm font-black text-white shadow-[0_12px_30px_rgba(34,158,217,.25)] transition-transform hover:-translate-y-0.5 transition hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+              tabIndex={BOT_USERNAME ? 0 : -1}
+              className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-black text-white shadow-[0_12px_30px_rgba(34,158,217,.25)] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 ${BOT_USERNAME ? 'bg-[#229ED9] hover:-translate-y-0.5 hover:brightness-105' : 'cursor-not-allowed bg-slate-300 text-slate-600 shadow-none'}`}
             >
               <Send className="h-4 w-4" /> {BOT_USERNAME ? copy.cta : 'Telegram bot is not configured'}
             </a>
@@ -145,7 +146,7 @@ export function TelegramSimulator({ onSlotConfirmed }: TelegramSimulatorProps) {
             </button>
             {linkError && <p role="alert" className="text-center text-xs font-semibold text-red-700">{linkError}</p>}
             <div className="text-center text-[11px] font-semibold text-slate-500">
-              @{BOT_USERNAME}
+              {BOT_USERNAME ? `@${BOT_USERNAME}` : 'Configure VITE_TELEGRAM_BOT_USERNAME to enable direct opening'}
             </div>
           </div>
         </div>
