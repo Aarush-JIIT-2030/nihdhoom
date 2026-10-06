@@ -71,6 +71,7 @@ declare global {
   }
 }
 
+/** Interactive 3D globe with animated arcs for NIRDHOOM's operational network view. */
 export interface GlobeProps {
   /** Width of the globe container in pixels (or "auto" for parent width) */
   width?: number | "auto";
