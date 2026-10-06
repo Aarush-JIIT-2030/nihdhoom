@@ -3220,3 +3220,163 @@ html[data-theme="kisan"] {
   .workspace-skeleton-image::after,
   .workspace-skeleton-grid span::after { animation: none; }
 }
+
+
+/* =========================================================
+   VISUAL STORYTELLING PASS — curated field photography + depth
+   ========================================================= */
+html[data-theme="kisan"] .home-hero {
+  isolation:isolate;
+  border:1px solid rgba(255,255,255,.28);
+}
+html[data-theme="kisan"] .home-hero-image {
+  transform:scale(1.015);
+  filter:saturate(.98) contrast(1.04);
+  transition:transform 1.2s cubic-bezier(.16,1,.3,1);
+}
+html[data-theme="kisan"] .home-hero:hover .home-hero-image { transform:scale(1.035); }
+html[data-theme="kisan"] .home-hero-spotlight {
+  left:-8%;
+  top:-16%;
+  width:74%;
+  height:80%;
+  opacity:.8;
+  animation:home-spotlight-in 1.3s ease .25s both;
+}
+@keyframes home-spotlight-in {
+  from { opacity:0; transform:translate(-60%,-45%) scale(.7); }
+  to { opacity:.8; transform:translate(-50%,-40%) scale(1); }
+}
+html[data-theme="kisan"] .home-photo-credit {
+  position:absolute;
+  right:1rem;
+  bottom:1rem;
+  z-index:3;
+  max-width:300px;
+  padding:.38rem .58rem;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:999px;
+  background:rgba(11,35,20,.58);
+  backdrop-filter:blur(10px);
+  color:rgba(255,255,255,.68);
+  font-size:.54rem;
+  line-height:1.35;
+  text-decoration:none;
+}
+html[data-theme="kisan"] .home-photo-credit:hover { color:#fff; background:rgba(11,35,20,.78); }
+
+html[data-theme="kisan"] .home-visual-rail {
+  margin-top:3.4rem;
+  padding:1.25rem;
+  border:1px solid rgba(31,122,70,.11);
+  border-radius:28px;
+  background:linear-gradient(145deg,#f8fbf5 0%,#f0f4e7 55%,#fbf4e3 100%);
+  box-shadow:0 18px 48px rgba(35,76,44,.07);
+}
+html[data-theme="kisan"] .home-visual-rail-heading {
+  display:flex;
+  align-items:end;
+  justify-content:space-between;
+  gap:2rem;
+  padding:.4rem .4rem 1rem;
+}
+html[data-theme="kisan"] .home-visual-rail-heading h2 {
+  margin-top:.3rem;
+  color:#173522;
+  font-family:'Outfit','DM Sans',sans-serif;
+  font-size:clamp(1.55rem,3vw,2.35rem);
+  line-height:1.06;
+  letter-spacing:-.045em;
+  font-weight:900;
+}
+html[data-theme="kisan"] .home-visual-rail-heading p {
+  max-width:480px;
+  color:#607563;
+  font-size:.76rem;
+  line-height:1.65;
+}
+html[data-theme="kisan"] .home-visual-grid {
+  display:grid;
+  grid-template-columns:1.35fr 1fr 1fr;
+  grid-auto-rows:260px;
+  gap:.75rem;
+}
+html[data-theme="kisan"] .home-visual-card {
+  position:relative;
+  min-width:0;
+  overflow:hidden;
+  border-radius:21px;
+  background:#173522;
+  border:1px solid rgba(255,255,255,.65);
+  box-shadow:0 14px 35px rgba(35,76,44,.1);
+  isolation:isolate;
+}
+html[data-theme="kisan"] .home-visual-card img {
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  transition:transform .7s cubic-bezier(.16,1,.3,1),filter .5s ease;
+  filter:saturate(.94) contrast(1.04);
+}
+html[data-theme="kisan"] .home-visual-card:hover img {
+  transform:scale(1.06);
+  filter:saturate(1.04) contrast(1.05);
+}
+html[data-theme="kisan"] .home-visual-scrim {
+  position:absolute;
+  inset:0;
+  z-index:1;
+  background:linear-gradient(180deg,rgba(8,29,17,.02) 22%,rgba(8,29,17,.16) 45%,rgba(8,29,17,.9) 100%);
+}
+html[data-theme="kisan"] .home-visual-copy {
+  position:absolute;
+  z-index:2;
+  left:1rem;
+  right:1rem;
+  bottom:1rem;
+  display:flex;
+  flex-direction:column;
+  color:#fff;
+}
+html[data-theme="kisan"] .home-visual-copy span {
+  color:#f2c45e;
+  font-size:.57rem;
+  font-weight:900;
+  letter-spacing:.15em;
+}
+html[data-theme="kisan"] .home-visual-copy strong {
+  margin-top:.25rem;
+  max-width:420px;
+  font-size:1rem;
+  line-height:1.15;
+  letter-spacing:-.02em;
+}
+html[data-theme="kisan"] .home-visual-copy small {
+  margin-top:.3rem;
+  color:rgba(255,255,255,.66);
+  font-size:.53rem;
+  line-height:1.35;
+}
+html[data-theme="kisan"] .home-visual-card-wide { grid-row:span 1; }
+
+@media(max-width:900px){
+  html[data-theme="kisan"] .home-visual-rail-heading { align-items:flex-start; flex-direction:column; gap:.55rem; }
+  html[data-theme="kisan"] .home-visual-grid { grid-template-columns:1fr 1fr; grid-auto-rows:250px; }
+  html[data-theme="kisan"] .home-visual-card-wide { grid-column:1/-1; }
+}
+@media(max-width:560px){
+  html[data-theme="kisan"] .home-hero-image { object-position:58% center; }
+  html[data-theme="kisan"] .home-photo-credit { left:.85rem; right:auto; bottom:.8rem; max-width:calc(100% - 1.7rem); }
+  html[data-theme="kisan"] .home-visual-rail { margin-top:2.5rem; padding:.8rem; border-radius:22px; }
+  html[data-theme="kisan"] .home-visual-grid { grid-template-columns:1fr; grid-auto-rows:245px; }
+  html[data-theme="kisan"] .home-visual-card-wide { grid-column:auto; }
+}
+@media(prefers-reduced-motion:reduce){
+  html[data-theme="kisan"] .home-hero-image,
+  html[data-theme="kisan"] .home-visual-card img { transition:none; }
+  html[data-theme="kisan"] .home-hero:hover .home-hero-image,
+  html[data-theme="kisan"] .home-visual-card:hover img { transform:none; }
+  html[data-theme="kisan"] .home-hero-spotlight { animation:none; opacity:.7; }
+}
