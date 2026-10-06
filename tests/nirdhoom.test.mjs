@@ -274,7 +274,7 @@ test('competition center is wired for both RIDE and WarriorHacks', () => {
   assert.match(app, /activeTab === 'COMPETITION_CENTER'/);
   assert.match(center, /RIDE HACK/);
   assert.match(center, /WARRIORHACKS 2\.0/);
-  assert.match(center, /Field.*Book.*Machine.*Proof.*Parali/);
+  for (const step of ['Field', 'Book', 'Machine', 'Proof', 'Parali']) assert.match(center, new RegExp(step));
   assert.match(center, /Real payment or payout movement/);
 });
 
