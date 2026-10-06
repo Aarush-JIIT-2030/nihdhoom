@@ -459,3 +459,22 @@ test('React Bits Stepper is integrated into farmer onboarding progress', () => {
   assert.match(css, /farmer-onboarding-stepper/);
   assert.match(css, /prefers-reduced-motion/);
 });
+
+
+test('React Bits Pro globe registry and operational map integration stay wired', () => {
+  const components = read('components.json');
+  const env = read('.env.example');
+  const globe = read('src/components/react-bits/globe.tsx');
+  const map = read('src/components/OpsConsole/OpsMap.tsx');
+  assert.match(components, /@reactbits-starter/);
+  assert.match(components, /@reactbits-pro/);
+  assert.match(components, /REACTBITS_LICENSE_KEY/);
+  assert.match(env, /REACTBITS_LICENSE_KEY=/);
+  assert.match(globe, /Interactive 3D globe with animated arcs/);
+  assert.match(globe, /autoRotateSpeed/);
+  assert.match(globe, /arcAnimationDuration/);
+  assert.match(map, /from '..\\/react-bits\\/globe'/);
+  assert.match(map, /Network Globe/);
+  assert.match(map, /mapMode === 'globe'/);
+  assert.match(map, /Field GIS/);
+});
