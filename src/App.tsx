@@ -278,6 +278,7 @@ export function App() {
     fieldForUpiModal,
     setFieldForUpiModal,
     handleUpdateFieldStatus,
+    refreshLiveData,
     demoMode,
     loadingLiveData,
     liveDataError,
@@ -644,6 +645,7 @@ export function App() {
             fields={fields}
             fireEvents={fireEvents}
             demoMode={demoMode}
+            onVerified={() => { void refreshLiveData(); }}
           />
         )}
 
