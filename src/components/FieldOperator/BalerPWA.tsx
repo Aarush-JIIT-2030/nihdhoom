@@ -36,6 +36,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
   const [selectedFieldId, setSelectedFieldId] = useState<string>(fields[0]?.id || 'FIELD-101');
   const [moistureValue, setMoistureValue] = useState<number>(14.2);
   const [balesCount, setBalesCount] = useState<number>(38);
+  const [residueTonnes, setResidueTonnes] = useState<number>(0);
   const [showUpiModal, setShowUpiModal] = useState(false);
   const [jobStatus, setJobStatus] = useState<string | null>(null);
   const [jobBusy, setJobBusy] = useState(false);
@@ -225,8 +226,40 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
       });
       if (error) throw new Error(error.message);
       setJobStatus(next);
-      setJobMessage(next === 'COMPLETED' ? 'Job completed on the server. Evidence and verification remain separate steps.' : `Job moved to ${next.replace(/_/g, ' ')}.`);
-      if (next === 'COMPLETED') onJobCompleted(currentField.id, Number(currentField.payout_amount || 0));
+      if (next === 'COMPLETED') {
+        const quantity = Number(residueTonnes);
+        const { data: existingLot } = await supabase
+          .from('residue_lots')
+          .select('id')
+          .eq('job_id', lookup.data.id)
+          .maybeSingle();
+        if (!existingLot && quantity > 0) {
+          const { error: lotError } = await supabase.from('residue_lots').insert({
+            field_id: currentField.dbId || currentField.id,
+            booking_id: lookup.data.id,
+            job_id: lookup.data.id,
+            quantity_tonnes: quantity,
+            moisture_pct: Number(moistureValue),
+            quality_notes: `Operator-recorded completion • ${balesCount} bales • GPS ${gpsState ? 'available' : 'not available'}`,
+            quality_grade: moistureValue <= 16 ? 'DRY' : moistureValue <= 20 ? 'STANDARD' : 'HIGH_MOISTURE',
+            status: 'AVAILABLE',
+            baled_at: new Date().toISOString(),
+            qr_code: `NIR-${lookup.data.id.slice(0, 12).toUpperCase()}`,
+          });
+          if (lotError) {
+            setJobMessage(`Job completed, but the residue lot could not be recorded: ${lotError.message}`);
+          } else {
+            setJobMessage('Job completed and the measured residue lot was recorded. Verification and buyer matching remain separate steps.');
+          }
+        } else if (existingLot) {
+          setJobMessage('Job completed. The residue lot for this job already exists.');
+        } else {
+          setJobMessage('Job completed, but no measured residue quantity was entered; create the lot after weighment.');
+        }
+        onJobCompleted(currentField.id, Number(currentField.payout_amount || 0));
+      } else {
+        setJobMessage(`Job moved to ${next.replace(/_/g, ' ')}.`);
+      }
     } catch (error) {
       setJobMessage(error instanceof Error ? error.message : 'Job transition failed.');
     } finally { setJobBusy(false); }
@@ -444,6 +477,25 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
                   <strong className="text-white font-mono">{balesCount} Bales (~{Math.round(currentField.acreage * 2.2 * 10) / 10} Tonnes)</strong>
                 </div>
 
+                <div className="flex items-center justify-between gap-2 text-[11px]">
+                  <label className="text-slate-400" htmlFor="residue-tonnes">Measured residue</label>
+                  <div className="flex items-center gap-1">
+                    <input
+                      id="residue-tonnes"
+                      type="number"
+                      min="0"
+                      step="0.1"
+                      value={residueTonnes || ''}
+                      onChange={(e) => setResidueTonnes(Number(e.target.value) || 0)}
+                      disabled={demoMode}
+                      placeholder={demoMode ? 'Demo' : '0.0'}
+                      className="w-20 rounded-md border border-slate-700 bg-slate-900 px-2 py-1 text-right text-xs font-mono text-white"
+                      aria-label="Measured residue quantity in tonnes"
+                    />
+                    <span className="text-slate-500">t</span>
+                  </div>
+                </div>
+
                 <div className="flex justify-between items-center text-[11px]">
                   <span className="text-slate-400">QR lot:</span>
                   <span className="font-mono text-cyan-300 font-bold flex items-center gap-1">
@@ -489,11 +541,11 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
                     if (demoMode) setShowUpiModal(true);
                     else void advanceLiveJob();
                   }}
-                  disabled={jobBusy || (!demoMode && !jobStatus)}
+                  disabled={jobBusy || (!demoMode && (!jobStatus || (jobStatus === 'PROOF_PENDING' && residueTonnes <= 0)))}
                   className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 disabled:from-slate-800 disabled:to-slate-800 disabled:text-slate-500 text-white font-extrabold text-xs shadow-lg shadow-emerald-600/30 disabled:shadow-none flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95"
                 >
                   <Zap className="w-4 h-4 fill-current text-amber-300" />
-                  <span>{jobBusy ? 'Updating job…' : demoMode ? 'Simulate field completion' : jobStatus ? `Advance job: ${jobStatus.replace(/_/g, ' ')} →` : 'No active server job'}</span>
+                  <span>{jobBusy ? 'Updating job…' : demoMode ? 'Simulate field completion' : jobStatus === 'PROOF_PENDING' && residueTonnes <= 0 ? 'Enter measured tonnes to complete' : jobStatus ? `Advance job: ${jobStatus.replace(/_/g, ' ')} →` : 'No active server job'}</span>
                 </button>
               ) : (
                 <div className="p-2.5 rounded-xl bg-emerald-950/70 border border-emerald-500/50 text-emerald-300 text-xs font-bold text-center flex items-center justify-center gap-2">
