@@ -33,22 +33,22 @@ export const MultiOfftakeAuction: React.FC = () => {
   return (
     <div className="flex flex-col gap-6 max-w-6xl mx-auto p-2">
       {/* Top Framing Card */}
-      <div className="glass-panel-emerald p-5">
+      <div className="glass-panel-emerald p-5 relative overflow-hidden"><div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-amber-400 via-emerald-600 to-emerald-800" />
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center shrink-0 shadow-lg shadow-emerald-500/30">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-800 border border-emerald-500/40 flex items-center justify-center shrink-0 shadow-lg shadow-emerald-500/30">
               <TrendingUp className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-extrabold text-lg text-white font-['Outfit']">
+                <h3 className="font-extrabold text-lg text-emerald-950 font-['DM_Sans']">
                   Wedge 5: Stop Assuming Biogas is the Best Buyer
                 </h3>
                 <span className="badge badge-emerald text-xs">
                   Multi-Offtake Value Auction
                 </span>
               </div>
-              <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
+              <p className="text-xs text-emerald-950/65 mt-1 max-w-2xl leading-relaxed">
                 Paddy straw is a poor biogas feedstock: high silica (9-14%) and high lignin erode margins. Instead of selling everything to CBG at ₹1,850/t, Nirdhoom operates a multi-offtake quality auction routing each lot by moisture and silica content.
               </p>
             </div>
@@ -56,7 +56,7 @@ export const MultiOfftakeAuction: React.FC = () => {
         </div>
 
         {/* Real Industry Circular Economy Facility Visual */}
-        <div className="mt-4 rounded-xl overflow-hidden border border-emerald-500/30 relative max-h-52 bg-slate-950">
+        <div className="mt-4 rounded-xl overflow-hidden border border-emerald-900/10 relative max-h-52 bg-white">
           <img 
             src="/images/offtake_facility.jpg" 
             alt="Punjab CBG Plant & Gourmet Mushroom Cultivation from Paddy Straw"
@@ -68,13 +68,13 @@ export const MultiOfftakeAuction: React.FC = () => {
               <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
                 PUNJAB AGRO-PROCESSING CIRCULAR ECONOMY
               </span>
-              <p className="text-xs font-bold text-white mt-1">
+              <p className="text-xs font-bold text-emerald-950 mt-1">
                 Lehragaga CBG (Verbio) + Patiala Gourmet Mushroom Substrate Cluster
               </p>
             </div>
             <div className="text-right hidden sm:block">
-              <span className="text-xs font-mono text-emerald-400 font-bold block">+₹1,350/T Premium</span>
-              <span className="text-[10px] text-slate-400">Over Raw Biogas Floor</span>
+              <span className="text-xs font-mono text-emerald-800 font-bold block">+₹1,350/T Premium</span>
+              <span className="text-[10px] text-emerald-950/55">Over Raw Biogas Floor</span>
             </div>
           </div>
         </div>
@@ -82,23 +82,23 @@ export const MultiOfftakeAuction: React.FC = () => {
 
       {/* Interactive Quality-Based Auction Simulator */}
       <div className="glass-panel p-5 flex flex-col gap-4">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div className="flex items-center justify-between border-b border-emerald-900/10 pb-3">
           <div className="flex items-center gap-2">
-            <Scale className="w-5 h-5 text-amber-400" />
-            <h4 className="font-bold text-base text-white">
+            <Scale className="w-5 h-5 text-amber-700" />
+            <h4 className="font-bold text-base text-emerald-950">
               Interactive Lot Offtake Router
             </h4>
           </div>
-          <span className="text-xs text-slate-400">
+          <span className="text-xs text-emerald-950/55">
             Demo quality-matching simulator
           </span>
         </div>
 
         {/* Quality Input Parameters */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-900/90 p-4 rounded-xl border border-slate-800">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-emerald-50/60 p-4 rounded-xl border border-emerald-900/10">
           <div>
-            <label className="text-xs text-slate-400 block mb-1">
-              Straw Moisture Level: <strong className="text-cyan-300 font-mono">{testMoisture}%</strong>
+            <label className="text-xs text-emerald-950/55 block mb-1">
+              Straw Moisture Level: <strong className="text-emerald-800 font-mono">{testMoisture}%</strong>
             </label>
             <input
               type="range"
@@ -109,7 +109,7 @@ export const MultiOfftakeAuction: React.FC = () => {
               onChange={(e) => setTestMoisture(Number(e.target.value))}
               className="w-full accent-cyan-400 cursor-pointer"
             />
-            <div className="flex justify-between text-[10px] text-slate-500 mt-0.5">
+            <div className="flex justify-between text-[10px] text-emerald-950/45 mt-0.5">
               <span>Dry (&lt;15%)</span>
               <span>Standard (18%)</span>
               <span>Damp (&gt;20%)</span>
@@ -117,8 +117,8 @@ export const MultiOfftakeAuction: React.FC = () => {
           </div>
 
           <div>
-            <label className="text-xs text-slate-400 block mb-1">
-              Silica Fraction: <strong className="text-amber-300 font-mono">{testSilica} SILICA</strong>
+            <label className="text-xs text-emerald-950/55 block mb-1">
+              Silica Fraction: <strong className="text-amber-800 font-mono">{testSilica} SILICA</strong>
             </label>
             <div className="flex gap-1.5 mt-1">
               {(['LOW', 'MEDIUM', 'HIGH'] as const).map((tier) => (
@@ -127,8 +127,8 @@ export const MultiOfftakeAuction: React.FC = () => {
                   onClick={() => setTestSilica(tier)}
                   className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                     testSilica === tier
-                      ? 'bg-amber-500 text-slate-950'
-                      : 'bg-slate-800 text-slate-400 hover:text-white'
+                      ? 'bg-amber-400 text-emerald-950'
+                      : 'bg-slate-800 text-emerald-950/55 hover:text-emerald-950'
                   }`}
                 >
                   {tier}
@@ -138,8 +138,8 @@ export const MultiOfftakeAuction: React.FC = () => {
           </div>
 
           <div>
-            <label className="text-xs text-slate-400 block mb-1">
-              Harvest Lot Size: <strong className="text-emerald-400 font-mono">{lotTonnage} Tonnes</strong>
+            <label className="text-xs text-emerald-950/55 block mb-1">
+              Harvest Lot Size: <strong className="text-emerald-800 font-mono">{lotTonnage} Tonnes</strong>
             </label>
             <input
               type="range"
@@ -150,7 +150,7 @@ export const MultiOfftakeAuction: React.FC = () => {
               onChange={(e) => setLotTonnage(Number(e.target.value))}
               className="w-full accent-emerald-500 cursor-pointer"
             />
-            <div className="text-[10px] text-slate-500 mt-0.5 text-right">
+            <div className="text-[10px] text-emerald-950/45 mt-0.5 text-right">
               Approx. {Math.round(lotTonnage / 2.3)} Acres equivalent
             </div>
           </div>
@@ -162,24 +162,24 @@ export const MultiOfftakeAuction: React.FC = () => {
             <span className="badge badge-emerald text-[10px] mb-1">
               Algorithm Recommendation
             </span>
-            <div className="text-lg font-black text-white flex items-center gap-2">
+            <div className="text-lg font-black text-emerald-950 flex items-center gap-2">
               <span>Route To: {topBuyer.name}</span>
             </div>
-            <p className="text-xs text-slate-300 mt-0.5">
+            <p className="text-xs text-emerald-950/65 mt-0.5">
               {topBuyer.description}
             </p>
           </div>
 
-          <div className="flex items-center gap-4 bg-slate-950/80 px-4 py-2.5 rounded-xl border border-slate-800 shrink-0">
+          <div className="flex items-center gap-4 bg-white/80 px-4 py-2.5 rounded-xl border border-emerald-900/10 shrink-0">
             <div>
-              <span className="text-[10px] text-slate-400 uppercase font-bold block">Offtake Realisation</span>
-              <div className="text-xl font-extrabold text-emerald-400 font-mono">
+              <span className="text-[10px] text-emerald-950/55 uppercase font-bold block">Offtake Realisation</span>
+              <div className="text-xl font-extrabold text-emerald-800 font-mono">
                 ₹{topBuyer.price_per_tonne.toLocaleString()} / t
               </div>
             </div>
-            <div className="border-l border-slate-800 pl-3">
-              <span className="text-[10px] text-slate-400 uppercase font-bold block">Net Lot Value</span>
-              <div className="text-xl font-extrabold text-white font-mono">
+            <div className="border-l border-emerald-900/10 pl-3">
+              <span className="text-[10px] text-emerald-950/55 uppercase font-bold block">Net Lot Value</span>
+              <div className="text-xl font-extrabold text-emerald-950 font-mono">
                 ₹{(topBuyer.price_per_tonne * lotTonnage).toLocaleString()}
               </div>
             </div>
@@ -199,10 +199,10 @@ export const MultiOfftakeAuction: React.FC = () => {
               key={buyer.id}
               className={`p-4 rounded-xl border transition-all flex flex-col justify-between gap-3 ${
                 isOptimal
-                  ? 'bg-slate-900/95 border-emerald-500 ring-2 ring-emerald-500/40 shadow-xl'
+                  ? 'bg-white border-emerald-500 ring-2 ring-emerald-500/40 shadow-xl'
                   : isEligible
-                  ? 'bg-slate-900/70 border-slate-800'
-                  : 'bg-slate-950/60 border-slate-900 opacity-50'
+                  ? 'bg-white border-emerald-900/10'
+                  : 'bg-white/60 border-slate-900 opacity-50'
               }`}
             >
               <div>
@@ -229,27 +229,27 @@ export const MultiOfftakeAuction: React.FC = () => {
                   </span>
                 </div>
 
-                <h5 className="font-bold text-sm text-white">{buyer.name}</h5>
-                <p className="text-[11px] text-slate-400 mt-0.5">{buyer.location_name}</p>
+                <h5 className="font-bold text-sm text-emerald-950">{buyer.name}</h5>
+                <p className="text-[11px] text-emerald-950/55 mt-0.5">{buyer.location_name}</p>
 
-                <p className="text-xs text-slate-300 mt-2 leading-relaxed">
+                <p className="text-xs text-emerald-950/65 mt-2 leading-relaxed">
                   {buyer.description}
                 </p>
               </div>
 
-              <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
+              <div className="pt-3 border-t border-emerald-900/10/80 flex items-center justify-between text-xs">
                 <div>
-                  <span className="text-[10px] text-slate-400 block">Rate / Tonne</span>
-                  <span className="text-base font-extrabold text-white font-mono">
+                  <span className="text-[10px] text-emerald-950/55 block">Rate / Tonne</span>
+                  <span className="text-base font-extrabold text-emerald-950 font-mono">
                     ₹{buyer.price_per_tonne.toLocaleString()}
                   </span>
                 </div>
 
                 <div className="text-right">
-                  <span className="text-[10px] text-slate-400 block">Vs CBG Baseline</span>
+                  <span className="text-[10px] text-emerald-950/55 block">Vs CBG Baseline</span>
                   <span
                     className={`font-mono font-bold ${
-                      diffVsBiogas > 0 ? 'text-emerald-400' : 'text-slate-500'
+                      diffVsBiogas > 0 ? 'text-emerald-800' : 'text-emerald-950/45'
                     }`}
                   >
                     {diffVsBiogas > 0 ? `+₹${diffVsBiogas.toLocaleString()}` : 'Baseline'}
