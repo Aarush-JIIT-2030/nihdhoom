@@ -37,7 +37,7 @@ const NODES: NodeItem[] = [
   {
     id: 'perception',
     title: 'Perception Agent',
-    subtitle: 'Sentinel-2 NDVI & Khasra',
+    subtitle: 'Satellite inputs + field boundary',
     icon: Satellite,
     badge: 'Maturity',
     color: 'text-cyan-400',
@@ -56,10 +56,10 @@ const NODES: NodeItem[] = [
   },
   {
     id: 'baler',
-    title: 'Stranded Baler',
-    subtitle: 'Subsidised CHC Fleet',
+    title: 'Available machine capacity',
+    subtitle: 'Registered / available fleet',
     icon: Truck,
-    badge: 'Zero Capex',
+    badge: 'Asset-light',
     color: 'text-teal-400',
     borderColor: 'border-teal-500/40',
     bgColor: 'bg-teal-950/40',
@@ -86,8 +86,8 @@ const NODES: NodeItem[] = [
   },
   {
     id: 'carbon',
-    title: 'Carbon Registry',
-    subtitle: 'Gold Standard & CBG',
+    title: 'Carbon market simulator',
+    subtitle: 'Illustrative workflow only',
     icon: Leaf,
     badge: 'Institutional',
     color: 'text-emerald-300',
@@ -109,30 +109,30 @@ export const AnimatedBeam: React.FC<{
   }, []);
 
   return (
-    <div className="relative rounded-2xl border border-emerald-500/25 bg-slate-950/80 p-5 backdrop-blur-xl shadow-2xl overflow-hidden">
+    <div className="relative rounded-2xl border border-emerald-900/10 bg-white p-5 shadow-[0_18px_50px_rgba(35,76,44,.08)] overflow-hidden">
       {/* Background glow and grid */}
-      <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 via-cyan-500/5 to-blue-500/5 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-r from-emerald-50 via-white to-amber-50 pointer-events-none" />
       <div className="absolute top-0 right-1/4 w-80 h-40 bg-emerald-500/10 blur-3xl pointer-events-none" />
 
-      <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 mb-6 pb-3 border-b border-slate-800">
+      <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 mb-6 pb-3 border-b border-emerald-900/10">
         <div>
           <div className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-emerald-400" />
-            <span className="text-xs font-mono uppercase tracking-wider text-emerald-400 font-bold">
+            <span className="text-xs font-mono uppercase tracking-wider text-emerald-800 font-bold">
               Autonomous Agentic Pipeline
             </span>
             <span className="px-2 py-0.5 rounded-full text-[10px] bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 font-mono">
               Live Data Flow
             </span>
           </div>
-          <h3 className="text-base font-bold text-white font-['Outfit'] mt-1">
+          <h3 className="text-base font-bold text-emerald-950 font-['DM_Sans'] mt-1">
             End-to-End Autonomous Parali Dispatch & Institutional Verification
           </h3>
         </div>
 
-        <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
+        <div className="flex items-center gap-2 text-xs font-mono text-emerald-950/55">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span>Active Pulse: <span className="text-cyan-300 font-bold">{NODES[activeStep].title}</span></span>
+          <span>Active Pulse: <span className="text-emerald-800 font-bold">{NODES[activeStep].title}</span></span>
         </div>
       </div>
 
@@ -151,8 +151,8 @@ export const AnimatedBeam: React.FC<{
                 isActive
                   ? `${node.borderColor} ${node.bgColor} shadow-lg shadow-emerald-500/20 scale-[1.04] ring-1 ring-emerald-400`
                   : isPassed
-                  ? 'border-slate-800 bg-slate-900/60 opacity-85'
-                  : 'border-slate-800/80 bg-slate-900/40 hover:border-slate-700'
+                  ? 'border-emerald-900/10 bg-emerald-50/50 opacity-85'
+                  : 'border-emerald-900/10/80 bg-white hover:border-slate-700'
               }`}
             >
               {/* Animated connector line between cards for desktop */}
@@ -163,33 +163,33 @@ export const AnimatedBeam: React.FC<{
               )}
 
               <div className="flex items-center justify-between mb-2">
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isActive ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-800 text-slate-400'}`}>
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isActive ? 'bg-emerald-500/20 text-emerald-300' : 'bg-emerald-50 text-emerald-950/55'}`}>
                   <Icon className="w-4 h-4" />
                 </div>
                 <span className={`text-[9px] px-1.5 py-0.5 rounded font-mono font-bold uppercase border ${
                   isActive 
                     ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' 
-                    : 'bg-slate-800/60 text-slate-400 border-slate-700'
+                    : 'bg-emerald-50/60 text-emerald-950/55 border-slate-700'
                 }`}>
                   {node.badge}
                 </span>
               </div>
 
               <div>
-                <h4 className="text-xs font-bold text-white font-['Outfit'] truncate">
+                <h4 className="text-xs font-bold text-emerald-950 font-['DM_Sans'] truncate">
                   {node.title}
                 </h4>
-                <p className="text-[10px] text-slate-400 mt-0.5 truncate font-['Plus_Jakarta_Sans']">
+                <p className="text-[10px] text-emerald-950/55 mt-0.5 truncate font-['Plus_Jakarta_Sans']">
                   {node.subtitle}
                 </p>
               </div>
 
               {/* Progress Beam Indicator */}
-              <div className="w-full bg-slate-800 h-1 rounded-full overflow-hidden mt-3">
+              <div className="w-full bg-emerald-50 h-1 rounded-full overflow-hidden mt-3">
                 <div
                   className={`h-full transition-all duration-300 ${
                     isActive 
-                      ? 'w-full bg-gradient-to-r from-emerald-400 to-cyan-400 animate-pulse' 
+                      ? 'w-full bg-gradient-to-r from-emerald-500 to-amber-400 animate-pulse' 
                       : isPassed 
                       ? 'w-full bg-emerald-600' 
                       : 'w-0'
