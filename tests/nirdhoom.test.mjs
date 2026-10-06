@@ -478,3 +478,17 @@ test('React Bits Pro globe registry and operational map integration stay wired',
   assert.match(map, /mapMode === 'globe'/);
   assert.match(map, /Field GIS/);
 });
+
+
+test('homepage uses curated agriculture photography and visual storytelling', () => {
+  const home = read('src/components/CommandCenter/CommandCenter.tsx');
+  const css = read('src/index.css');
+  assert.match(home, /from '..\\/Animated\\/Spotlight'/);
+  assert.match(home, /upload\.wikimedia\.org/);
+  assert.match(home, /home-visual-rail/);
+  assert.match(home, /home-photo-credit/);
+  assert.match(home, /fetchPriority="high"/);
+  assert.match(css, /home-hero-spotlight/);
+  assert.match(css, /home-visual-grid/);
+  assert.match(css, /prefers-reduced-motion:reduce/);
+});
