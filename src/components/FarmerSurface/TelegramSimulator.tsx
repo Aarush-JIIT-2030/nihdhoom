@@ -25,7 +25,7 @@ export function TelegramSimulator({ onSlotConfirmed }: TelegramSimulatorProps) {
     return () => { active = false; };
   }, []);
 
-  const botUrl = useMemo(() => BOT_USERNAME ? `https://t.me/${BOT_USERNAME}` : 'https://t.me', []);
+  const botUrl = useMemo(() => BOT_USERNAME ? `https://t.me/${BOT_USERNAME}` : '', []);
 
   const copy = {
     pa: {
@@ -127,12 +127,13 @@ export function TelegramSimulator({ onSlotConfirmed }: TelegramSimulatorProps) {
 
           <div className="flex w-full flex-col gap-2 sm:w-auto">
             <a
-              href={botUrl}
+              href={botUrl || undefined}
               target="_blank"
               rel="noreferrer"
+              aria-disabled={!BOT_USERNAME}
               className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#229ED9] px-5 py-3 text-sm font-black text-white shadow-[0_12px_30px_rgba(34,158,217,.25)] transition-transform hover:-translate-y-0.5 transition hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
             >
-              <Send className="h-4 w-4" /> {copy.cta}
+              <Send className="h-4 w-4" /> {BOT_USERNAME ? copy.cta : 'Telegram bot is not configured'}
             </a>
             <button
               type="button"
