@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ActiveTab } from '../components/Header';
 import { INITIAL_FIELDS, INITIAL_MACHINES, MOCK_FIRMS_FIRE_EVENTS } from '../data/mockData';
 import { Field, Machine, BurnEvent, LatLng } from '../types';
@@ -49,78 +49,85 @@ export function useAppController() {
     }
   }, [fields, machines, fireEvents]);
 
+  const refreshLiveData = useCallback(async () => {
+    if (DEMO_MODE || !supabase) {
+      setLoadingLiveData(false);
+      return;
+    }
+    setLoadingLiveData(true);
+    setLiveDataError(null);
+    const client = supabase;
+    const [{ data: fieldRows, error: fieldError }, { data: machineRows, error: machineError }] =
+      await Promise.all([
+        client.from('fields').select('id,external_id,owner_id,khasra_no,village,block,district,acreage,crop,variety,expected_harvest_date,clearance_deadline,status,moisture_pct,center_lat,center_lng,geometry,boundary_geojson,boundary_source,boundary_verified,geometry_area_acres'),
+        client.from('machines').select('id,external_id,name,machine_type,owner_name,operator_name,operator_phone,status,capacity_acres_day,fuel_pct,current_lat,current_lng,operator_user_id'),
+      ]);
+    if (fieldError || machineError) {
+      setLiveDataError(fieldError?.message || machineError?.message || 'Unable to load live operational data');
+      setFields([]);
+      setMachines([]);
+      setSelectedField(null);
+      setLoadingLiveData(false);
+      return;
+    }
+    const rows = fieldRows || [];
+    const normalizedFields: Field[] = rows.map(normalizeField).map((f) => ({
+      ...f,
+      dbId: f.dbId,
+      acreage: f.acres,
+      farmer_id: String(rows.find((row) => row.id === f.dbId)?.owner_id || ''),
+      farmer_name: '',
+      farmer_phone: '',
+      khasra_no: f.khasra,
+      paddy_variety: (f.variety || 'PR-126') as Field['paddy_variety'],
+      expected_harvest_date: f.harvest,
+      clearance_deadline: f.deadline,
+      status: f.status as Field['status'],
+      center: { lat: f.lat, lng: f.lng },
+      geometry: f.geometry || [],
+      crop: 'Paddy',
+    }));
+    const normalizedMachines: Machine[] = (machineRows || []).map((m) => ({
+      id: String(m.external_id || m.id),
+      name: String(m.name || m.external_id || 'Machine'),
+      type: String(m.machine_type || 'Round Baler (50 HP)') as Machine['type'],
+      owner_type: 'CHC',
+      owner_name: String(m.owner_name || ''),
+      operator_name: String(m.operator_name || ''),
+      operator_phone: String(m.operator_phone || ''),
+      capacity_acres_day: Number(m.capacity_acres_day || 0),
+      current_location: { lat: Number(m.current_lat || 0), lng: Number(m.current_lng || 0) },
+      home_chc: '',
+      status: String(m.status || 'IDLE') as Machine['status'],
+      assigned_field_ids: [],
+      battery_or_fuel_pct: Number(m.fuel_pct || 0),
+    }));
+    setFields(normalizedFields);
+    setMachines(normalizedMachines);
+    setFireEvents([]);
+    setSelectedField((current) => normalizedFields.find((f) => f.id === current?.id) || normalizedFields[0] || null);
+    setLoadingLiveData(false);
+  }, []);
+
   useEffect(() => {
     if (DEMO_MODE || !supabase) {
       setLoadingLiveData(false);
       return;
     }
-
     let active = true;
-    const client = supabase;
-    if (!client) { setLoadingLiveData(false); return; }
-
-    const load = async () => {
-      setLoadingLiveData(true);
-      setLiveDataError(null);
-      const [{ data: fieldRows, error: fieldError }, { data: machineRows, error: machineError }] =
-        await Promise.all([
-          client.from('fields').select('id,external_id,owner_id,khasra_no,village,block,district,acreage,crop,variety,expected_harvest_date,clearance_deadline,status,moisture_pct,center_lat,center_lng,geometry,boundary_geojson,boundary_source,boundary_verified,geometry_area_acres'),
-          client.from('machines').select('id,external_id,name,machine_type,owner_name,operator_name,operator_phone,status,capacity_acres_day,fuel_pct,current_lat,current_lng,operator_user_id'),
-        ]);
-
-      if (!active) return;
-      if (fieldError || machineError) {
-        setLiveDataError(fieldError?.message || machineError?.message || 'Unable to load live operational data');
-        setFields([]);
-        setMachines([]);
-        setSelectedField(null);
-        setLoadingLiveData(false);
-        return;
-      }
-
-      const normalizedFields: Field[] = (fieldRows || []).map(normalizeField).map((f) => ({
-        ...f,
-        dbId: f.dbId,
-        acreage: f.acres,
-        farmer_id: String((fieldRows || []).find((row) => row.id === f.dbId)?.owner_id || ''),
-        farmer_name: '',
-        farmer_phone: '',
-        khasra_no: f.khasra,
-        paddy_variety: (f.variety || 'PR-126') as Field['paddy_variety'],
-        expected_harvest_date: f.harvest,
-        clearance_deadline: f.deadline,
-        status: f.status as Field['status'],
-        center: { lat: f.lat, lng: f.lng },
-        geometry: f.geometry || [],
-        crop: 'Paddy',
-      }));
-
-      const normalizedMachines: Machine[] = (machineRows || []).map((m) => ({
-        id: String(m.external_id || m.id),
-        name: String(m.name || m.external_id || 'Machine'),
-        type: String(m.machine_type || 'Round Baler (50 HP)') as Machine['type'],
-        owner_type: 'CHC',
-        owner_name: String(m.owner_name || ''),
-        operator_name: String(m.operator_name || ''),
-        operator_phone: String(m.operator_phone || ''),
-        capacity_acres_day: Number(m.capacity_acres_day || 0),
-        current_location: { lat: Number(m.current_lat || 0), lng: Number(m.current_lng || 0) },
-        home_chc: '',
-        status: String(m.status || 'IDLE') as Machine['status'],
-        assigned_field_ids: [],
-        battery_or_fuel_pct: Number(m.fuel_pct || 0),
-      }));
-
-      setFields(normalizedFields);
-      setMachines(normalizedMachines);
-      setFireEvents([]);
-      setSelectedField(normalizedFields[0] || null);
-      setLoadingLiveData(false);
+    void refreshLiveData().finally(() => { if (!active) return; });
+    const channel = supabase
+      .channel('nirdhoom-live-operations')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'fields' }, () => { void refreshLiveData(); })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'machines' }, () => { void refreshLiveData(); })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bookings' }, () => { void refreshLiveData(); })
+      .subscribe();
+    return () => {
+      active = false;
+      void supabase.removeChannel(channel);
     };
+  }, [refreshLiveData]);
 
-    void load();
-    return () => { active = false; };
-  }, []);
 
   const handleUpdateFieldStatus = (
     fieldId: string,
@@ -163,5 +170,6 @@ export function useAppController() {
     fieldForUpiModal,
     setFieldForUpiModal,
     handleUpdateFieldStatus,
+    refreshLiveData,
   };
 }
