@@ -9,8 +9,6 @@ import {
   Shield,
   CreditCard,
   CheckCircle2,
-  Circle,
-  ChevronRight,
   Sparkles,
   Fingerprint,
   Landmark,
