@@ -151,7 +151,7 @@ export const LiveKPIDashboard: React.FC<LiveKPIDashboardProps> = ({
   return (
     <div className="w-full flex flex-col gap-3 mb-1">
       {/* Hero Telemetry Strip */}
-      <div className="relative overflow-hidden rounded-2xl border border-emerald-500/20 bg-gradient-to-r from-slate-950 via-slate-900/90 to-slate-950 shadow-xl shadow-emerald-500/5 p-4 sm:p-5">
+      <div className="ops-telemetry-strip relative overflow-hidden rounded-2xl border p-4 sm:p-5">
         {/* Animated background glow blobs */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl">
           <div className="absolute -top-20 -left-20 w-80 h-80 rounded-full bg-emerald-500/5 blur-3xl animate-pulse" />
@@ -170,15 +170,15 @@ export const LiveKPIDashboard: React.FC<LiveKPIDashboardProps> = ({
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-sm font-black text-white font-['Outfit'] tracking-tight">
+                <span className="text-sm font-black tracking-tight">
                   NIRDHOOM Ops Telemetry
                 </span>
-                <span className="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-bold">
+                <span className="telemetry-badge flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border font-bold">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />
                   FIRMS / VIIRS layer
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400 mt-0.5">
+              <p className="text-[11px] telemetry-muted mt-0.5">
                 Punjab Malwa · connected operational records
               </p>
             </div>
@@ -186,7 +186,7 @@ export const LiveKPIDashboard: React.FC<LiveKPIDashboardProps> = ({
 
           {/* Payment status */}
           <div
-            className="flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-700/50 bg-slate-900/80 min-w-[220px]"
+            className="telemetry-payment flex items-center gap-2 px-3.5 py-2 rounded-xl min-w-[220px]"
           >
             <Zap className="w-4 h-4 shrink-0 text-slate-500" />
             <div className="text-xs overflow-hidden">
