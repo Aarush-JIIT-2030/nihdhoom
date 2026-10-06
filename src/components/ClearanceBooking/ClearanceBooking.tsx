@@ -19,6 +19,7 @@ export function ClearanceBooking({ fields, demoMode, onBooked }: Props) {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [consentAccepted, setConsentAccepted] = useState(false);
 
   useEffect(() => {
     if (!fieldId && bookable[0]?.id) setFieldId(bookable[0].id);
@@ -33,6 +34,10 @@ export function ClearanceBooking({ fields, demoMode, onBooked }: Props) {
     setMessage('');
     if (!selected || !date) {
       setError('Please choose your field and pickup date first.');
+      return;
+    }
+    if (!consentAccepted) {
+      setError('Please confirm consent before requesting clearance.');
       return;
     }
     if (new Date(date) < new Date(new Date().toISOString().slice(0, 10))) {
@@ -122,7 +127,12 @@ export function ClearanceBooking({ fields, demoMode, onBooked }: Props) {
             <input type="date" value={date} min={new Date().toISOString().slice(0, 10)} onChange={(e) => setDate(e.target.value)} className="w-full rounded-xl border border-slate-700 bg-slate-900 py-3 pl-10 pr-3 text-sm font-semibold text-white focus:border-emerald-500 focus:outline-none" />
           </div>
 
-          <button type="button" onClick={() => void book()} disabled={!selected || busy} className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-black text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-40">
+          <label className="mt-4 flex items-start gap-3 rounded-xl border border-emerald-900/10 bg-emerald-50/50 p-3 text-xs leading-5 text-emerald-950/70">
+            <input type="checkbox" checked={consentAccepted} onChange={(e) => setConsentAccepted(e.target.checked)} className="mt-1 h-4 w-4 accent-emerald-700" />
+            <span>I consent to NIRDHOOM using this field and booking information to coordinate the requested clearance service.</span>
+          </label>
+
+          <button type="button" onClick={() => void book()} disabled={!selected || busy || !consentAccepted} className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-black text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-40">
             {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
             {busy ? 'Confirming booking…' : demoMode ? 'Book example pickup' : 'Book my pickup'}
           </button>
@@ -140,9 +150,9 @@ export function ClearanceBooking({ fields, demoMode, onBooked }: Props) {
             <p>• Payment is not connected in this version.</p>
           </div>
           <div className="mt-5 rounded-xl border border-amber-500/15 bg-slate-950/40 p-3">
-            <span className="block text-[10px] uppercase tracking-wider text-slate-500">Example estimate</span>
-            <strong className="mt-1 block text-xl font-black text-amber-200">₹{estimate.toLocaleString()}</strong>
-            <span className="text-[10px] text-slate-500">Example only · Live quote comes from NIRDHOOM</span>
+            <span className="block text-[10px] uppercase tracking-wider text-amber-900/55">{demoMode ? 'Example estimate' : 'Server quote'}</span>
+            <strong className="mt-1 block text-xl font-black text-amber-900">{demoMode ? `₹${estimate.toLocaleString()}` : 'Shown after booking'}</strong>
+            <span className="text-[10px] text-amber-900/55">{demoMode ? 'Example only · no payment is made' : 'Authoritative quote comes from the server'}</span>
           </div>
         </aside>
       </section>
