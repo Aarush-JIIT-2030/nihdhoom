@@ -170,7 +170,7 @@ export const OpsMap: React.FC<OpsMapProps> = ({
         });
 
         polygon.bindTooltip(
-          `<strong>${field.khasra_no}</strong><br/>${field.farmer_name}<br/>${field.acreage} ac (${field.paddy_variety})<br/><span style="color:#10b981;font-weight:bold;">0 Fires • Planning window</span>`,
+          `<strong>${field.khasra_no}</strong><br/>${field.farmer_name}<br/>${field.acreage} ac (${field.paddy_variety})<br/><span style="color:#10b981;font-weight:bold;">No fire points in selected record • Planning window</span>`,
           { direction: 'top', className: 'leaflet-custom-tooltip' }
         );
 
