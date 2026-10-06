@@ -37,6 +37,9 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
   const [moistureValue, setMoistureValue] = useState<number>(14.2);
   const [balesCount, setBalesCount] = useState<number>(38);
   const [showUpiModal, setShowUpiModal] = useState(false);
+  const [jobStatus, setJobStatus] = useState<string | null>(null);
+  const [jobBusy, setJobBusy] = useState(false);
+  const [jobMessage, setJobMessage] = useState('');
   const [offlineSyncActive, setOfflineSyncActive] = useState(typeof navigator !== 'undefined' ? navigator.onLine : true);
 
   useEffect(() => {
@@ -191,6 +194,42 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
   const [evidenceMessage, setEvidenceMessage] = useState('');
   const [queuedEvidence, setQueuedEvidence] = useState(0);
   const lastGpsWrite = useRef(0);
+
+  useEffect(() => {
+    if (demoMode || !supabase || !currentField) return;
+    let cancelled = false;
+    const loadJob = async () => {
+      const { data, error } = await supabase.from('jobs').select('id,status').eq('field_id', currentField.dbId || currentField.id)
+        .in('status', ['ASSIGNED', 'ARRIVED', 'BALING', 'PROOF_PENDING']).order('created_at', { ascending: false }).limit(1).maybeSingle();
+      if (!cancelled) setJobStatus(error ? null : String(data?.status || ''));
+    };
+    void loadJob();
+    return () => { cancelled = true; };
+  }, [currentField?.dbId, currentField?.id, demoMode]);
+
+  const advanceLiveJob = async () => {
+    if (demoMode || !supabase || !currentField || jobBusy) return;
+    const nextByStatus: Record<string, string> = { ASSIGNED: 'ARRIVED', ARRIVED: 'BALING', BALING: 'PROOF_PENDING', PROOF_PENDING: 'COMPLETED' };
+    const next = jobStatus ? nextByStatus[jobStatus] : undefined;
+    if (!next) { setJobMessage('No active server job is assigned to this field yet.'); return; }
+    setJobBusy(true);
+    setJobMessage('');
+    try {
+      const lookup = await supabase.from('jobs').select('id,status').eq('field_id', currentField.dbId || currentField.id)
+        .eq('status', jobStatus).order('created_at', { ascending: false }).limit(1).maybeSingle();
+      if (lookup.error || !lookup.data?.id) throw new Error(lookup.error?.message || 'Active job not found.');
+      const { error } = await supabase.rpc('transition_job', {
+        p_job_id: lookup.data.id, p_next_status: next,
+        p_metadata: { source: 'operator-pwa', field_id: currentField.dbId || currentField.id },
+      });
+      if (error) throw new Error(error.message);
+      setJobStatus(next);
+      setJobMessage(next === 'COMPLETED' ? 'Job completed on the server. Evidence and verification remain separate steps.' : `Job moved to ${next.replace(/_/g, ' ')}.`);
+      if (next === 'COMPLETED') onJobCompleted(currentField.id, Number(currentField.payout_amount || 0));
+    } catch (error) {
+      setJobMessage(error instanceof Error ? error.message : 'Job transition failed.');
+    } finally { setJobBusy(false); }
+  };
 
   const currentField = fields.find((f) => f.id === selectedFieldId) || fields[0];
   const isJobFinished = currentField.status === 'CLEARED_PENDING_AUDIT' || currentField.status === 'VERIFIED_NON_BURN';
@@ -431,17 +470,21 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
                   />
                 </label>
                 {evidenceMessage && <p className="mt-2 text-[11px] text-slate-300">{evidenceMessage}</p>}
+                {jobMessage && <p role="status" className="mt-2 text-[11px] text-slate-300">{jobMessage}</p>}
               </div>
 
               {/* Completion action: payment is never triggered from the browser */}
               {!isJobFinished ? (
                 <button
-                  onClick={() => demoMode && setShowUpiModal(true)}
-                  disabled={!demoMode}
+                  onClick={() => {
+                    if (demoMode) setShowUpiModal(true);
+                    else void advanceLiveJob();
+                  }}
+                  disabled={jobBusy || (!demoMode && !jobStatus)}
                   className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 disabled:from-slate-800 disabled:to-slate-800 disabled:text-slate-500 text-white font-extrabold text-xs shadow-lg shadow-emerald-600/30 disabled:shadow-none flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95"
                 >
                   <Zap className="w-4 h-4 fill-current text-amber-300" />
-                  <span>{demoMode ? 'Simulate field completion' : 'Complete via authorized server workflow'}</span>
+                  <span>{jobBusy ? 'Updating job…' : demoMode ? 'Simulate field completion' : jobStatus ? `Advance job: ${jobStatus.replace(/_/g, ' ')} →` : 'No active server job'}</span>
                 </button>
               ) : (
                 <div className="p-2.5 rounded-xl bg-emerald-950/70 border border-emerald-500/50 text-emerald-300 text-xs font-bold text-center flex items-center justify-center gap-2">
