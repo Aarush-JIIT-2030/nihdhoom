@@ -214,9 +214,9 @@ export const Globe: React.FC<GlobeProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const globeRef = useRef<GlobeInstance | null>(null);
-  const animationIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const animationIntervalRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const animationFrameRef = useRef<number | null>(null);
-  const animationTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
+  const animationTimeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const isAnimatingRef = useRef(false);
   const cleanupFnRef = useRef<(() => void) | null>(null);
   const isInitializingRef = useRef(false);
@@ -604,7 +604,7 @@ export const Globe: React.FC<GlobeProps> = ({
 
         animationIntervalRef.current = setInterval(animateArcs, arcInterval);
 
-        let resizeTimeout: NodeJS.Timeout;
+        let resizeTimeout: ReturnType<typeof setTimeout>;
         const handleResize = () => {
           clearTimeout(resizeTimeout);
           resizeTimeout = setTimeout(() => {
