@@ -198,7 +198,7 @@ export const FarmerOnboarding: React.FC = () => {
               return (
                 <div
                   key={step.id}
-                  className={``flex items-center gap-3 p-2.5 rounded-lg transition-all ${
+                  className={`flex items-center gap-3 p-2.5 rounded-lg transition-all ${
                     current
                       ? 'bg-emerald-950/60 border border-emerald-500/50'
                       : done
