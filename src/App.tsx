@@ -617,7 +617,7 @@ export function App() {
               fields={fields}
               activeMachine={machines[0]}
               demoMode={demoMode}
-              onJobCompleted={(fId, amt) => handleUpdateFieldStatus(fId, 'CLEARED_PENDING_AUDIT', amt)}
+              onJobCompleted={(fId, amt) => demoMode ? handleUpdateFieldStatus(fId, 'CLEARED_PENDING_AUDIT', amt) : void refreshLiveData()}
             />
           ) : (
             <div className="glass-panel p-6 max-w-3xl mx-auto">
