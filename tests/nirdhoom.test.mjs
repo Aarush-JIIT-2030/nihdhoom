@@ -421,3 +421,24 @@ test('image optimization keeps JSX valid and the primary hero eager', () => {
   }
   assert.doesNotMatch(read('src/components/CommandCenter/CommandCenter.tsx'), /home-hero-image"[^>]*loading="lazy"/);
 });
+
+
+test('farmer OTP uses React Bits CodeSlots with live Supabase verification wiring', () => {
+  const onboarding = read('src/components/FarmerOnboarding/FarmerOnboarding.tsx');
+  const slots = read('src/components/FarmerOnboarding/CodeSlots.tsx');
+  const css = read('src/components/FarmerOnboarding/CodeSlots.css');
+  const pkg = JSON.parse(read('package.json'));
+  const lock = read('package-lock.json');
+  assert.match(onboarding, /import CodeSlots from '\.\/CodeSlots'/);
+  assert.match(onboarding, /onComplete=\{verifyLiveOtp\}/);
+  assert.match(onboarding, /accentColor="#F2A900"/);
+  assert.match(onboarding, /verifyOtp\(\{/);
+  assert.match(slots, /autoComplete="one-time-code"/);
+  assert.match(slots, /HugeiconsIcon/);
+  assert.match(css, /prefers-reduced-motion/);
+  assert.equal(pkg.dependencies.motion, '^12.23.21');
+  assert.equal(pkg.dependencies['@hugeicons/react'], '^1.1.10');
+  assert.equal(pkg.dependencies['@hugeicons/core-free-icons'], '^4.3.3');
+  assert.match(lock, /node_modules\/motion/);
+  assert.match(lock, /node_modules\/@hugeicons\/react/);
+});
