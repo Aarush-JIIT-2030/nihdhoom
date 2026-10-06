@@ -1107,3 +1107,104 @@ html[data-theme="kisan"] .field-menu-button:hover {
     border-radius: 15px;
   }
 }
+
+
+/* =========================================================
+   FINAL FIELD-FIRST COMPATIBILITY + STATE POLISH
+   Keep legacy/demo screens readable without hiding their boundaries.
+   ========================================================= */
+html[data-theme="kisan"] .nirdhoom-field-app .live-state-banner {
+  width: min(100% - 24px, 1480px);
+  margin: 8px auto 0;
+  padding: 9px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.45;
+  font-weight: 700;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .live-state-banner-loading {
+  color: #356244;
+  background: #eef6ea;
+  border: 1px solid rgba(31,122,70,.12);
+}
+html[data-theme="kisan"] .nirdhoom-field-app .live-state-banner-error {
+  color: #7f4105;
+  background: #fff4e2;
+  border: 1px solid rgba(200,111,8,.22);
+}
+html[data-theme="kisan"] .nirdhoom-field-app .ops-telemetry-strip {
+  background: linear-gradient(135deg,#fffdf8 0%,#f3f8ef 72%,#fff4df 100%);
+  border-color: rgba(31,122,70,.14);
+  box-shadow: 0 16px 40px rgba(38,76,43,.08);
+  color: #173522;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .ops-telemetry-strip .telemetry-badge {
+  color: #257044;
+  background: #e6f4e9;
+  border-color: rgba(31,122,70,.16);
+}
+html[data-theme="kisan"] .nirdhoom-field-app .ops-telemetry-strip .telemetry-muted {
+  color: #607462;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .ops-telemetry-strip .telemetry-payment {
+  color: #805d15;
+  background: #fff7e8;
+  border: 1px solid rgba(200,135,22,.20);
+}
+html[data-theme="kisan"] .nirdhoom-field-app .ops-telemetry-strip [class*="bg-slate-950"],
+html[data-theme="kisan"] .nirdhoom-field-app .ops-telemetry-strip [class*="bg-slate-900"] {
+  background: transparent !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .ops-telemetry-strip [class*="text-slate-"] {
+  color: #536658 !important;
+}
+
+/* Legacy dark demo shells: preserve the demo concept, not the dark cyber chrome. */
+html[data-theme="kisan"] .nirdhoom-field-app [class*="from-[#020409]"],
+html[data-theme="kisan"] .nirdhoom-field-app [class*="from-[#050c18]"],
+html[data-theme="kisan"] .nirdhoom-field-app [class*="to-[#0a1424]"] {
+  background-image: none !important;
+  background-color: #fffdf8 !important;
+  color: #173522 !important;
+  border-color: rgba(31,122,70,.14) !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app [class*="bg-[#040711]"],
+html[data-theme="kisan"] .nirdhoom-field-app [class*="bg-[#03060f]"] {
+  background: #f7faf4 !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .grid-bg,
+html[data-theme="kisan"] .nirdhoom-field-app .orb {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .glass-panel-amber,
+html[data-theme="kisan"] .nirdhoom-field-app .glass-panel-emerald {
+  color: #173522;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .nirdhoom-dark-demo {
+  background: #fffdf8 !important;
+  color: #173522 !important;
+  border-color: rgba(31,122,70,.14) !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .nirdhoom-dark-demo :is(.text-white,.text-slate-100,.text-slate-200) {
+  color: #173522 !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .nirdhoom-dark-demo :is(.text-slate-300,.text-slate-400,.text-slate-500) {
+  color: #536658 !important;
+}
+
+@media (max-width: 760px) {
+  html[data-theme="kisan"] .nirdhoom-field-app .live-state-banner {
+    width: calc(100% - 16px);
+    margin-top: 6px;
+  }
+  html[data-theme="kisan"] .nirdhoom-field-app .ops-telemetry-strip {
+    border-radius: 16px;
+  }
+}
+@media (max-width: 560px) {
+  html[data-theme="kisan"] .nirdhoom-field-app .ops-telemetry-strip .telemetry-payment {
+    min-width: 0;
+    width: 100%;
+  }
+}
