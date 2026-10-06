@@ -58,8 +58,8 @@ export const SatelliteEarth3D: React.FC<SatelliteEarth3DProps> = ({
 
     // 1. Scene, Camera, Renderer
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x040711);
-    scene.fog = new THREE.FogExp2(0x040711, 0.025);
+    scene.background = new THREE.Color(0xf3f8ed);
+    scene.fog = new THREE.FogExp2(0xf3f8ed, 0.025);
     sceneRef.current = scene;
 
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
@@ -74,7 +74,7 @@ export const SatelliteEarth3D: React.FC<SatelliteEarth3DProps> = ({
     rendererRef.current = renderer;
 
     // 2. Lights
-    const ambientLight = new THREE.AmbientLight(0x1e293b, 1.8);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 2.1);
     scene.add(ambientLight);
 
     const sunLight = new THREE.DirectionalLight(0xffffff, 2.5);
@@ -120,7 +120,7 @@ export const SatelliteEarth3D: React.FC<SatelliteEarth3DProps> = ({
     // Glowing Circular Platform Rim
     const rimGeo = new THREE.RingGeometry(11.8, 12.2, 64);
     const rimMat = new THREE.MeshBasicMaterial({
-      color: 0x10b981,
+      color: 0x2e9554,
       side: THREE.DoubleSide,
       transparent: true,
       opacity: 0.4,
@@ -142,7 +142,7 @@ export const SatelliteEarth3D: React.FC<SatelliteEarth3DProps> = ({
     terrainGeo.computeVertexNormals();
 
     const terrainMat = new THREE.MeshStandardMaterial({
-      color: 0x091422,
+      color: 0xdfe9d8,
       roughness: 0.7,
       metalness: 0.2,
       wireframe: false,
@@ -153,7 +153,7 @@ export const SatelliteEarth3D: React.FC<SatelliteEarth3DProps> = ({
 
     // Wireframe overlay for high-tech satellite GIS look
     const wireMat = new THREE.MeshBasicMaterial({
-      color: 0x064e3b,
+      color: 0x6f9b68,
       wireframe: true,
       transparent: true,
       opacity: 0.35,
@@ -178,8 +178,8 @@ export const SatelliteEarth3D: React.FC<SatelliteEarth3DProps> = ({
       const hexRadius = Math.max(0.6, Math.min(1.4, field.acreage * 0.22));
       const hexGeo = new THREE.CylinderGeometry(hexRadius, hexRadius, 0.15, 6);
       const hexMat = new THREE.MeshStandardMaterial({
-        color: 0x10b981,
-        emissive: 0x064e3b,
+        color: 0x2e9554,
+        emissive: 0x1f7a46,
         emissiveIntensity: 0.5,
         transparent: true,
         opacity: 0.75,
@@ -187,7 +187,7 @@ export const SatelliteEarth3D: React.FC<SatelliteEarth3DProps> = ({
       const hexMesh = new THREE.Mesh(hexGeo, hexMat);
       fieldGroup.add(hexMesh);
 
-      // 3D Protective Dome (Zero Burn Shield)
+      // 3D Protective Dome (Evidence boundary)
       const domeGeo = new THREE.SphereGeometry(hexRadius * 1.1, 16, 12, 0, Math.PI * 2, 0, Math.PI / 2);
       const domeMat = new THREE.MeshBasicMaterial({
         color: 0x34d399,
@@ -202,7 +202,7 @@ export const SatelliteEarth3D: React.FC<SatelliteEarth3DProps> = ({
       // Vertical Hologram Pillar
       const pillarGeo = new THREE.CylinderGeometry(0.04, 0.04, 2.2, 8);
       const pillarMat = new THREE.MeshBasicMaterial({
-        color: 0x10b981,
+        color: 0x2e9554,
         transparent: true,
         opacity: 0.6,
       });
@@ -230,7 +230,7 @@ export const SatelliteEarth3D: React.FC<SatelliteEarth3DProps> = ({
       fieldObjects.push(fieldGroup);
     });
 
-    // 6. NASA FIRMS Active Fire Anomalies (3D Red Pulsing Volcano Plumes)
+    // 6. FIRMS / VIIRS thermal observations (3D Red Pulsing Volcano Plumes)
     const fireObjects: THREE.Object3D[] = [];
     fireEvents.forEach((fire) => {
       const scaleFactor = 35;
@@ -284,7 +284,7 @@ export const SatelliteEarth3D: React.FC<SatelliteEarth3DProps> = ({
       fireObjects.push(fireGroup);
     });
 
-    // 7. NASA NOAA-20 / Sentinel-2 Satellite Model in 3D Orbit
+    // 7. Illustrative satellite / sensor visualization
     const satelliteGroup = new THREE.Group();
     scene.add(satelliteGroup);
 
@@ -468,7 +468,7 @@ export const SatelliteEarth3D: React.FC<SatelliteEarth3DProps> = ({
           setSelectedBeacon({
             type: 'FIELD',
             title: `${f.khasra_no} (${f.farmer_name})`,
-            desc: `Zero FIRMS fire points • Sentinel-2 verified • 48h SLA`,
+            desc: `No thermal observation in current record • supporting evidence only`,
             tempOrAcreage: `${f.acreage} Acres (${f.paddy_variety})`,
             coords: `${f.center.lat.toFixed(4)}°N, ${f.center.lng.toFixed(4)}°E`,
           });
@@ -477,7 +477,7 @@ export const SatelliteEarth3D: React.FC<SatelliteEarth3DProps> = ({
           const fire: BurnEvent = parent.userData.fireData;
           setSelectedBeacon({
             type: 'FIRE',
-            title: `NASA FIRMS VIIRS Active Fire`,
+            title: `FIRMS / VIIRS thermal observation`,
             desc: `Unregistered field (${fire.nearest_village}) • No Nirdhoom contract`,
             tempOrAcreage: `Brightness Temp: ${fire.brightness_temp_kelvin} K (Confidence: ${fire.confidence}%)`,
             coords: `${fire.firms_point.lat.toFixed(4)}°N, ${fire.firms_point.lng.toFixed(4)}°E`,
