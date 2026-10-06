@@ -41,6 +41,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
   const [jobBusy, setJobBusy] = useState(false);
   const [jobMessage, setJobMessage] = useState('');
   const [offlineSyncActive, setOfflineSyncActive] = useState(typeof navigator !== 'undefined' ? navigator.onLine : true);
+  const currentField = fields.find((f) => f.id === selectedFieldId) || fields[0];
 
   useEffect(() => {
     const client = supabase;
@@ -231,7 +232,6 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
     } finally { setJobBusy(false); }
   };
 
-  const currentField = fields.find((f) => f.id === selectedFieldId) || fields[0];
   const isJobFinished = currentField?.status === 'CLEARED_PENDING_AUDIT' || currentField?.status === 'VERIFIED_NON_BURN';
 
   if (!currentField) {
