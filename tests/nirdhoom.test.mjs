@@ -581,3 +581,18 @@ test('landing and visual pipeline avoid unsupported machinery, fire, and buyer c
   assert.match(earth, /supporting evidence only/);
   assert.doesNotMatch(earth, /Zero Burn Shield/);
 });
+
+
+test('field-first UI kit and open-source interaction surfaces remain wired', () => {
+  const css = read('src/index.css');
+  const header = read('src/components/Header.tsx');
+  const harvest = read('src/components/OfftakeAndForecast/HarvestForecast.tsx');
+  const auction = read('src/components/OfftakeAndForecast/MultiOfftakeAuction.tsx');
+  assert.match(css, /NIRDHOOM UI KIT v2/);
+  assert.match(css, /prefers-reduced-motion/);
+  assert.match(css, /spotlight/);
+  assert.match(header, /backdrop-blur-xl/);
+  assert.match(header, /Field-first crop-residue network/);
+  assert.match(harvest, /field-first cards/);
+  assert.match(auction, /field-first/);
+});
