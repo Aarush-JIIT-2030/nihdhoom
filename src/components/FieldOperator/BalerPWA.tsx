@@ -201,7 +201,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
     if (demoMode || !supabase || !currentField) return;
     let cancelled = false;
     const loadJob = async () => {
-      const { data, error } = await supabase.from('jobs').select('id,status').eq('field_id', currentField.dbId || currentField.id)
+      const { data, error } = await supabase.from('jobs').select('id,status,booking_id').eq('field_id', currentField.dbId || currentField.id)
         .in('status', ['ASSIGNED', 'ARRIVED', 'BALING', 'PROOF_PENDING']).order('created_at', { ascending: false }).limit(1).maybeSingle();
       if (!cancelled) setJobStatus(error ? null : String(data?.status || ''));
     };
@@ -236,7 +236,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
         if (!existingLot && quantity > 0) {
           const { error: lotError } = await supabase.from('residue_lots').insert({
             field_id: currentField.dbId || currentField.id,
-            booking_id: lookup.data.id,
+            booking_id: lookup.data.booking_id,
             job_id: lookup.data.id,
             quantity_tonnes: quantity,
             moisture_pct: Number(moistureValue),
