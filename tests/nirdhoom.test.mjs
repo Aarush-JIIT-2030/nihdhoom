@@ -517,3 +517,14 @@ test('satellite and landing evidence labels stay truthful', () => {
   assert.doesNotMatch(landing, /Subsidised CRM Baler Fleet Active/);
   assert.match(landing, /Registered baler fleet operating/);
 });
+
+test('ops telemetry does not invent live defaults', () => {
+  const telemetry = read('src/components/LiveKPIDashboard.tsx');
+  assert.match(telemetry, /acresScheduled = 0/);
+  assert.match(telemetry, /co2Avoided = 0/);
+  assert.match(telemetry, /activeMachines = 0/);
+  assert.match(telemetry, /fireEventsOutsideCount = 0/);
+  assert.match(telemetry, /demoMode = false/);
+  assert.doesNotMatch(telemetry, /NIRDHOOM Live Ops Telemetry/);
+  assert.match(telemetry, /NIRDHOOM Ops Telemetry/);
+});
