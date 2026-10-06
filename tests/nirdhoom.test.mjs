@@ -492,3 +492,19 @@ test('homepage uses curated agriculture photography and visual storytelling', ()
   assert.match(css, /home-visual-grid/);
   assert.match(css, /prefers-reduced-motion:reduce/);
 });
+
+
+test('provider and demo-label contracts stay truthful', () => {
+  const assistant = read('api/assistant.ts');
+  const env = read('.env.example');
+  const map = read('src/components/OpsConsole/OpsMap.tsx');
+  const landing = read('src/components/Landing/AgenticLanding.tsx');
+  assert.match(assistant, /GROQ_API_KEY/);
+  assert.match(assistant, /api\.groq\.com\/openai\/v1/);
+  assert.match(assistant, /askOpenAI/);
+  assert.match(env, /GROQ_MODEL=llama-3\.3-70b-versatile/);
+  assert.doesNotMatch(map, /Subsidised Balers/);
+  assert.doesNotMatch(map, /External Fire Storm/);
+  assert.doesNotMatch(landing, /Carbon Credit Marketplace/);
+  assert.match(landing, /Carbon Market Simulator/);
+});
