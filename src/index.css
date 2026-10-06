@@ -3405,3 +3405,131 @@ html[data-theme="kisan"] .nirdhoom-field-app .font-\['Outfit'\],
 html[data-theme="kisan"] .nirdhoom-field-app .font-\['Plus_Jakarta_Sans'\] {
   font-family:'DM Sans','Plus Jakarta Sans',system-ui,sans-serif !important;
 }
+
+
+/* =========================================================
+   NIRDHOOM UI KIT v2 — open-source inspired interaction layer
+   Uses Motion/React Bits patterns already in the app, but keeps
+   the product language field-first instead of cyber-dashboard.
+   ========================================================= */
+html[data-theme="kisan"] {
+  --nirdhoom-ink:#173522;
+  --nirdhoom-muted:#627466;
+  --nirdhoom-green:#207b47;
+  --nirdhoom-green-2:#2e9554;
+  --nirdhoom-saffron:#f2a900;
+  --nirdhoom-cream:#f6f8f1;
+  --nirdhoom-line:rgba(31,122,70,.12);
+  --nirdhoom-shadow:0 18px 50px rgba(35,76,44,.075);
+}
+html[data-theme="kisan"] body {
+  background:
+    radial-gradient(circle at 8% 0%,rgba(242,169,0,.08),transparent 28rem),
+    radial-gradient(circle at 94% 10%,rgba(46,149,84,.08),transparent 32rem),
+    #f6f8f1 !important;
+  color:var(--nirdhoom-ink) !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app {
+  background:transparent;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .glass-panel,
+html[data-theme="kisan"] .nirdhoom-field-app .glass-panel-emerald,
+html[data-theme="kisan"] .nirdhoom-field-app .glass-panel-amber,
+html[data-theme="kisan"] .nirdhoom-field-app .glass-panel-crimson {
+  background:rgba(255,255,255,.94) !important;
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border:1px solid var(--nirdhoom-line) !important;
+  border-radius:20px !important;
+  box-shadow:var(--nirdhoom-shadow) !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .glass-panel:hover,
+html[data-theme="kisan"] .nirdhoom-field-app .glass-panel-emerald:hover {
+  border-color:rgba(31,122,70,.2) !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .badge {
+  font-family:'DM Sans',system-ui,sans-serif;
+  letter-spacing:.03em;
+  font-size:10px;
+  padding:.34rem .62rem;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .badge-emerald {
+  background:#edf7eb !important;
+  color:#216c3e !important;
+  border-color:rgba(31,122,70,.14) !important;
+  box-shadow:none !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .badge-amber {
+  background:#fff6df !important;
+  color:#8b5d0d !important;
+  border-color:rgba(242,169,0,.2) !important;
+  box-shadow:none !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .badge-cyan {
+  background:#eef8f7 !important;
+  color:#286f72 !important;
+  border-color:rgba(40,111,114,.15) !important;
+  box-shadow:none !important;
+}
+html[data-theme="kisan"] .nirdhoom-field-app input[type="range"] {
+  accent-color:var(--nirdhoom-green);
+  height:6px;
+}
+html[data-theme="kisan"] .nirdhoom-field-app button {
+  -webkit-tap-highlight-color:transparent;
+}
+html[data-theme="kisan"] .nirdhoom-field-app button:not(:disabled):hover {
+  transition:transform .18s ease,box-shadow .18s ease,background-color .18s ease,border-color .18s ease;
+}
+html[data-theme="kisan"] .nirdhoom-field-app button:not(:disabled):active {
+  transform:translateY(1px);
+}
+html[data-theme="kisan"] .nirdhoom-field-app table {
+  border-color:var(--nirdhoom-line);
+}
+html[data-theme="kisan"] .nirdhoom-field-app th {
+  color:#496052;
+  background:#f4f8f0;
+}
+html[data-theme="kisan"] .nirdhoom-field-app td {
+  color:#254332;
+}
+html[data-theme="kisan"] .nirdhoom-field-app ::selection {
+  background:rgba(242,169,0,.25);
+  color:#173522;
+}
+/* React Bits style spotlight, but soft enough for a farmer-facing UI. */
+html[data-theme="kisan"] .spotlight {
+  opacity:.35;
+  mix-blend-mode:multiply;
+}
+/* Image cards: editorial crop photography rather than dashboard tiles. */
+html[data-theme="kisan"] .nirdhoom-field-app img {
+  image-rendering:auto;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .home-visual-card,
+html[data-theme="kisan"] .nirdhoom-field-app .home-hero {
+  box-shadow:0 24px 70px -35px rgba(35,76,44,.22);
+}
+/* Safe mobile rhythm. */
+@media (max-width:639px) {
+  html[data-theme="kisan"] .nirdhoom-field-app .glass-panel,
+  html[data-theme="kisan"] .nirdhoom-field-app .glass-panel-emerald,
+  html[data-theme="kisan"] .nirdhoom-field-app .glass-panel-amber {
+    border-radius:16px !important;
+  }
+  html[data-theme="kisan"] .nirdhoom-field-app h1 { text-wrap:balance; }
+  html[data-theme="kisan"] .nirdhoom-field-app h2,
+  html[data-theme="kisan"] .nirdhoom-field-app h3 { text-wrap:balance; }
+}
+/* Respect reduced-motion across Motion/React Bits-inspired surfaces. */
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme="kisan"] .nirdhoom-field-app *,
+  html[data-theme="kisan"] .nirdhoom-field-app *::before,
+  html[data-theme="kisan"] .nirdhoom-field-app *::after {
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    scroll-behavior:auto !important;
+    transition-duration:.001ms !important;
+  }
+}
