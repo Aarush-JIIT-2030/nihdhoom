@@ -56,3 +56,13 @@ test('root document enables the field-first theme before React mounts', () => {
   assert.match(html, /data-theme="kisan"/);
   assert.match(html, /DM+Sans/);
 });
+
+
+test('live operations realtime uses a private authenticated channel', () => {
+  const controller = read('src/state/useAppController.ts');
+  const migration = read('supabase/migrations/202610070001_nirdhoom_private_realtime_live_operations.sql');
+  assert.match(controller, /nirdhoom-live-operations/);
+  assert.match(controller, /private: true/);
+  assert.match(migration, /to authenticated/);
+  assert.match(migration, /realtime\.topic\(\) = 'nirdhoom-live-operations'/);
+});
