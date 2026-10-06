@@ -85,12 +85,12 @@ export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: H
 
   return (
     <>
-      <header className="nirdhoom-field-header sticky top-0 z-50 border-b px-3 sm:px-5">
+      <header className="nirdhoom-field-header sticky top-0 z-50 border-b border-emerald-900/10 bg-white/90 px-3 shadow-[0_8px_30px_rgba(35,76,44,.06)] backdrop-blur-xl sm:px-5">
       <div className="mx-auto max-w-[1480px]">
         <div className="flex min-h-[72px] items-center gap-3">
           <button
             onClick={() => navigate('OVERVIEW')} onMouseEnter={() => prefetchWorkspace('OVERVIEW')}
-            className="group flex min-w-0 items-center gap-3 rounded-2xl px-1 py-1.5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+            className="group flex min-w-0 items-center gap-3 rounded-2xl px-1 py-1.5 text-left transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
             aria-label="Go to NIRDHOOM Home"
           >
             <span className="relative grid h-11 w-11 shrink-0 place-items-center rounded-2xl border bg-emerald-50 shadow-sm">
@@ -99,7 +99,7 @@ export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: H
             </span>
             <span className="hidden min-w-0 sm:block">
               <span className="flex items-center gap-2">
-                <span className="font-['Outfit'] text-[16px] font-black tracking-[0.08em] text-emerald-950">NIRDHOOM</span>
+                <span className="font-['DM_Sans'] text-[16px] font-black tracking-[0.08em] text-emerald-950">NIRDHOOM</span>
                 <span className="rounded-full border border-amber-300 bg-amber-50 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-800">
                   {demoMode ? 'Demo' : 'Live'}
                 </span>
