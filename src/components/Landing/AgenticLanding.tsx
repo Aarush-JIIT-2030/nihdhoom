@@ -53,8 +53,8 @@ const PUNJAB_DISTRICT_TICKERS = [
   { district: 'Patiala (Nabaha)', status: 'DEMO RE-ROUTING', balers: '6 CHC Balers', acres: '142.0 ac', firms: 'Thermal observations reviewed', time: 'Demo' },
   { district: 'Barnala (Mehal Kalan)', status: 'DEMO HARVEST SIGNAL', balers: '3 CHC Balers', acres: '64.8 ac', firms: 'Thermal observations reviewed', time: 'Demo' },
   { district: 'Mansa (Budhlada)', status: 'DEMO READINESS SIGNAL', balers: '5 CHC Balers', acres: '110.5 ac', firms: 'Thermal observations reviewed', time: 'Demo' },
-  { district: 'Ludhiana (Jagraon)', status: 'DEMO BUYER PATHWAY', balers: '4 CHC Balers', acres: '92.0 ac', firms: 'Thermal observations reviewed', time: 'Demo' },
-  { district: 'Bathinda (Rampura)', status: 'DEMO CLEARANCE ESTIMATE', balers: '3 CHC Balers', acres: '78.2 ac', firms: 'Thermal observations reviewed', time: 'Demo' },
+  { district: 'Ludhiana (Jagraon)', status: 'DEMO DEMAND PATHWAY', balers: '4 CHC Balers', acres: '92.0 ac', firms: 'Thermal observations reviewed', time: 'Demo' },
+  { district: 'Bathinda (Rampura)', status: 'DEMO CLEARANCE PLANNING', balers: '3 CHC Balers', acres: '78.2 ac', firms: 'Thermal observations reviewed', time: 'Demo' },
 ];
 
 export const AgenticLanding: React.FC<AgenticLandingProps> = ({
@@ -97,7 +97,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
 
           {/* Main Kinetic Headline */}
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-emerald-950 font-['DM_Sans'] leading-[1.08] mb-6">
-            From Field to Verified Parali —{' '}
+            From Field to Accountable Residue —{' '}
             <span className="hero-word block sm:inline mt-2 sm:mt-0">
               <span className="text-amber-700">
                 {ROTATING_WORDS[wordIndex]}
