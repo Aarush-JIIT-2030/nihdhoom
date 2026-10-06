@@ -69,8 +69,8 @@ const DISTRICT_HOTSPOTS = [
 
 const FARMER_TESTIMONIALS = [
   {
-    name: 'Gurpreet Singh Brar',
-    village: 'Ubhawal, Sangrur',
+    name: 'Illustrative farmer',
+    village: 'Demo scenario',
     quote: 'ਮੈਂ 18 ਦਿਨ ਪਹਿਲਾਂ ਬੁਕ ਕੀਤਾ, ਬੇਲਰ ਆਇਆ ਡੈੱਡਲਾਈਨ ਤੋਂ 2 ਦਿਨ ਪਹਿਲਾਂ। ਕਣਕ ਦੀ ਬਿਜਾਈ ਸਮੇਂ ਸਿਰ ਹੋ ਗਈ।',
     quoteEn: 'I booked 18 days early, baler came 2 days before deadline. Wheat sowing happened on time.',
     acres: 8.5,
@@ -79,8 +79,8 @@ const FARMER_TESTIMONIALS = [
     savings: 'Illustrative booking scenario; payment and penalties are disabled',
   },
   {
-    name: 'Manpreet Kaur Sandhu',
-    village: 'Bhalwan, Dhuri',
+    name: 'Illustrative farmer',
+    village: 'Demo scenario',
     quote: 'ਪਹਿਲਾਂ ਫ਼ੋਨ ਤੇ ਫ਼ੋਨ ਕਰਨੇ ਪੈਂਦੇ ਸੀ। ਹੁਣ Telegram ਤੇ ਬੁੱਕ ਕਰ ਲੈਂਦੇ ਹਾਂ, Telegram ਤੇ ਬੁਕਿੰਗ ਦਾ ਸਟੇਟਸ ਇਕ ਥਾਂ ਵੇਖ ਸਕਦੇ ਹਾਂ।',
     quoteEn: 'Earlier I had to make endless calls. Now I can send a booking request through Telegram and see the field status in one place.',
     acres: 6.2,
@@ -89,8 +89,8 @@ const FARMER_TESTIMONIALS = [
     savings: 'Illustrative booking scenario • payment integration disabled',
   },
   {
-    name: 'Harinder Singh Dhillon',
-    village: 'Kheri Chandwan, Sunam',
+    name: 'Illustrative farmer',
+    village: 'Demo scenario',
     quote: 'ਇਹ demo scenario ਹੈ — verification ਤੋਂ ਬਾਅਦ residue ਦੀ downstream value ਸਮਝਾਉਣ ਲਈ।',
     quoteEn: 'Illustrative scenario showing how verified residue could unlock downstream value; no payment or carbon certificate is issued here.',
     acres: 12.0,
@@ -125,7 +125,7 @@ export const ImpactStats: React.FC<ImpactStatsProps> = ({ onNavigateTab }) => {
                   The Crisis: Punjab's 18.81 Million Tonnes of Paddy Straw
                 </h2>
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-500/15 text-red-400 font-mono font-bold border border-red-500/30 animate-live-pulse">
-                  REAL DATA
+                  PUBLIC CONTEXT
                 </span>
               </div>
               <p className="text-xs text-slate-400 mt-0.5">
@@ -161,7 +161,7 @@ export const ImpactStats: React.FC<ImpactStatsProps> = ({ onNavigateTab }) => {
             <div className="rounded-2xl overflow-hidden border border-emerald-500/25 relative group bg-slate-950">
               <img
                 src="/images/baling_fleet.jpg"
-                alt="Subsidised CRM baler fleet clearing paddy straw from Punjab fields"
+                alt="CRM baler fleet clearing crop residue from a Punjab field"
                 className="w-full h-56 object-cover object-center group-hover:scale-105 transition-transform duration-500"
                loading="lazy" decoding="async" />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent" />
@@ -170,7 +170,7 @@ export const ImpactStats: React.FC<ImpactStatsProps> = ({ onNavigateTab }) => {
                   ✅ THE NIRDHOOM REFRAME
                 </span>
                 <h4 className="text-sm font-bold text-white">
-                  1.25 lakh CRM machines already deployed — we dispatch idle ones with zero capex
+                  CRM machinery is widely distributed — NIRDHOOM coordinates available capacity without owning the fleet
                 </h4>
                 <p className="text-[11px] text-slate-300 mt-1 leading-relaxed">
                   Existing CRM machinery network. NIRDHOOM adds capacity-aware dispatch, layered evidence review and a payment-disabled completion workflow.
@@ -211,7 +211,7 @@ export const ImpactStats: React.FC<ImpactStatsProps> = ({ onNavigateTab }) => {
               <div className="text-2xl font-black font-mono text-teal-400">
                 <AnimCounter target={125000} prefix="" />
               </div>
-              <div className="text-[10px] text-slate-400 mt-1">Operational subsidised machines in Punjab</div>
+              <div className="text-[10px] text-slate-400 mt-1">CRM machine capacity • source year/definition dependent</div>
             </div>
 
             <div className="impact-stat">
@@ -220,9 +220,9 @@ export const ImpactStats: React.FC<ImpactStatsProps> = ({ onNavigateTab }) => {
                 CRM Subsidy
               </div>
               <div className="text-2xl font-black font-mono text-cyan-400">
-                ₹<AnimCounter target={576} suffix=" Cr" />
+                ₹<AnimCounter target={544.15} decimals={2} suffix=" Cr" />
               </div>
-              <div className="text-[10px] text-slate-400 mt-1">Allocated for 2026-27 season by CAQM</div>
+              <div className="text-[10px] text-slate-400 mt-1">Central CRM allocation for 2026-27 • verify current scheme notice</div>
             </div>
           </div>
 
