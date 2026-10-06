@@ -539,3 +539,17 @@ test('landing telemetry is zero-by-default and demo-aware', () => {
   assert.match(landing, /time: 'Demo'/);
   assert.match(landing, /demoMode=\{demoMode\}/);
 });
+
+test('Telegram UI does not fall back to generic t.me', () => {
+  const telegram = read('src/components/FarmerSurface/TelegramSimulator.tsx');
+  assert.doesNotMatch(telegram, /'https:\/\/t\.me'/);
+  assert.match(telegram, /Telegram bot is not configured/);
+  assert.match(telegram, /href=\{botUrl \|\| undefined\}/);
+});
+test('landing district ticker records are explicitly demo-labelled', () => {
+  const landing = read('src/components/Landing/AgenticLanding.tsx');
+  assert.doesNotMatch(landing, /status: '(?:ACTIVE DISPATCH|VRP RE-ROUTING|HARVEST SPIKE)'/);
+  assert.doesNotMatch(landing, /time: '(?:1m ago|2m ago|3m ago|5m ago|7m ago)'/);
+  assert.match(landing, /DEMO RE-ROUTING/);
+  assert.match(landing, /DEMO HARVEST SIGNAL/);
+});
