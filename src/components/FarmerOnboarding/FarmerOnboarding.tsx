@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import CodeSlots from './CodeSlots';
+import Stepper, { Step } from './Stepper';
 import { supabase } from '../../lib/supabase';
 import {
   UserCheck,
@@ -159,9 +160,6 @@ export const FarmerOnboarding: React.FC = () => {
     setFaceScanned(false); setBankVerified(false); setOtpError(''); setOtpStatus('idle'); setConsentAccepted(false);
   };
 
-  const isComplete = (step: KYCStep) => STEP_ORDER.indexOf(step) < stepIndex;
-  const isCurrent = (step: KYCStep) => step === currentStep;
-
   return (
     <div className="farmer-onboarding-surface flex flex-col gap-6 max-w-6xl mx-auto p-2">
       {/* Banner */}
@@ -185,46 +183,31 @@ export const FarmerOnboarding: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        {/* Steps Sidebar */}
+        {/* Animated React Bits progress stepper */}
         <div className="lg:col-span-4">
-          <div className="glass-panel p-4 flex flex-col gap-1.5 rounded-3xl">
-            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
-              Onboarding Progress
-            </h4>
-            {STEPS.map((step, idx) => {
-              const Icon = step.icon;
-              const done = isComplete(step.id);
-              const current = isCurrent(step.id);
-              return (
-                <div
-                  key={step.id}
-                  className={`flex items-center gap-3 p-2.5 rounded-lg transition-all ${
-                    current
-                      ? 'bg-emerald-950/60 border border-emerald-500/50'
-                      : done
-                      ? 'opacity-70'
-                      : 'opacity-40'
-                  }`}
-                >
-                  <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-[11px] font-extrabold ${
-                    done
-                      ? 'bg-emerald-500 text-slate-950'
-                      : current
-                      ? 'bg-emerald-500/20 border border-emerald-500 text-emerald-400'
-                      : 'bg-slate-800 text-slate-600'
-                  }`}>
-                    {done ? <CheckCircle2 className="w-4 h-4" /> : <Icon className="w-3.5 h-3.5" />}
-                  </div>
-                  <div className="min-w-0">
-                    <div className={`text-xs font-bold truncate ${current ? 'text-white' : done ? 'text-slate-300' : 'text-slate-500'}`}>
-                      {step.label}
-                    </div>
-                    <div className="text-[10px] text-slate-500">{step.sublabel}</div>
-                  </div>
-                  {current && <ChevronRight className="w-4 h-4 text-emerald-400 ml-auto shrink-0" />}
-                </div>
-              );
-            })}
+          <div className="farmer-onboarding-stepper">
+            <div className="px-1 pb-3">
+              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Onboarding progress</h4>
+              <p className="text-sm font-bold text-slate-800 mt-1">{STEPS[stepIndex]?.label}</p>
+              <p className="text-xs text-slate-500 mt-0.5">{STEPS[stepIndex]?.sublabel}</p>
+            </div>
+            <Stepper
+              key={stepIndex}
+              initialStep={stepIndex + 1}
+              disableStepIndicators
+              stepCircleContainerClassName="farmer-stepper-container"
+              stepContainerClassName="farmer-stepper-indicators"
+              contentClassName="farmer-stepper-hidden-content"
+              footerClassName="farmer-stepper-hidden-footer"
+              onStepChange={() => undefined}
+              onFinalStepCompleted={() => undefined}
+            >
+              {STEPS.map((step) => (
+                <Step key={step.id}>
+                  <span className="sr-only">{step.label}: {step.sublabel}</span>
+                </Step>
+              ))}
+            </Stepper>
           </div>
         </div>
 
