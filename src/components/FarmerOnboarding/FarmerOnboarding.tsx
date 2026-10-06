@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import CodeSlots from './CodeSlots';
 import { supabase } from '../../lib/supabase';
 import {
   UserCheck,
@@ -48,6 +49,7 @@ export const FarmerOnboarding: React.FC = () => {
   const [faceScanned, setFaceScanned] = useState(false);
   const [bankVerified, setBankVerified] = useState(false);
   const [otpError, setOtpError] = useState('');
+  const [otpStatus, setOtpStatus] = useState<'idle' | 'error' | 'success'>('idle');
   const [consentAccepted, setConsentAccepted] = useState(false);
   const [resendSeconds, setResendSeconds] = useState(0);
 
@@ -71,13 +73,23 @@ export const FarmerOnboarding: React.FC = () => {
   const normalizedPhone = phone ? `+91${phone}` : '';
 
   const sendLiveOtp = async () => {
-    if (DEMO_MODE) return advance();
+    if (DEMO_MODE) {
+      if (currentStep === 'PHONE') {
+        advance();
+      } else {
+        setOtp('');
+        setOtpStatus('idle');
+        setOtpError('');
+      }
+      return;
+    }
     if (!supabase) {
       setOtpError('Live authentication is not configured.');
       return;
     }
     setLoading(true);
     setOtpError('');
+    setOtpStatus('idle');
     const { error } = await supabase.auth.signInWithOtp({
       phone: normalizedPhone,
       options: { shouldCreateUser: true },
@@ -85,28 +97,43 @@ export const FarmerOnboarding: React.FC = () => {
     setLoading(false);
     if (error) {
       setOtpError(error.message || 'Unable to send OTP.');
+      setOtpStatus('error');
       return;
     }
+    setOtp('');
     setResendSeconds(45);
     setCurrentStep('OTP');
   };
 
-  const verifyLiveOtp = async () => {
-    if (DEMO_MODE) return advance();
+  const verifyLiveOtp = async (code: string) => {
+    if (code.length !== 6) return;
+    if (DEMO_MODE) {
+      if (code !== '842613') {
+        setOtpError('That demo code is incorrect. Try 842613.');
+        setOtpStatus('error');
+        return;
+      }
+      setOtpStatus('success');
+      window.setTimeout(() => setCurrentStep('CONSENT'), 650);
+      return;
+    }
     if (!supabase) {
       setOtpError('Live authentication is not configured.');
+      setOtpStatus('error');
       return;
     }
     setLoading(true);
     setOtpError('');
+    setOtpStatus('idle');
     const { data, error } = await supabase.auth.verifyOtp({
       phone: normalizedPhone,
-      token: otp,
+      token: code,
       type: 'sms',
     });
     if (error || !data.user) {
       setLoading(false);
-      setOtpError(error?.message || 'OTP verification failed.');
+      setOtpError(error?.message || 'OTP verification failed. Please try again.');
+      setOtpStatus('error');
       return;
     }
     const { error: profileError } = await supabase.from('profiles').upsert({
@@ -118,16 +145,18 @@ export const FarmerOnboarding: React.FC = () => {
     setLoading(false);
     if (profileError) {
       setOtpError(profileError.message || 'Verified, but farmer profile could not be saved.');
+      setOtpStatus('error');
       return;
     }
-    setCurrentStep('CONSENT');
+    setOtpStatus('success');
+    window.setTimeout(() => setCurrentStep('CONSENT'), 650);
   };
 
   const reset = () => {
     setCurrentStep('PHONE');
     setPhone(''); setOtp(''); setAadhaarLast4(''); setName(''); setVillage('');
     setBlock(''); setKhasra(''); setAcreage('');
-    setFaceScanned(false); setBankVerified(false); setOtpError(''); setConsentAccepted(false);
+    setFaceScanned(false); setBankVerified(false); setOtpError(''); setOtpStatus('idle'); setConsentAccepted(false);
   };
 
   const isComplete = (step: KYCStep) => STEP_ORDER.indexOf(step) < stepIndex;
@@ -281,52 +310,77 @@ export const FarmerOnboarding: React.FC = () => {
                 <div className="p-3 bg-slate-900/80 rounded-lg border border-slate-800 text-xs text-slate-300">
                   <div className="flex items-center justify-between gap-3">
                     <span>OTP sent to <strong className="text-white">+91 {phone}</strong> via SMS.</span>
-                    <button type="button" onClick={() => { setCurrentStep('PHONE'); setOtp(''); setOtpError(''); }} className="shrink-0 text-amber-300 font-bold hover:text-amber-200">Edit</button>
+                    <button
+                      type="button"
+                      onClick={() => { setCurrentStep('PHONE'); setOtp(''); setOtpStatus('idle'); setOtpError(''); }}
+                      className="shrink-0 text-amber-300 font-bold hover:text-amber-200"
+                    >
+                      Edit
+                    </button>
                   </div>
-                  {DEMO_MODE && <>
-                    <br/>
-                    <span className="text-emerald-400 font-semibold">Demo OTP: 8 4 2 6 1 3</span>
-                  </>}
+                  {DEMO_MODE && (
+                    <>
+                      <br />
+                      <span className="text-emerald-400 font-semibold">Demo OTP: 8 4 2 6 1 3</span>
+                    </>
+                  )}
                 </div>
-                <div className="rounded-2xl border border-amber-400/20 bg-amber-400/5 p-4">
-                  <label className="text-sm font-bold text-slate-200 block mb-3">Enter 6-digit OTP</label>
-                  <div className="flex gap-2 justify-center">
-                    {Array.from({ length: 6 }).map((_, i) => (
-                      <input
-                        key={i}
-                        maxLength={1}
-                        className={`w-10 h-12 rounded-lg text-center font-mono text-xl font-bold text-white focus:outline-none transition-all ${
-                          otp[i]
-                            ? 'bg-emerald-950/80 border-2 border-emerald-500'
-                            : 'bg-slate-900 border border-slate-700 focus:border-emerald-500'
-                        }`}
-                        value={otp[i] || ''}
-                        onChange={(e) => {
-                          const val = e.target.value.replace(/\D/g, '');
-                          setOtp((prev) => {
-                            const arr = prev.split('');
-                            arr[i] = val;
-                            return arr.join('').slice(0, 6);
-                          });
-                        }}
-                      />
-                    ))}
+
+                <div className="rounded-2xl border border-amber-400/20 bg-amber-400/5 p-4 sm:p-5">
+                  <div className="flex items-center justify-between gap-3 mb-3">
+                    <label className="text-sm font-bold text-slate-200">Enter 6-digit OTP</label>
+                    <span className="text-[11px] font-semibold text-slate-500">Secure SMS code</span>
                   </div>
-                  <p className="mt-3 text-xs text-slate-500">Never share this code with anyone. NIRDHOOM will only use it to verify this phone.</p>
+                  <div className="flex justify-center overflow-x-auto py-2">
+                    <CodeSlots
+                      length={6}
+                      value={otp}
+                      status={otpStatus}
+                      onChange={(code) => {
+                        setOtp(code);
+                        if (otpStatus !== 'idle' && code.length < 6) setOtpStatus('idle');
+                      }}
+                      onComplete={verifyLiveOtp}
+                      autoFocus
+                      accentColor="#F2A900"
+                      inkColor="#4A3600"
+                      slotColor="#FFF7E6"
+                      digitColor="#2B2115"
+                      dangerColor="#DC2626"
+                      slotSize={44}
+                      gap={8}
+                      radius={12}
+                      ariaLabel="Six digit farmer verification code"
+                      disabled={loading}
+                    />
+                  </div>
+                  <p className="mt-3 text-xs text-slate-500 text-center">
+                    Enter the code from the SMS. It verifies only this phone number; never share it with anyone.
+                  </p>
                 </div>
-                <div className="flex items-center justify-between gap-3">
-                  <button type="button" disabled={resendSeconds > 0 || loading} onClick={sendLiveOtp} className="text-sm font-bold text-amber-300 disabled:text-slate-600">{resendSeconds > 0 ? `Resend OTP in ${resendSeconds}s` : 'Resend OTP'}</button>
-                  <span className="text-xs text-slate-500">SMS verification</span>
+
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                  <button
+                    type="button"
+                    disabled={resendSeconds > 0 || loading}
+                    onClick={sendLiveOtp}
+                    className="min-h-11 text-sm font-bold text-amber-300 disabled:text-slate-600"
+                  >
+                    {resendSeconds > 0 ? `Resend OTP in ${resendSeconds}s` : 'Resend OTP'}
+                  </button>
+                  <span className="text-xs text-slate-500">Verification runs automatically when all 6 digits are entered.</span>
                 </div>
-                <button
-                  onClick={verifyLiveOtp}
-                  disabled={(DEMO_MODE ? otp !== '842613' : otp.length !== 6) || loading}
-                  className="mt-auto w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow transition-all"
-                >
-                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
-                  {DEMO_MODE ? 'Verify Demo OTP & Continue' : 'Verify OTP & Continue'}
-                </button>
-                {otpError && <div className="text-xs text-red-300 bg-red-950/30 border border-red-500/30 rounded-lg p-2">{otpError}</div>}
+
+                {loading && (
+                  <div className="text-xs text-emerald-300 bg-emerald-950/30 border border-emerald-500/30 rounded-lg p-2" role="status">
+                    Verifying your OTP securely…
+                  </div>
+                )}
+                {otpError && (
+                  <div className="text-xs text-red-300 bg-red-950/30 border border-red-500/30 rounded-lg p-2" role="alert">
+                    {otpError}
+                  </div>
+                )}
               </>
             )}
 
