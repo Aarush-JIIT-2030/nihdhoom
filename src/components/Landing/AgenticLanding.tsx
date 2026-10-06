@@ -38,6 +38,7 @@ interface AgenticLandingProps {
   firmsZeroBurnCount?: number;
   activeMachines?: number;
   fireEventsOutsideCount?: number;
+  demoMode?: boolean;
 }
 
 const ROTATING_WORDS = [
@@ -48,7 +49,7 @@ const ROTATING_WORDS = [
 ];
 
 const PUNJAB_DISTRICT_TICKERS = [
-  { district: 'Sangrur (Bhawanigarh)', status: 'ACTIVE DISPATCH', balers: '4 CHC Balers', acres: '88.4 ac', firms: 'Thermal observations reviewed', time: 'Live' },
+  { district: 'Sangrur (Bhawanigarh)', status: 'DEMO DISPATCH', balers: '4 CHC Balers', acres: '88.4 ac', firms: 'Thermal observations reviewed', time: 'Demo' },
   { district: 'Patiala (Nabaha)', status: 'VRP RE-ROUTING', balers: '6 CHC Balers', acres: '142.0 ac', firms: 'Thermal observations reviewed', time: '1m ago' },
   { district: 'Barnala (Mehal Kalan)', status: 'HARVEST SPIKE', balers: '3 CHC Balers', acres: '64.8 ac', firms: 'Thermal observations reviewed', time: '2m ago' },
   { district: 'Mansa (Budhlada)', status: 'READINESS SIGNAL · DEMO', balers: '5 CHC Balers', acres: '110.5 ac', firms: 'Thermal observations reviewed', time: '3m ago' },
@@ -59,11 +60,12 @@ const PUNJAB_DISTRICT_TICKERS = [
 export const AgenticLanding: React.FC<AgenticLandingProps> = ({
   onNavigateTab,
   openPitchDrawer,
-  acresScheduled = 88.4,
-  co2Avoided = 72.6,
-  firmsZeroBurnCount = 5,
-  activeMachines = 4,
-  fireEventsOutsideCount = 8,
+  acresScheduled = 0,
+  co2Avoided = 0,
+  firmsZeroBurnCount = 0,
+  activeMachines = 0,
+  fireEventsOutsideCount = 0,
+  demoMode = false,
 }) => {
   const [wordIndex, setWordIndex] = useState(0);
 
@@ -320,6 +322,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
       {/* SECTION 2: LIVE TELEMETRY DASHBOARD */}
       <section>
         <LiveKPIDashboard
+          demoMode={demoMode}
           acresScheduled={acresScheduled}
           co2Avoided={co2Avoided}
           firmsZeroBurnCount={firmsZeroBurnCount}
