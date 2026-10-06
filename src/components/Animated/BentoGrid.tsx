@@ -36,12 +36,12 @@ const WEDGES: WedgeItem[] = [
   {
     id: 1,
     title: 'Wedge 1: Asset Strategy',
-    tagline: "Don't buy balers. Route the idle ones.",
+    tagline: "Don't buy balers. Coordinate available capacity.",
     category: 'CAPEX ELIMINATION',
     description: "Punjab & Haryana have distributed crop-residue machinery networks. NIRDHOOM's thesis is to coordinate available capacity without owning the fleet; machine availability must be verified in a pilot.",
-    highlight: '₹0 Startup Capex • 100% Asset-Light Take Rate',
+    highlight: 'Asset-light model • no fleet ownership in prototype',
     metrics: [
-      { label: 'Baler Machine Capex', value: '₹0 (Zero)' },
+      { label: 'Baler ownership', value: 'Not owned by NIRDHOOM' },
       { label: 'Registered CRM Capacity', value: 'Demo capacity pool' },
       { label: 'Take Rate Margin', value: 'Asset-Light Take Rate' },
     ],
@@ -76,7 +76,7 @@ const WEDGES: WedgeItem[] = [
   {
     id: 3,
     title: 'Wedge 3: Pricing Mechanism',
-    tagline: 'Price by time, not by weight. Pay per acre.',
+    tagline: 'Plan service terms around the field and job.',
     category: 'ALGORITHMIC YIELD MANAGEMENT',
     description: 'Weight disputes can create farmgate friction. The prototype uses bounded per-acre estimates to support planning; authoritative booking values are calculated by the server when the live booking workflow succeeds.',
     highlight: 'Flattens the 30-day Supply Spike Before It Hits',
@@ -96,7 +96,7 @@ const WEDGES: WedgeItem[] = [
   {
     id: 4,
     title: 'Wedge 4: Data Moat',
-    tagline: 'Forecast the harvest before it happens.',
+    tagline: 'Plan around harvest pressure.',
     category: 'SENTINEL-2 NDVI FORECASTING',
     description: 'Paddy variety and crop maturity can inform harvest planning. The product keeps satellite/forecast inputs separate from verified field records and does not invent a maturity accuracy number.',
     highlight: 'Future analytics pathway',
@@ -117,7 +117,7 @@ const WEDGES: WedgeItem[] = [
     id: 5,
     title: 'Wedge 5: Offtake Optimization',
     tagline: 'Stop assuming biogas is the best buyer.',
-    category: 'DYNAMIC MULTI-OFFTAKE AUCTION',
+    category: 'CONDITIONAL BUYER MATCHING',
     description: 'Verified residue can be routed toward eligible offtake pathways based on quality, quantity, logistics and buyer terms. Demo buyer values are illustrative until real offers and contracts are connected.',
     highlight: 'Conditional buyer matching',
     metrics: [
@@ -154,7 +154,7 @@ export const BentoGrid: React.FC<{
             Why The Obvious Model Dies, and The Version That Wins
           </h2>
           <p className="text-xs text-emerald-950/55 mt-1 max-w-3xl">
-            Originality does not come from selling commoditised straw. It comes from picking a new unit of value: unlocking stranded public balers, underwriting harvest downside, and verifying non-burning on satellite.
+            Originality does not come from selling commoditised straw. It comes from picking a new unit of value: coordinating registered capacity, reducing scheduling friction, and keeping evidence separate from impact claims.
           </p>
         </div>
 
