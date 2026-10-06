@@ -77,10 +77,10 @@ export function ResiduePooling({ fields, demoMode }: Props) {
 
   return (
     <div className="farmer-surface farmer-market residue-pooling-surface space-y-4">
-      <div className="rounded-2xl border border-emerald-500/20 bg-slate-950/70 p-5">
+      <div className="rounded-2xl border border-emerald-900/10 bg-white p-5 shadow-sm">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-          <div><div className="flex items-center gap-2 text-emerald-300 text-xs font-bold uppercase tracking-widest"><Layers3 className="h-4 w-4" /> Residue-first marketplace</div><h1 className="mt-1 text-2xl font-black text-white">Residue Supply & Deal Pools</h1><p className="text-sm text-slate-400 mt-1">Pool fragmented, verified residue against buyer requirements before discussing impact or carbon value.</p></div>
-          {demoMode && <button onClick={createDemoPool} className="rounded-lg bg-emerald-600 px-3 py-2 text-xs font-bold text-white"><Plus className="inline h-3.5 w-3.5 mr-1" /> Create demo pool</button>}
+          <div><div className="flex items-center gap-2 text-emerald-800 text-xs font-bold uppercase tracking-widest"><Layers3 className="h-4 w-4" /> Residue-first marketplace</div><h1 className="mt-1 text-2xl font-black text-emerald-950">Residue Supply & Deal Pools</h1><p className="text-sm text-emerald-950/65 mt-1">Pool fragmented, verified residue against buyer requirements before discussing impact or carbon value.</p></div>
+          {demoMode && <button onClick={createDemoPool} className="rounded-lg bg-emerald-600 px-3 py-2 text-xs font-bold text-emerald-950"><Plus className="inline h-3.5 w-3.5 mr-1" /> Create demo pool</button>}
         </div>
       </div>
 
@@ -92,49 +92,49 @@ export function ResiduePooling({ fields, demoMode }: Props) {
       </section>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <section className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
-          <h2 className="font-bold text-white">Field-derived supply (pooling requires verified lots)</h2>
+        <section className="rounded-2xl border border-emerald-900/10 bg-white p-4 shadow-sm">
+          <h2 className="font-bold text-emerald-950">Field-derived supply (pooling requires verified lots)</h2>
           <div className="mt-3 space-y-2">
-            {localSupply.length === 0 ? <p className="text-sm text-slate-500">No field supply records yet.</p> : localSupply.map(s => (
-              <div key={s.fieldId} className="flex items-center justify-between rounded-lg border border-slate-800 p-3">
-                <div><div className="text-xs font-bold text-white">{s.farmer}</div><div className="text-[10px] text-slate-500">{s.village} · {s.status}</div></div>
-                <div className="text-sm font-black text-emerald-300">{s.tonnes.toFixed(1)} t planning</div>
+            {localSupply.length === 0 ? <p className="text-sm text-emerald-950/50">No field supply records yet.</p> : localSupply.map(s => (
+              <div key={s.fieldId} className="flex items-center justify-between rounded-lg border border-emerald-900/10 bg-emerald-50/30 p-3">
+                <div><div className="text-xs font-bold text-emerald-950">{s.farmer}</div><div className="text-[10px] text-emerald-950/50">{s.village} · {s.status}</div></div>
+                <div className="text-sm font-black text-emerald-800">{s.tonnes.toFixed(1)} t planning</div>
               </div>
             ))}
           </div>
         </section>
 
-        <section className="rounded-2xl border border-amber-500/20 bg-slate-950/60 p-4">
-          <h2 className="font-bold text-white">Buyer demand</h2>
+        <section className="rounded-2xl border border-amber-900/10 bg-amber-50/50 p-4">
+          <h2 className="font-bold text-emerald-950">Buyer demand</h2>
           <div className="mt-3 space-y-2">
-            {demands.length === 0 ? <p className="text-sm text-slate-500">No live buyer demand published yet.</p> : demands.map(d => (
-              <div key={d.id} className="rounded-lg border border-slate-800 p-3">
-                <div className="flex justify-between"><span className="text-xs font-bold text-white">{d.buyer_name}</span><span className="text-xs text-amber-300">{d.target_tonnes} t</span></div>
-                <div className="mt-1 text-[10px] text-slate-500">Pickup by {d.pickup_deadline} · radius {d.radius_km} km</div>
-                <button onClick={() => void createPoolFromDemand(d)} className="mt-2 inline-flex items-center gap-1 rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-1 text-[10px] font-bold text-amber-200"><ArrowRight className="h-3 w-3" /> Create pool</button>
+            {demands.length === 0 ? <p className="text-sm text-emerald-950/50">No live buyer demand published yet.</p> : demands.map(d => (
+              <div key={d.id} className="rounded-lg border border-emerald-900/10 bg-emerald-50/30 p-3">
+                <div className="flex justify-between"><span className="text-xs font-bold text-emerald-950">{d.buyer_name}</span><span className="text-xs text-amber-800">{d.target_tonnes} t</span></div>
+                <div className="mt-1 text-[10px] text-emerald-950/50">Pickup by {d.pickup_deadline} · radius {d.radius_km} km</div>
+                <button onClick={() => void createPoolFromDemand(d)} className="mt-2 inline-flex items-center gap-1 rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-1 text-[10px] font-bold text-amber-800"><ArrowRight className="h-3 w-3" /> Create pool</button>
               </div>
             ))}
           </div>
         </section>
       </div>
 
-      <section className="rounded-2xl border border-cyan-500/20 bg-slate-950/60 p-4">
-        <div className="flex items-center gap-2"><Users className="h-4 w-4 text-cyan-300" /><h2 className="font-bold text-white">Deal pools</h2></div>
+      <section className="rounded-2xl border border-emerald-900/10 bg-white p-4 shadow-sm">
+        <div className="flex items-center gap-2"><Users className="h-4 w-4 text-emerald-800" /><h2 className="font-bold text-emerald-950">Deal pools</h2></div>
         <div className="mt-3 grid gap-3 md:grid-cols-2">
           {visiblePools.map(p => {
             const pct = Math.min(100, Math.round((p.current_tonnes / Math.max(1, p.target_tonnes)) * 100));
-            return <div key={p.id} className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
-              <div className="flex justify-between"><span className="text-sm font-bold text-white">{p.name}</span><span className="text-[10px] text-cyan-300">{p.status}</span></div>
+            return <div key={p.id} className="rounded-xl border border-emerald-900/10 bg-emerald-50/30 p-4">
+              <div className="flex justify-between"><span className="text-sm font-bold text-emerald-950">{p.name}</span><span className="text-[10px] text-emerald-800">{p.status}</span></div>
               <div className="mt-3 h-2 rounded-full bg-slate-800 overflow-hidden"><div className="h-full bg-emerald-500" style={{ width: `${pct}%` }} /></div>
-              <div className="mt-2 flex justify-between text-xs text-slate-400"><span>{p.current_tonnes.toFixed(1)} t pooled</span><span>{p.target_tonnes.toFixed(1)} t target</span></div>
-              <button onClick={() => void joinPool(p.id, Math.min(5, Math.max(1, p.target_tonnes - p.current_tonnes)))} className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-2 text-xs font-bold text-cyan-200"><CheckCircle2 className="h-3.5 w-3.5" /> Join pool</button>
+              <div className="mt-2 flex justify-between text-xs text-emerald-950/55"><span>{p.current_tonnes.toFixed(1)} t pooled</span><span>{p.target_tonnes.toFixed(1)} t target</span></div>
+              <button onClick={() => void joinPool(p.id, Math.min(5, Math.max(1, p.target_tonnes - p.current_tonnes)))} className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-2 text-xs font-bold text-emerald-800"><CheckCircle2 className="h-3.5 w-3.5" /> Join pool</button>
             </div>;
           })}
         </div>
       </section>
 
-      {notice && <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-3 text-xs text-emerald-200">{notice}</div>}
-      <div className="flex items-center gap-2 text-[11px] text-slate-500"><Clock3 className="h-3.5 w-3.5" /> Pooling locks only after quantity, quality, pickup window and buyer match are validated.</div>
+      {notice && <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-3 text-xs text-emerald-800">{notice}</div>}
+      <div className="flex items-center gap-2 text-[11px] text-emerald-950/50"><Clock3 className="h-3.5 w-3.5" /> Pooling locks only after quantity, quality, pickup window and buyer match are validated.</div>
     </div>
   );
 }
