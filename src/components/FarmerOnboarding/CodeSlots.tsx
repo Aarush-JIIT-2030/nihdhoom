@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
-import { animate, motionValue, motion, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
+import { useCallback, useEffect, useId, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type ClipboardEvent, type ChangeEvent, type MouseEvent } from 'react';
+import { animate, motionValue, motion, useMotionValue, useReducedMotion, useTransform, type MotionValue } from 'motion/react';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Tick02Icon } from '@hugeicons/core-free-icons';
 
@@ -209,7 +209,7 @@ export default function CodeSlots({
 
   const busy = disabled || draining.current || status === 'success';
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (busy || e.metaKey || e.ctrlKey || e.altKey) return;
     const k = e.key;
     if (/^[0-9]$/.test(k)) {
@@ -237,20 +237,20 @@ export default function CodeSlots({
     }
   };
 
-  const onPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+  const onPaste = (e: ClipboardEvent<HTMLInputElement>) => {
     if (busy) return;
     e.preventDefault();
     insert(e.clipboardData.getData('text'));
   };
 
-  const onInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onInput = (e: ChangeEvent<HTMLInputElement>) => {
     if (busy) return;
     const d = digitsOf(e.target.value);
     if (!d) return;
     insert(d, d.length === 1 ? active : 0);
   };
 
-  const onRowMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+  const onRowMouseDown = (e: MouseEvent<HTMLDivElement>) => {
     if (disabled) return;
     e.preventDefault();
     const row = rowRef.current;
@@ -387,7 +387,7 @@ export default function CodeSlots({
         '--cs-gap': `${gap}px`,
         '--cs-radius': `${Math.min(radius, slotSize / 2)}px`,
         '--cs-font': `${Math.round(slotSize * 0.5)}px`,
-      } as React.CSSProperties}
+      } as CSSProperties}
     >
       <div
         ref={rowRef}
@@ -445,8 +445,8 @@ export default function CodeSlots({
 }
 
 function Slot({ mv, drop, char, active, rise, sink }: {
-  mv: ReturnType<typeof motionValue<number>>;
-  drop: ReturnType<typeof motionValue<number>>;
+  mv: MotionValue<number>;
+  drop: MotionValue<number>;
   char: string;
   active: boolean;
   rise: number;
