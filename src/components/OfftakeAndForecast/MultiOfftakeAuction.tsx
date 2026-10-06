@@ -42,14 +42,14 @@ export const MultiOfftakeAuction: React.FC = () => {
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-extrabold text-lg text-emerald-950 font-['DM_Sans']">
-                  Wedge 5: Stop Assuming Biogas is the Best Buyer
+                  Multi-offtake planning simulator
                 </h3>
                 <span className="badge badge-emerald text-xs">
-                  Multi-Offtake Value Auction
+                  ILLUSTRATIVE SCENARIO
                 </span>
               </div>
               <p className="text-xs text-emerald-950/65 mt-1 max-w-2xl leading-relaxed">
-                Paddy straw is a poor biogas feedstock: high silica (9-14%) and high lignin erode margins. Instead of selling everything to CBG at ₹1,850/t, Nirdhoom operates a multi-offtake quality auction routing each lot by moisture and silica content.
+                This simulator demonstrates how residue lots could be compared against buyer requirements using moisture, quality and logistics. Prices below are mock records; no live offer or contract is created.
               </p>
             </div>
           </div>
@@ -73,14 +73,14 @@ export const MultiOfftakeAuction: React.FC = () => {
               </p>
             </div>
             <div className="text-right hidden sm:block">
-              <span className="text-xs font-mono text-emerald-800 font-bold block">+₹1,350/T Premium</span>
-              <span className="text-[10px] text-emerald-950/55">Over Raw Biogas Floor</span>
+              <span className="text-xs font-mono text-emerald-800 font-bold block">Illustrative price spread</span>
+              <span className="text-[10px] text-emerald-950/55">Demo comparison only</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Interactive Quality-Based Auction Simulator */}
+      {/* Interactive quality-matching simulator */}
       <div className="glass-panel p-5 flex flex-col gap-4">
         <div className="flex items-center justify-between border-b border-emerald-900/10 pb-3">
           <div className="flex items-center gap-2">
@@ -160,10 +160,10 @@ export const MultiOfftakeAuction: React.FC = () => {
         <div className="p-4 rounded-xl bg-gradient-to-r from-emerald-950/80 via-slate-900 to-slate-950 border border-emerald-500/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <span className="badge badge-emerald text-[10px] mb-1">
-              Algorithm Recommendation
+              Scenario recommendation
             </span>
             <div className="text-lg font-black text-emerald-950 flex items-center gap-2">
-              <span>Route To: {topBuyer.name}</span>
+              <span>Possible pathway: {topBuyer.name}</span>
             </div>
             <p className="text-xs text-emerald-950/65 mt-0.5">
               {topBuyer.description}
@@ -172,13 +172,13 @@ export const MultiOfftakeAuction: React.FC = () => {
 
           <div className="flex items-center gap-4 bg-white/80 px-4 py-2.5 rounded-xl border border-emerald-900/10 shrink-0">
             <div>
-              <span className="text-[10px] text-emerald-950/55 uppercase font-bold block">Offtake Realisation</span>
+              <span className="text-[10px] text-emerald-950/55 uppercase font-bold block">Illustrative price</span>
               <div className="text-xl font-extrabold text-emerald-800 font-mono">
                 ₹{topBuyer.price_per_tonne.toLocaleString()} / t
               </div>
             </div>
             <div className="border-l border-emerald-900/10 pl-3">
-              <span className="text-[10px] text-emerald-950/55 uppercase font-bold block">Net Lot Value</span>
+              <span className="text-[10px] text-emerald-950/55 uppercase font-bold block">Illustrative lot value</span>
               <div className="text-xl font-extrabold text-emerald-950 font-mono">
                 ₹{(topBuyer.price_per_tonne * lotTonnage).toLocaleString()}
               </div>
