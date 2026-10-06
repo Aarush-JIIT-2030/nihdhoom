@@ -93,14 +93,14 @@ export const HarvestForecast: React.FC = () => {
           <div>
             <div className="flex items-center gap-2">
               <h3 className="font-extrabold text-lg text-emerald-950 font-['DM_Sans']">
-                Wedge 4: Forecast the Harvest Before It Happens
+                Harvest pressure planning — illustrative
               </h3>
               <span className="badge badge-emerald text-xs">
-                Sentinel-2 NDVI Maturity Moat
+                Planning model • provider data required
               </span>
             </div>
             <p className="text-xs text-emerald-950/65 mt-1 max-w-2xl leading-relaxed">
-              PR-126 comes off late September to early October; Pusa-44 hits in late October. By tracking Sentinel-2 NDVI time series, Nirdhoom predicts block-by-block daily straw acreage to pre-position machinery before the burn panic strikes.
+              This workspace demonstrates how harvest timing could inform machine pre-positioning. The figures below are illustrative planning records unless a configured harvest-data provider supplies them.
             </p>
           </div>
         </div>
@@ -139,7 +139,7 @@ export const HarvestForecast: React.FC = () => {
           </div>
         </div>
 
-        {/* PAU Ludhiana Agronomic Advisory with Real Farm Photograph */}
+        {/* Research context and planning assumptionsograph */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-3 mt-1">
           <div className="md:col-span-8 p-3.5 rounded-xl bg-emerald-50/60 border border-cyan-500/30 flex items-start gap-3 text-xs">
             <Truck className="w-5 h-5 text-emerald-700 shrink-0 mt-0.5" />
