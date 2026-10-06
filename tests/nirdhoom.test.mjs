@@ -528,3 +528,14 @@ test('ops telemetry does not invent live defaults', () => {
   assert.doesNotMatch(telemetry, /NIRDHOOM Live Ops Telemetry/);
   assert.match(telemetry, /NIRDHOOM Ops Telemetry/);
 });
+
+test('landing telemetry is zero-by-default and demo-aware', () => {
+  const landing = read('src/components/Landing/AgenticLanding.tsx');
+  assert.match(landing, /demoMode\?: boolean/);
+  assert.match(landing, /demoMode = false/);
+  assert.match(landing, /acresScheduled = 0/);
+  assert.match(landing, /activeMachines = 0/);
+  assert.match(landing, /status: 'DEMO DISPATCH'/);
+  assert.match(landing, /time: 'Demo'/);
+  assert.match(landing, /demoMode=\{demoMode\}/);
+});
