@@ -451,7 +451,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
             {
               tab: 'CARBON_MARKET' as ActiveTab,
               title: '🌿 Carbon Market Simulator',
-              desc: 'Institutional carbon credit issuance from satellite-verified non-burning records for CBG & registries.',
+              desc: 'Illustrative carbon-market workflow; registry issuance and retirement are not connected.',
               tag: 'Outcome Credits',
               badgeColor: 'text-emerald-300 bg-emerald-950/60 border-emerald-500/30',
             },
