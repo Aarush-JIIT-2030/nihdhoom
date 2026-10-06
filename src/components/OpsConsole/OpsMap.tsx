@@ -525,7 +525,7 @@ export const OpsMap: React.FC<OpsMapProps> = ({
         </span>
         <span className="flex items-center gap-1">
           <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping inline-block"></span>
-          <span className="text-red-400 font-semibold">External Fire Storm</span>
+          <span className="text-red-400 font-semibold">External thermal observation</span>
         </span>
       </div>}
     </div>
