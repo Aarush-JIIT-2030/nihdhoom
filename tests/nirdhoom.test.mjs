@@ -553,3 +553,16 @@ test('landing district ticker records are explicitly demo-labelled', () => {
   assert.match(landing, /DEMO RE-ROUTING/);
   assert.match(landing, /DEMO HARVEST SIGNAL/);
 });
+
+
+test('field-first polish removes high-risk legacy landing and Telegram UI regressions', () => {
+  const landing = read('src/components/Landing/AgenticLanding.tsx');
+  const telegram = read('src/components/FarmerSurface/TelegramSimulator.tsx');
+  const telemetry = read('src/components/AgenticConsole/AgenticTelemetryToast.tsx');
+  assert.doesNotMatch(landing, /bg-gradient-to-b from=\["']#020409/i);
+  assert.match(landing, /field-first, with React Bits spotlight/i);
+  assert.match(telegram, /Configure VITE_TELEGRAM_BOT_USERNAME to enable direct opening/);
+  assert.match(telegram, /cursor-not-allowed/);
+  assert.doesNotMatch(telemetry, /Real-time Telemetry Stream/);
+  assert.match(telemetry, /operational signal stream/);
+});
