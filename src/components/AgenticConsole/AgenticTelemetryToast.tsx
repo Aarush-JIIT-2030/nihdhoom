@@ -85,15 +85,15 @@ export const AgenticTelemetryToast: React.FC<{
   if (!isVisible) return null;
 
   return (
-    <aside aria-label="Real-time Telemetry Stream" className="fixed bottom-5 right-5 z-40 max-w-sm w-full px-3 sm:px-0">
-      <div className="glass-panel p-3.5 rounded-2xl border border-cyan-500/30 shadow-2xl backdrop-blur-xl bg-slate-950/85">
+    <aside aria-label="NIRDHOOM operational signal stream" className="fixed bottom-20 right-3 z-40 w-[calc(100%-1.5rem)] max-w-sm sm:bottom-5 sm:right-5 sm:w-full px-0">
+      <div className="glass-panel p-3.5 rounded-2xl border border-emerald-900/10 bg-white/95 shadow-[0_16px_40px_rgba(35,76,44,.12)]">
         <div className="flex items-center justify-between pb-2 border-b border-white/5 mb-2.5">
           <div className="flex items-center gap-2">
             <span className="badge--dot" />
-            <span className="text-[11px] font-mono uppercase tracking-wider text-cyan-400 font-bold">
+            <span className="text-[11px] uppercase tracking-wider text-emerald-800 font-bold">
               Telemetry Stream
             </span>
-            <span className="text-[10px] text-slate-500 font-mono">
+            <span className="text-[10px] text-emerald-950/45">
               {demoMode ? `(${currentIndex + 1}/${STREAM_EVENTS.length})` : '(live)'}
             </span>
           </div>
@@ -101,7 +101,7 @@ export const AgenticTelemetryToast: React.FC<{
           <div className="flex items-center gap-1 text-slate-400">
             <button
               onClick={() => setIsMinimized(!isMinimized)}
-              className="p-1 hover:text-white rounded hover:bg-slate-800 transition-all cursor-pointer"
+              className="p-1 hover:text-emerald-950 rounded hover:bg-emerald-50 transition-all cursor-pointer"
               title={isMinimized ? 'Expand' : 'Collapse'}
             >
               {isMinimized ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
@@ -127,14 +127,14 @@ export const AgenticTelemetryToast: React.FC<{
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-1 mb-0.5">
-                  <span className="text-xs font-bold text-white truncate">
+                  <span className="text-xs font-bold text-emerald-950 truncate">
                     {currentEvent.title}
                   </span>
-                  <span className="text-[10px] text-slate-500 font-mono flex-shrink-0">
+                  <span className="text-[10px] text-emerald-950/45 flex-shrink-0">
                     {currentEvent.time}
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-300 leading-snug line-clamp-2">
+                <p className="text-[11px] text-emerald-950/65 leading-snug line-clamp-2">
                   {currentEvent.detail}
                 </p>
               </div>
@@ -142,12 +142,12 @@ export const AgenticTelemetryToast: React.FC<{
 
             {currentEvent.targetTab && (
               <div className="flex items-center justify-between pt-1 border-t border-white/5">
-                <span className="badge badge-cyan text-[9px] py-0 px-1.5">
+                <span className="badge text-[9px] py-0 px-1.5 bg-emerald-50 text-emerald-800">
                   {currentEvent.badge}
                 </span>
                 <button
                   onClick={() => onNavigateTab?.(currentEvent.targetTab!)}
-                  className="text-[11px] font-mono text-cyan-300 hover:text-cyan-200 font-semibold cursor-pointer flex items-center gap-1"
+                  className="text-[11px] text-emerald-800 hover:text-emerald-950 font-semibold cursor-pointer flex items-center gap-1"
                 >
                   <span>Inspect Layer &rarr;</span>
                 </button>
