@@ -508,3 +508,12 @@ test('provider and demo-label contracts stay truthful', () => {
   assert.doesNotMatch(landing, /Carbon Credit Marketplace/);
   assert.match(landing, /Carbon Market Simulator/);
 });
+
+test('satellite and landing evidence labels stay truthful', () => {
+  const satellite = read('src/components/ThreeD/SatelliteEarth3D.tsx');
+  const landing = read('src/components/Landing/AgenticLanding.tsx');
+  assert.doesNotMatch(satellite, /NASA FIRMS LIVE/);
+  assert.match(satellite, /FIRMS \/ VIIRS layer/);
+  assert.doesNotMatch(landing, /Subsidised CRM Baler Fleet Active/);
+  assert.match(landing, /Registered baler fleet operating/);
+});
