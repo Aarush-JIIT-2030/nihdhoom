@@ -239,7 +239,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
             <div className="rounded-2xl overflow-hidden border border-amber-500/30 relative group bg-slate-950 flex-1">
               <img 
                 src="/images/baling_fleet.jpg" 
-                alt="Subsidised CRM Baler Fleet Active in Sangrur Fields"
+                alt="Registered baler fleet operating across Sangrur fields"
                 className="w-full h-32 sm:h-36 object-cover object-center group-hover:scale-105 transition-transform duration-500"
                loading="lazy" decoding="async" />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
