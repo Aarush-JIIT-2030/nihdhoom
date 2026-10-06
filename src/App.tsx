@@ -151,8 +151,8 @@ const WORKSPACE_META: Partial<Record<ActiveTab, {
   },
   CARBON_MARKET: {
     eyebrow: 'CARBON & IMPACT',
-    title: 'Carbon marketplace',
-    description: 'Explore the registry pathway and evidence model without presenting illustrative credits as issued carbon assets.',
+    title: 'Carbon market simulator',
+    description: 'Explore an illustrative registry pathway and evidence model. Credits are not issued or retired in this release.',
     image: '/images/satellite_firms.jpg',
     accent: 'green',
     action: { label: 'View verification', tab: 'SATELLITE_AUDIT' },
@@ -320,8 +320,8 @@ export function App() {
         demoMode={demoMode}
       />
 
-      {!demoMode && loadingLiveData && <div className="mx-auto w-full max-w-7xl px-4 pt-2 text-xs text-cyan-300">Loading live Supabase operational records…</div>}
-      {!demoMode && liveDataError && <div className="mx-auto w-full max-w-7xl px-4 pt-2 text-xs text-amber-300">Live data unavailable: {liveDataError}</div>}
+      {!demoMode && loadingLiveData && <div className="live-state-banner live-state-banner-loading" role="status">Loading live operational records…</div>}
+      {!demoMode && liveDataError && <div className="live-state-banner live-state-banner-error" role="alert">Live data unavailable: {liveDataError}</div>}
 
       {/* Main Content Area */}
       <main id="main-content" className="field-main flex-1 w-full max-w-[1480px] mx-auto px-3 sm:px-5 lg:px-7 py-5 sm:py-7 relative z-10">
