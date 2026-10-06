@@ -232,10 +232,19 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
   };
 
   const currentField = fields.find((f) => f.id === selectedFieldId) || fields[0];
-  const isJobFinished = currentField.status === 'CLEARED_PENDING_AUDIT' || currentField.status === 'VERIFIED_NON_BURN';
+  const isJobFinished = currentField?.status === 'CLEARED_PENDING_AUDIT' || currentField?.status === 'VERIFIED_NON_BURN';
+
+  if (!currentField) {
+    return (
+      <section className="field-empty mx-auto max-w-3xl" aria-live="polite">
+        <h2>No field is assigned to this operator session.</h2>
+        <p>Live operator actions appear only after a field and job are assigned by the connected dispatch workflow.</p>
+      </section>
+    );
+  }
 
   return (
-    <div className="flex flex-col lg:flex-row items-center lg:items-start justify-center gap-6 p-2 max-w-6xl mx-auto">
+    <div className="field-operator-surface flex flex-col lg:flex-row items-center lg:items-start justify-center gap-6 p-2 max-w-6xl mx-auto">
       {/* Left side: Context for Judges */}
       <div className="w-full lg:w-5/12 flex flex-col gap-4">
         <div className="glass-panel-emerald p-4">
@@ -288,7 +297,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
         <div className="device-frame">
           {/* Status Bar */}
           <div className="device-header">
-            <span>11:15 AM</span>
+            <span>Operator session</span>
             <div className="device-notch"></div>
             <div className="flex items-center gap-1.5 text-xs">
               <Wifi className="w-3 h-3 text-emerald-400" />
@@ -305,7 +314,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
               <div>
                 <h4 className="font-bold text-sm text-white">Nirdhoom Field Dispatch</h4>
                 <span className="text-[10px] text-emerald-400 font-mono">
-                  GPS Geofence: Ubhawal Sector 4
+                  GPS status: {gpsState ? 'Location available' : 'Waiting for device location'}
                 </span>
               </div>
             </div>
@@ -360,7 +369,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
                 <div className="text-right">
                   <span className="text-[10px] text-slate-400 block">{demoMode ? 'Demo quote' : 'Server quote'}</span>
                   <span className="text-base font-extrabold text-emerald-400 font-mono">
-                    ₹{(currentField.payout_amount || 5075).toLocaleString()}
+                    {demoMode ? `₹${Number(currentField.payout_amount || 0).toLocaleString()}` : (currentField.payout_amount ? `₹${Number(currentField.payout_amount).toLocaleString()}` : 'Server quote pending')}
                   </span>
                 </div>
               </div>
@@ -369,7 +378,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
               <div className="rounded-xl overflow-hidden border border-slate-800 relative bg-slate-900">
                 <img 
                   src="/images/baling_fleet.jpg" 
-                  alt="Assigned Baler in Sangrur Field" 
+                  alt="Baler working on the selected field" 
                   className="w-full h-24 object-cover object-center"
                  loading="lazy" decoding="async" />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
@@ -377,7 +386,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
                   <div className="flex items-center gap-2">
                     <img 
                       src="/images/farmer_gurpreet.jpg" 
-                      alt="Gurpreet Singh" 
+                      alt="Field operator / farmer record" 
                       className="w-7 h-7 rounded-full border border-emerald-400 object-cover"
                      loading="lazy" decoding="async" />
                     <span className="text-xs font-bold text-white drop-shadow">
