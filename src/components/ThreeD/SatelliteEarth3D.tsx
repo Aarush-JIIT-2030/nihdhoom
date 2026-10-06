@@ -544,10 +544,10 @@ export const SatelliteEarth3D: React.FC<SatelliteEarth3DProps> = ({
               <span className="text-xs font-black text-white uppercase tracking-wider font-['Outfit']">
                 3D Agricultural Digital Twin
               </span>
-              <span className="badge badge-emerald text-[9px]">NASA FIRMS LIVE</span>
+              <span className="badge badge-emerald text-[9px]">FIRMS / VIIRS layer</span>
             </div>
             <div className="text-[10px] text-slate-400 font-mono">
-              NOAA-20 VIIRS 375m • Orbit Alt: 824 km • Pass: 14:28 UTC
+              VIIRS 375m reference • orbital visualization • event records shown below
             </div>
           </div>
         </div>
