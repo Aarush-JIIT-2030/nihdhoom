@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { Field, Machine, BurnEvent, StorageYard, Buyer } from '../../types';
 import { OpsMap } from '../OpsConsole/OpsMap';
+import { Spotlight } from '../Animated/Spotlight';
 
 interface Props {
   fields: Field[];
@@ -18,10 +19,10 @@ interface Props {
   onNavigate: (tab: string) => void;
 }
 
-const heroImage = '/images/punjab_farmer_hero.jpg';
-const farmImage = '/images/punjab_farm_hero.jpg';
-const balerImage = '/images/baler_machine.jpg';
-const fleetImage = '/images/baling_dispatch_fleet_1790447115856.jpg';
+const heroImage = 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Paddy_fields_in_Batala%2C_Gurdaspur%2C_Punjab.jpg/1280px-Paddy_fields_in_Batala%2C_Gurdaspur%2C_Punjab.jpg';
+const farmImage = 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Paddy_fields_in_Batala%2C_Gurdaspur%2C_Punjab.jpg/1280px-Paddy_fields_in_Batala%2C_Gurdaspur%2C_Punjab.jpg';
+const balerImage = 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Tractor_with_baler.jpg/1280px-Tractor_with_baler.jpg';
+const fleetImage = 'https://upload.wikimedia.org/wikipedia/commons/7/7e/Agriculture_in_India_tractor_farming_Punjab_preparing_field_for_a_wheat_crop_without_burning_previous_crop_stalk.jpg';
 const offtakeImage = '/images/offtake_facility.jpg';
 const satelliteImage = '/images/satellite_firms.jpg';
 const burningImage = '/images/parali_burning.jpg';
@@ -56,7 +57,8 @@ export function CommandCenter({
     <div className="field-page field-home pb-12">
       {/* HERO: visual story first */}
       <section className="home-hero">
-        <img src={heroImage} alt="Farmer and field in Punjab" className="home-hero-image" decoding="async" />
+        <Spotlight className="home-hero-spotlight" fill="#f2a900" />
+        <img src={heroImage} alt="Paddy fields in Batala, Gurdaspur, Punjab" className="home-hero-image" decoding="async" fetchPriority="high" />
         <div className="home-hero-overlay" />
         <div className="home-hero-content">
           <div className="home-eyebrow"><Leaf className="h-4 w-4" /> FIELD CLEARANCE COORDINATION • NIRDHOOM</div>
@@ -71,10 +73,38 @@ export function CommandCenter({
             <span><Map /> Field-level provenance</span>
             <span><Truck /> Machine-linked operations</span>
           </div>
+          <a className="home-photo-credit" href="https://commons.wikimedia.org/wiki/File:Paddy_fields_in_Batala,_Gurdaspur,_Punjab.jpg" target="_blank" rel="noreferrer">Photo: Rohitjahnavi / Wikimedia Commons · CC BY-SA 3.0 ↗</a>
         </div>
       </section>
 
       {/* FARMER-FIRST QUICK ACTIONS */}
+      <section className="home-visual-rail" aria-label="Field stories">
+        <div className="home-visual-rail-heading">
+          <div>
+            <div className="home-section-kicker">Field stories</div>
+            <h2>From standing crop to useful residue.</h2>
+          </div>
+          <p>Real agricultural photography keeps the product grounded in the work happening on the field — not just dashboards and maps.</p>
+        </div>
+        <div className="home-visual-grid">
+          <article className="home-visual-card home-visual-card-wide">
+            <img src={heroImage} alt="Paddy fields in Batala, Gurdaspur, Punjab" loading="lazy" decoding="async" />
+            <div className="home-visual-scrim" />
+            <div className="home-visual-copy"><span>01 · FIELD</span><strong>Start with the actual field.</strong><small>Punjab paddy landscape · Wikimedia Commons</small></div>
+          </article>
+          <article className="home-visual-card">
+            <img src={balerImage} alt="Tractor with a baler working in a harvested field" loading="lazy" decoding="async" />
+            <div className="home-visual-scrim" />
+            <div className="home-visual-copy"><span>02 · BALING</span><strong>Turn loose residue into a movable resource.</strong><small>Tractor with baler · CC0</small></div>
+          </article>
+          <article className="home-visual-card">
+            <img src={fleetImage} alt="Tractor working on crop residue in Punjab" loading="lazy" decoding="async" />
+            <div className="home-visual-scrim" />
+            <div className="home-visual-copy"><span>03 · FIELD WORK</span><strong>Coordinate the machine before the window closes.</strong><small>Punjab field preparation · CIAT / Wikimedia Commons</small></div>
+          </article>
+        </div>
+      </section>
+
       <section className="home-farmer-actions" aria-label="Quick farmer actions">
         <div className="home-farmer-actions-intro">
           <span className="home-section-kicker">For farmers</span>
