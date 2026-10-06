@@ -473,7 +473,7 @@ test('React Bits Pro globe registry and operational map integration stay wired',
   assert.match(globe, /Interactive 3D globe with animated arcs/);
   assert.match(globe, /autoRotateSpeed/);
   assert.match(globe, /arcAnimationDuration/);
-  assert.match(map, /from '..\\/react-bits\\/globe'/);
+  assert.match(map, /from '..\/react-bits\/globe'/);
   assert.match(map, /Network Globe/);
   assert.match(map, /mapMode === 'globe'/);
   assert.match(map, /Field GIS/);
@@ -483,7 +483,7 @@ test('React Bits Pro globe registry and operational map integration stay wired',
 test('homepage uses curated agriculture photography and visual storytelling', () => {
   const home = read('src/components/CommandCenter/CommandCenter.tsx');
   const css = read('src/index.css');
-  assert.match(home, /from '..\\/Animated\\/Spotlight'/);
+  assert.match(home, /from '..\/Animated\/Spotlight'/);
   assert.match(home, /upload\.wikimedia\.org/);
   assert.match(home, /home-visual-rail/);
   assert.match(home, /home-photo-credit/);
