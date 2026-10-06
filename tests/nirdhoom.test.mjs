@@ -566,3 +566,18 @@ test('field-first polish removes high-risk legacy landing and Telegram UI regres
   assert.doesNotMatch(telemetry, /Real-time Telemetry Stream/);
   assert.match(telemetry, /operational signal stream/);
 });
+
+
+test('landing and visual pipeline avoid unsupported machinery, fire, and buyer claims', () => {
+  const landing = read('src/components/Landing/AgenticLanding.tsx');
+  const beam = read('src/components/Animated/AnimatedBeam.tsx');
+  const earth = read('src/components/ThreeD/SatelliteEarth3D.tsx');
+  assert.doesNotMatch(landing, /NASA FIRMS 375m Audit/);
+  assert.doesNotMatch(landing, /Subsidised Baler Twin/);
+  assert.doesNotMatch(landing, /₹3,200\/T/);
+  assert.match(landing, /not a no-burn certificate/);
+  assert.match(beam, /Registered \/ available fleet/);
+  assert.match(beam, /Illustrative workflow only/);
+  assert.match(earth, /supporting evidence only/);
+  assert.doesNotMatch(earth, /Zero Burn Shield/);
+});
