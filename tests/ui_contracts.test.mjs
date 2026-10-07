@@ -54,7 +54,7 @@ test('farmer onboarding labels adapter-only identity and financial steps', () =>
 test('root document enables the field-first theme before React mounts', () => {
   const html = read('index.html');
   assert.match(html, /data-theme="kisan"/);
-  assert.match(html, /DM+Sans/);
+  assert.match(html, /DM\+Sans/);
 });
 
 
