@@ -116,7 +116,9 @@ export function useAppController() {
     }
     let active = true;
     void refreshLiveData().finally(() => { if (!active) return; });
-    const channel = supabase
+    const client = supabase;
+    if (!client) return;
+    const channel = client
       .channel('nirdhoom-live-operations', { config: { private: true } })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'fields' }, () => { void refreshLiveData(); })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'machines' }, () => { void refreshLiveData(); })
@@ -124,7 +126,7 @@ export function useAppController() {
       .subscribe();
     return () => {
       active = false;
-      void supabase.removeChannel(channel);
+      void client.removeChannel(channel);
     };
   }, [refreshLiveData]);
 
