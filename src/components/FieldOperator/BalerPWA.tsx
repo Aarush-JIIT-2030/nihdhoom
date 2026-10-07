@@ -230,13 +230,13 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
       setJobStatus(next);
       if (next === 'COMPLETED') {
         const quantity = Number(residueTonnes);
-        const { data: existingLot } = await supabase
+        const { data: existingLot } = await client
           .from('residue_lots')
           .select('id')
           .eq('job_id', lookup.data.id)
           .maybeSingle();
         if (!existingLot && quantity > 0) {
-          const { error: lotError } = await supabase.from('residue_lots').insert({
+          const { error: lotError } = await client.from('residue_lots').insert({
             field_id: currentField.dbId || currentField.id,
             booking_id: lookup.data.booking_id,
             job_id: lookup.data.id,
