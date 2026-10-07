@@ -198,10 +198,11 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
   const lastGpsWrite = useRef(0);
 
   useEffect(() => {
-    if (demoMode || !supabase || !currentField) return;
+    const client = supabase;
+    if (demoMode || !client || !currentField) return;
     let cancelled = false;
     const loadJob = async () => {
-      const { data, error } = await supabase.from('jobs').select('id,status,booking_id').eq('field_id', currentField.dbId || currentField.id)
+      const { data, error } = await client.from('jobs').select('id,status,booking_id').eq('field_id', currentField.dbId || currentField.id)
         .in('status', ['ASSIGNED', 'ARRIVED', 'BALING', 'PROOF_PENDING']).order('created_at', { ascending: false }).limit(1).maybeSingle();
       if (!cancelled) setJobStatus(error ? null : String(data?.status || ''));
     };
@@ -210,17 +211,18 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
   }, [currentField?.dbId, currentField?.id, demoMode]);
 
   const advanceLiveJob = async () => {
-    if (demoMode || !supabase || !currentField || jobBusy) return;
+    const client = supabase;
+    if (demoMode || !client || !currentField || jobBusy) return;
     const nextByStatus: Record<string, string> = { ASSIGNED: 'ARRIVED', ARRIVED: 'BALING', BALING: 'PROOF_PENDING', PROOF_PENDING: 'COMPLETED' };
     const next = jobStatus ? nextByStatus[jobStatus] : undefined;
     if (!next) { setJobMessage('No active server job is assigned to this field yet.'); return; }
     setJobBusy(true);
     setJobMessage('');
     try {
-      const lookup = await supabase.from('jobs').select('id,status,booking_id').eq('field_id', currentField.dbId || currentField.id)
+      const lookup = await client.from('jobs').select('id,status,booking_id').eq('field_id', currentField.dbId || currentField.id)
         .eq('status', jobStatus).order('created_at', { ascending: false }).limit(1).maybeSingle();
       if (lookup.error || !lookup.data?.id) throw new Error(lookup.error?.message || 'Active job not found.');
-      const { error } = await supabase.rpc('transition_job', {
+      const { error } = await client.rpc('transition_job', {
         p_job_id: lookup.data.id, p_next_status: next,
         p_metadata: { source: 'operator-pwa', field_id: currentField.dbId || currentField.id },
       });
