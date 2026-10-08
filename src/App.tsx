@@ -222,11 +222,6 @@ export function App() {
     storageYards: liveStorageYards,
   } = useAppController();
 
-  useEffect(() => {
-    const demoOnlyTabs: ActiveTab[] = [];
-    if (!demoMode && demoOnlyTabs.includes(activeTab)) setActiveTab('OVERVIEW');
-  }, [activeTab, demoMode, setActiveTab]);
-
   const navigate = useCallback((tab: ActiveTab) => {
     startTransition(() => setActiveTab(tab));
   }, [setActiveTab]);
