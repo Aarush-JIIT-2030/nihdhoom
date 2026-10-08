@@ -80,13 +80,14 @@ async function getLinkedProfile(chatId: number) {
 }
 
 function menu() {
-  return {
-    inline_keyboard: [
-      [{ text: '🌾 My fields', callback_data: 'fields' }, { text: '🚜 Book clearance', callback_data: 'book' }],
-      [{ text: '📍 Track machine', callback_data: 'track' }, { text: '🧾 Verification', callback_data: 'verify' }],
-      [{ text: '🌱 Residue market', callback_data: 'market' }],
-    ],
-  };
+  const rows = [
+    [{ text: '🌾 My fields', callback_data: 'fields' }, { text: '🚜 Book clearance', callback_data: 'book' }],
+    [{ text: '📍 Track machine', callback_data: 'track' }, { text: '🧾 Verification', callback_data: 'verify' }],
+    [{ text: '🌱 Residue market', callback_data: 'market' }],
+  ];
+  const miniAppUrl = process.env.TELEGRAM_MINI_APP_URL;
+  if (miniAppUrl) rows.push([{ text: '📱 Open NIRDHOOM', web_app: { url: miniAppUrl } }]);
+  return { inline_keyboard: rows };
 }
 
 async function handle(request: Request) {
