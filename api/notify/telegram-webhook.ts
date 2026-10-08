@@ -171,6 +171,10 @@ async function handle(request: Request) {
   if (request.headers.get('x-telegram-bot-api-secret-token') !== secret) {
     return Response.json({ error: 'Invalid Telegram webhook secret' }, { status: 401 });
   }
+  const contentLength = Number(request.headers.get('content-length') || '0');
+  if (Number.isFinite(contentLength) && contentLength > 32_768) {
+    return Response.json({ error: 'Telegram update too large' }, { status: 413 });
+  }
 
   let update: any;
   try { update = await request.json(); } catch { return Response.json({ error: 'Invalid JSON' }, { status: 400 }); }
