@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { HindiTextConverter } from './HindiTextConverter';
-import { Bell, CalendarCheck, Camera, CheckCircle2, MapPin, Send, ShieldCheck } from 'lucide-react';
+import { Bell, Camera, ExternalLink, Link2, MapPin, Send, ShieldCheck, Smartphone as SmartphoneIcon } from 'lucide-react';
 
 interface TelegramSimulatorProps {
   onSlotConfirmed?: (fieldId: string) => void;
@@ -11,7 +11,6 @@ const BOT_USERNAME = import.meta.env.VITE_TELEGRAM_BOT_USERNAME || '';
 
 export function TelegramSimulator({ onSlotConfirmed }: TelegramSimulatorProps) {
   const [language, setLanguage] = useState<'pa' | 'hi' | 'en'>('pa');
-  const [confirmed, setConfirmed] = useState(false);
   const [linking, setLinking] = useState(false);
   const [linkError, setLinkError] = useState('');
   const [botReady, setBotReady] = useState<boolean | null>(null);
@@ -26,6 +25,7 @@ export function TelegramSimulator({ onSlotConfirmed }: TelegramSimulatorProps) {
   }, []);
 
   const botUrl = useMemo(() => BOT_USERNAME ? `https://t.me/${BOT_USERNAME}` : undefined, []);
+  const miniAppUrl = import.meta.env.VITE_TELEGRAM_MINI_APP_URL || '';
 
   const copy = {
     pa: {
@@ -95,11 +95,6 @@ export function TelegramSimulator({ onSlotConfirmed }: TelegramSimulatorProps) {
     } finally {
       setLinking(false);
     }
-  };
-
-  const confirmDemo = () => {
-    setConfirmed(true);
-    onSlotConfirmed?.('demo-field-1');
   };
 
   return (
@@ -205,27 +200,37 @@ export function TelegramSimulator({ onSlotConfirmed }: TelegramSimulatorProps) {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 text-slate-900 shadow-sm">
-        <div className="flex items-center gap-2">
-          <MapPin className="h-5 w-5 text-emerald-600" />
-          <h3 className="text-lg font-extrabold">Telegram → NIRDHOOM workflow</h3>
+      <div className="grid gap-4 lg:grid-cols-[1.1fr_.9fr]">
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 text-slate-900 shadow-sm">
+          <div className="flex items-center gap-2">
+            <MapPin className="h-5 w-5 text-emerald-600" />
+            <h3 className="text-lg font-extrabold">Telegram → NIRDHOOM</h3>
+          </div>
+          <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-600">
+            The bot is the farmer channel; the web app remains the place for authenticated field selection, consent, booking and evidence review.
+          </p>
+          <div className="mt-4 grid gap-2 sm:grid-cols-4">
+            {['Start the bot', 'Link your account', 'Book or track', 'Receive updates'].map((step, index) => (
+              <div key={step} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                <div className="text-xs font-black text-emerald-700">0{index + 1}</div>
+                <div className="mt-1 text-sm font-bold text-slate-800">{step}</div>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="mt-4 grid gap-2 sm:grid-cols-4">
-          {['Farmer starts bot', 'Link field / consent', 'Book + track', 'Evidence + verification'].map((step, index) => (
-            <div key={step} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-              <div className="text-xs font-black text-emerald-700">0{index + 1}</div>
-              <div className="mt-1 text-sm font-bold text-slate-800">{step}</div>
-            </div>
-          ))}
+        <div className="rounded-2xl border border-[#229ED9]/15 bg-[#229ED9]/5 p-5">
+          <div className="flex items-center gap-2 text-[#197aa8]">
+            <Link2 className="h-4 w-4" />
+            <strong className="text-sm">Account connection</strong>
+          </div>
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            Generate a short-lived secure link from your signed-in NIRDHOOM account. Telegram identity is verified server-side before it is linked.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {botUrl && <a href={botUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-[#229ED9] px-4 py-2 text-xs font-extrabold text-white hover:brightness-105"><Send className="h-3.5 w-3.5" /> Open bot <ExternalLink className="h-3.5 w-3.5" /></a>}
+            {miniAppUrl && <a href={miniAppUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-[#229ED9]/20 bg-white px-4 py-2 text-xs font-extrabold text-[#197aa8] hover:bg-sky-50"><SmartphoneIcon className="h-3.5 w-3.5" /> Open Mini App <ExternalLink className="h-3.5 w-3.5" /></a>}
+          </div>
         </div>
-        <button
-          type="button"
-          onClick={confirmDemo}
-          className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-extrabold text-white hover:bg-emerald-800"
-        >
-          {confirmed ? <CheckCircle2 className="h-4 w-4" /> : <CalendarCheck className="h-4 w-4" />}
-          {confirmed ? 'Demo slot confirmed' : 'Preview booking handoff'}
-        </button>
       </div>
 
       <HindiTextConverter />
