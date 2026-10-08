@@ -160,3 +160,31 @@ comment on column public.residue_lots.geometry_provenance is
   'Provenance metadata for the field geometry used by this lot; this does not assert authoritative cadastral ownership.';
 comment on column public.residue_lots.verification_source is
   'Source of the verification decision. Remote sensing may support the decision but is not itself proof of no burning.';
+
+create or replace function public.validate_residue_lot_identity()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  field_row public.fields%rowtype;
+begin
+  select * into field_row from public.fields where id=new.field_id;
+  if not found then raise exception 'Residue lot field does not exist'; end if;
+  if new.farmer_id is distinct from field_row.owner_id then
+    raise exception 'Residue lot farmer does not match field owner';
+  end if;
+  if new.crop is distinct from field_row.crop then
+    raise exception 'Residue lot crop does not match field crop';
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists residue_lot_identity_guard on public.residue_lots;
+create trigger residue_lot_identity_guard
+before insert or update of field_id, farmer_id, crop on public.residue_lots
+for each row execute function public.validate_residue_lot_identity();
+
+revoke all on function public.validate_residue_lot_identity() from public, anon, authenticated;
