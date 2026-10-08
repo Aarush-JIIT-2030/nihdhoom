@@ -301,7 +301,7 @@ test('application uses one field-first theme and no theme switcher', () => {
 
 test('Hindi text converter is present and uses bounded transliteration requests', () => {
   const converter = read('src/components/FarmerSurface/HindiTextConverter.tsx');
-  const telegram = read('src/components/FarmerSurface/TelegramSimulator.tsx');
+  const telegram = read('src/components/FarmerSurface/TelegramChannel.tsx');
   assert.match(converter, /hi-t-i0-und/);
   assert.match(converter, /AbortController/);
   assert.match(converter, /7000/);
