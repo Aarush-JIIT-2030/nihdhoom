@@ -1,7 +1,7 @@
 # NIRDHOOM — Field-First Crop-Residue Network
 
 <p align="center">
-  <a href="https://github.com/coolbandariya/nihdhoom/actions/workflows/ci.yml"><img src="https://github.com/coolbandariya/nihdhoom/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/kaustubhdua/nihdhoom/actions/workflows/ci.yml"><img src="https://github.com/coolbandariya/nihdhoom/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <img src="https://img.shields.io/badge/React-19-2f7d46?logo=react&logoColor=white" alt="React 19">
   <img src="https://img.shields.io/badge/Vite-8-646cff?logo=vite&logoColor=white" alt="Vite 8">
   <img src="https://img.shields.io/badge/Supabase-Postgres-3ecf8e?logo=supabase&logoColor=white" alt="Supabase">
@@ -10,7 +10,7 @@
 
 <p align="center"><b>Field → service → evidence → residue → buyer</b><br>Farmer-first coordination for crop-residue management.</p>
 
-> **Truth boundary:** NIRDHOOM is a prototype / integration foundation. Demo records, indicative quotes, heuristic dispatch, research figures and illustrative carbon/market views are labelled and must not be represented as live field outcomes or confirmed commercial commitments.
+> **Truth boundary:** NIRDHOOM is a prototype / integration foundation. Seeded records and indicative planning values are clearly separated from connected live records; they are never evidence of field-pilot outcomes or confirmed commercial commitments.
 
 ## Why this repository is different
 
@@ -25,7 +25,8 @@ NIRDHOOM treats residue management as an operational chain rather than a single 
 | **Track / Operator** | Map, machine workflow and evidence | Lazy; Leaflet deferred |
 | **Residue Market** | Verified lots, pooling and buyer demand | Lazy + prefetch |
 | **Impact / Research** | Evidence, methodology and context | Lazy + prefetch |
-| **Advanced** | 3D, AI, carbon and pitch surfaces | Lazy; heavy dependencies isolated |
+| **Telegram Help** | Farmer communication, secure account linking and status updates | Lazy + interaction prefetch |
+| **Buyers / Demand** | Buyer requirements and residue pathways | Lazy + prefetch |
 
 ### Performance principles
 
