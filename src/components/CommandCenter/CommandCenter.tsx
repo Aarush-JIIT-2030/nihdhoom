@@ -145,16 +145,16 @@ export function CommandCenter({
         </div>
         <div className="home-field-stories-grid">
           <figure>
-            <img src={heroImage} alt="Paddy fields in Batala, Gurdaspur, Punjab" loading="lazy" decoding="async" />
-            <figcaption><span>Punjab field context</span><a href="https://commons.wikimedia.org/wiki/File:Paddy_fields_in_Batala,_Gurdaspur,_Punjab.jpg" target="_blank" rel="noreferrer">Rohitjahnavi · CC BY-SA 3.0 ↗</a></figcaption>
+            <img src={heroImage} alt="Punjab agricultural field context" loading="lazy" decoding="async" />
+            <figcaption><span>Punjab field context</span><span>Project photography</span></figcaption>
           </figure>
           <figure>
-            <img src={fleetImage} alt="Tractor preparing a Punjab field without burning previous crop stalk" loading="lazy" decoding="async" />
-            <figcaption><span>Residue-aware field preparation</span><a href="https://commons.wikimedia.org/wiki/File:Agriculture_in_India_tractor_farming_Punjab_preparing_field_for_a_wheat_crop_without_burning_previous_crop_stalk.jpg" target="_blank" rel="noreferrer">CIAT / Neil Palmer · CC BY 2.0 ↗</a></figcaption>
+            <img src={fleetImage} alt="Agricultural machinery working a Punjab field" loading="lazy" decoding="async" />
+            <figcaption><span>Residue-aware field preparation</span><span>Project photography</span></figcaption>
           </figure>
           <figure>
-            <img src={monsoonImage} alt="Paddy fields near Batala, Punjab in early monsoon" loading="lazy" decoding="async" />
-            <figcaption><span>Early-season field landscape</span><a href="/images/punjab_farm_hero.jpg">Project photography ↗</a></figcaption>
+            <img src={monsoonImage} alt="Punjab field landscape" loading="lazy" decoding="async" />
+            <figcaption><span>Early-season field landscape</span><span>Project photography</span></figcaption>
           </figure>
           <figure>
             <img src="/images/farmer_phone.jpg" alt="Farmer using a phone for field coordination" loading="lazy" decoding="async" />
