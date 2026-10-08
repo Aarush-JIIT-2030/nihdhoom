@@ -360,7 +360,6 @@ export function App() {
         {/* TAB 0: AGENTIC AI MULTI-AGENT SWARM */}
         {activeTab === 'AGENTIC_CONSOLE' && (
           <AgenticCommandCenter
-            onTriggerDemoBeat={(_beat) => setActiveTab('DEMO_RUNNER')}
             onNavigateTab={(tab) => setActiveTab(tab as ActiveTab)}
           />
         )}
