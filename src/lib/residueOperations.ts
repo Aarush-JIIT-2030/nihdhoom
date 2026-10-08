@@ -153,7 +153,7 @@ export function buildDemandCoverage(buyers: Buyer[], lots: ResidueLot[] = []): B
 
 export function buildResidueSummary(fields: Field[], machines: Machine[], buyers: Buyer[], yards: StorageYard[], lots: ResidueLot[] = [], now = Date.now()): ResidueOperationSummary {
   const ready = lots.length
-    ? lots.reduce((sum, lot) => sum + estimatedResidueTonnes(fields.find((f) => f.residue_lot_id === lot.id) || fields[0], lot), 0)
+    ? lots.reduce((sum, lot) => { const field = fields.find((f) => f.residue_lot_id === lot.id); return sum + (field ? estimatedResidueTonnes(field, lot) : Number(lot.verified_quantity_tonnes ?? lot.quantity_tonnes ?? lot.estimated_quantity_tonnes ?? 0)); }, 0)
     : fields.filter((f) => ['SCHEDULED', 'MACHINE_ASSIGNED', 'ON_THE_WAY', 'BALING_IN_PROGRESS'].includes(f.status)).reduce((sum, f) => sum + estimatedResidueTonnes(f), 0);
   const verified = lots.reduce((sum, lot) => sum + Number(lot.verified_quantity_tonnes || 0), 0);
   const demand = buyers.reduce((sum, buyer) => sum + Number(buyer.demand_tonnes || 0), 0);
