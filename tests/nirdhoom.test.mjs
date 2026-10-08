@@ -261,6 +261,8 @@ test('product home routes users to real workflows instead of presentation flows'
   assert.match(home, /home-product-status/);
   assert.match(home, /Open residue market/);
   assert.doesNotMatch(home, /See the 2-minute demo/);
+  assert.doesNotMatch(home, /The gap we are attacking|CEEW research points/);
+
 });
 
 test('retired pitch-only source files are gone from the product surface', () => {
@@ -524,7 +526,8 @@ test('landing telemetry is zero-by-default and demo-aware', () => {
 test('Telegram UI does not fall back to generic t.me', () => {
   const telegram = read('src/components/FarmerSurface/TelegramChannel.tsx');
   assert.doesNotMatch(telegram, /'https:\/\/t\.me'/);
-  assert.match(telegram, /Telegram bot is not configured/);
+  assert.match(telegram, /Configure Telegram first/);
+  assert.match(telegram, /Connect my NIRDHOOM account/);
   assert.match(telegram, /href=\{botUrl \|\| undefined\}/);
 });
 test('landing district ticker records are explicitly demo-labelled', () => {
@@ -540,7 +543,8 @@ test('field-first polish keeps Telegram channel and removes synthetic telemetry'
   const landing = read('src/components/Landing/AgenticLanding.tsx');
   const telegram = read('src/components/FarmerSurface/TelegramChannel.tsx');
   assert.doesNotMatch(landing, /2-Minute Competition Demo|Competition Pitch Center|Judge Defense|Q&A Prep/i);
-  assert.match(telegram, /Configure VITE_TELEGRAM_BOT_USERNAME to enable direct opening/);
+  assert.match(telegram, /Connect my NIRDHOOM account/);
+  assert.match(telegram, /Open Telegram/);
   assert.doesNotMatch(telegram, /Demo slot confirmed|Preview booking handoff|confirmDemo/);
   assert.doesNotMatch(read('src/App.tsx'), /AgenticTelemetryToast|AgenticCommandCenter|SatelliteEarth3D|BalerModel3D/);
 });
