@@ -60,7 +60,7 @@ export function useAppController() {
     const [{ data: fieldRows, error: fieldError }, { data: machineRows, error: machineError }] =
       await Promise.all([
         client.from('fields').select('id,external_id,owner_id,khasra_no,village,block,district,acreage,crop,variety,expected_harvest_date,clearance_deadline,status,moisture_pct,center_lat,center_lng,geometry,boundary_geojson,boundary_source,boundary_verified,geometry_area_acres'),
-        client.from('machines').select('id,external_id,name,machine_type,owner_name,operator_name,operator_phone,status,capacity_acres_day,fuel_pct,current_lat,current_lng,operator_user_id'),
+        client.from('machines').select('id,external_id,name,machine_type,owner_name,operator_name,operator_phone,status,capacity_acres_day,tractor_hp_required,residue_types,operating_conditions,capability_source,capability_source_date,fuel_pct,current_lat,current_lng,operator_user_id'),
       ]);
     if (fieldError || machineError) {
       setLiveDataError(fieldError?.message || machineError?.message || 'Unable to load live operational data');
