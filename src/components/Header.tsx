@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, startTransition } from 'react';
 import { prefetchWorkspace } from '../lib/workspacePrefetch';
+import { farmerLanguageLabels, type FarmerLanguage } from '../i18n/farmerLabels';
 import {
   Activity, BarChart3, Bot, ChevronDown, ClipboardList, HelpCircle, Leaf, Map,
   Menu, MessageSquare, Satellite, Search, ShieldCheck, Sparkles, Smartphone,
@@ -29,11 +30,11 @@ type NavItem = {
 };
 
 const primaryNav: NavItem[] = [
-  { id: 'OVERVIEW', label: 'Home', short: 'Home', icon: Activity, description: 'Farmer-first overview and today\'s activity' },
-  { id: 'FIELD_JOBS', label: 'My Fields', short: 'Fields', icon: ClipboardList, description: 'Fields, bookings and clearance jobs' },
-  { id: 'FARMER_ONBOARDING', label: 'Book Parali Pickup', short: 'Book', icon: Tractor, description: 'Choose your field and book machine pickup' },
-  { id: 'OPS_CONSOLE', label: 'Track My Machine', short: 'Track', icon: Map, description: 'See where the machine is and what happens next' },
-  { id: 'RESIDUE_POOLS', label: 'Parali Market', short: 'Market', icon: Leaf, description: 'See where collected parali can go' },
+  { id: 'OVERVIEW', label: farmerLabels.home, short: farmerLabels.home, icon: Activity, description: 'Farmer-first overview and today\'s activity' },
+  { id: 'FIELD_JOBS', label: farmerLabels.fields, short: farmerLabels.fields, icon: ClipboardList, description: 'Fields, bookings and clearance jobs' },
+  { id: 'FARMER_ONBOARDING', label: farmerLabels.book, short: farmerLabels.book, icon: Tractor, description: 'Choose your field and book machine pickup' },
+  { id: 'OPS_CONSOLE', label: farmerLabels.track, short: farmerLabels.track, icon: Map, description: 'See where the machine is and what happens next' },
+  { id: 'RESIDUE_POOLS', label: farmerLabels.market, short: farmerLabels.market, icon: Leaf, description: 'See where collected parali can go' },
 ];
 
 const secondaryNav: NavItem[] = [
@@ -56,6 +57,10 @@ const secondaryNav: NavItem[] = [
 
 export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: HeaderProps) {
   const [moreOpen, setMoreOpen] = useState(false);
+  const [farmerLanguage, setFarmerLanguage] = useState<FarmerLanguage>(() => {
+    if (typeof window === 'undefined') return 'en';
+    return window.localStorage.getItem('nirdhoom.farmer.language') === 'hi' ? 'hi' : 'en';
+  });
   const [mobileOpen, setMobileOpen] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
 
@@ -82,6 +87,12 @@ export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: H
   };
 
   const activeSecondary = secondaryNav.some((item) => item.id === activeTab);
+  const farmerLabels = farmerLanguageLabels[farmerLanguage];
+
+  useEffect(() => {
+    window.localStorage.setItem('nirdhoom.farmer.language', farmerLanguage);
+    document.documentElement.lang = farmerLanguage === 'hi' ? 'hi' : 'en';
+  }, [farmerLanguage]);
 
   return (
     <>
@@ -126,7 +137,7 @@ export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: H
             <div className="relative ml-auto" ref={moreRef}>
               <button onClick={() => setMoreOpen((value) => !value)} aria-expanded={moreOpen} aria-haspopup="menu"
                 className={`field-more-button ${activeSecondary ? 'is-active' : ''}`}>
-                <Menu className="h-4 w-4" /> More <ChevronDown className={`h-3.5 w-3.5 transition-transform ${moreOpen ? 'rotate-180' : ''}`} />
+                <Menu className="h-4 w-4" /> {farmerLabels.more} <ChevronDown className={`h-3.5 w-3.5 transition-transform ${moreOpen ? 'rotate-180' : ''}`} />
               </button>
               {moreOpen && (
                 <>
@@ -174,8 +185,27 @@ export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: H
               <span className={`h-2 w-2 rounded-full ${demoMode ? 'bg-amber-500' : 'bg-emerald-500'}`} />
               <span className="font-semibold text-emerald-900/65">{demoMode ? 'Demo records' : 'Live records'}</span>
             </div>
+            <button
+              type="button"
+              onClick={() => setFarmerLanguage((value) => value === 'en' ? 'hi' : 'en')}
+              className="hidden sm:flex items-center gap-1.5 rounded-xl border border-emerald-700/15 bg-white px-2.5 py-2 text-[10px] font-extrabold text-emerald-800 transition hover:bg-emerald-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+              aria-label={farmerLabels.language}
+              title={farmerLabels.language}
+            >
+              <span className={farmerLanguage === 'en' ? 'font-black text-emerald-900' : 'opacity-45'}>EN</span>
+              <span className="text-emerald-900/25">/</span>
+              <span className={farmerLanguage === 'hi' ? 'font-black text-emerald-900' : 'opacity-45'}>हिंदी</span>
+            </button>
             <button onClick={openPitchDrawer} className="hidden sm:flex items-center gap-1.5 rounded-xl border border-emerald-700/15 bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-800 transition hover:bg-emerald-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500">
               <Search className="h-3.5 w-3.5" /> Brief
+            </button>
+            <button
+              type="button"
+              onClick={() => setFarmerLanguage((value) => value === 'en' ? 'hi' : 'en')}
+              className="grid h-11 min-w-11 place-items-center rounded-xl border border-emerald-900/10 bg-emerald-50 px-2 text-[10px] font-extrabold text-emerald-900 lg:hidden"
+              aria-label={farmerLabels.language}
+            >
+              {farmerLanguage === 'en' ? 'हिंदी' : 'EN'}
             </button>
             <button onClick={() => setMobileOpen((value) => !value)} className="field-menu-button grid h-11 w-11 place-items-center rounded-xl border border-emerald-900/10 bg-white text-emerald-900 lg:hidden" aria-label={mobileOpen ? 'Close navigation' : 'Open navigation'} aria-expanded={mobileOpen}>
               {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
