@@ -131,6 +131,30 @@ export function CommandCenter({
         })}
       </section>
 
+      <section className="home-field-stories" aria-labelledby="field-stories-title">
+        <div className="home-field-stories-heading">
+          <div>
+            <div className="home-section-kicker">In the field</div>
+            <h2 id="field-stories-title">Real agriculture, not stock illustrations.</h2>
+          </div>
+          <p>These images are sourced from Wikimedia Commons and credited to their authors. They show the real landscape and operating context NIRDHOOM is designed for.</p>
+        </div>
+        <div className="home-field-stories-grid">
+          <figure>
+            <img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Paddy_fields_in_Batala%2C_Gurdaspur%2C_Punjab.jpg?width=1280" alt="Paddy fields in Batala, Gurdaspur, Punjab" loading="lazy" />
+            <figcaption><span>Punjab field context</span><a href="https://commons.wikimedia.org/wiki/File:Paddy_fields_in_Batala,_Gurdaspur,_Punjab.jpg" target="_blank" rel="noreferrer">Rohitjahnavi · CC BY-SA 3.0 ↗</a></figcaption>
+          </figure>
+          <figure>
+            <img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Agriculture_in_India_tractor_farming_Punjab_preparing_field_for_a_wheat_crop_without_burning_previous_crop_stalk.jpg?width=1280" alt="Tractor preparing a Punjab field without burning previous crop residue" loading="lazy" />
+            <figcaption><span>Residue-aware field preparation</span><a href="https://commons.wikimedia.org/wiki/File:Agriculture_in_India_tractor_farming_Punjab_preparing_field_for_a_wheat_crop_without_burning_previous_crop_stalk.jpg" target="_blank" rel="noreferrer">CIAT / Neil Palmer · CC BY 2.0 ↗</a></figcaption>
+          </figure>
+          <figure>
+            <img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Manav_Vikas_Sansthan_on_Crop_residue_management.jpg?width=1280" alt="Crop residue management training in Punjab" loading="lazy" />
+            <figcaption><span>Crop-residue management</span><a href="https://commons.wikimedia.org/wiki/File:Manav_Vikas_Sansthan_on_Crop_residue_management.jpg" target="_blank" rel="noreferrer">Singhbrarraj636 · CC BY-SA 4.0 ↗</a></figcaption>
+          </figure>
+        </div>
+      </section>
+
       {/* LIVE PRODUCT LAYER */}
       <section className="home-product-layer">
         <div className="home-layer-copy">
