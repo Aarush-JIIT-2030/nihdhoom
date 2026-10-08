@@ -614,3 +614,38 @@ test('operator surface distinguishes stale GPS readings', () => {
   assert.match(source, /stale \$\{gpsAgeSeconds\}s ago/);
   assert.match(source, /GPS reading is stale/);
 });
+
+
+test('residue is a first-class traceable domain object', () => {
+  const types = read('src/types/index.ts');
+  const migration = read('supabase/migrations/202610080002_nirdhoom_residue_lot_first_class.sql');
+  const timeline = read('src/components/ResidueNetwork/FieldEvidenceTimeline.tsx');
+  assert.match(types, /export interface ResidueLot/);
+  assert.match(types, /verified_quantity_tonnes/);
+  assert.match(types, /geometry_provenance/);
+  assert.match(migration, /farmer_id uuid/);
+  assert.match(migration, /record_residue_lot_event/);
+  assert.match(migration, /revoke insert, update, delete on public\.residue_lot_events/);
+  assert.match(timeline, /FIELD EVIDENCE TIMELINE/);
+  assert.match(timeline, /absence of a detection does not prove no burning/);
+});
+
+test('machine capability claims carry source metadata', () => {
+  const migration = read('supabase/migrations/202610080003_nirdhoom_machine_capability_provenance.sql');
+  const types = read('src/types/index.ts');
+  const map = read('src/components/OpsConsole/OpsMap.tsx');
+  assert.match(migration, /tractor_hp_required/);
+  assert.match(migration, /capability_source/);
+  assert.match(types, /capability_source_date/);
+  assert.match(map, /Capability source:/);
+});
+
+test('farmer navigation has bilingual core labels', () => {
+  const labels = read('src/i18n/farmerLabels.ts');
+  const header = read('src/components/Header.tsx');
+  assert.match(labels, /मेरे खेत/);
+  assert.match(labels, /पराली उठवाएँ/);
+  assert.match(labels, /मशीन ट्रैक करें/);
+  assert.match(header, /nirdhoom\.farmer\.language/);
+  assert.match(header, /हिंदी/);
+});
