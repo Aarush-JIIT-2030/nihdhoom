@@ -317,6 +317,7 @@ export const INITIAL_STORAGE_YARDS: StorageYard[] = [
   },
 ];
 
+// Demo-only buyer coordinates are illustrative map references, not live facility geocoding.
 export const INITIAL_BUYERS: Buyer[] = [
   {
     id: 'BUYER-01',
