@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import { Field, Machine, BurnEvent, StorageYard, Buyer, LatLng } from '../../types';
-import { Layers, Flame, MapPin } from 'lucide-react';
-import Globe from '../react-bits/globe';
+import { supabase } from '../../lib/supabase';
+import { Layers, Flame, MapPin, PackageCheck, Route, CloudSun, Building2 } from 'lucide-react';
 
 interface OpsMapProps {
   fields: Field[];
@@ -33,12 +33,16 @@ export const OpsMap: React.FC<OpsMapProps> = ({
   const mapInstanceRef = useRef<L.Map | null>(null);
   const layerGroupRef = useRef<L.LayerGroup | null>(null);
 
-  const [mapMode, setMapMode] = useState<'field' | 'globe'>('field');
-  const [tileMode, setTileMode] = useState<'satellite' | 'dark'>('satellite');
+  const [tileMode] = useState<'satellite'>('satellite');
   const [showFires, setShowFires] = useState(true);
   const [showMachines, setShowMachines] = useState(true);
   const [showFields, setShowFields] = useState(true);
   const [showYards, setShowYards] = useState(true);
+  const [showResidue, setShowResidue] = useState(true);
+  const [showBuyers, setShowBuyers] = useState(true);
+  const [showRoute, setShowRoute] = useState(true);
+  const [showWeather, setShowWeather] = useState(true);
+  const [weatherPoint, setWeatherPoint] = useState<{ temperature: number; precipitationProbability: number; precipitationMm: number; windGustKmh: number } | null>(null);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [mapError, setMapError] = useState<string | null>(null);
   const [animatedPositions, setAnimatedPositions] = useState<Record<string, { lat: number; lng: number }>>(
@@ -48,7 +52,7 @@ export const OpsMap: React.FC<OpsMapProps> = ({
 
   // Initialize Leaflet map
   useEffect(() => {
-    if (mapMode !== 'field' || !mapContainerRef.current) return;
+    if (!mapContainerRef.current) return;
     if (mapInstanceRef.current) return;
 
     // Centered at Sangrur, Punjab
@@ -74,7 +78,7 @@ export const OpsMap: React.FC<OpsMapProps> = ({
       map.remove();
       mapInstanceRef.current = null;
     };
-  }, [mapMode]);
+  }, []);
 
   // Live fleet tracking animation: machines drift toward assigned fields every 5s
   useEffect(() => {
@@ -103,10 +107,44 @@ export const OpsMap: React.FC<OpsMapProps> = ({
     };
   }, [machines, fields]);
 
-  // Update base tile layer
+    // Weather is an operational planning layer, sourced through the authenticated weather adapter.
+  useEffect(() => {
+    if (demoMode || !showWeather || !selectedField?.dbId || !supabase) {
+      setWeatherPoint(null);
+      return;
+    }
+    const client = supabase;
+    let active = true;
+    const loadWeather = async () => {
+      try {
+        const { data } = await client.auth.getSession();
+        const token = data.session?.access_token;
+        if (!token) return;
+        const response = await fetch(`/api/weather?field_id=${encodeURIComponent(selectedField.dbId!)}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!response.ok) return;
+        const payload = await response.json();
+        const currentIndex = payload.forecast?.hourly?.time?.length ? 0 : -1;
+        if (!active || currentIndex < 0) return;
+        setWeatherPoint({
+          temperature: Number(payload.forecast.hourly.temperature_2m?.[currentIndex] ?? 0),
+          precipitationProbability: Number(payload.forecast.hourly.precipitation_probability?.[currentIndex] ?? 0),
+          precipitationMm: Number(payload.forecast.hourly.precipitation?.[currentIndex] ?? 0),
+          windGustKmh: Number(payload.forecast.hourly.wind_gusts_10m?.[currentIndex] ?? 0),
+        });
+      } catch {
+        if (active) setWeatherPoint(null);
+      }
+    };
+    void loadWeather();
+    return () => { active = false; };
+  }, [demoMode, selectedField?.dbId, showWeather]);
+
+// Update base tile layer
   useEffect(() => {
     const map = mapInstanceRef.current;
-    if (mapMode !== 'field' || !map) return;
+    if (!map) return;
 
     // Remove existing tile layers
     map.eachLayer((layer) => {
@@ -115,26 +153,18 @@ export const OpsMap: React.FC<OpsMapProps> = ({
       }
     });
 
-    if (tileMode === 'satellite') {
-      // Esri World Imagery (Satellite)
-      L.tileLayer(
-        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-        { maxZoom: 18, maxNativeZoom: 17 }
-      ).addTo(map);
-    } else {
-      // CartoDB Dark Matter
-      L.tileLayer(
-        'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-        { maxZoom: 19, subdomains: 'abcd' }
-      ).addTo(map);
-    }
-  }, [tileMode, mapMode]);
+    // Machine tracking uses a field satellite layer only; avoid a second visual language.
+    L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      { maxZoom: 18, maxNativeZoom: 17 }
+    ).addTo(map);
+  }, [tileMode]);
 
   // Render Polygons, Markers, FIRMS Fires, and Route
   useEffect(() => {
     const map = mapInstanceRef.current;
     const layerGroup = layerGroupRef.current;
-    if (mapMode !== 'field' || !map || !layerGroup) return;
+    if (!map || !layerGroup) return;
 
     layerGroup.clearLayers();
 
@@ -170,7 +200,7 @@ export const OpsMap: React.FC<OpsMapProps> = ({
         });
 
         polygon.bindTooltip(
-          `<strong>${field.khasra_no}</strong><br/>${field.farmer_name}<br/>${field.acreage} ac (${field.paddy_variety})<br/><span style="color:#10b981;font-weight:bold;">No fire points in selected record • Planning window</span>`,
+          `<strong>${field.khasra_no}</strong><br/>${field.farmer_name}<br/>${field.acreage} ac (${field.paddy_variety})<br/><span style="color:#10b981;font-weight:bold;">FIRMS observations are supporting evidence only • Planning window</span>`,
           { direction: 'top', className: 'leaflet-custom-tooltip' }
         );
 
@@ -215,7 +245,10 @@ export const OpsMap: React.FC<OpsMapProps> = ({
             <div style="color:#94a3b8;margin-bottom:6px;">${machine.home_chc}</div>
             <div><strong>Type:</strong> ${machine.type}</div>
             <div><strong>Capacity:</strong> ${machine.capacity_acres_day} acres/day</div>
+            <div><strong>Tractor:</strong> ${machine.tractor_hp_required ? machine.tractor_hp_required + " HP" : "Not sourced"}</div>
+            <div><strong>Residue:</strong> ${(machine.residue_types || ["Not established"]).join(", ")}</div>
             <div><strong>Operator:</strong> ${machine.operator_name} (${machine.operator_phone})</div>
+            <div style="margin-top:4px;color:#718076;">Capability source: ${machine.capability_source || "Not established"}${machine.capability_source_date ? " · " + machine.capability_source_date : ""}</div>
             <div><strong>Status:</strong> <span style="color:#34d399;font-weight:bold;">${machine.status}</span></div>
           </div>
         `);
@@ -264,7 +297,58 @@ export const OpsMap: React.FC<OpsMapProps> = ({
       });
     }
 
-    // 4. Render Storage Yards & Buyers
+        // 4. Render residue lots at their field origin.
+    if (showResidue) {
+      fields
+        .filter((field) => Boolean(field.residue_lot_id) || field.status === 'VERIFIED_NON_BURN')
+        .forEach((field) => {
+          const pos = field.center;
+          if (!Number.isFinite(Number(pos?.lat)) || !Number.isFinite(Number(pos?.lng))) return;
+          const icon = L.divIcon({
+            html: '<div style="width:26px;height:26px;border-radius:7px;background:#F0F7EF;border:2px solid #2D6A45;display:flex;align-items:center;justify-content:center;color:#2D6A45;font-size:12px;">🌾</div>',
+            className: 'residue-lot-icon',
+            iconSize: [26, 26],
+            iconAnchor: [13, 13],
+          });
+          L.marker([Number(pos.lat), Number(pos.lng)], { icon })
+            .bindPopup(`<div style="padding:4px;font-family:sans-serif;font-size:12px;"><strong style="color:#2D6A45;">Residue lot</strong><div>Field: ${field.khasra_no}</div><div>Status: ${field.status.replaceAll('_',' ')}</div><div>Source: field record</div></div>`)
+            .addTo(layerGroup);
+        });
+    }
+
+    // 5. Render buyer demand only where a real/explicit buyer coordinate exists.
+    if (showBuyers) {
+      buyers.forEach((buyer) => {
+        const pos = buyer.location;
+        if (!pos || !Number.isFinite(Number(pos.lat)) || !Number.isFinite(Number(pos.lng))) return;
+        const icon = L.divIcon({
+          html: '<div style="width:27px;height:27px;border-radius:7px;background:#FFF7E8;border:2px solid #C8953D;display:flex;align-items:center;justify-content:center;color:#76521B;font-size:12px;">🏭</div>',
+          className: 'buyer-icon',
+          iconSize: [27, 27],
+          iconAnchor: [13.5, 13.5],
+        });
+        L.marker([Number(pos.lat), Number(pos.lng)], { icon })
+          .bindPopup(`<div style="padding:4px;font-family:sans-serif;font-size:12px;"><strong style="color:#76521B;">${buyer.name}</strong><div>${buyer.location_name}</div><div>Demand: ${buyer.demand_tonnes.toLocaleString('en-IN')} t</div><div>Price: ₹${buyer.price_per_tonne.toLocaleString('en-IN')}/t</div><div style="margin-top:4px;color:#718076;">Buyer coordinates are explicit demo/reference data when present.</div></div>`)
+          .addTo(layerGroup);
+      });
+    }
+
+    // 6. Render authenticated weather planning signal for the selected field.
+    if (showWeather && selectedField?.center && weatherPoint) {
+      const pos = selectedField.center;
+      const risk = weatherPoint.precipitationProbability >= 70 || weatherPoint.precipitationMm >= 8 || weatherPoint.windGustKmh >= 35;
+      const icon = L.divIcon({
+        html: `<div style="width:30px;height:30px;border-radius:50%;background:${risk ? '#FFF3D6' : '#EFF7F0'};border:2px solid ${risk ? '#C8953D' : '#2D6A45'};display:flex;align-items:center;justify-content:center;font-size:13px;">☁️</div>`,
+        className: 'weather-icon',
+        iconSize: [30, 30],
+        iconAnchor: [15, 15],
+      });
+      L.marker([Number(pos.lat), Number(pos.lng)], { icon })
+        .bindPopup(`<div style="padding:4px;font-family:sans-serif;font-size:12px;"><strong style="color:#2D6A45;">Weather planning signal</strong><div>${weatherPoint.temperature.toFixed(0)}°C · rain probability ${weatherPoint.precipitationProbability.toFixed(0)}%</div><div>${weatherPoint.precipitationMm.toFixed(1)} mm rain · gusts ${weatherPoint.windGustKmh.toFixed(0)} km/h</div><div style="margin-top:4px;color:#718076;">Planning signal only; confirm field and machine conditions before dispatch.</div></div>`)
+        .addTo(layerGroup);
+    }
+
+// 4. Render Storage Yards & Buyers
     if (showYards) {
       storageYards.forEach((yard) => {
         const yardHtml = `
@@ -297,8 +381,8 @@ export const OpsMap: React.FC<OpsMapProps> = ({
       });
     }
 
-    // 5. Render Active VRP Polyline Route
-    if (activeRoutePolyline && activeRoutePolyline.length > 1) {
+    // 7. Render Active VRP Polyline Route
+    if (showRoute && activeRoutePolyline && activeRoutePolyline.length > 1) {
       const lineCoords: [number, number][] = activeRoutePolyline.map((p) => [p.lat, p.lng]);
       const routeLine = L.polyline(lineCoords, {
         color: '#10b981',
@@ -321,60 +405,34 @@ export const OpsMap: React.FC<OpsMapProps> = ({
     showMachines,
     showFires,
     showYards,
+    showResidue,
+    showBuyers,
+    showRoute,
+    showWeather,
+    weatherPoint,
     animatedPositions,
-    mapMode,
   ]);
 
   // Pan to selected field
   useEffect(() => {
-    if (mapMode === 'field' && selectedField && mapInstanceRef.current) {
+    if (selectedField && mapInstanceRef.current) {
       mapInstanceRef.current.flyTo(
         [selectedField.center.lat, selectedField.center.lng],
         13,
         { duration: 1.2 }
       );
     }
-  }, [selectedField, mapMode]);
+  }, [selectedField]);
 
   return (
     <div className="ops-map-surface relative w-full h-[540px] lg:h-[620px] rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
-      {/* Map / network globe */}
-      {mapMode === 'globe' ? (
-        <div className="relative w-full h-full bg-[#0d2418] overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(242,169,0,.13),transparent_42%),linear-gradient(180deg,#102b1c,#07150d)]" />
-          <div className="relative z-[1] w-full h-full grid place-items-center">
-            <Globe
-              className="w-full h-full"
-              primaryColor="rgb(242, 169, 0)"
-              neutralColor="rgb(113, 171, 126)"
-              atmosphereColor="rgb(242, 169, 0)"
-              globeColor="rgb(18, 61, 36)"
-              showAtmosphere
-              autoRotateSpeed={0.45}
-              interactive
-              enableZoom
-              arcCount={Math.min(12, Math.max(6, machines.length + 3))}
-              arcInterval={5200}
-              arcAnimationDuration={1800}
-              cameraAltitude={2.35}
-              pointSize={0.22}
-              pointResolution={5}
-              atmosphereAltitude={0.2}
-              landDotRows={150}
-            />
-          </div>
-          <div className="absolute left-4 bottom-4 z-10 max-w-sm rounded-2xl border border-white/10 bg-[#10291a]/90 px-4 py-3 text-white shadow-xl backdrop-blur-md">
-            <div className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#f2a900]">NIRDHOOM network view</div>
-            <div className="mt-1 text-sm font-semibold">Animated movement between field and recovery nodes</div>
-            <div className="mt-1 text-xs leading-5 text-white/65">Use Field GIS for exact polygons, fires, baler positions and route inspection.</div>
-          </div>
-        </div>
-      ) : mapError ? (
-        <div className="w-full h-full grid place-items-center bg-slate-950 p-6 text-center">
+      {/* Field GIS map — the operational tracking surface. */}
+      {mapError ? (
+        <div className="w-full h-full grid place-items-center bg-slate-50 p-6 text-center">
           <div className="max-w-md">
-            <div className="text-sm font-bold text-amber-300">Operational map unavailable</div>
-            <p className="mt-2 text-xs text-slate-400">The rest of NIRDHOOM is still available. Check your network/map tile access and reload.</p>
-            <p className="mt-2 text-[10px] text-slate-600 break-words">{mapError}</p>
+            <div className="text-sm font-bold text-amber-700">Operational map unavailable</div>
+            <p className="mt-2 text-xs text-slate-500">Check your network/map tile access and reload.</p>
+            <p className="mt-2 text-[10px] text-slate-500 break-words">{mapError}</p>
           </div>
         </div>
       ) : (
@@ -382,139 +440,106 @@ export const OpsMap: React.FC<OpsMapProps> = ({
       )}
 
       {/* GPS Live Ticker Top-Left */}
-      <div className="absolute top-3 left-3 z-10 bg-slate-900/90 backdrop-blur-md border border-emerald-500/30 rounded-lg px-3 py-1.5 flex items-center gap-2 text-xs shadow-lg">
+      <div className="absolute top-3 left-3 z-10 bg-white/95 backdrop-blur-md border border-slate-200 rounded-lg px-3 py-1.5 flex items-center gap-2 text-xs shadow-lg">
         <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-        <span className="text-emerald-300 font-bold">{demoMode ? 'GPS DEMO' : 'GPS LIVE'}</span>
+        <span className="text-emerald-700 font-bold">{demoMode ? 'GPS DEMO' : 'GPS LIVE'}</span>
         <span className="text-slate-400">·</span>
-        <span className="text-slate-300 font-mono">{machines.length} balers {demoMode ? 'simulated' : 'tracked'}</span>
+        <span className="text-slate-600 font-mono">{machines.length} balers {demoMode ? 'simulated' : 'tracked'}</span>
         <span className="text-slate-500 text-[10px] ml-1">Updated {lastRefresh.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
       </div>
 
       {/* Floating Control Overlay Top-Right */}
-      <div className="absolute top-3 right-3 z-10 flex flex-col gap-2">
-<div className="bg-slate-900/90 backdrop-blur-md border border-slate-700/80 rounded-lg p-1.5 flex gap-1 shadow-lg">
-          <button onClick={() => setMapMode('field')} className={`px-2.5 py-1 text-xs font-semibold rounded transition-all cursor-pointer ${mapMode === 'field' ? 'bg-[#f2a900] text-[#173522]' : 'text-slate-400 hover:text-white'}`}>Field GIS</button>
-          <button onClick={() => setMapMode('globe')} className={`px-2.5 py-1 text-xs font-semibold rounded transition-all cursor-pointer ${mapMode === 'globe' ? 'bg-[#f2a900] text-[#173522]' : 'text-slate-400 hover:text-white'}`}>Network Globe</button>
+      <div className="absolute top-3 right-3 z-10">
+        <div className="rounded-lg border border-slate-200 bg-white/95 p-2 text-xs font-semibold text-slate-700 shadow-lg backdrop-blur-md">
+          Satellite field map
         </div>
-        {/* Tile mode switcher */}
-        {mapMode === 'field' && <div className="bg-slate-900/90 backdrop-blur-md border border-slate-700/80 rounded-lg p-1.5 flex gap-1 shadow-lg">
-          <button
-            onClick={() => setTileMode('satellite')}
-            className={`px-2.5 py-1 text-xs font-semibold rounded transition-all cursor-pointer ${
-              tileMode === 'satellite'
-                ? 'bg-emerald-600 text-white shadow'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            🛰️ Satellite imagery
-          </button>
-          <button
-            onClick={() => setTileMode('dark')}
-            className={`px-2.5 py-1 text-xs font-semibold rounded transition-all cursor-pointer ${
-              tileMode === 'dark'
-                ? 'bg-emerald-600 text-white shadow'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            🌑 Dark Ops Mode
-          </button>
-        </div>}
-
-        {/* Layer Toggles */}
-        {mapMode === 'field' && <div className="bg-slate-900/90 backdrop-blur-md border border-slate-700/80 rounded-lg p-2 flex flex-col gap-1.5 shadow-lg text-xs font-medium">
-          <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-0.5 flex items-center gap-1">
-            <Layers className="w-3 h-3 text-emerald-400" />
-            <span>GIS Map Layers</span>
+        <div className="mt-2 flex flex-col gap-1.5 rounded-lg border border-slate-200 bg-white/95 p-2 text-xs font-medium text-slate-700 shadow-lg backdrop-blur-md">
+          <div className="mb-0.5 flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+            <Layers className="h-3 w-3 text-emerald-600" />
+            <span>GIS map layers</span>
           </div>
-
-          <label className="flex items-center justify-between gap-3 text-slate-300 hover:text-white cursor-pointer">
+          <label className="flex min-h-9 items-center justify-between gap-3 cursor-pointer rounded-md px-1 hover:bg-slate-50">
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm bg-emerald-500"></span>
-              <span>Customer Polygons ({fields.length})</span>
+              <span className="h-2.5 w-2.5 rounded-sm bg-emerald-500" />
+              <span>Field polygons ({fields.length})</span>
             </span>
-            <input
-              type="checkbox"
-              checked={showFields}
-              onChange={(e) => setShowFields(e.target.checked)}
-              className="accent-emerald-500 rounded"
-            />
+            <input type="checkbox" checked={showFields} onChange={(e) => setShowFields(e.target.checked)} className="accent-emerald-600 rounded" />
+          </label>
+          <label className="flex min-h-9 items-center justify-between gap-3 cursor-pointer rounded-md px-1 hover:bg-slate-50">
+            <span className="flex items-center gap-1.5">
+              <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+              <span>Machines ({machines.length})</span>
+            </span>
+            <input type="checkbox" checked={showMachines} onChange={(e) => setShowMachines(e.target.checked)} className="accent-emerald-600 rounded" />
+          </label>
+          <label className="flex min-h-9 items-center justify-between gap-3 cursor-pointer rounded-md px-1 hover:bg-slate-50">
+            <span className="flex items-center gap-1.5">
+              <Flame className="h-3.5 w-3.5 text-red-500" />
+              <span className="font-semibold text-red-600">FIRMS observations ({fireEvents.length})</span>
+            </span>
+            <input type="checkbox" checked={showFires} onChange={(e) => setShowFires(e.target.checked)} className="accent-red-500 rounded" />
+          </label>
+          <label className="flex min-h-9 items-center justify-between gap-3 cursor-pointer rounded-md px-1 hover:bg-slate-50">
+            <span className="flex items-center gap-1.5">
+              <span className="h-2.5 w-2.5 rounded-sm bg-blue-500" />
+              <span>Yards & offtake ({storageYards.length})</span>
+            </span>
+            <input type="checkbox" checked={showYards} onChange={(e) => setShowYards(e.target.checked)} className="accent-blue-600 rounded" />
+          </label>
+          <label className="flex min-h-9 items-center justify-between gap-3 cursor-pointer rounded-md px-1 hover:bg-slate-50">
+            <span className="flex items-center gap-1.5"><PackageCheck className="h-3.5 w-3.5 text-emerald-600" /><span>Residue lots</span></span>
+            <input type="checkbox" checked={showResidue} onChange={(e) => setShowResidue(e.target.checked)} className="accent-emerald-600 rounded" />
+          </label>
+          <label className="flex min-h-9 items-center justify-between gap-3 cursor-pointer rounded-md px-1 hover:bg-slate-50">
+            <span className="flex items-center gap-1.5"><Building2 className="h-3.5 w-3.5 text-amber-600" /><span>Buyer demand ({buyers.filter((buyer) => buyer.location).length} mapped)</span></span>
+            <input type="checkbox" checked={showBuyers} onChange={(e) => setShowBuyers(e.target.checked)} className="accent-amber-600 rounded" />
+          </label>
+          <label className="flex min-h-9 items-center justify-between gap-3 cursor-pointer rounded-md px-1 hover:bg-slate-50">
+            <span className="flex items-center gap-1.5"><CloudSun className="h-3.5 w-3.5 text-sky-600" /><span>Weather planning</span></span>
+            <input type="checkbox" checked={showWeather} onChange={(e) => setShowWeather(e.target.checked)} className="accent-sky-600 rounded" />
+          </label>
+          <label className="flex min-h-9 items-center justify-between gap-3 cursor-pointer rounded-md px-1 hover:bg-slate-50">
+            <span className="flex items-center gap-1.5"><Route className="h-3.5 w-3.5 text-blue-600" /><span>Pickup route</span></span>
+            <input type="checkbox" checked={showRoute} onChange={(e) => setShowRoute(e.target.checked)} className="accent-blue-600 rounded" />
           </label>
 
-          <label className="flex items-center justify-between gap-3 text-slate-300 hover:text-white cursor-pointer">
-            <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-              <span>Registered / available balers ({machines.length})</span>
-            </span>
-            <input
-              type="checkbox"
-              checked={showMachines}
-              onChange={(e) => setShowMachines(e.target.checked)}
-              className="accent-emerald-500 rounded"
-            />
-          </label>
-
-          <label className="flex items-center justify-between gap-3 text-slate-300 hover:text-white cursor-pointer">
-            <span className="flex items-center gap-1.5">
-              <Flame className="w-3.5 h-3.5 text-red-500 animate-pulse" />
-              <span className="text-red-300 font-semibold">NASA FIRMS Fires ({fireEvents.length})</span>
-            </span>
-            <input
-              type="checkbox"
-              checked={showFires}
-              onChange={(e) => setShowFires(e.target.checked)}
-              className="accent-red-500 rounded"
-            />
-          </label>
-
-          <label className="flex items-center justify-between gap-3 text-slate-300 hover:text-white cursor-pointer">
-            <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm bg-blue-500"></span>
-              <span>Yards & Offtake ({storageYards.length})</span>
-            </span>
-            <input
-              type="checkbox"
-              checked={showYards}
-              onChange={(e) => setShowYards(e.target.checked)}
-              className="accent-blue-500 rounded"
-            />
-          </label>
-        </div>}
+        </div>
       </div>
 
       {/* Floating Bottom Quick Zoom Bar */}
-      {mapMode === 'field' && <div className="absolute bottom-3 left-3 z-10 bg-slate-900/90 backdrop-blur-md border border-slate-700/80 rounded-lg p-1.5 flex items-center gap-2 shadow-lg text-xs">
+      <div className="absolute bottom-3 left-3 z-10 bg-white/95 backdrop-blur-md border border-slate-200 rounded-lg p-1.5 flex items-center gap-2 shadow-lg text-xs text-slate-700">
         <span className="text-slate-400 font-medium px-1 flex items-center gap-1">
-          <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+          <MapPin className="w-3.5 h-3.5 text-emerald-600" />
           <span>Hotspot Clusters:</span>
         </span>
         <button
           onClick={() => mapInstanceRef.current?.flyTo([30.2458, 75.8421], 12)}
-          className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs cursor-pointer"
+          className="px-2 py-0.5 rounded bg-slate-50 hover:bg-emerald-50 text-slate-700 border border-slate-200 text-xs cursor-pointer"
         >
           Sangrur
         </button>
         <button
           onClick={() => mapInstanceRef.current?.flyTo([30.1311, 75.8016], 13)}
-          className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs cursor-pointer"
+          className="px-2 py-0.5 rounded bg-slate-50 hover:bg-emerald-50 text-slate-700 border border-slate-200 text-xs cursor-pointer"
         >
           Sunam
         </button>
         <button
           onClick={() => mapInstanceRef.current?.flyTo([30.3683, 75.8672], 13)}
-          className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs cursor-pointer"
+          className="px-2 py-0.5 rounded bg-slate-50 hover:bg-emerald-50 text-slate-700 border border-slate-200 text-xs cursor-pointer"
         >
           Dhuri
         </button>
         <button
           onClick={() => mapInstanceRef.current?.flyTo([30.2766, 76.0427], 13)}
-          className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs cursor-pointer"
+          className="px-2 py-0.5 rounded bg-slate-50 hover:bg-emerald-50 text-slate-700 border border-slate-200 text-xs cursor-pointer"
         >
           Bhawanigarh
         </button>
-      </div>}
+      </div>
 
       {/* Floating Map Legend Bottom-Right */}
-      {mapMode === 'field' && <div className="absolute bottom-3 right-3 z-10 hidden sm:flex items-center gap-3 bg-slate-950/85 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-800 text-[11px] text-slate-300">
+      <div className="absolute bottom-3 right-3 z-10 hidden sm:flex items-center gap-3 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-200 text-[11px] text-slate-700 shadow-lg">
         <span className="flex items-center gap-1">
           <span className="w-3 h-2 rounded bg-emerald-500 border border-emerald-300 inline-block"></span>
           <span>Field status / verified evidence</span>
@@ -525,9 +550,9 @@ export const OpsMap: React.FC<OpsMapProps> = ({
         </span>
         <span className="flex items-center gap-1">
           <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping inline-block"></span>
-          <span className="text-red-400 font-semibold">External thermal observation</span>
+          <span className="text-red-600 font-semibold">External thermal observation</span>
         </span>
-      </div>}
+      </div>
     </div>
   );
 };

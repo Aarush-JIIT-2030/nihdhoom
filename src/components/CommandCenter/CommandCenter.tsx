@@ -36,14 +36,15 @@ export function CommandCenter({
   const verified = fields.filter(f => f.status === 'VERIFIED_NON_BURN' || f.is_verified_non_burn).length;
   const machineActive = machines.filter(m => m.status !== 'MAINTENANCE').length;
   const acreage = fields.reduce((sum, f) => sum + (Number(f.acreage) || 0), 0);
-  const estimatedResidue = acreage * 1.8; // illustrative planning coefficient; not a measured recovery factor
+  const residueLots = fields.filter((f) => Boolean(f.residue_lot_id)).length;
   const cleared = fields.filter(f => ['CLEARED_PENDING_AUDIT', 'VERIFIED_NON_BURN'].includes(f.status)).length;
 
   const workflow = [
     { n: '01', title: 'Register the field', text: 'Add the field, location and consent once.', icon: MapPinned, image: farmImage, imageAlt: 'Cultivated field landscape', tab: 'My Fields' },
     { n: '02', title: 'Book clearance', text: 'Request a baler and plan the job around harvest.', icon: CalendarDays, image: balerImage, imageAlt: 'Baler working with crop residue', tab: 'Book Clearance' },
     { n: '03', title: 'Track the operation', text: 'Follow the machine and see the field move through each stage.', icon: Truck, image: fleetImage, imageAlt: 'Agricultural machines moving baled residue', tab: 'Track Clearance' },
-    { n: '04', title: 'Prove what happened', text: 'Capture evidence, verify the field and release residue for offtake.', icon: ShieldCheck, image: satelliteImage, imageAlt: 'Satellite view used as verification context', tab: 'Verify' },
+    { n: '04', title: 'Prove what happened', text: 'Capture evidence and verify the field without overstating what remote sensing can prove.', icon: ShieldCheck, image: satelliteImage, imageAlt: 'Satellite view used as verification context', tab: 'Verify' },
+    { n: '05', title: 'Move the residue', text: 'Create a verified lot, pool it and connect it to real buyer demand.', icon: Leaf, image: circularUseImage, imageAlt: 'Biomass utilisation facility', tab: 'Parali Market' },
   ];
 
   const audiences = [
@@ -161,7 +162,7 @@ export function CommandCenter({
         {workflow.map((step) => {
           const Icon = step.icon;
           return (
-            <button type="button" key={step.n} onClick={() => onNavigate(step.tab === 'My Fields' ? 'FIELD_JOBS' : step.tab === 'Book Clearance' ? 'FARMER_ONBOARDING' : step.tab === 'Track Clearance' ? 'OPS_CONSOLE' : 'SATELLITE_AUDIT')} className="home-workflow-card text-left">
+            <button type="button" key={step.n} onClick={() => onNavigate(step.tab === 'My Fields' ? 'FIELD_JOBS' : step.tab === 'Book Clearance' ? 'FARMER_ONBOARDING' : step.tab === 'Track Clearance' ? 'OPS_CONSOLE' : step.tab === 'Parali Market' ? 'RESIDUE_POOLS' : 'SATELLITE_AUDIT')} className="home-workflow-card text-left">
               <div className="home-workflow-image">
                 <img src={step.image} alt={step.imageAlt} loading="lazy" />
                 <span>{step.n}</span>
@@ -298,7 +299,7 @@ export function CommandCenter({
       <section className="home-proof">
         <div><span>FIELD NETWORK</span><strong>{fields.length}</strong><small>registered fields</small></div>
         <div><span>OPERATIONS</span><strong>{cleared}</strong><small>cleared fields</small></div>
-        <div><span>RESIDUE</span><strong>{estimatedResidue.toFixed(1)} t</strong><small>illustrative planning estimate</small></div>
+        <div><span>RESIDUE</span><strong>{residueLots}</strong><small>linked residue lots</small></div>
         <div><span>VERIFIED</span><strong>{verified}</strong><small>verified non-burn fields</small></div>
       </section>
 

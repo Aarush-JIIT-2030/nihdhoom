@@ -290,7 +290,7 @@ test('visible competition surfaces stay claim-safe', () => {
   assert.doesNotMatch(sources, /14,200\+ Balers/i);
   assert.doesNotMatch(sources, /already-subsidised crop residue machinery/i);
   assert.doesNotMatch(sources, /UPI payout/i);
-  assert.match(read('src/components/CarbonMarketplace/CarbonMarketplace.tsx'), /Carbon Market Simulator/);
+  assert.match(read('src/components/CarbonMarketplace/CarbonMarketplace.tsx'), /Impact & carbon evidence/);
 });
 
 
@@ -461,22 +461,16 @@ test('React Bits Stepper is integrated into farmer onboarding progress', () => {
 });
 
 
-test('React Bits Pro globe registry and operational map integration stay wired', () => {
-  const components = read('components.json');
-  const env = read('.env.example');
-  const globe = read('src/components/react-bits/globe.tsx');
+test('operational map stays field-first and GIS-focused', () => {
   const map = read('src/components/OpsConsole/OpsMap.tsx');
-  assert.match(components, /@reactbits-starter/);
-  assert.match(components, /@reactbits-pro/);
-  assert.match(components, /REACTBITS_LICENSE_KEY/);
-  assert.match(env, /REACTBITS_LICENSE_KEY=/);
-  assert.match(globe, /Interactive 3D globe with animated arcs/);
-  assert.match(globe, /autoRotateSpeed/);
-  assert.match(globe, /arcAnimationDuration/);
-  assert.match(map, /from '..\/react-bits\/globe'/);
-  assert.match(map, /Network Globe/);
-  assert.match(map, /mapMode === 'globe'/);
   assert.match(map, /Field GIS/);
+  assert.doesNotMatch(map, /Network Globe/);
+  assert.doesNotMatch(map, /mapMode === 'globe'/);
+  assert.match(map, /showResidue/);
+  assert.match(map, /showBuyers/);
+  assert.match(map, /showRoute/);
+  assert.match(map, /showWeather/);
+  assert.match(map, /FIRMS/);
 });
 
 
@@ -593,8 +587,8 @@ test('field-first UI kit and open-source interaction surfaces remain wired', () 
   assert.match(css, /spotlight/);
   assert.match(header, /backdrop-blur-xl/);
   assert.match(header, /Field-first crop-residue network/);
-  assert.match(harvest, /field-first cards/);
-  assert.match(auction, /field-first/);
+  assert.match(harvest, /Harvest pressure planning/);
+  assert.match(auction, /Multi-offtake planning simulator/);
 });
 
 
@@ -613,4 +607,71 @@ test('operator surface distinguishes stale GPS readings', () => {
   assert.match(source, /gpsStale/);
   assert.match(source, /stale \$\{gpsAgeSeconds\}s ago/);
   assert.match(source, /GPS reading is stale/);
+});
+
+
+test('residue is a first-class traceable domain object', () => {
+  const types = read('src/types/index.ts');
+  const migration = read('supabase/migrations/202610080002_nirdhoom_residue_lot_first_class.sql');
+  const timeline = read('src/components/ResidueNetwork/FieldEvidenceTimeline.tsx');
+  const baler = read('src/components/FieldOperator/BalerPWA.tsx');
+  assert.match(types, /export interface ResidueLot/);
+  assert.match(types, /verified_quantity_tonnes/);
+  assert.match(types, /geometry_provenance/);
+  assert.match(migration, /farmer_id uuid/);
+  assert.match(migration, /record_residue_lot_event/);
+  assert.match(migration, /revoke insert, update, delete on public\.residue_lot_events/);
+  assert.match(timeline, /FIELD EVIDENCE TIMELINE/);
+  assert.match(timeline, /absence of a detection does not prove no burning/);
+  assert.match(baler, /estimated_quantity_tonnes: quantity/);
+  assert.match(baler, /geometry_provenance:/);
+});
+
+test('machine capability claims carry source metadata', () => {
+  const migration = read('supabase/migrations/202610080003_nirdhoom_machine_capability_provenance.sql');
+  const types = read('src/types/index.ts');
+  const map = read('src/components/OpsConsole/OpsMap.tsx');
+  assert.match(migration, /tractor_hp_required/);
+  assert.match(migration, /capability_source/);
+  assert.match(types, /capability_source_date/);
+  assert.match(map, /Capability source:/);
+});
+
+test('farmer navigation has bilingual core labels', () => {
+  const labels = read('src/i18n/farmerLabels.ts');
+  const header = read('src/components/Header.tsx');
+  assert.match(labels, /मेरे खेत/);
+  assert.match(labels, /पराली उठवाएँ/);
+  assert.match(labels, /मशीन ट्रैक करें/);
+  assert.match(header, /nirdhoom\.farmer\.language/);
+  assert.match(header, /हिंदी/);
+});
+
+test('residue control tower is backed by first-class operational objects', () => {
+  const tower = read('src/components/ResidueNetwork/ResidueControlTower.tsx');
+  const engine = read('src/lib/residueOperations.ts');
+  const migration = read('supabase/migrations/202610080004_nirdhoom_residue_control_tower.sql');
+  assert.match(tower, /Residue Control Tower/);
+  assert.match(tower, /What needs attention now/);
+  assert.match(tower, /Yard capacity/);
+  assert.match(tower, /48-hour operating rule/);
+  assert.match(engine, /harvestPressure/);
+  assert.match(engine, /machineRecommendations/);
+  assert.match(engine, /buildResidueExceptions/);
+  assert.match(engine, /buildDemandCoverage/);
+  assert.match(migration, /machine_capacity_windows/);
+  assert.match(migration, /storage_yards/);
+  assert.match(migration, /residue_matches/);
+  assert.match(migration, /residue_transport_jobs/);
+  assert.match(migration, /residue_exceptions/);
+  assert.match(migration, /revoke insert, update, delete/);
+});
+
+test('satellite observations remain supporting evidence and are sensor-agnostic', () => {
+  const types = read('src/types/index.ts');
+  const source = read('src/components/ThreeD/SatelliteEarth3D.tsx');
+  assert.match(types, /sensor\?: string/);
+  assert.match(types, /product\?: string/);
+  assert.match(types, /observation_role\?: 'SUPPORTING_EVIDENCE'/);
+  assert.match(source, /supporting evidence only/);
 });

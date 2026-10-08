@@ -28,10 +28,12 @@ const ImpactResearch = lazy(() => import('./components/ImpactResearch/ImpactRese
 const HarvestIntelligence = lazy(() => import('./components/HarvestIntelligence/HarvestIntelligence').then((m) => ({ default: m.HarvestIntelligence })));
 const FieldProvenancePanel = lazy(() => import('./components/FieldProvenance/FieldProvenancePanel').then((m) => ({ default: m.FieldProvenancePanel })));
 const FieldJobBoard = lazy(() => import('./components/FieldJobs/FieldJobBoard').then((m) => ({ default: m.FieldJobBoard })));
+const FieldEvidenceTimeline = lazy(() => import('./components/ResidueNetwork/FieldEvidenceTimeline').then((m) => ({ default: m.FieldEvidenceTimeline })));
 const ClearanceBooking = lazy(() => import('./components/ClearanceBooking/ClearanceBooking').then((m) => ({ default: m.ClearanceBooking })));
+const ResidueControlTower = lazy(() => import('./components/ResidueNetwork/ResidueControlTower').then((m) => ({ default: m.ResidueControlTower })));
 
 
-import { INITIAL_STORAGE_YARDS, INITIAL_BUYERS } from './data/mockData';
+import { INITIAL_STORAGE_YARDS, INITIAL_BUYERS, INITIAL_RESIDUE_LOTS } from './data/mockData';
 import { Field } from './types';
 import { prefetchWorkspace } from './lib/workspacePrefetch';
 import { WorkspaceLoading } from './components/WorkspaceLoading';
@@ -282,6 +284,9 @@ export function App() {
     demoMode,
     loadingLiveData,
     liveDataError,
+    residueLots,
+    buyers: liveBuyers,
+    storageYards: liveStorageYards,
   } = useAppController();
 
   const acresScheduled = fields.reduce((sum, field) => sum + (Number(field.acreage) || 0), 0);
@@ -290,10 +295,8 @@ export function App() {
   useEffect(() => {
     const demoOnlyTabs: ActiveTab[] = [
       'AGENTIC_CONSOLE',
-      'DEMO_RUNNER',
       'DIGITAL_TWIN_3D',
       'MACHINERY_3D',
-      'FARMER_SURFACE',
       'OFFTAKE_AUCTION',
       'CARBON_MARKET',
       'JUDGE_DEFENSE',
@@ -310,7 +313,7 @@ export function App() {
   };
 
   return (
-    <div className="nirdhoom-field-app min-h-screen bg-[var(--bg-deep)] text-[var(--text)] flex flex-col font-sans selection:bg-emerald-500 selection:text-slate-950 relative overflow-x-hidden">
+    <div data-active-tab={activeTab} className="nirdhoom-field-app min-h-screen bg-[var(--bg-deep)] text-[var(--text)] flex flex-col font-sans selection:bg-emerald-500 selection:text-slate-950 relative overflow-x-hidden">
       <a href="#main-content" className="skip-link">Skip to main content</a>
       {/* Top Header */}
       <Header
@@ -334,8 +337,8 @@ export function App() {
             fields={fields}
             machines={machines}
             fireEvents={fireEvents}
-            storageYards={demoMode ? INITIAL_STORAGE_YARDS : []}
-            buyers={demoMode ? INITIAL_BUYERS : []}
+            storageYards={demoMode ? INITIAL_STORAGE_YARDS : liveStorageYards}
+            buyers={demoMode ? INITIAL_BUYERS : liveBuyers}
             onSelectField={handleSelectField}
             onOpenResidue={() => navigate('RESIDUE_POOLS')}
             onOpenImpact={() => navigate('IMPACT_RESEARCH')}
@@ -360,15 +363,24 @@ export function App() {
         )}
 
         {activeTab === 'FIELD_JOBS' && (
-          <FieldJobBoard
-            fields={fields}
-            machines={machines}
-            demoMode={demoMode}
-            onSelectField={handleSelectField}
-            onOpenDispatch={() => navigate('OPS_CONSOLE')}
-            onOpenResidue={() => navigate('RESIDUE_POOLS')}
-            onOpenImpact={() => navigate('IMPACT_RESEARCH')}
-          />
+          <>
+            <FieldJobBoard
+              fields={fields}
+              machines={machines}
+              demoMode={demoMode}
+              onSelectField={handleSelectField}
+              onOpenDispatch={() => navigate('OPS_CONSOLE')}
+              onOpenResidue={() => navigate('RESIDUE_POOLS')}
+              onOpenImpact={() => navigate('IMPACT_RESEARCH')}
+            />
+            {(selectedField || fields[0]) && (
+            <FieldEvidenceTimeline
+              field={(selectedField || fields[0])!}
+              machine={machines.find((machine) => machine.id === (selectedField || fields[0])?.assigned_machine_id) || machines[0] || null}
+              demoMode={demoMode}
+            />
+            )}
+          </>
         )}
 
         {activeTab === 'FIELD_PROVENANCE' && (
@@ -536,8 +548,22 @@ export function App() {
           </div>
         )}
 
-        {/* TAB 2: OPS COMMAND CONSOLE (The Real Product) */}
+        {/* TAB 2: RESIDUE CONTROL TOWER + OPS COMMAND CONSOLE */}
         {activeTab === 'OPS_CONSOLE' && (
+          <div className="flex flex-col gap-6">
+            <ResidueControlTower
+              fields={fields}
+              machines={machines}
+              buyers={demoMode ? INITIAL_BUYERS : liveBuyers}
+              storageYards={demoMode ? INITIAL_STORAGE_YARDS : liveStorageYards}
+              residueLots={demoMode ? INITIAL_RESIDUE_LOTS : residueLots}
+              demoMode={demoMode}
+              onSelectField={handleSelectField}
+              onNavigate={(tab) => setActiveTab(tab as ActiveTab)}
+            />
+
+            <div className="flex flex-col gap-4">
+
           <div className="flex flex-col gap-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 bg-slate-900/60 p-3 rounded-xl border border-slate-800">
               <div>
@@ -566,7 +592,7 @@ export function App() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
               <div className="lg:col-span-8 flex flex-col gap-3">
                 <OpsMap
                   fields={fields}
@@ -591,7 +617,7 @@ export function App() {
                 )}
               </div>
 
-              <div className="lg:col-span-4">
+              <div className="lg:col-span-4 h-full">
                 <VRPDispatchPanel
                   fields={fields}
                   machines={machines}
@@ -599,6 +625,9 @@ export function App() {
                   onSelectField={handleSelectField}
                 />
               </div>
+            </div>
+          </div>
+        )}
             </div>
           </div>
         )}

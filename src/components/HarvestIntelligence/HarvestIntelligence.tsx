@@ -131,9 +131,16 @@ export function HarvestIntelligence({ fields, machines, demoMode }: Props) {
 
   const dateLabel = selectedDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
   const horizonLabel = horizon.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+  const weatherSignal = weather
+    ? weather.precipitationProbability >= 70 || weather.precipitationMm >= 8
+      ? { label: 'Weather caution', detail: 'Rain risk is high enough to review the pickup window before dispatch.', tone: 'caution' }
+      : weather.windGustKmh >= 35
+        ? { label: 'Wind caution', detail: 'Gusts are elevated; confirm operator conditions before committing a route.', tone: 'caution' }
+        : { label: 'Weather looks workable', detail: 'No high-risk signal from this planning heuristic. Confirm field and machine readiness separately.', tone: 'good' }
+    : null;
 
   return (
-    <div className="space-y-4">
+    <div className="harvest-intelligence-surface space-y-4">
       <section className="rounded-2xl border border-emerald-500/25 bg-slate-950/75 p-5">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
@@ -199,6 +206,7 @@ export function HarvestIntelligence({ fields, machines, demoMode }: Props) {
         {weatherError ? (
           <div className="mt-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-200">{weatherError}</div>
         ) : weather ? (
+          <>
           <div className="mt-3 grid grid-cols-3 gap-2">
             <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3">
               <div className="text-[10px] text-slate-500">Max rain probability</div>
@@ -213,6 +221,14 @@ export function HarvestIntelligence({ fields, machines, demoMode }: Props) {
               <div className="mt-1 text-xl font-black text-cyan-200">{weather.windGustKmh.toFixed(0)} km/h</div>
             </div>
           </div>
+          {weatherSignal && (
+            <div className={`mt-3 rounded-xl border p-3 ${weatherSignal.tone === 'caution' ? 'border-amber-200 bg-amber-50 text-amber-900' : 'border-emerald-200 bg-emerald-50 text-emerald-900'}`}>
+              <div className="text-xs font-extrabold">{weatherSignal.label}</div>
+              <div className="mt-1 text-xs leading-5">{weatherSignal.detail}</div>
+              <div className="mt-1 text-[10px] opacity-70">Planning heuristic based on the authenticated forecast response; not a machine-safety guarantee.</div>
+            </div>
+          )}
+          </>
         ) : (
           <div className="mt-3 rounded-lg border border-dashed border-slate-700 p-4 text-xs text-slate-500">
             {demoMode ? 'Weather is intentionally not fabricated in demo mode.' : 'Select a field with valid coordinates to load the live forecast.'}

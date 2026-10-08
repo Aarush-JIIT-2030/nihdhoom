@@ -39,6 +39,9 @@ const required = [
   'supabase/migrations/202610050001_nirdhoom_telegram_identity.sql',
   'supabase/migrations/202610050002_nirdhoom_telegram_webhook_idempotency.sql',
   'supabase/migrations/202610070001_nirdhoom_consent_withdrawal.sql',
+  'supabase/migrations/202610080001_nirdhoom_residue_lot_provenance.sql',
+  'supabase/migrations/202610080002_nirdhoom_residue_lot_first_class.sql',
+  'supabase/migrations/202610080003_nirdhoom_machine_capability_provenance.sql',
   'supabase/migrations/202609270001_nirdhoom_core.sql',
   'supabase/migrations/202609270002_nirdhoom_production.sql',
   'supabase/migrations/202609270003_nirdhoom_v6.sql',
@@ -82,6 +85,13 @@ const telegramDedupe = read('supabase/migrations/202610050002_nirdhoom_telegram_
 const controller = read('src/state/useAppController.ts');
 const envExample = read('.env.example');
 const consentWithdrawal = read('supabase/migrations/202610070001_nirdhoom_consent_withdrawal.sql');
+const residueProvenance = read('supabase/migrations/202610080001_nirdhoom_residue_lot_provenance.sql');
+const residueJourney = read('src/components/ResidueNetwork/FieldEvidenceTimeline.tsx');
+const residueModel = read('src/types/index.ts');
+const machineCapability = read('supabase/migrations/202610080003_nirdhoom_machine_capability_provenance.sql');
+const farmerLabels = read('src/i18n/farmerLabels.ts');
+const rlsMatrix = read('tests/rls_role_matrix.sql');
+const opsMap = read('src/components/OpsConsole/OpsMap.tsx');
 
 const checks = [
   ['modular React entrypoint', entry.includes("import { App } from './App.tsx'") && entry.includes("import './index.css'")],
@@ -135,6 +145,15 @@ const checks = [
   ['live weather planning adapter', read('src/components/HarvestIntelligence/HarvestIntelligence.tsx').includes('/api/weather?field_id=') && read('api/weather.ts').includes('open-meteo')],
   ['explicit farmer consent flow', read('src/components/FarmerOnboarding/FarmerOnboarding.tsx').includes("consent_type: 'farmer_network'") && read('src/components/FarmerOnboarding/FarmerOnboarding.tsx').includes("consent_status: 'GRANTED'")],
   ['consent withdrawal boundary', consentWithdrawal.includes('revoke_farmer_network_consent') && consentWithdrawal.includes('revoked_at') && consentWithdrawal.includes('grant execute on function public.revoke_farmer_network_consent() to authenticated')],
+  ['residue lot provenance ledger', residueProvenance.includes('residue_lot_events') && residueProvenance.includes('verification_source') && residueProvenance.includes('revoke insert, update, delete on public.residue_lot_events')],
+  ['first-class residue lot model', residueModel.includes('export interface ResidueLot') && read('supabase/migrations/202610080002_nirdhoom_residue_lot_first_class.sql').includes('farmer_id uuid') && read('supabase/migrations/202610080002_nirdhoom_residue_lot_first_class.sql').includes('record_residue_lot_event') && read('supabase/migrations/202610080002_nirdhoom_residue_lot_first_class.sql').includes('validate_residue_lot_identity')],
+  ['machine capability provenance', machineCapability.includes('tractor_hp_required') && machineCapability.includes('capability_source')],
+  ['provenance-aware residue journey', residueJourney.includes('FIELD EVIDENCE TIMELINE') && residueJourney.includes('supporting evidence only') && app.includes('FieldEvidenceTimeline')],
+  ['machine map is field-only', !opsMap.includes("Network Globe") && !opsMap.includes('dark_all') && !opsMap.includes("setMapMode")],
+  ['agricultural GIS layer stack', opsMap.includes('showResidue') && opsMap.includes('showBuyers') && opsMap.includes('showWeather') && opsMap.includes('showRoute') && opsMap.includes('FIRMS observations')],
+  ['farmer bilingual navigation', farmerLabels.includes("hi: {") && read('src/components/Header.tsx').includes("farmerLabels") && read('src/components/Header.tsx').includes("हिंदी")],
+  ['field evidence timeline', residueJourney.includes('FIELD EVIDENCE TIMELINE') && residueJourney.includes('supporting evidence only')],
+  ['RLS role matrix contract', rlsMatrix.includes('farmer_a_cannot_read_farmer_b_field') && rlsMatrix.includes('operator_a_cannot_read_operator_b_job') && rlsMatrix.includes('buyer_a_cannot_read_buyer_b_demand')],
   ['stale GPS is surfaced to operators', read('src/components/FieldOperator/BalerPWA.tsx').includes('gpsStale') && read('src/components/FieldOperator/BalerPWA.tsx').includes('GPS reading is stale')],
   ['settlement surfaces disclosed', read('src/components/FieldOperator/UpiSettlementModal.tsx').includes('no money movement') && !read('src/App.tsx').includes('Instant UPI Settlement')],
   ['farmer onboarding avoids financial identifiers', !read('src/components/FarmerOnboarding/FarmerOnboarding.tsx').includes('UPI ID (Preferred)')],

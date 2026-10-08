@@ -1582,3 +1582,523 @@ html[data-theme="kisan"] .nirdhoom-field-app .leaflet-container {
     transform:scale(.988)!important;
   }
 }
+
+
+/* =========================================================
+   RESEARCH-DRIVEN RESIDUE JOURNEY
+   ========================================================= */
+.residue-journey-card{
+  margin-top:1rem;
+  border:1px solid #DDE5DC;
+  border-radius:20px;
+  background:#FFFFFF;
+  box-shadow:0 10px 30px rgba(32,74,43,.06);
+  padding:1.15rem;
+}
+.residue-journey-header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+}
+.residue-journey-kicker{
+  display:inline-flex;
+  font-size:.68rem;
+  font-weight:800;
+  letter-spacing:.14em;
+  color:#2D6A45;
+}
+.residue-journey-header h2{
+  margin:.25rem 0 0;
+  color:#17352A;
+  font-size:1.35rem;
+  font-weight:850;
+}
+.residue-journey-header p{
+  margin:.35rem 0 0;
+  max-width:48rem;
+  color:#65736A;
+  font-size:.85rem;
+  line-height:1.55;
+}
+.residue-journey-mode{
+  flex:0 0 auto;
+  border:1px solid #E3C98D;
+  background:#FFF8E8;
+  color:#76521B;
+  border-radius:999px;
+  padding:.35rem .65rem;
+  font-size:.68rem;
+  font-weight:800;
+}
+.residue-journey-grid{
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  gap:.65rem;
+  margin-top:1rem;
+}
+.residue-journey-step{
+  min-width:0;
+  border:1px solid #E3E9E0;
+  border-radius:15px;
+  background:#F8FAF7;
+  padding:.8rem;
+}
+.residue-journey-step.is-current{
+  border-color:#B8D4BF;
+  background:#F0F7F1;
+  box-shadow:0 8px 20px rgba(45,106,69,.07);
+}
+.residue-journey-step.is-done .residue-journey-marker{
+  background:#2D6A45;
+  color:#fff;
+}
+.residue-journey-marker{
+  width:1.7rem;
+  height:1.7rem;
+  display:grid;
+  place-items:center;
+  border-radius:10px;
+  background:#E8EEE6;
+  color:#5E6E63;
+  font-size:.7rem;
+  font-weight:850;
+}
+.residue-journey-step-title{
+  margin-top:.7rem;
+  color:#17352A;
+  font-size:.78rem;
+  font-weight:850;
+}
+.residue-journey-detail{
+  margin-top:.25rem;
+  min-height:2.6rem;
+  color:#65736A;
+  font-size:.7rem;
+  line-height:1.45;
+}
+.residue-journey-source{
+  display:inline-flex;
+  margin-top:.55rem;
+  border-radius:999px;
+  background:#EDF3EA;
+  color:#557060;
+  padding:.22rem .45rem;
+  font-size:.6rem;
+  font-weight:750;
+}
+.residue-journey-trust{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:.6rem;
+  margin-top:.8rem;
+  padding-top:.8rem;
+  border-top:1px solid #E7ECE5;
+}
+.residue-journey-trust > div{
+  display:flex;
+  flex-direction:column;
+  gap:.15rem;
+}
+.residue-journey-trust strong{
+  color:#304B38;
+  font-size:.68rem;
+}
+.residue-journey-trust span{
+  color:#718076;
+  font-size:.66rem;
+}
+.field-more-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:39;
+  border:0;
+  background:rgba(23,53,42,.06);
+  cursor:default;
+}
+.field-more-menu{
+  position:absolute;
+  right:0;
+  top:calc(100% + .55rem);
+  z-index:40;
+  width:min(580px,calc(100vw - 2rem));
+  max-height:min(70vh,620px);
+  overflow:auto;
+  padding:.45rem;
+  border:1px solid #DDE5DC;
+  border-radius:18px;
+  background:rgba(255,255,255,.98);
+  box-shadow:0 22px 60px rgba(23,53,42,.15);
+}
+.field-more-close{
+  display:grid;
+  place-items:center;
+  width:34px;
+  height:34px;
+  border:1px solid #E0E7DF;
+  border-radius:10px;
+  background:#fff;
+  color:#456052;
+}
+.field-more-close:hover{background:#F1F6EF;color:#17352A}
+.ops-map-surface{
+  border-color:#CBD5E1!important;
+  box-shadow:0 10px 30px rgba(15,23,42,.09)!important;
+}
+.ops-map-surface .leaflet-container{
+  background:#EAF2E8;
+}
+.ops-map-surface .leaflet-control,
+.ops-map-surface .leaflet-bar{
+  border-color:#CBD5E1;
+}
+@media(max-width:900px){
+  .residue-journey-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .residue-journey-trust{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:560px){
+  .residue-journey-header{flex-direction:column}
+  .residue-journey-grid{grid-template-columns:1fr}
+  .residue-journey-trust{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  .residue-journey-step{transition:none!important}
+}
+
+
+/* =========================================================
+   RESIDUE MARKET — verified supply / buyer demand language
+   ========================================================= */
+.market-hero-card{
+  border:1px solid #DDE5DC;
+  border-radius:20px;
+  background:linear-gradient(135deg,#FBFDF9,#FFFFFF);
+  padding:1.25rem;
+  box-shadow:0 10px 30px rgba(32,74,43,.06);
+}
+.market-eyebrow,.market-card-kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  color:#2D6A45;
+  font-size:.67rem;
+  font-weight:850;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+.market-hero-card h1{
+  margin:.35rem 0 0;
+  color:#17352A;
+  font-size:clamp(1.45rem,3vw,2.1rem);
+  line-height:1.08;
+  font-weight:900;
+}
+.market-hero-card p{
+  max-width:50rem;
+  margin:.45rem 0 0;
+  color:#65736A;
+  font-size:.88rem;
+  line-height:1.55;
+}
+.market-primary-action{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  min-height:44px;
+  margin-top:.75rem;
+  border:1px solid #2D6A45;
+  border-radius:12px;
+  background:#2D6A45;
+  color:#fff;
+  padding:.65rem .85rem;
+  font-size:.75rem;
+  font-weight:850;
+}
+.market-card{
+  border:1px solid #E0E7DE;
+  border-radius:18px;
+  background:#fff;
+  padding:1rem;
+  box-shadow:0 6px 20px rgba(32,74,43,.045);
+}
+.market-card-heading{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:.75rem;
+}
+.market-card-heading h2{
+  margin:.2rem 0 0;
+  color:#17352A;
+  font-size:1rem;
+  font-weight:850;
+}
+.market-count,.market-status{
+  border-radius:999px;
+  background:#EEF4EC;
+  color:#557060;
+  padding:.3rem .55rem;
+  font-size:.62rem;
+  font-weight:800;
+}
+.market-empty{
+  display:grid;
+  justify-items:center;
+  text-align:center;
+  border:1px dashed #CBD8C9;
+  border-radius:14px;
+  padding:1.25rem;
+  color:#65736A;
+}
+.market-empty-icon{width:1.5rem;height:1.5rem;color:#6A9474}
+.market-empty strong{margin-top:.5rem;color:#304B38;font-size:.78rem}
+.market-empty p{margin:.25rem 0 0;font-size:.68rem;line-height:1.45}
+.market-list-row,.market-demand-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:.75rem;
+  border:1px solid #E5EBE3;
+  border-radius:13px;
+  padding:.75rem;
+  background:#FAFCF9;
+}
+.market-demand-row{display:block}
+.market-row-title{color:#304B38;font-size:.76rem;font-weight:850}
+.market-row-meta{margin-top:.18rem;color:#718076;font-size:.66rem;line-height:1.4}
+.market-tonnage{color:#2D6A45;font-size:.72rem;font-weight:850;white-space:nowrap}
+.market-secondary-action{
+  display:inline-flex;
+  align-items:center;
+  gap:.35rem;
+  min-height:38px;
+  margin-top:.6rem;
+  border:1px solid #CFE0CF;
+  border-radius:10px;
+  background:#F2F8F1;
+  color:#285C3C;
+  padding:.5rem .7rem;
+  font-size:.68rem;
+  font-weight:850;
+}
+.market-full-action{width:100%;justify-content:center}
+.market-pool-card{
+  border:1px solid #E1E9DF;
+  border-radius:15px;
+  background:#FAFCF9;
+  padding:.85rem;
+}
+.market-progress{
+  height:8px;
+  overflow:hidden;
+  margin-top:.75rem;
+  border-radius:999px;
+  background:#E8EEE6;
+}
+.market-progress > div{
+  height:100%;
+  border-radius:inherit;
+  background:#2D6A45;
+}
+.market-progress-meta{
+  display:flex;
+  justify-content:space-between;
+  margin-top:.4rem;
+  color:#718076;
+  font-size:.63rem;
+}
+.market-notice{
+  border:1px solid #BFD9C4;
+  border-radius:12px;
+  background:#F0F8F1;
+  color:#285C3C;
+  padding:.7rem .8rem;
+  font-size:.7rem;
+}
+.market-footnote{
+  display:flex;
+  align-items:center;
+  gap:.4rem;
+  color:#718076;
+  font-size:.65rem;
+}
+
+
+/* Harvest planning surface: operational, evidence-aware, not a dark analytics HUD. */
+.harvest-intelligence-surface > section{
+  border-color:#DDE5DC!important;
+  background:#FFFFFF!important;
+  color:#17352A!important;
+  box-shadow:0 6px 20px rgba(32,74,43,.045);
+}
+.harvest-intelligence-surface :where(.text-white,.text-slate-200,.text-slate-300){color:#304B38!important}
+.harvest-intelligence-surface :where(.text-slate-400,.text-slate-500){color:#718076!important}
+.harvest-intelligence-surface :where(.bg-slate-950,.bg-slate-950\/75,.bg-slate-950\/65,.bg-slate-900\/60){background:#F8FAF7!important}
+.harvest-intelligence-surface :where(.border-slate-800,.border-slate-700){border-color:#E1E9DF!important}
+.harvest-intelligence-surface :where(.text-cyan-300,.text-cyan-200){color:#2D6A45!important}
+.harvest-intelligence-surface :where(.text-emerald-300,.text-emerald-400){color:#2D6A45!important}
+.harvest-intelligence-surface :where(.text-amber-200){color:#76521B!important}
+
+
+.nirdhoom-telemetry .telemetry-card{
+  border-color:#DDE5DC;
+  background:#FFFFFF;
+  color:#17352A;
+}
+.nirdhoom-telemetry .telemetry-kicker{color:#2D6A45}
+.nirdhoom-telemetry .telemetry-muted{color:#7A887F}
+.nirdhoom-telemetry .telemetry-actions{color:#5D6D62}
+.nirdhoom-telemetry .telemetry-icon-button{color:#5D6D62}
+.nirdhoom-telemetry .telemetry-icon-button:hover{background:#F0F5EE;color:#17352A}
+.nirdhoom-telemetry .telemetry-event-icon{
+  border-color:#D9E6D7;
+  background:#F0F7EF;
+}
+.nirdhoom-telemetry .telemetry-event-icon svg{color:#2D6A45!important}
+.nirdhoom-telemetry .telemetry-title{color:#17352A}
+.nirdhoom-telemetry .telemetry-detail{color:#65736A}
+.nirdhoom-telemetry .telemetry-inspect{color:#2D6A45}
+.nirdhoom-telemetry .telemetry-badge{background:#EEF5EB;color:#2D6A45;border-color:#D4E3D0}
+
+
+.field-evidence-timeline-list{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  gap:.2rem;
+  margin:1rem 0 0;
+  padding:0;
+  list-style:none;
+}
+.field-evidence-timeline-list::before{
+  content:"";
+  position:absolute;
+  left:.82rem;
+  top:.9rem;
+  bottom:.9rem;
+  width:1px;
+  background:#DCE6DA;
+}
+.field-evidence-event{
+  position:relative;
+  display:grid;
+  grid-template-columns:2.2rem minmax(0,1fr);
+  gap:.55rem;
+  padding:.4rem 0;
+}
+.field-evidence-line{
+  position:relative;
+  display:flex;
+  justify-content:center;
+}
+.field-evidence-dot{
+  position:relative;
+  z-index:1;
+  display:grid;
+  place-items:center;
+  width:1.7rem;
+  height:1.7rem;
+  border:1px solid #D7E2D4;
+  border-radius:999px;
+  background:#F8FBF7;
+  color:#617269;
+}
+.field-evidence-event.is-active .field-evidence-dot{
+  border-color:#B8D4BF;
+  background:#EEF7EF;
+  color:#2D6A45;
+}
+.field-evidence-event.is-evidence .field-evidence-dot{
+  border-color:#C7D9E8;
+  background:#F1F7FC;
+  color:#35627D;
+}
+.field-evidence-event.is-verified .field-evidence-dot{
+  border-color:#B8D4BF;
+  background:#EAF6EC;
+  color:#267044;
+}
+.field-evidence-content{
+  min-width:0;
+  border:1px solid #E5EBE3;
+  border-radius:13px;
+  background:#FBFDFB;
+  padding:.7rem .8rem;
+}
+.field-evidence-top{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:1rem;
+}
+.field-evidence-top strong{
+  color:#17352A;
+  font-size:.76rem;
+  font-weight:850;
+}
+.field-evidence-top time{
+  flex:0 0 auto;
+  color:#7A887F;
+  font-size:.61rem;
+}
+.field-evidence-content p{
+  margin:.25rem 0 0;
+  color:#65736A;
+  font-size:.68rem;
+  line-height:1.5;
+}
+.field-evidence-source{
+  display:inline-flex;
+  margin-top:.45rem;
+  border-radius:999px;
+  background:#EEF4EC;
+  color:#5D7063;
+  padding:.2rem .45rem;
+  font-size:.59rem;
+  font-weight:800;
+}
+.field-evidence-trust-strip{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:.6rem;
+  margin-top:.8rem;
+  padding-top:.8rem;
+  border-top:1px solid #E7ECE5;
+}
+.field-evidence-trust-strip > div{
+  display:flex;
+  flex-direction:column;
+  gap:.15rem;
+}
+.field-evidence-trust-strip strong{font-size:.64rem;color:#304B38}
+.field-evidence-trust-strip span{font-size:.62rem;color:#718076}
+@media(max-width:700px){
+  .field-evidence-top{align-items:flex-start;flex-direction:column;gap:.15rem}
+  .field-evidence-trust-strip{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:450px){
+  .field-evidence-trust-strip{grid-template-columns:1fr}
+}
+
+
+.market-supply-card{
+  align-items:flex-start;
+}
+.market-supply-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.35rem .7rem;
+  margin-top:.35rem;
+  color:#718076;
+  font-size:.62rem;
+}
+.market-supply-meta span::before{
+  content:"";
+  display:inline-block;
+  width:4px;
+  height:4px;
+  margin-right:.3rem;
+  border-radius:999px;
+  background:#8AA596;
+  vertical-align:middle;
+}
