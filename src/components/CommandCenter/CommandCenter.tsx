@@ -1,3 +1,4 @@
+import { motion } from 'motion/react';
 import {
   Activity, ArrowRight, CalendarDays, CheckCircle2, Factory, Leaf, Map,
   MapPinned, ShieldCheck, Truck, Wheat, Users, CircleDollarSign, Camera,
@@ -216,10 +217,25 @@ export function CommandCenter({
           <small>Use the live workflow surfaces below instead of a presentation flow.</small>
         </div>
         <div className="home-status-grid">
-          <button type="button" onClick={() => onNavigate('FIELD_JOBS')}><MapPinned /><span><b>{fields.length}</b><small>fields</small></span></button>
-          <button type="button" onClick={() => onNavigate('OPS_CONSOLE')}><Truck /><span><b>{activeJobs}</b><small>active jobs</small></span></button>
-          <button type="button" onClick={() => onNavigate('RESIDUE_POOLS')}><Leaf /><span><b>{residueLots}</b><small>residue lots</small></span></button>
-          <button type="button" onClick={() => onNavigate('SATELLITE_AUDIT')}><ShieldCheck /><span><b>{verified}</b><small>verified fields</small></span></button>
+          {[
+            { icon: MapPinned, value: fields.length, label: 'fields', tab: 'FIELD_JOBS' },
+            { icon: Truck, value: activeJobs, label: 'active jobs', tab: 'OPS_CONSOLE' },
+            { icon: Leaf, value: residueLots, label: 'residue lots', tab: 'RESIDUE_POOLS' },
+            { icon: ShieldCheck, value: verified, label: 'verified fields', tab: 'SATELLITE_AUDIT' },
+          ].map(({ icon: Icon, value, label, tab }, index) => (
+            <motion.button
+              key={label}
+              type="button"
+              onClick={() => onNavigate(tab)}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05, duration: 0.3 }}
+              whileHover={{ y: -3 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Icon /><span><b>{value}</b><small>{label}</small></span>
+            </motion.button>
+          ))}
         </div>
       </section>
     </div>
