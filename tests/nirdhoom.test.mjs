@@ -522,7 +522,7 @@ test('landing telemetry is zero-by-default and demo-aware', () => {
 });
 
 test('Telegram UI does not fall back to generic t.me', () => {
-  const telegram = read('src/components/FarmerSurface/TelegramSimulator.tsx');
+  const telegram = read('src/components/FarmerSurface/TelegramChannel.tsx');
   assert.doesNotMatch(telegram, /'https:\/\/t\.me'/);
   assert.match(telegram, /Telegram bot is not configured/);
   assert.match(telegram, /href=\{botUrl \|\| undefined\}/);
