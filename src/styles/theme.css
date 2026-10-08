@@ -1582,3 +1582,185 @@ html[data-theme="kisan"] .nirdhoom-field-app .leaflet-container {
     transform:scale(.988)!important;
   }
 }
+
+
+/* =========================================================
+   RESEARCH-DRIVEN RESIDUE JOURNEY
+   ========================================================= */
+.residue-journey-card{
+  margin-top:1rem;
+  border:1px solid #DDE5DC;
+  border-radius:20px;
+  background:#FFFFFF;
+  box-shadow:0 10px 30px rgba(32,74,43,.06);
+  padding:1.15rem;
+}
+.residue-journey-header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:1rem;
+}
+.residue-journey-kicker{
+  display:inline-flex;
+  font-size:.68rem;
+  font-weight:800;
+  letter-spacing:.14em;
+  color:#2D6A45;
+}
+.residue-journey-header h2{
+  margin:.25rem 0 0;
+  color:#17352A;
+  font-size:1.35rem;
+  font-weight:850;
+}
+.residue-journey-header p{
+  margin:.35rem 0 0;
+  max-width:48rem;
+  color:#65736A;
+  font-size:.85rem;
+  line-height:1.55;
+}
+.residue-journey-mode{
+  flex:0 0 auto;
+  border:1px solid #E3C98D;
+  background:#FFF8E8;
+  color:#76521B;
+  border-radius:999px;
+  padding:.35rem .65rem;
+  font-size:.68rem;
+  font-weight:800;
+}
+.residue-journey-grid{
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  gap:.65rem;
+  margin-top:1rem;
+}
+.residue-journey-step{
+  min-width:0;
+  border:1px solid #E3E9E0;
+  border-radius:15px;
+  background:#F8FAF7;
+  padding:.8rem;
+}
+.residue-journey-step.is-current{
+  border-color:#B8D4BF;
+  background:#F0F7F1;
+  box-shadow:0 8px 20px rgba(45,106,69,.07);
+}
+.residue-journey-step.is-done .residue-journey-marker{
+  background:#2D6A45;
+  color:#fff;
+}
+.residue-journey-marker{
+  width:1.7rem;
+  height:1.7rem;
+  display:grid;
+  place-items:center;
+  border-radius:10px;
+  background:#E8EEE6;
+  color:#5E6E63;
+  font-size:.7rem;
+  font-weight:850;
+}
+.residue-journey-step-title{
+  margin-top:.7rem;
+  color:#17352A;
+  font-size:.78rem;
+  font-weight:850;
+}
+.residue-journey-detail{
+  margin-top:.25rem;
+  min-height:2.6rem;
+  color:#65736A;
+  font-size:.7rem;
+  line-height:1.45;
+}
+.residue-journey-source{
+  display:inline-flex;
+  margin-top:.55rem;
+  border-radius:999px;
+  background:#EDF3EA;
+  color:#557060;
+  padding:.22rem .45rem;
+  font-size:.6rem;
+  font-weight:750;
+}
+.residue-journey-trust{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:.6rem;
+  margin-top:.8rem;
+  padding-top:.8rem;
+  border-top:1px solid #E7ECE5;
+}
+.residue-journey-trust > div{
+  display:flex;
+  flex-direction:column;
+  gap:.15rem;
+}
+.residue-journey-trust strong{
+  color:#304B38;
+  font-size:.68rem;
+}
+.residue-journey-trust span{
+  color:#718076;
+  font-size:.66rem;
+}
+.field-more-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:39;
+  border:0;
+  background:rgba(23,53,42,.06);
+  cursor:default;
+}
+.field-more-menu{
+  position:absolute;
+  right:0;
+  top:calc(100% + .55rem);
+  z-index:40;
+  width:min(580px,calc(100vw - 2rem));
+  max-height:min(70vh,620px);
+  overflow:auto;
+  padding:.45rem;
+  border:1px solid #DDE5DC;
+  border-radius:18px;
+  background:rgba(255,255,255,.98);
+  box-shadow:0 22px 60px rgba(23,53,42,.15);
+}
+.field-more-close{
+  display:grid;
+  place-items:center;
+  width:34px;
+  height:34px;
+  border:1px solid #E0E7DF;
+  border-radius:10px;
+  background:#fff;
+  color:#456052;
+}
+.field-more-close:hover{background:#F1F6EF;color:#17352A}
+.ops-map-surface{
+  border-color:#CBD5E1!important;
+  box-shadow:0 10px 30px rgba(15,23,42,.09)!important;
+}
+.ops-map-surface .leaflet-container{
+  background:#EAF2E8;
+}
+.ops-map-surface .leaflet-control,
+.ops-map-surface .leaflet-bar{
+  border-color:#CBD5E1;
+}
+@media(max-width:900px){
+  .residue-journey-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .residue-journey-trust{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:560px){
+  .residue-journey-header{flex-direction:column}
+  .residue-journey-grid{grid-template-columns:1fr}
+  .residue-journey-trust{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  .residue-journey-step{transition:none!important}
+}
