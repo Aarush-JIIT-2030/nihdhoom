@@ -1,4 +1,4 @@
-import { Field, Machine, Buyer, StorageYard, BurnEvent, Farmer, Payout } from '../types';
+import { Field, Machine, Buyer, StorageYard, BurnEvent, Farmer, Payout, ResidueLot } from '../types';
 
 export const INITIAL_FARMERS: Farmer[] = [
   {
@@ -287,6 +287,36 @@ export const INITIAL_MACHINES: Machine[] = [
     status: 'IDLE',
     assigned_field_ids: [],
     battery_or_fuel_pct: 95,
+  },
+];
+
+export const INITIAL_RESIDUE_LOTS: ResidueLot[] = [
+  {
+    id: 'LOT-DEMO-101', field_id: 'FIELD-101', farmer_id: 'FARMER-001', crop: 'Paddy', residue_type: 'PADDY_STRAW',
+    estimated_quantity_tonnes: 7.4, quantity_tonnes: 7.2, verified_quantity_tonnes: 7.1, moisture_pct: 14.2,
+    quality_grade: 'A', quality_notes: 'Demo weighment record; not a live buyer transaction.', bale_type: 'ROUND',
+    harvest_date: '2026-10-14', ready_from: '2026-10-14T08:00:00+05:30', pickup_deadline: '2026-10-16T18:00:00+05:30',
+    machine_id: 'MACH-01', status: 'VERIFIED', geometry_provenance: { source: 'FIELD_RECORD', authority: 'DEMO' },
+    verification_source: 'Demo operator weighment', verified_at: '2026-10-14T14:30:00+05:30', assigned_buyer_id: null,
+    qr_code: 'DEMO-LOT-101', baled_at: '2026-10-14T13:45:00+05:30', created_at: '2026-10-14T13:45:00+05:30'
+  },
+  {
+    id: 'LOT-DEMO-103', field_id: 'FIELD-103', farmer_id: 'FARMER-003', crop: 'Paddy', residue_type: 'PADDY_STRAW',
+    estimated_quantity_tonnes: 5.2, quantity_tonnes: 5.0, verified_quantity_tonnes: 4.9, moisture_pct: 13.5,
+    quality_grade: 'A', quality_notes: 'Demo weighment record; no settlement implied.', bale_type: 'SQUARE',
+    harvest_date: '2026-10-11', ready_from: '2026-10-11T08:00:00+05:30', pickup_deadline: '2026-10-13T16:00:00+05:30',
+    machine_id: 'MACH-02', status: 'VERIFIED', geometry_provenance: { source: 'FIELD_RECORD', authority: 'DEMO' },
+    verification_source: 'Demo operator weighment', verified_at: '2026-10-11T17:00:00+05:30', assigned_buyer_id: null,
+    qr_code: 'DEMO-LOT-103', baled_at: '2026-10-11T16:10:00+05:30', created_at: '2026-10-11T16:10:00+05:30'
+  },
+  {
+    id: 'LOT-DEMO-104', field_id: 'FIELD-104', farmer_id: 'FARMER-004', crop: 'Paddy', residue_type: 'PADDY_STRAW',
+    estimated_quantity_tonnes: 8.8, quantity_tonnes: 8.4, verified_quantity_tonnes: null, moisture_pct: 14.0,
+    quality_grade: 'PENDING', quality_notes: 'Awaiting weighment in demo flow.', bale_type: 'ROUND',
+    harvest_date: '2026-10-12', ready_from: '2026-10-12T08:00:00+05:30', pickup_deadline: '2026-10-14T18:00:00+05:30',
+    machine_id: 'MACH-03', status: 'AVAILABLE', geometry_provenance: { source: 'FIELD_RECORD', authority: 'DEMO' },
+    verification_source: null, verified_at: null, assigned_buyer_id: null,
+    qr_code: 'DEMO-LOT-104', baled_at: null, created_at: '2026-10-12T12:00:00+05:30'
   },
 ];
 
