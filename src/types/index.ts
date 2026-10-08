@@ -130,6 +130,41 @@ export interface Job {
   estimated_hours: number;
 }
 
+export type ResidueLotStatus =
+  | 'AVAILABLE'
+  | 'VERIFIED'
+  | 'VERIFIED_NON_BURN'
+  | 'ALLOCATED'
+  | 'POOLED'
+  | 'DELIVERED';
+
+export interface ResidueLot {
+  id: string;
+  field_id: string;
+  farmer_id: string;
+  crop: string;
+  residue_type: string;
+  estimated_quantity_tonnes?: number | null;
+  quantity_tonnes?: number | null;
+  verified_quantity_tonnes?: number | null;
+  moisture_pct?: number | null;
+  quality_grade?: string | null;
+  quality_notes?: string | null;
+  bale_type?: string | null;
+  harvest_date?: string | null;
+  ready_from?: string | null;
+  pickup_deadline?: string | null;
+  machine_id?: string | null;
+  status: string;
+  geometry_provenance: Record<string, unknown>;
+  verification_source?: string | null;
+  verified_at?: string | null;
+  assigned_buyer_id?: string | null;
+  qr_code?: string | null;
+  baled_at?: string | null;
+  created_at?: string;
+}
+
 export interface Lot {
   id: string;
   field_id: string;
