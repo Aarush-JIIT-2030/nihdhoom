@@ -12,7 +12,7 @@ function collectRuntimeSources(dir) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const absolute = path.join(dir, entry.name);
     if (entry.isDirectory()) collectRuntimeSources(absolute);
-    else if (/\\.(tsx?|jsx?)$/.test(entry.name)) runtimeSourceFiles.push(absolute);
+    else if (/\.(tsx?|jsx?)$/.test(entry.name)) runtimeSourceFiles.push(absolute);
   }
 }
 collectRuntimeSources(path.join(root, 'src'));
@@ -23,7 +23,7 @@ function collectApiRoutes(dir, prefix = '') {
     const relative = prefix ? `${prefix}/${entry.name}` : entry.name;
     const absolute = path.join(dir, entry.name);
     if (entry.isDirectory()) collectApiRoutes(absolute, relative);
-    else if (/\\.(m?js|cjs|ts)$/.test(entry.name)) apiRouteFiles.push(relative);
+    else if (/\.(m?js|cjs|ts)$/.test(entry.name)) apiRouteFiles.push(relative);
   }
 }
 collectApiRoutes(path.join(root, 'api'));
@@ -107,7 +107,7 @@ const farmerLabels = read('src/i18n/farmerLabels.ts');
 const rlsMatrix = read('tests/rls_role_matrix.sql');
 const opsMap = read('src/components/OpsConsole/OpsMap.tsx');
 const runtimeSource = runtimeSourceFiles.map(file => fs.readFileSync(file, 'utf8')).join('\n');
-const localImageRefs = [...new Set([...runtimeSource.matchAll(/(?:src|image|avatar|imageUrl|landMapUrl)\\s*[:=]\\s*[\\\"'\`]\\/images\\/([^\\\"'\`?#]+)/g)].map(match => match[1]))];
+const localImageRefs = [...new Set([...runtimeSource.matchAll(/[\"'\`]\\/images\\/([^\"'\`?#]+)/g)].map(match => match[1]))];
 
 const checks = [
   ['modular React entrypoint', entry.includes("import { App } from './App.tsx'") && entry.includes("import './index.css'")],
@@ -189,7 +189,7 @@ const checks = [
 
 checks.push(
   ['runtime local image references exist', localImageRefs.every((file) => exists(`public/images/${file}`))],
-  ['runtime images use lazy loading', [...runtimeSource.matchAll(/<img\\b[^>]*>/g)].every((match) => /loading=["']lazy["']/.test(match[0]) || /fetchPriority=["']high["']/.test(match[0]))],
+  ['runtime images use lazy loading', [...runtimeSource.matchAll(/<img\b[^>]*>/g)].every((match) => /loading=["']lazy["']/.test(match[0]) || /fetchPriority=["']high["']/.test(match[0]))],
   ['runtime imagery is self-hosted', !runtimeSource.includes('upload.wikimedia.org') && !runtimeSource.includes('commons.wikimedia.org/wiki/Special:Redirect/file')],
   ['presentation-only components are removed', !exists('src/components/DemoWalkthrough.tsx') && !exists('src/components/PitchDefense/CompetitionCenter.tsx') && !exists('src/components/PitchDefense/JudgesQnAPanel.tsx') && !exists('src/components/PitchDefense/JudgePitchDrawer.tsx')],
 );
