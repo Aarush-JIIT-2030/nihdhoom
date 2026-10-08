@@ -113,10 +113,11 @@ export const OpsMap: React.FC<OpsMapProps> = ({
       setWeatherPoint(null);
       return;
     }
+    const client = supabase;
     let active = true;
     const loadWeather = async () => {
       try {
-        const { data } = await supabase.auth.getSession();
+        const { data } = await client.auth.getSession();
         const token = data.session?.access_token;
         if (!token) return;
         const response = await fetch(`/api/weather?field_id=${encodeURIComponent(selectedField.dbId!)}`, {
