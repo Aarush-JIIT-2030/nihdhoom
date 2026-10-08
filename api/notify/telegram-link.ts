@@ -1,4 +1,5 @@
 import { createHash, randomBytes } from 'node:crypto';
+import { rateLimit } from '../_lib/rateLimit';
 
 declare const process: { env: Record<string, string | undefined> };
 
@@ -39,6 +40,7 @@ export default async function handler(req: any, res: any) {
     res.setHeader?.('Allow', 'POST');
     return res.status(405).json({ error: 'Method not allowed' });
   }
+  if (!rateLimit(req, res, 'telegram-link', 5, 60_000)) return res.status(429).json({ error: 'Too many link requests' });
 
   const user = await getUser(bearer(req));
   if (!user?.id) return res.status(401).json({ error: 'Authenticated NIRDHOOM farmer required' });
