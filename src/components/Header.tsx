@@ -30,11 +30,11 @@ type NavItem = {
 };
 
 const primaryNav: NavItem[] = [
-  { id: 'OVERVIEW', label: farmerLabels.home, short: farmerLabels.home, icon: Activity, description: 'Farmer-first overview and today\'s activity' },
-  { id: 'FIELD_JOBS', label: farmerLabels.fields, short: farmerLabels.fields, icon: ClipboardList, description: 'Fields, bookings and clearance jobs' },
-  { id: 'FARMER_ONBOARDING', label: farmerLabels.book, short: farmerLabels.book, icon: Tractor, description: 'Choose your field and book machine pickup' },
-  { id: 'OPS_CONSOLE', label: farmerLabels.track, short: farmerLabels.track, icon: Map, description: 'See where the machine is and what happens next' },
-  { id: 'RESIDUE_POOLS', label: farmerLabels.market, short: farmerLabels.market, icon: Leaf, description: 'See where collected parali can go' },
+  { id: 'OVERVIEW', label: 'Home', short: 'Home', icon: Activity, description: 'Farmer-first overview and today\'s activity' },
+  { id: 'FIELD_JOBS', label: 'My Fields', short: 'Fields', icon: ClipboardList, description: 'Fields, bookings and clearance jobs' },
+  { id: 'FARMER_ONBOARDING', label: 'Book Parali Pickup', short: 'Book', icon: Tractor, description: 'Choose your field and book machine pickup' },
+  { id: 'OPS_CONSOLE', label: 'Track My Machine', short: 'Track', icon: Map, description: 'See where the machine is and what happens next' },
+  { id: 'RESIDUE_POOLS', label: 'Parali Market', short: 'Market', icon: Leaf, description: 'See where collected parali can go' },
 ];
 
 const secondaryNav: NavItem[] = [
@@ -129,7 +129,7 @@ export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: H
                 <button key={item.id} onClick={() => navigate(item.id)} onMouseEnter={() => prefetchWorkspace(item.id)} onFocus={() => prefetchWorkspace(item.id)} title={item.description}
                   className={`field-nav-item ${active ? 'is-active' : ''}`}>
                   <Icon className="h-4 w-4" />
-                  <span>{item.label}</span>
+                  <span>{item.id === 'OVERVIEW' ? farmerLabels.home : item.id === 'FIELD_JOBS' ? farmerLabels.fields : item.id === 'FARMER_ONBOARDING' ? farmerLabels.book : item.id === 'OPS_CONSOLE' ? farmerLabels.track : item.id === 'RESIDUE_POOLS' ? farmerLabels.market : item.label}</span>
                 </button>
               );
             })}
@@ -231,11 +231,11 @@ export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: H
 
       <nav className="field-mobile-bottom-nav lg:hidden" aria-label="Farmer quick navigation">
       {[
-        ['OVERVIEW', 'Home', Activity],
-        ['FIELD_JOBS', 'Fields', ClipboardList],
-        ['FARMER_ONBOARDING', 'Book', Tractor],
-        ['OPS_CONSOLE', 'Track', Map],
-        ['RESIDUE_POOLS', 'Market', Leaf],
+        ['OVERVIEW', farmerLabels.home, Activity],
+        ['FIELD_JOBS', farmerLabels.fields, ClipboardList],
+        ['FARMER_ONBOARDING', farmerLabels.book, Tractor],
+        ['OPS_CONSOLE', farmerLabels.track, Map],
+        ['RESIDUE_POOLS', farmerLabels.market, Leaf],
       ].map(([id, label, Icon]) => {
         const NavIcon = Icon as typeof Activity;
         return (
