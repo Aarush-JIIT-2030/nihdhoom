@@ -25,7 +25,7 @@ export function TelegramSimulator({ onSlotConfirmed }: TelegramSimulatorProps) {
     return () => { active = false; };
   }, []);
 
-  const botUrl = useMemo(() => BOT_USERNAME ? `https://t.me/${BOT_USERNAME}` : 'https://t.me', []);
+  const botUrl = useMemo(() => BOT_USERNAME ? `https://t.me/${BOT_USERNAME}` : undefined, []);
 
   const copy = {
     pa: {
@@ -127,12 +127,19 @@ export function TelegramSimulator({ onSlotConfirmed }: TelegramSimulatorProps) {
           <div className="flex w-full flex-col gap-2 sm:w-auto">
             <a
               href={botUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#229ED9] px-5 py-3 text-sm font-extrabold text-white shadow-sm transition hover:-translate-y-0.5 hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+              target={botUrl ? '_blank' : undefined}
+              rel={botUrl ? 'noreferrer' : undefined}
+              aria-disabled={!botUrl}
+              className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-extrabold text-white shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 ${botUrl ? 'bg-[#229ED9] hover:-translate-y-0.5 hover:brightness-105' : 'cursor-not-allowed bg-slate-300'}`}
+              onClick={(event) => { if (!botUrl) event.preventDefault(); }}
             >
-              <Send className="h-4 w-4" /> {copy.cta}
+              <Send className="h-4 w-4" /> {botUrl ? copy.cta : 'Telegram bot unavailable'}
             </a>
+            {!botUrl && (
+              <p className="text-center text-xs font-semibold text-slate-500">
+                Configure VITE_TELEGRAM_BOT_USERNAME to enable direct opening.
+              </p>
+            )}
             <button
               type="button"
               onClick={connectTelegram}
