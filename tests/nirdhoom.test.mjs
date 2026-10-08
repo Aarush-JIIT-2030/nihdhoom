@@ -290,7 +290,7 @@ test('visible competition surfaces stay claim-safe', () => {
   assert.doesNotMatch(sources, /14,200\+ Balers/i);
   assert.doesNotMatch(sources, /already-subsidised crop residue machinery/i);
   assert.doesNotMatch(sources, /UPI payout/i);
-  assert.match(read('src/components/CarbonMarketplace/CarbonMarketplace.tsx'), /Carbon Market Simulator/);
+  assert.match(read('src/components/CarbonMarketplace/CarbonMarketplace.tsx'), /Impact & carbon evidence/);
 });
 
 
