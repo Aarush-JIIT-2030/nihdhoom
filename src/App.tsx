@@ -1,6 +1,5 @@
 import { lazy, Suspense, useEffect, useCallback, startTransition } from 'react';
 import { Header, ActiveTab } from './components/Header';
-const DemoWalkthrough = lazy(() => import('./components/DemoWalkthrough').then((m) => ({ default: m.DemoWalkthrough })));
 import { LiveKPIDashboard } from './components/LiveKPIDashboard';
 const OpsMap = lazy(() => import('./components/OpsConsole/OpsMap').then((m) => ({ default: m.OpsMap })));
 const VRPDispatchPanel = lazy(() => import('./components/OpsConsole/VRPDispatchPanel').then((m) => ({ default: m.VRPDispatchPanel })));
@@ -12,9 +11,6 @@ const SatelliteAudit = lazy(() => import('./components/VerificationLayer/Satelli
 const CarbonCertificate = lazy(() => import('./components/VerificationLayer/CarbonCertificate').then((m) => ({ default: m.CarbonCertificate })));
 const MultiOfftakeAuction = lazy(() => import('./components/OfftakeAndForecast/MultiOfftakeAuction').then((m) => ({ default: m.MultiOfftakeAuction })));
 const HarvestForecast = lazy(() => import('./components/OfftakeAndForecast/HarvestForecast').then((m) => ({ default: m.HarvestForecast })));
-const JudgesQnAPanel = lazy(() => import('./components/PitchDefense/JudgesQnAPanel').then((m) => ({ default: m.JudgesQnAPanel })));
-const JudgePitchDrawer = lazy(() => import('./components/PitchDefense/JudgePitchDrawer').then((m) => ({ default: m.JudgePitchDrawer })));
-const CompetitionCenter = lazy(() => import('./components/PitchDefense/CompetitionCenter').then((m) => ({ default: m.CompetitionCenter })));
 const SatelliteEarth3D = lazy(() => import('./components/ThreeD/SatelliteEarth3D').then((m) => ({ default: m.SatelliteEarth3D })));
 const BalerModel3D = lazy(() => import('./components/ThreeD/BalerModel3D').then((m) => ({ default: m.BalerModel3D })));
 const CardTilt3D = lazy(() => import('./components/ThreeD/CardTilt3D').then((m) => ({ default: m.CardTilt3D })));
@@ -39,7 +35,7 @@ import { prefetchWorkspace } from './lib/workspacePrefetch';
 import { WorkspaceLoading } from './components/WorkspaceLoading';
 import { useAppController } from './state/useAppController';
 import { generateNonBurnCertificate } from './utils/spatialVerification';
-import { Globe, Box, Map, Sparkles, ShieldCheck, Zap, UserCheck, Leaf } from 'lucide-react';
+import { Globe, Box, Map, ShieldCheck, Zap, UserCheck, Leaf } from 'lucide-react';
 
 type WorkspaceHeaderProps = {
   activeTab: ActiveTab;
@@ -183,28 +179,6 @@ const WORKSPACE_META: Partial<Record<ActiveTab, {
     accent: 'sky',
     action: { label: 'Open operator PWA', tab: 'BALER_OPERATOR' },
   },
-  DEMO_RUNNER: {
-    eyebrow: 'PRODUCT WALKTHROUGH',
-    title: 'NIRDHOOM end-to-end walkthrough',
-    description: 'A controlled demonstration of the field → machine → evidence → residue journey. Demo records are clearly separated from live records.',
-    image: '/images/baling_dispatch_fleet_1790447115856.jpg',
-    accent: 'amber',
-  },
-  COMPETITION_CENTER: {
-    eyebrow: 'COMPETITION READY',
-    title: 'RIDE & WarriorHacks pitch center',
-    description: 'A focused judging workspace for the two competitions: startup/incubation for RIDE and community impact + technical craft for WarriorHacks.',
-    image: '/images/punjab_farmer_hero.jpg',
-    accent: 'amber',
-    action: { label: 'Start the 2-minute demo', tab: 'DEMO_RUNNER' },
-  },
-  JUDGE_DEFENSE: {
-    eyebrow: 'PITCH DEFENCE',
-    title: 'Judge Q&A & product proof',
-    description: 'Keep the story, constraints, evidence and release boundaries in one place for a clear technical demonstration.',
-    image: '/images/punjab_farm_hero.jpg',
-    accent: 'green',
-  },
 };
 
 function WorkspaceHeader({ activeTab, demoMode, onNavigate }: WorkspaceHeaderProps) {
@@ -273,8 +247,6 @@ export function App() {
     setSelectedField,
     activeRoutePolyline,
     setActiveRoutePolyline,
-    isPitchDrawerOpen,
-    setIsPitchDrawerOpen,
     certificateField,
     setCertificateField,
     fieldForUpiModal,
@@ -289,9 +261,6 @@ export function App() {
     storageYards: liveStorageYards,
   } = useAppController();
 
-  const acresScheduled = fields.reduce((sum, field) => sum + (Number(field.acreage) || 0), 0);
-  const verifiedCount = fields.filter((field) => field.is_verified_non_burn || field.status === 'VERIFIED_NON_BURN').length;
-
   useEffect(() => {
     const demoOnlyTabs: ActiveTab[] = [
       'AGENTIC_CONSOLE',
@@ -299,7 +268,6 @@ export function App() {
       'MACHINERY_3D',
       'OFFTAKE_AUCTION',
       'CARBON_MARKET',
-      'JUDGE_DEFENSE',
     ];
     if (!demoMode && demoOnlyTabs.includes(activeTab)) setActiveTab('OVERVIEW');
   }, [activeTab, demoMode, setActiveTab]);
@@ -319,7 +287,6 @@ export function App() {
       <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        openPitchDrawer={() => setIsPitchDrawerOpen(true)}
         demoMode={demoMode}
       />
 
@@ -397,28 +364,6 @@ export function App() {
             onTriggerDemoBeat={(_beat) => setActiveTab('DEMO_RUNNER')}
             onNavigateTab={(tab) => setActiveTab(tab as ActiveTab)}
           />
-        )}
-
-        {/* TAB 1: 4-BEAT DEMO WALKTHROUGH */}
-        {activeTab === 'DEMO_RUNNER' && (
-          <div className="flex flex-col gap-2">
-            <LiveKPIDashboard
-              demoMode={demoMode}
-              acresScheduled={acresScheduled}
-              co2Avoided={0}
-              firmsZeroBurnCount={verifiedCount}
-              activeMachines={machines.length}
-              fireEventsOutsideCount={fireEvents.length}
-            />
-            <DemoWalkthrough
-              fields={fields}
-              machines={machines}
-              fireEvents={fireEvents}
-              demoMode={demoMode}
-              onUpdateFieldStatus={handleUpdateFieldStatus}
-              onViewCertificateModal={(f) => setCertificateField(f)}
-            />
-          </div>
         )}
 
         {/* TAB: 3D DIGITAL TWIN (HOLOGRAPHIC SATELLITE & HOTSPOT SCAN) */}
@@ -691,14 +636,6 @@ export function App() {
         )}
 
         {/* TAB: FARMER ONBOARDING KYC */}
-        {/* TAB 7: JUDGE DEFENSE & UNIT ECONOMICS */}
-        {activeTab === 'COMPETITION_CENTER' && (
-          <CompetitionCenter onNavigate={setActiveTab} />
-        )}
-
-        {activeTab === 'JUDGE_DEFENSE' && (
-          <JudgesQnAPanel />
-        )}
         </Suspense>
       </main>
 
@@ -722,12 +659,6 @@ export function App() {
           }}
         />
       )}
-
-      {/* 3. Judge Pitch Brief Drawer */}
-      <JudgePitchDrawer
-        isOpen={isPitchDrawerOpen}
-        onClose={() => setIsPitchDrawerOpen(false)}
-      />
 
       {/* Live Agentic Telemetry Toast Stream */}
       <AgenticTelemetryToast demoMode={demoMode} onNavigateTab={(tab) => setActiveTab(tab as ActiveTab)} />
