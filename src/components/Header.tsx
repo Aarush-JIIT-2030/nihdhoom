@@ -104,10 +104,10 @@ export function Header({ activeTab, setActiveTab, demoMode }: HeaderProps) {
               <span className="flex items-center gap-2">
                 <span className="font-['DM_Sans'] text-[16px] font-black tracking-[0.08em] text-emerald-950">NIRDHOOM</span>
                 <span className="rounded-full border border-amber-300 bg-amber-50 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-800">
-                  {demoMode ? 'Demo' : 'Live'}
+                  Field network
                 </span>
               </span>
-              <span className="mt-0.5 block text-[10px] font-medium text-emerald-800/60">Field-first crop-residue network</span>
+              <span className="mt-0.5 block text-[10px] font-medium text-emerald-800/60">Crop-residue field network</span>
             </span>
           </button>
 
@@ -175,7 +175,7 @@ export function Header({ activeTab, setActiveTab, demoMode }: HeaderProps) {
           <div className="ml-auto flex shrink-0 items-center gap-1.5">
             <div className="hidden xl:flex items-center gap-2 rounded-full border border-emerald-900/10 bg-emerald-50 px-3 py-1.5 text-[10px]">
               <span className={`h-2 w-2 rounded-full ${demoMode ? 'bg-amber-500' : 'bg-emerald-500'}`} />
-              <span className="font-semibold text-emerald-900/65">{demoMode ? 'Demo records' : 'Live records'}</span>
+              <span className="font-semibold text-emerald-900/65">{demoMode ? 'Sample records' : 'Connected records'}</span>
             </div>
             <button
               type="button"
