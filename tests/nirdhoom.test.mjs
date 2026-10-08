@@ -536,17 +536,15 @@ test('landing district ticker records are explicitly demo-labelled', () => {
 });
 
 
-test('field-first polish removes high-risk legacy landing and Telegram UI regressions', () => {
+test('field-first polish keeps Telegram channel and removes synthetic telemetry', () => {
   const landing = read('src/components/Landing/AgenticLanding.tsx');
-  const telegram = read('src/components/FarmerSurface/TelegramSimulator.tsx');
-  const telemetry = read('src/components/AgenticConsole/AgenticTelemetryToast.tsx');
-  assert.doesNotMatch(landing, /bg-gradient-to-b from=\["']#020409/i);
-  assert.match(landing, /field-first, with React Bits spotlight/i);
+  const telegram = read('src/components/FarmerSurface/TelegramChannel.tsx');
+  assert.doesNotMatch(landing, /2-Minute Competition Demo|Competition Pitch Center|Judge Defense|Q&A Prep/i);
   assert.match(telegram, /Configure VITE_TELEGRAM_BOT_USERNAME to enable direct opening/);
-  assert.match(telegram, /cursor-not-allowed/);
-  assert.doesNotMatch(telemetry, /Real-time Telemetry Stream/);
-  assert.match(telemetry, /operational signal stream/);
+  assert.doesNotMatch(telegram, /Demo slot confirmed|Preview booking handoff|confirmDemo/);
+  assert.doesNotMatch(read('src/App.tsx'), /AgenticTelemetryToast|AgenticCommandCenter|SatelliteEarth3D|BalerModel3D/);
 });
+
 
 
 test('landing and visual pipeline avoid unsupported machinery, fire, and buyer claims', () => {
