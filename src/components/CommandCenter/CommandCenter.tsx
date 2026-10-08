@@ -182,7 +182,7 @@ export function CommandCenter({
         <div className="home-map-card">
           <div className="home-map-header">
             <div><span>FIELD VIEW</span><strong>Operations map</strong></div>
-            <span className="home-live-pill"><i /> Connected records</span>
+            <span className="home-live-pill"><i /> Loaded records</span>
           </div>
           <OpsMap fields={fields} machines={machines} fireEvents={fireEvents} storageYards={storageYards} buyers={buyers} selectedField={null} onSelectField={onSelectField} activeRoutePolyline={[]} />
         </div>
