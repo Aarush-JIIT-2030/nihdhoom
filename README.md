@@ -405,6 +405,7 @@ Use [docs/FINAL-PILOT-READINESS.md](docs/FINAL-PILOT-READINESS.md) as the detail
 | `docs/PUNJAB-CROP-RESIDUE-RESEARCH.md` | Research notes and product implications |
 | `docs/RESEARCH-DATA.md` | Dated public data, source scope, and caveats |
 | `docs/FINAL-PILOT-READINESS.md` | Consolidated pilot checklist |
+| `docs/IMAGE-LICENSES.md` | Public photography sources and licenses |
 | `docs/NON-PAYMENT-RELEASE-SCOPE.md` | Explicit non-payment release boundary |
 | `LINE-BY-LINE-AUDIT.md` | Repository audit notes |
 | `PDF-FEATURE-MATRIX.md` | Feature mapping to supplied brief |
