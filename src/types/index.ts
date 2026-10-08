@@ -193,6 +193,53 @@ export interface StorageYard {
   capacity_tonnes: number;
   current_load: number;
   moisture_alert: boolean;
+  incoming_tonnes?: number;
+  status?: 'AVAILABLE' | 'WATCH' | 'FULL';
+  provenance?: 'DEMO' | 'LIVE_RECORD';
+}
+
+export type ResidueOperationPriority = 'CRITICAL' | 'HIGH' | 'WATCH' | 'NORMAL';
+
+export interface ResidueException {
+  id: string;
+  severity: 'CRITICAL' | 'HIGH' | 'WATCH';
+  kind: 'PICKUP_OVERDUE' | 'MACHINE_SHORTFALL' | 'UNWEIGHED_LOT' | 'UNMATCHED_DEMAND' | 'YARD_CAPACITY' | 'STALE_GPS' | 'WEATHER_CAUTION';
+  title: string;
+  detail: string;
+  field_id?: string;
+  machine_id?: string;
+  action: string;
+}
+
+export interface MachineCapacityRecommendation {
+  machine_id: string;
+  field_id: string;
+  score: number;
+  reason: string;
+  capacity_acres_day: number;
+  distance_km?: number;
+  available: boolean;
+}
+
+export interface BuyerDemandCoverage {
+  buyer_id: string;
+  buyer_name: string;
+  required_tonnes: number;
+  committed_tonnes: number;
+  verified_tonnes: number;
+  delivered_tonnes: number;
+  coverage_pct: number;
+  status: 'OPEN' | 'WATCH' | 'COVERED';
+}
+
+export interface ResidueOperationSummary {
+  ready_tonnes: number;
+  verified_tonnes: number;
+  demand_tonnes: number;
+  demand_coverage_pct: number;
+  machine_capacity_acres_day: number;
+  fields_at_risk: number;
+  exceptions: ResidueException[];
 }
 
 export interface Buyer {
