@@ -2102,3 +2102,134 @@ html[data-theme="kisan"] .nirdhoom-field-app .leaflet-container {
   background:#8AA596;
   vertical-align:middle;
 }
+
+
+/* =========================================================
+   PRODUCT HOME — open-source-inspired motion + bento polish
+   Uses Motion for React and the existing React Bits-style
+   spotlight language; no pitch/deck chrome.
+   ========================================================= */
+html[data-theme="kisan"] .home-product-status {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: minmax(240px,.9fr) minmax(0,1.8fr);
+  gap: 14px;
+  align-items: stretch;
+  padding: 14px;
+  border: 1px solid rgba(31,122,70,.12);
+  border-radius: 24px;
+  background: rgba(255,255,255,.72);
+  box-shadow: 0 18px 45px rgba(38,76,43,.07);
+  backdrop-filter: blur(14px);
+}
+html[data-theme="kisan"] .home-product-status > div:first-child {
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding: 8px 12px;
+}
+html[data-theme="kisan"] .home-product-status > div:first-child strong {
+  margin-top: 5px;
+  font-size: clamp(1.1rem,2vw,1.45rem);
+  line-height: 1.15;
+  color:#173522;
+  letter-spacing:-.025em;
+}
+html[data-theme="kisan"] .home-product-status > div:first-child small {
+  margin-top: 5px;
+  color:#657565;
+  font-size:.75rem;
+}
+html[data-theme="kisan"] .home-status-grid {
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+}
+html[data-theme="kisan"] .home-status-grid button {
+  min-height:78px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px;
+  text-align:left;
+  border:1px solid rgba(31,122,70,.09);
+  border-radius:18px;
+  background:linear-gradient(145deg,#ffffff,#f4f8f0);
+  color:#205c37;
+  transition:border-color .2s ease, box-shadow .2s ease, background .2s ease;
+}
+html[data-theme="kisan"] .home-status-grid button:hover {
+  border-color:rgba(31,122,70,.24);
+  background:#fff;
+  box-shadow:0 12px 28px rgba(38,76,43,.09);
+}
+html[data-theme="kisan"] .home-status-grid button > svg {
+  width:18px;
+  height:18px;
+  flex:none;
+  color:#2b8250;
+}
+html[data-theme="kisan"] .home-status-grid button span {
+  display:flex;
+  min-width:0;
+  flex-direction:column;
+}
+html[data-theme="kisan"] .home-status-grid button b {
+  font-size:1.25rem;
+  line-height:1;
+  color:#173522;
+}
+html[data-theme="kisan"] .home-status-grid button small {
+  margin-top:4px;
+  color:#687a6a;
+  font-size:.68rem;
+  font-weight:700;
+}
+html[data-theme="kisan"] .home-hero {
+  overflow:hidden;
+  box-shadow:0 28px 70px rgba(32,69,39,.14);
+}
+html[data-theme="kisan"] .home-hero-content {
+  max-width:760px;
+}
+html[data-theme="kisan"] .home-primary,
+html[data-theme="kisan"] .home-secondary {
+  min-height:46px;
+  border-radius:14px;
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+html[data-theme="kisan"] .home-primary:hover,
+html[data-theme="kisan"] .home-secondary:hover {
+  transform:translateY(-2px);
+}
+html[data-theme="kisan"] .home-role-card,
+html[data-theme="kisan"] .home-workflow-card {
+  transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+}
+html[data-theme="kisan"] .home-role-card:hover,
+html[data-theme="kisan"] .home-workflow-card:hover {
+  transform:translateY(-3px);
+  box-shadow:0 18px 38px rgba(38,76,43,.10);
+}
+@media (max-width: 900px) {
+  html[data-theme="kisan"] .home-product-status {
+    grid-template-columns:1fr;
+  }
+}
+@media (max-width: 620px) {
+  html[data-theme="kisan"] .home-status-grid {
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  html[data-theme="kisan"] .home-product-status {
+    border-radius:20px;
+    padding:10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme="kisan"] .home-primary:hover,
+  html[data-theme="kisan"] .home-secondary:hover,
+  html[data-theme="kisan"] .home-role-card:hover,
+  html[data-theme="kisan"] .home-workflow-card:hover {
+    transform:none;
+  }
+}
