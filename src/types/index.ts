@@ -108,6 +108,11 @@ export interface Machine {
   operator_name: string;
   operator_phone: string;
   capacity_acres_day: number;
+  tractor_hp_required?: number;
+  residue_types?: string[];
+  operating_conditions?: string;
+  capability_source?: string;
+  capability_source_date?: string;
   current_location: LatLng;
   home_chc: string;
   status: 'IDLE' | 'EN_ROUTE' | 'BALING' | 'MAINTENANCE';
