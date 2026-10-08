@@ -34,7 +34,7 @@ export function ResidueControlTower({
   const pressureFields = fields
     .map((field) => ({ field, pressure: harvestPressure(field) }))
     .filter(({ pressure }) => pressure !== 'NORMAL')
-    .sort((a, b) => ({ CRITICAL: 0, HIGH: 1, WATCH: 2 }[a.pressure] - { CRITICAL: 0, HIGH: 1, WATCH: 2 }[b.pressure]));
+    .sort((a, b) => { const rank: Record<string, number> = { CRITICAL: 0, HIGH: 1, WATCH: 2, NORMAL: 3 }; return rank[a.pressure] - rank[b.pressure]; });
 
   return (
     <section className="field-page space-y-5" aria-labelledby="residue-control-tower-title">

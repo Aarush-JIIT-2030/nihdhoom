@@ -327,7 +327,7 @@ export const INITIAL_STORAGE_YARDS: StorageYard[] = [
     location: { lat: 30.0682, lng: 75.9868 },
     capacity_tonnes: 8500,
     current_load: 3420,
-    moisture_alert: false,
+    moisture_alert: false, incoming_tonnes: 420, status: 'AVAILABLE', provenance: 'DEMO',
   },
   {
     id: 'YARD-02',
@@ -335,7 +335,7 @@ export const INITIAL_STORAGE_YARDS: StorageYard[] = [
     location: { lat: 30.3720, lng: 75.8710 },
     capacity_tonnes: 6000,
     current_load: 2150,
-    moisture_alert: false,
+    moisture_alert: false, incoming_tonnes: 310, status: 'AVAILABLE', provenance: 'DEMO',
   },
   {
     id: 'YARD-03',
@@ -343,7 +343,7 @@ export const INITIAL_STORAGE_YARDS: StorageYard[] = [
     location: { lat: 30.0150, lng: 75.8100 },
     capacity_tonnes: 12000,
     current_load: 7890,
-    moisture_alert: false,
+    moisture_alert: false, incoming_tonnes: 2800, status: 'WATCH', provenance: 'DEMO',
   },
 ];
 

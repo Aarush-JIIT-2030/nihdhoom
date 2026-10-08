@@ -42,6 +42,7 @@ const required = [
   'supabase/migrations/202610080001_nirdhoom_residue_lot_provenance.sql',
   'supabase/migrations/202610080002_nirdhoom_residue_lot_first_class.sql',
   'supabase/migrations/202610080003_nirdhoom_machine_capability_provenance.sql',
+  'supabase/migrations/202610080004_nirdhoom_residue_control_tower.sql',
   'supabase/migrations/202609270001_nirdhoom_core.sql',
   'supabase/migrations/202609270002_nirdhoom_production.sql',
   'supabase/migrations/202609270003_nirdhoom_v6.sql',
@@ -89,6 +90,9 @@ const residueProvenance = read('supabase/migrations/202610080001_nirdhoom_residu
 const residueJourney = read('src/components/ResidueNetwork/FieldEvidenceTimeline.tsx');
 const residueModel = read('src/types/index.ts');
 const machineCapability = read('supabase/migrations/202610080003_nirdhoom_machine_capability_provenance.sql');
+const controlTowerMigration = read('supabase/migrations/202610080004_nirdhoom_residue_control_tower.sql');
+const controlTower = read('src/components/ResidueNetwork/ResidueControlTower.tsx');
+const residueEngine = read('src/lib/residueOperations.ts');
 const farmerLabels = read('src/i18n/farmerLabels.ts');
 const rlsMatrix = read('tests/rls_role_matrix.sql');
 const opsMap = read('src/components/OpsConsole/OpsMap.tsx');
@@ -148,6 +152,9 @@ const checks = [
   ['residue lot provenance ledger', residueProvenance.includes('residue_lot_events') && residueProvenance.includes('verification_source') && residueProvenance.includes('revoke insert, update, delete on public.residue_lot_events')],
   ['first-class residue lot model', residueModel.includes('export interface ResidueLot') && read('supabase/migrations/202610080002_nirdhoom_residue_lot_first_class.sql').includes('farmer_id uuid') && read('supabase/migrations/202610080002_nirdhoom_residue_lot_first_class.sql').includes('record_residue_lot_event') && read('supabase/migrations/202610080002_nirdhoom_residue_lot_first_class.sql').includes('validate_residue_lot_identity')],
   ['machine capability provenance', machineCapability.includes('tractor_hp_required') && machineCapability.includes('capability_source')],
+  ['residue control tower', controlTower.includes('Residue Control Tower') && controlTower.includes('What needs attention now') && controlTower.includes('Yard capacity')],
+  ['residue operations engine', residueEngine.includes('harvestPressure') && residueEngine.includes('machineRecommendations') && residueEngine.includes('buildResidueExceptions')],
+  ['control tower schema', controlTowerMigration.includes('machine_capacity_windows') && controlTowerMigration.includes('storage_yards') && controlTowerMigration.includes('residue_matches') && controlTowerMigration.includes('residue_transport_jobs') && controlTowerMigration.includes('residue_exceptions')],
   ['provenance-aware residue journey', residueJourney.includes('FIELD EVIDENCE TIMELINE') && residueJourney.includes('supporting evidence only') && app.includes('FieldEvidenceTimeline')],
   ['machine map is field-only', !opsMap.includes("Network Globe") && !opsMap.includes('dark_all') && !opsMap.includes("setMapMode")],
   ['agricultural GIS layer stack', opsMap.includes('showResidue') && opsMap.includes('showBuyers') && opsMap.includes('showWeather') && opsMap.includes('showRoute') && opsMap.includes('FIRMS observations')],

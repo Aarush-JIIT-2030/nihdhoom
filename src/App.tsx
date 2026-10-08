@@ -598,8 +598,8 @@ export function App() {
                   fields={fields}
                   machines={machines}
                   fireEvents={fireEvents}
-                  storageYards={demoMode ? INITIAL_STORAGE_YARDS : []}
-                  buyers={demoMode ? INITIAL_BUYERS : []}
+                  storageYards={demoMode ? INITIAL_STORAGE_YARDS : liveStorageYards}
+                  buyers={demoMode ? INITIAL_BUYERS : liveBuyers}
                   selectedField={selectedField}
                   demoMode={demoMode}
                   onSelectField={handleSelectField}
@@ -627,7 +627,6 @@ export function App() {
               </div>
             </div>
           </div>
-        )}
             </div>
           </div>
         )}
