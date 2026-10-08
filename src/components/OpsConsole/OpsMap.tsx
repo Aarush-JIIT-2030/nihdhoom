@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import { Field, Machine, BurnEvent, StorageYard, Buyer, LatLng } from '../../types';
-import { Layers, Flame, MapPin } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
+import { Layers, Flame, MapPin, PackageCheck, Route, CloudSun, Building2 } from 'lucide-react';
 
 interface OpsMapProps {
   fields: Field[];
@@ -37,6 +38,11 @@ export const OpsMap: React.FC<OpsMapProps> = ({
   const [showMachines, setShowMachines] = useState(true);
   const [showFields, setShowFields] = useState(true);
   const [showYards, setShowYards] = useState(true);
+  const [showResidue, setShowResidue] = useState(true);
+  const [showBuyers, setShowBuyers] = useState(true);
+  const [showRoute, setShowRoute] = useState(true);
+  const [showWeather, setShowWeather] = useState(true);
+  const [weatherPoint, setWeatherPoint] = useState<{ temperature: number; precipitationProbability: number; precipitationMm: number; windGustKmh: number } | null>(null);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [mapError, setMapError] = useState<string | null>(null);
   const [animatedPositions, setAnimatedPositions] = useState<Record<string, { lat: number; lng: number }>>(
@@ -101,7 +107,40 @@ export const OpsMap: React.FC<OpsMapProps> = ({
     };
   }, [machines, fields]);
 
-  // Update base tile layer
+    // Weather is an operational planning layer, sourced through the authenticated weather adapter.
+  useEffect(() => {
+    if (demoMode || !showWeather || !selectedField?.dbId || !supabase) {
+      setWeatherPoint(null);
+      return;
+    }
+    let active = true;
+    const loadWeather = async () => {
+      try {
+        const { data } = await supabase.auth.getSession();
+        const token = data.session?.access_token;
+        if (!token) return;
+        const response = await fetch(`/api/weather?field_id=${encodeURIComponent(selectedField.dbId!)}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!response.ok) return;
+        const payload = await response.json();
+        const currentIndex = payload.forecast?.hourly?.time?.length ? 0 : -1;
+        if (!active || currentIndex < 0) return;
+        setWeatherPoint({
+          temperature: Number(payload.forecast.hourly.temperature_2m?.[currentIndex] ?? 0),
+          precipitationProbability: Number(payload.forecast.hourly.precipitation_probability?.[currentIndex] ?? 0),
+          precipitationMm: Number(payload.forecast.hourly.precipitation?.[currentIndex] ?? 0),
+          windGustKmh: Number(payload.forecast.hourly.wind_gusts_10m?.[currentIndex] ?? 0),
+        });
+      } catch {
+        if (active) setWeatherPoint(null);
+      }
+    };
+    void loadWeather();
+    return () => { active = false; };
+  }, [demoMode, selectedField?.dbId, showWeather]);
+
+// Update base tile layer
   useEffect(() => {
     const map = mapInstanceRef.current;
     if (!map) return;
@@ -254,7 +293,58 @@ export const OpsMap: React.FC<OpsMapProps> = ({
       });
     }
 
-    // 4. Render Storage Yards & Buyers
+        // 4. Render residue lots at their field origin.
+    if (showResidue) {
+      fields
+        .filter((field) => Boolean(field.residue_lot_id) || field.status === 'VERIFIED_NON_BURN')
+        .forEach((field) => {
+          const pos = field.center;
+          if (!Number.isFinite(Number(pos?.lat)) || !Number.isFinite(Number(pos?.lng))) return;
+          const icon = L.divIcon({
+            html: '<div style="width:26px;height:26px;border-radius:7px;background:#F0F7EF;border:2px solid #2D6A45;display:flex;align-items:center;justify-content:center;color:#2D6A45;font-size:12px;">🌾</div>',
+            className: 'residue-lot-icon',
+            iconSize: [26, 26],
+            iconAnchor: [13, 13],
+          });
+          L.marker([Number(pos.lat), Number(pos.lng)], { icon })
+            .bindPopup(`<div style="padding:4px;font-family:sans-serif;font-size:12px;"><strong style="color:#2D6A45;">Residue lot</strong><div>Field: ${field.khasra_no}</div><div>Status: ${field.status.replaceAll('_',' ')}</div><div>Source: field record</div></div>`)
+            .addTo(layerGroup);
+        });
+    }
+
+    // 5. Render buyer demand only where a real/explicit buyer coordinate exists.
+    if (showBuyers) {
+      buyers.forEach((buyer) => {
+        const pos = buyer.location;
+        if (!pos || !Number.isFinite(Number(pos.lat)) || !Number.isFinite(Number(pos.lng))) return;
+        const icon = L.divIcon({
+          html: '<div style="width:27px;height:27px;border-radius:7px;background:#FFF7E8;border:2px solid #C8953D;display:flex;align-items:center;justify-content:center;color:#76521B;font-size:12px;">🏭</div>',
+          className: 'buyer-icon',
+          iconSize: [27, 27],
+          iconAnchor: [13.5, 13.5],
+        });
+        L.marker([Number(pos.lat), Number(pos.lng)], { icon })
+          .bindPopup(`<div style="padding:4px;font-family:sans-serif;font-size:12px;"><strong style="color:#76521B;">${buyer.name}</strong><div>${buyer.location_name}</div><div>Demand: ${buyer.demand_tonnes.toLocaleString('en-IN')} t</div><div>Price: ₹${buyer.price_per_tonne.toLocaleString('en-IN')}/t</div><div style="margin-top:4px;color:#718076;">Buyer coordinates are explicit demo/reference data when present.</div></div>`)
+          .addTo(layerGroup);
+      });
+    }
+
+    // 6. Render authenticated weather planning signal for the selected field.
+    if (showWeather && selectedField?.center && weatherPoint) {
+      const pos = selectedField.center;
+      const risk = weatherPoint.precipitationProbability >= 70 || weatherPoint.precipitationMm >= 8 || weatherPoint.windGustKmh >= 35;
+      const icon = L.divIcon({
+        html: `<div style="width:30px;height:30px;border-radius:50%;background:${risk ? '#FFF3D6' : '#EFF7F0'};border:2px solid ${risk ? '#C8953D' : '#2D6A45'};display:flex;align-items:center;justify-content:center;font-size:13px;">☁️</div>`,
+        className: 'weather-icon',
+        iconSize: [30, 30],
+        iconAnchor: [15, 15],
+      });
+      L.marker([Number(pos.lat), Number(pos.lng)], { icon })
+        .bindPopup(`<div style="padding:4px;font-family:sans-serif;font-size:12px;"><strong style="color:#2D6A45;">Weather planning signal</strong><div>${weatherPoint.temperature.toFixed(0)}°C · rain probability ${weatherPoint.precipitationProbability.toFixed(0)}%</div><div>${weatherPoint.precipitationMm.toFixed(1)} mm rain · gusts ${weatherPoint.windGustKmh.toFixed(0)} km/h</div><div style="margin-top:4px;color:#718076;">Planning signal only; confirm field and machine conditions before dispatch.</div></div>`)
+        .addTo(layerGroup);
+    }
+
+// 4. Render Storage Yards & Buyers
     if (showYards) {
       storageYards.forEach((yard) => {
         const yardHtml = `
@@ -287,8 +377,8 @@ export const OpsMap: React.FC<OpsMapProps> = ({
       });
     }
 
-    // 5. Render Active VRP Polyline Route
-    if (activeRoutePolyline && activeRoutePolyline.length > 1) {
+    // 7. Render Active VRP Polyline Route
+    if (showRoute && activeRoutePolyline && activeRoutePolyline.length > 1) {
       const lineCoords: [number, number][] = activeRoutePolyline.map((p) => [p.lat, p.lng]);
       const routeLine = L.polyline(lineCoords, {
         color: '#10b981',
@@ -311,6 +401,11 @@ export const OpsMap: React.FC<OpsMapProps> = ({
     showMachines,
     showFires,
     showYards,
+    showResidue,
+    showBuyers,
+    showRoute,
+    showWeather,
+    weatherPoint,
     animatedPositions,
   ]);
 
@@ -387,6 +482,23 @@ export const OpsMap: React.FC<OpsMapProps> = ({
             </span>
             <input type="checkbox" checked={showYards} onChange={(e) => setShowYards(e.target.checked)} className="accent-blue-600 rounded" />
           </label>
+          <label className="flex min-h-9 items-center justify-between gap-3 cursor-pointer rounded-md px-1 hover:bg-slate-50">
+            <span className="flex items-center gap-1.5"><PackageCheck className="h-3.5 w-3.5 text-emerald-600" /><span>Residue lots</span></span>
+            <input type="checkbox" checked={showResidue} onChange={(e) => setShowResidue(e.target.checked)} className="accent-emerald-600 rounded" />
+          </label>
+          <label className="flex min-h-9 items-center justify-between gap-3 cursor-pointer rounded-md px-1 hover:bg-slate-50">
+            <span className="flex items-center gap-1.5"><Building2 className="h-3.5 w-3.5 text-amber-600" /><span>Buyer demand ({buyers.filter((buyer) => buyer.location).length} mapped)</span></span>
+            <input type="checkbox" checked={showBuyers} onChange={(e) => setShowBuyers(e.target.checked)} className="accent-amber-600 rounded" />
+          </label>
+          <label className="flex min-h-9 items-center justify-between gap-3 cursor-pointer rounded-md px-1 hover:bg-slate-50">
+            <span className="flex items-center gap-1.5"><CloudSun className="h-3.5 w-3.5 text-sky-600" /><span>Weather planning</span></span>
+            <input type="checkbox" checked={showWeather} onChange={(e) => setShowWeather(e.target.checked)} className="accent-sky-600 rounded" />
+          </label>
+          <label className="flex min-h-9 items-center justify-between gap-3 cursor-pointer rounded-md px-1 hover:bg-slate-50">
+            <span className="flex items-center gap-1.5"><Route className="h-3.5 w-3.5 text-blue-600" /><span>Pickup route</span></span>
+            <input type="checkbox" checked={showRoute} onChange={(e) => setShowRoute(e.target.checked)} className="accent-blue-600 rounded" />
+          </label>
+
         </div>
       </div>
 
