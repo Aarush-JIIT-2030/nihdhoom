@@ -80,7 +80,7 @@ docs/                           # Architecture, research and release notes
 
 NIRDHOOM (also referred to in the project materials as **Parali: The Reframe**) is a field-first web application for coordinating farmers, field records, machinery operators, dispatch, verification, and residue offtake. The V7 direction prioritizes the operational chain over adding more dashboard surfaces.
 
-> **Project status:** prototype / integration foundation. This repository is not evidence of an operating service or a completed field pilot. Demo records, indicative quotes, heuristic dispatch, and payment UI must not be represented as live operations, confirmed service commitments, or verified outcomes.
+> **Truth boundary:** this repository is a prototype/integration foundation. Seeded records and indicative planning values are clearly separated from connected live records; they are never evidence of field-pilot outcomes or confirmed commercial commitments.
 
 
 ## Connected backend
@@ -89,7 +89,6 @@ The dedicated NIRDHOOM Supabase project and deployed database state are document
 
 ## Contents
 
-- [Competition readiness](#competition-readiness)
 - [What the product is intended to do](#what-the-product-is-intended-to-do)
 - [Current implementation](#current-implementation)
 - [Workflow and architecture](#workflow-and-architecture)
@@ -105,19 +104,31 @@ The dedicated NIRDHOOM Supabase project and deployed database state are document
 - [Research and references](#research-and-references)
 - [Contributing](#contributing)
 
-## Competition readiness
+## Product
 
-NIRDHOOM is prepared for two different competition stories without changing the underlying product:
+NIRDHOOM is a field-first crop-residue coordination product built around one operational chain:
 
-- **RIDE Hack '26:** startup/incubation story — asset-light rural logistics, machinery coordination, verification, market validation and a supervised pilot path.
-- **WarriorHacks 2.0:** community-impact story — a simple farmer workflow that makes crop-residue clearance easier to request, track and verify.
+**Field → Machine → Bale → Pickup → Buyer**
 
-Submission briefs:
-- [RIDE Hack '26 submission](docs/RIDE-HACK-26-SUBMISSION.md)
-- [WarriorHacks 2.0 submission](docs/WARRIORHACKS-2-SUBMISSION.md)
-- [Competition readiness checklist](docs/COMPETITION-READINESS.md)
+It is designed for the people who actually have to move residue: farmers, machine operators, dispatchers, verifiers and buyers.
 
-**WarriorHacks eligibility note:** the repository has development history predating the current event window. The public event page confirms the Hackathon requires code, a GitHub repository, a 2–3 minute demo and project images, but this repository does not assume that pre-existing work is eligible. Confirm the organizer's rule before submitting and never misrepresent development history.
+### What is deliberately not in the product shell
+
+There is no in-app pitch deck, judge Q&A, competition walkthrough, fake payment confirmation, or presentation-only “demo runner”. The public UI is reserved for product workflows.
+
+### Product principles
+
+- **Evidence before impact** — operational claims need a traceable record.
+- **Capacity before promises** — a machine is available only when its current state supports it.
+- **Residue is a first-class object** — weight, quality, custody and destination stay connected.
+- **Remote sensing is supporting evidence** — a satellite observation is never presented as field-level proof by itself.
+- **Commercial state is explicit** — a buyer need is not a contract and a proposed match is not a transaction.
+- **Farmer UX stays small** — complexity belongs in operations, not in the farmer's first screen.
+- **Truth beats theatre** — unavailable integrations fail clearly instead of simulating success.
+
+### Visual language
+
+The product uses restrained agriculture photography, a warm field palette, compact operational cards, accessible motion and open-source UI primitives rather than generic AI-dashboard decoration.
 
 ## What the product is intended to do
 
