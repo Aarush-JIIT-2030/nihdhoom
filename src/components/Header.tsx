@@ -34,13 +34,13 @@ const primaryNav: NavItem[] = [
   { id: 'FARMER_ONBOARDING', label: 'Book Parali Pickup', short: 'Book', icon: Tractor, description: 'Choose your field and book machine pickup' },
   { id: 'OPS_CONSOLE', label: 'Track My Machine', short: 'Track', icon: Map, description: 'See where the machine is and what happens next' },
   { id: 'RESIDUE_POOLS', label: 'Parali Market', short: 'Market', icon: Leaf, description: 'See where collected parali can go' },
-  { id: 'SATELLITE_AUDIT', label: 'Check My Proof', short: 'Proof', icon: ShieldCheck, description: 'See photos, field proof and verification' },
-  { id: 'IMPACT_RESEARCH', label: 'Why It Matters', short: 'Impact', icon: BarChart3, description: 'Simple facts about crop residue and air quality' },
 ];
 
 const secondaryNav: NavItem[] = [
   { id: 'HARVEST_INTELLIGENCE', label: 'Harvest Timing', icon: Wheat, description: 'Know when to prepare for harvest and pickup' },
   { id: 'FIELD_PROVENANCE', label: 'Field Details', icon: ShieldCheck, description: 'Field boundary, consent and history' },
+  { id: 'SATELLITE_AUDIT', label: 'Check My Proof', icon: ShieldCheck, description: 'Photos, field proof and verification' },
+  { id: 'IMPACT_RESEARCH', label: 'Why It Matters', icon: BarChart3, description: 'Evidence and context for crop-residue management' },
   { id: 'BALER_OPERATOR', label: 'Machine Worker', icon: Smartphone, description: 'Tools for the person driving the machine' },
   { id: 'FARMER_SURFACE', label: 'Telegram Help', icon: MessageSquare, description: 'Get updates and help on Telegram' },
   { id: 'FARMER_KYC', label: 'My Profile', icon: UserCheck, description: 'Phone verification and farmer consent' },
