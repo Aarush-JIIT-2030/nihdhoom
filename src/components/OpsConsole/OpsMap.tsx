@@ -391,39 +391,39 @@ export const OpsMap: React.FC<OpsMapProps> = ({
       </div>
 
       {/* Floating Bottom Quick Zoom Bar */}
-      <div className="absolute bottom-3 left-3 z-10 bg-slate-900/90 backdrop-blur-md border border-slate-700/80 rounded-lg p-1.5 flex items-center gap-2 shadow-lg text-xs">
+      <div className="absolute bottom-3 left-3 z-10 bg-white/95 backdrop-blur-md border border-slate-200 rounded-lg p-1.5 flex items-center gap-2 shadow-lg text-xs text-slate-700">
         <span className="text-slate-400 font-medium px-1 flex items-center gap-1">
           <MapPin className="w-3.5 h-3.5 text-emerald-600" />
           <span>Hotspot Clusters:</span>
         </span>
         <button
           onClick={() => mapInstanceRef.current?.flyTo([30.2458, 75.8421], 12)}
-          className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs cursor-pointer"
+          className="px-2 py-0.5 rounded bg-slate-50 hover:bg-emerald-50 text-slate-700 border border-slate-200 text-xs cursor-pointer"
         >
           Sangrur
         </button>
         <button
           onClick={() => mapInstanceRef.current?.flyTo([30.1311, 75.8016], 13)}
-          className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs cursor-pointer"
+          className="px-2 py-0.5 rounded bg-slate-50 hover:bg-emerald-50 text-slate-700 border border-slate-200 text-xs cursor-pointer"
         >
           Sunam
         </button>
         <button
           onClick={() => mapInstanceRef.current?.flyTo([30.3683, 75.8672], 13)}
-          className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs cursor-pointer"
+          className="px-2 py-0.5 rounded bg-slate-50 hover:bg-emerald-50 text-slate-700 border border-slate-200 text-xs cursor-pointer"
         >
           Dhuri
         </button>
         <button
           onClick={() => mapInstanceRef.current?.flyTo([30.2766, 76.0427], 13)}
-          className="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs cursor-pointer"
+          className="px-2 py-0.5 rounded bg-slate-50 hover:bg-emerald-50 text-slate-700 border border-slate-200 text-xs cursor-pointer"
         >
           Bhawanigarh
         </button>
       </div>
 
       {/* Floating Map Legend Bottom-Right */}
-      <div className="absolute bottom-3 right-3 z-10 hidden sm:flex items-center gap-3 bg-slate-950/85 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-800 text-[11px] text-slate-300">
+      <div className="absolute bottom-3 right-3 z-10 hidden sm:flex items-center gap-3 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-200 text-[11px] text-slate-700 shadow-lg">
         <span className="flex items-center gap-1">
           <span className="w-3 h-2 rounded bg-emerald-500 border border-emerald-300 inline-block"></span>
           <span>Field status / verified evidence</span>
@@ -434,7 +434,7 @@ export const OpsMap: React.FC<OpsMapProps> = ({
         </span>
         <span className="flex items-center gap-1">
           <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping inline-block"></span>
-          <span className="text-red-400 font-semibold">External thermal observation</span>
+          <span className="text-red-600 font-semibold">External thermal observation</span>
         </span>
       </div>
     </div>
