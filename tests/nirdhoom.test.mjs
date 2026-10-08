@@ -528,7 +528,7 @@ test('Telegram UI does not fall back to generic t.me', () => {
   assert.doesNotMatch(telegram, /'https:\/\/t\.me'/);
   assert.match(telegram, /Configure Telegram first/);
   assert.match(telegram, /Connect my NIRDHOOM account/);
-  assert.match(telegram, /href=\{botUrl \|\| undefined\}/);
+  assert.match(telegram, /href=\{botUrl\}/);
 });
 test('landing district ticker records are explicitly demo-labelled', () => {
   const landing = read('src/components/Landing/AgenticLanding.tsx');
@@ -576,7 +576,7 @@ test('field-first UI kit and open-source interaction surfaces remain wired', () 
   assert.match(css, /prefers-reduced-motion/);
   assert.match(css, /spotlight/);
   assert.match(header, /backdrop-blur-xl/);
-  assert.match(header, /Field-first crop-residue network/);
+  assert.match(header, /Crop-residue field network/);
   assert.match(harvest, /Harvest pressure planning/);
   assert.match(auction, /Multi-offtake planning simulator/);
   assert.match(home, /home-product-status/);
