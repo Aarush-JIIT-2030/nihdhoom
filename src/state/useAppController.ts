@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ActiveTab } from '../components/Header';
 import { INITIAL_FIELDS, INITIAL_MACHINES, MOCK_FIRMS_FIRE_EVENTS } from '../data/mockData';
-import { Field, Machine, BurnEvent, LatLng } from '../types';
+import { Field, Machine, BurnEvent, LatLng, ResidueLot, Buyer, StorageYard } from '../types';
 import { supabase } from '../lib/supabase';
 import { normalizeField } from '../lib/domain';
 
@@ -32,6 +32,9 @@ export function useAppController() {
   const [fields, setFields] = useState<Field[]>(DEMO_MODE ? demoSeed.fields : []);
   const [machines, setMachines] = useState<Machine[]>(DEMO_MODE ? demoSeed.machines : []);
   const [fireEvents, setFireEvents] = useState<BurnEvent[]>(DEMO_MODE ? demoSeed.fireEvents : []);
+  const [residueLots, setResidueLots] = useState<ResidueLot[]>([]);
+  const [buyers, setBuyers] = useState<Buyer[]>([]);
+  const [storageYards, setStorageYards] = useState<StorageYard[]>([]);
   const [selectedField, setSelectedField] = useState<Field | null>(DEMO_MODE ? demoSeed.fields[0] || null : null);
   const [loadingLiveData, setLoadingLiveData] = useState(!DEMO_MODE && Boolean(supabase));
   const [liveDataError, setLiveDataError] = useState<string | null>(null);
@@ -57,15 +60,21 @@ export function useAppController() {
     setLoadingLiveData(true);
     setLiveDataError(null);
     const client = supabase;
-    const [{ data: fieldRows, error: fieldError }, { data: machineRows, error: machineError }] =
+    const [{ data: fieldRows, error: fieldError }, { data: machineRows, error: machineError }, { data: lotRows, error: lotError }, { data: demandRows, error: demandError }, { data: yardRows, error: yardError }] =
       await Promise.all([
         client.from('fields').select('id,external_id,owner_id,khasra_no,village,block,district,acreage,crop,variety,expected_harvest_date,clearance_deadline,status,moisture_pct,center_lat,center_lng,geometry,boundary_geojson,boundary_source,boundary_verified,geometry_area_acres'),
         client.from('machines').select('id,external_id,name,machine_type,owner_name,operator_name,operator_phone,status,capacity_acres_day,tractor_hp_required,residue_types,operating_conditions,capability_source,capability_source_date,fuel_pct,current_lat,current_lng,operator_user_id'),
+        client.from('residue_lots').select('id,field_id,farmer_id,crop,residue_type,estimated_quantity_tonnes,quantity_tonnes,verified_quantity_tonnes,moisture_pct,quality_grade,quality_notes,bale_type,harvest_date,ready_from,pickup_deadline,machine_id,status,geometry_provenance,verification_source,verified_at,assigned_buyer_id,qr_code,baled_at,created_at'),
+        client.from('buyer_demands').select('id,buyer_id,buyer_name,residue_type,target_tonnes,pickup_deadline,status'),
+        client.from('storage_yards').select('id,external_id,name,latitude,longitude,capacity_tonnes,current_load_tonnes,incoming_tonnes,status,source'),
       ]);
-    if (fieldError || machineError) {
-      setLiveDataError(fieldError?.message || machineError?.message || 'Unable to load live operational data');
+    if (fieldError || machineError || lotError || demandError || yardError) {
+      setLiveDataError(fieldError?.message || machineError?.message || lotError?.message || demandError?.message || yardError?.message || 'Unable to load live operational data');
       setFields([]);
       setMachines([]);
+      setResidueLots([]);
+      setBuyers([]);
+      setStorageYards([]);
       setSelectedField(null);
       setLoadingLiveData(false);
       return;
@@ -104,6 +113,58 @@ export function useAppController() {
     }));
     setFields(normalizedFields);
     setMachines(normalizedMachines);
+    const normalizedLots: ResidueLot[] = (lotRows || []).map((lot) => ({
+      id: String(lot.id),
+      field_id: String(lot.field_id),
+      farmer_id: String(lot.farmer_id),
+      crop: String(lot.crop || 'Paddy'),
+      residue_type: String(lot.residue_type || 'PADDY_STRAW'),
+      estimated_quantity_tonnes: lot.estimated_quantity_tonnes == null ? null : Number(lot.estimated_quantity_tonnes),
+      quantity_tonnes: lot.quantity_tonnes == null ? null : Number(lot.quantity_tonnes),
+      verified_quantity_tonnes: lot.verified_quantity_tonnes == null ? null : Number(lot.verified_quantity_tonnes),
+      moisture_pct: lot.moisture_pct == null ? null : Number(lot.moisture_pct),
+      quality_grade: lot.quality_grade || null,
+      quality_notes: lot.quality_notes || null,
+      bale_type: lot.bale_type || null,
+      harvest_date: lot.harvest_date || null,
+      ready_from: lot.ready_from || null,
+      pickup_deadline: lot.pickup_deadline || null,
+      machine_id: lot.machine_id || null,
+      status: String(lot.status || 'AVAILABLE'),
+      geometry_provenance: lot.geometry_provenance || {},
+      verification_source: lot.verification_source || null,
+      verified_at: lot.verified_at || null,
+      assigned_buyer_id: lot.assigned_buyer_id || null,
+      qr_code: lot.qr_code || null,
+      baled_at: lot.baled_at || null,
+      created_at: lot.created_at || undefined,
+    }));
+    const normalizedBuyers: Buyer[] = (demandRows || []).map((d) => ({
+      id: String(d.buyer_id || d.id),
+      name: String(d.buyer_name || 'Buyer demand'),
+      type: 'CBG',
+      location_name: 'Connected buyer',
+      price_per_tonne: 0,
+      moisture_ceiling: 100,
+      silica_tolerance: 'Not established',
+      demand_tonnes: Number(d.target_tonnes || 0),
+      margin_tier: 'MEDIUM',
+      description: `Demand window through ${d.pickup_deadline || 'date not supplied'} • status ${d.status || 'OPEN'}`,
+    }));
+    const normalizedYards: StorageYard[] = (yardRows || []).map((y) => ({
+      id: String(y.external_id || y.id),
+      name: String(y.name || 'Storage yard'),
+      location: { lat: Number(y.latitude || 0), lng: Number(y.longitude || 0) },
+      capacity_tonnes: Number(y.capacity_tonnes || 0),
+      current_load: Number(y.current_load_tonnes || 0),
+      incoming_tonnes: Number(y.incoming_tonnes || 0),
+      moisture_alert: false,
+      status: String(y.status || 'AVAILABLE') as StorageYard['status'],
+      provenance: 'LIVE_RECORD',
+    }));
+    setResidueLots(normalizedLots);
+    setBuyers(normalizedBuyers);
+    setStorageYards(normalizedYards);
     setFireEvents([]);
     setSelectedField((current) => normalizedFields.find((f) => f.id === current?.id) || normalizedFields[0] || null);
     setLoadingLiveData(false);
@@ -153,6 +214,9 @@ export function useAppController() {
   };
 
   return {
+    residueLots,
+    buyers,
+    storageYards,
     demoMode: DEMO_MODE,
     loadingLiveData,
     liveDataError,
