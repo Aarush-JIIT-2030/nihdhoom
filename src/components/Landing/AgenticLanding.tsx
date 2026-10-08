@@ -32,7 +32,6 @@ import { ActiveTab } from '../Header';
 
 interface AgenticLandingProps {
   onNavigateTab: (tab: ActiveTab) => void;
-  openPitchDrawer: () => void;
   acresScheduled?: number;
   co2Avoided?: number;
   firmsZeroBurnCount?: number;
@@ -426,12 +425,6 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
               desc: 'Illustrative routing across potential residue offtake pathways; buyer terms require connected offers.',
               tag: 'Wedge 5',
               badgeColor: 'text-teal-300 bg-teal-950/60 border-teal-500/30',
-            },
-            {
-              title: '🌿 Carbon Market Simulator',
-              desc: 'Illustrative carbon-market workflow; registry issuance and retirement are not connected.',
-              tag: 'Outcome Credits',
-              badgeColor: 'text-emerald-300 bg-emerald-950/60 border-emerald-500/30',
             },
             {
               tab: 'FARMER_ONBOARDING' as ActiveTab,
