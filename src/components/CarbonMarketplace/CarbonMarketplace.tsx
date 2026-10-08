@@ -163,7 +163,7 @@ export const CarbonMarketplace: React.FC = () => {
             <div>
               <div className="flex items-center gap-2 flex-wrap">
                 <h3 className="font-extrabold text-lg text-white font-['Outfit']">
-                  Carbon Market Simulator
+                  Impact & carbon evidence (advanced)
                 </h3>
                 <span className="badge badge-emerald text-xs">Verra · Gold Standard · ART</span>
               </div>
@@ -206,6 +206,23 @@ export const CarbonMarketplace: React.FC = () => {
         </div>
       </div>
 
+      <section className="carbon-evidence-first rounded-2xl border border-emerald-200 bg-emerald-50/80 p-4">
+        <div className="text-[10px] font-black uppercase tracking-[0.16em] text-emerald-800">Evidence first</div>
+        <h4 className="mt-1 text-base font-extrabold text-emerald-950">Carbon is an output of a traceable residue journey.</h4>
+        <p className="mt-1 max-w-3xl text-xs leading-5 text-emerald-900/70">
+          Field → residue lot → pickup → measured weight → destination → evidence → impact calculation.
+          No registry issuance, retirement or financial settlement is implied by this simulator.
+        </p>
+        <div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-6">
+          {['Field', 'Residue', 'Weight', 'Destination', 'Evidence', 'Impact'].map((step, index) => (
+            <div key={step} className="rounded-xl border border-emerald-100 bg-white/80 px-2.5 py-2 text-center">
+              <div className="text-[10px] font-black text-emerald-800">{String(index + 1).padStart(2, '0')}</div>
+              <div className="mt-0.5 text-[11px] font-bold text-emerald-950">{step}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Market Overview Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
@@ -220,12 +237,12 @@ export const CarbonMarketplace: React.FC = () => {
             sub: `${MARKET_LISTINGS.filter(l => l.status !== 'SOLD_OUT').reduce((s, l) => s + l.available_credits, 0)} credits available`,
           },
           {
-            label: 'Nirdhoom Credits',
+            label: 'Illustrative impact record',
             value: '72 tCO₂e',
             icon: ShieldCheck,
             color: 'text-emerald-400',
             border: 'border-emerald-500/30',
-            sub: 'Sangrur 2026 vintage',
+            sub: 'Not a registry-issued credit',
           },
           {
             label: 'Best Price Live',
