@@ -487,7 +487,7 @@ test('provider and demo-label contracts stay truthful', () => {
   assert.doesNotMatch(map, /Subsidised Balers/);
   assert.doesNotMatch(map, /External Fire Storm/);
   assert.doesNotMatch(landing, /Carbon Credit Marketplace/);
-  assert.match(landing, /Carbon Market Simulator/);
+  assert.doesNotMatch(landing, /Carbon Market Simulator|Competition Pitch Center|Judge Defense|2-Minute Competition Demo/);
 });
 
 test('satellite and landing evidence labels stay truthful', () => {
