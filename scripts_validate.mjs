@@ -147,7 +147,7 @@ const checks = [
   ['residue lot provenance ledger', residueProvenance.includes('residue_lot_events') && residueProvenance.includes('verification_source') && residueProvenance.includes('revoke insert, update, delete on public.residue_lot_events')],
   ['first-class residue lot model', residueModel.includes('export interface ResidueLot') && read('supabase/migrations/202610080002_nirdhoom_residue_lot_first_class.sql').includes('farmer_id uuid') && read('supabase/migrations/202610080002_nirdhoom_residue_lot_first_class.sql').includes('record_residue_lot_event')],
   ['machine capability provenance', machineCapability.includes('tractor_hp_required') && machineCapability.includes('capability_source')],
-  ['provenance-aware residue journey', residueJourney.includes('Residue lot journey') && residueJourney.includes('Supporting evidence only') && app.includes('ResidueLotJourney')],
+  ['provenance-aware residue journey', residueJourney.includes('FIELD EVIDENCE TIMELINE') && residueJourney.includes('supporting evidence only') && app.includes('FieldEvidenceTimeline')],
   ['machine map is field-only', !opsMap.includes("Network Globe") && !opsMap.includes('dark_all') && !opsMap.includes("setMapMode")],
   ['farmer bilingual navigation', farmerLabels.includes("hi: {") && app.includes("farmerLabels") && read('src/components/Header.tsx').includes('हिंदी')],
   ['field evidence timeline', residueJourney.includes('FIELD EVIDENCE TIMELINE') && residueJourney.includes('supporting evidence only')],
