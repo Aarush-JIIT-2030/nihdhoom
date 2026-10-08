@@ -240,7 +240,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
 
         {/* Full-Width Interactive 3D Geospatial Digital Twin Banner */}
         <div 
-          onClick={() => onNavigateTab('DIGITAL_TWIN_3D')}
+          onClick={() => onNavigateTab('OPS_CONSOLE')}
           className="relative z-10 mt-4 rounded-2xl overflow-hidden border border-emerald-500/40 group bg-gradient-to-r from-emerald-50 via-white to-amber-50 p-4 max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 cursor-pointer hover:border-emerald-400 transition-all shadow-xl hover:shadow-emerald-500/20"
         >
           <div className="flex items-center gap-3.5">
@@ -323,8 +323,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
           else if (id === 'vrp') onNavigateTab('OPS_CONSOLE');
           else if (id === 'baler') onNavigateTab('BALER_OPERATOR');
           else if (id === 'nasa') onNavigateTab('SATELLITE_AUDIT');
-          else if (id === 'carbon') onNavigateTab('CARBON_MARKET');
-          else onNavigateTab('AGENTIC_CONSOLE');
+          else onNavigateTab('OPS_CONSOLE');
         }} />
       </section>
 
@@ -369,7 +368,6 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {[
             {
-              tab: 'AGENTIC_CONSOLE' as ActiveTab,
               title: '🤖 Agentic Swarm Console',
               desc: 'Operational coordination concepts with routing, evidence and assistant workflows.',
               tag: 'Agentic AI',
@@ -383,14 +381,12 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
               badgeColor: 'text-emerald-300 bg-emerald-950/60 border-emerald-500/30',
             },
             {
-              tab: 'DIGITAL_TWIN_3D' as ActiveTab,
               title: '🌐 3D Geospatial Digital Twin',
               desc: 'Three.js interactive Punjab Malwa hotspot with orbiting NOAA-20 satellite, radar scan cone, and fire plumes.',
               tag: 'Three.js 3D',
               badgeColor: 'text-teal-300 bg-teal-950/60 border-teal-500/30',
             },
             {
-              tab: 'MACHINERY_3D' as ActiveTab,
               title: '🚜 3D Baler Twin',
               desc: 'Interactive illustrative machine visualization; availability must come from registered operational records.',
               tag: 'CRM Fleet',
@@ -432,7 +428,6 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
               badgeColor: 'text-teal-300 bg-teal-950/60 border-teal-500/30',
             },
             {
-              tab: 'CARBON_MARKET' as ActiveTab,
               title: '🌿 Carbon Market Simulator',
               desc: 'Illustrative carbon-market workflow; registry issuance and retirement are not connected.',
               tag: 'Outcome Credits',
