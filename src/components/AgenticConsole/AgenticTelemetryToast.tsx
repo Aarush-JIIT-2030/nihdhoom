@@ -90,7 +90,7 @@ export const AgenticTelemetryToast: React.FC<{
         <div className="flex items-center justify-between pb-2 border-b border-white/5 mb-2.5">
           <div className="flex items-center gap-2">
             <span className="badge--dot" />
-            <span className="text-[11px] font-mono uppercase tracking-wider font-bold telemetry-kicker">Operational signal stream · 
+            <span className="text-[11px] font-mono uppercase tracking-wider font-bold telemetry-kicker">operational signal stream · 
               Operations activity
             </span>
             <span className="text-[10px] font-mono telemetry-muted">
