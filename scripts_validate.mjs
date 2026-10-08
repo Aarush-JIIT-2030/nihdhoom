@@ -151,7 +151,7 @@ const checks = [
   ['provenance-aware residue journey', residueJourney.includes('FIELD EVIDENCE TIMELINE') && residueJourney.includes('supporting evidence only') && app.includes('FieldEvidenceTimeline')],
   ['machine map is field-only', !opsMap.includes("Network Globe") && !opsMap.includes('dark_all') && !opsMap.includes("setMapMode")],
   ['agricultural GIS layer stack', opsMap.includes('showResidue') && opsMap.includes('showBuyers') && opsMap.includes('showWeather') && opsMap.includes('showRoute') && opsMap.includes('FIRMS observations')],
-  ['farmer bilingual navigation', farmerLabels.includes("hi: {") && app.includes("farmerLabels") && read('src/components/Header.tsx').includes('हिंदी')],
+  ['farmer bilingual navigation', farmerLabels.includes("hi: {") && read('src/components/Header.tsx').includes("farmerLabels") && read('src/components/Header.tsx').includes("हिंदी")],
   ['field evidence timeline', residueJourney.includes('FIELD EVIDENCE TIMELINE') && residueJourney.includes('supporting evidence only')],
   ['RLS role matrix contract', rlsMatrix.includes('farmer_a_cannot_read_farmer_b_field') && rlsMatrix.includes('operator_a_cannot_read_operator_b_job') && rlsMatrix.includes('buyer_a_cannot_read_buyer_b_demand')],
   ['stale GPS is surfaced to operators', read('src/components/FieldOperator/BalerPWA.tsx').includes('gpsStale') && read('src/components/FieldOperator/BalerPWA.tsx').includes('GPS reading is stale')],
