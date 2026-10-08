@@ -2,9 +2,9 @@ import { useEffect, useRef, useState, startTransition } from 'react';
 import { prefetchWorkspace } from '../lib/workspacePrefetch';
 import { farmerLanguageLabels, type FarmerLanguage } from '../i18n/farmerLabels';
 import {
-  Activity, BarChart3, Bot, ChevronDown, ClipboardList, HelpCircle, Leaf, Map,
-  Menu, MessageSquare, Satellite, Search, ShieldCheck, Sparkles, Smartphone,
-  TrendingUp, UserCheck, Wheat, X, Tractor, CircleDollarSign, Trophy
+  Activity, BarChart3, ChevronDown, ClipboardList, Leaf, Map,
+  Menu, MessageSquare, ShieldCheck, Smartphone, TrendingUp, UserCheck, Wheat,
+  X, Tractor
 } from 'lucide-react';
 
 export type ActiveTab =
@@ -45,10 +45,7 @@ const secondaryNav: NavItem[] = [
   { id: 'FARMER_SURFACE', label: 'Telegram Help', icon: MessageSquare, description: 'Get updates and help on Telegram' },
   { id: 'FARMER_KYC', label: 'My Profile', icon: UserCheck, description: 'Phone verification and farmer consent' },
   { id: 'OFFTAKE_AUCTION', label: 'Buyers', icon: TrendingUp, description: 'See buyer needs for collected parali' },
-  { id: 'CARBON_MARKET', label: 'Carbon (Advanced)', icon: CircleDollarSign, description: 'Advanced carbon evidence workspace' },
-  { id: 'AGENTIC_CONSOLE', label: 'AI Helper (Advanced)', icon: Bot, description: 'Bounded operations assistant' },
-  { id: 'DIGITAL_TWIN_3D', label: '3D Field View', icon: Activity, description: 'Spatial field context' },
-  { id: 'MACHINERY_3D', label: '3D Machine View', icon: Activity, description: 'Machine context' },
+
 ];
 
 export function Header({ activeTab, setActiveTab, demoMode }: HeaderProps) {
