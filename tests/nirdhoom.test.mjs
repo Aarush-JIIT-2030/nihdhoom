@@ -256,15 +256,21 @@ test('product home routes users to real workflows instead of presentation flows'
   assert.match(home, /Book parali pickup/);
   assert.match(home, /Track today's operation/);
   assert.match(home, /home-product-status/);
-  assert.match(home, /Find residue demand/);
+  assert.match(home, /Open residue market/);
   assert.doesNotMatch(home, /See the 2-minute demo/);
 });
 
-test('visible competition surfaces stay claim-safe', () => {
+test('retired pitch-only source files are gone from the product surface', () => {
+  assert.ok(!exists('src/components/DemoWalkthrough.tsx'));
+  assert.ok(!exists('src/components/PitchDefense/JudgesQnAPanel.tsx'));
+  assert.ok(!exists('src/components/PitchDefense/CompetitionCenter.tsx'));
+  assert.ok(!exists('src/components/PitchDefense/JudgePitchDrawer.tsx'));
+});
+
+test('visible product surfaces stay claim-safe', () => {
   const sources = [
     read('src/components/OpsConsole/OpsMap.tsx'),
     read('src/components/Animated/BentoGrid.tsx'),
-    read('src/components/PitchDefense/JudgePitchDrawer.tsx'),
     read('src/components/AgenticConsole/AgenticCommandCenter.tsx'),
     read('src/components/ThreeD/BalerModel3D.tsx'),
   ].join('\n');
@@ -274,7 +280,6 @@ test('visible competition surfaces stay claim-safe', () => {
   assert.doesNotMatch(sources, /UPI payout/i);
   assert.match(read('src/components/CarbonMarketplace/CarbonMarketplace.tsx'), /Impact & carbon evidence/);
 });
-
 
 test('application uses one field-first theme and no theme switcher', () => {
   const html = read('index.html');
@@ -456,19 +461,16 @@ test('operational map stays field-first and GIS-focused', () => {
 });
 
 
-test('homepage uses curated agriculture photography and visual storytelling', () => {
+test('homepage uses curated agriculture photography and product motion', () => {
   const home = read('src/components/CommandCenter/CommandCenter.tsx');
-  const css = read('src/index.css');
+  const css = read('src/styles/theme.css');
   assert.match(home, /from '..\/Animated\/Spotlight'/);
-  assert.match(home, /upload\.wikimedia\.org/);
-  assert.match(home, /home-visual-rail/);
-  assert.match(home, /home-photo-credit/);
-  assert.match(home, /fetchPriority="high"/);
-  assert.match(css, /home-hero-spotlight/);
-  assert.match(css, /home-visual-grid/);
-  assert.match(css, /prefers-reduced-motion:reduce/);
+  assert.match(home, /home-product-status/);
+  assert.match(home, /motion\/react/);
+  assert.match(home, /Track today's operation/);
+  assert.match(css, /home-status-grid/);
+  assert.match(css, /prefers-reduced-motion: reduce/);
 });
-
 
 test('provider and demo-label contracts stay truthful', () => {
   const assistant = read('api/assistant.ts');
