@@ -1764,3 +1764,161 @@ html[data-theme="kisan"] .nirdhoom-field-app .leaflet-container {
 @media(prefers-reduced-motion:reduce){
   .residue-journey-step{transition:none!important}
 }
+
+
+/* =========================================================
+   RESIDUE MARKET — verified supply / buyer demand language
+   ========================================================= */
+.market-hero-card{
+  border:1px solid #DDE5DC;
+  border-radius:20px;
+  background:linear-gradient(135deg,#FBFDF9,#FFFFFF);
+  padding:1.25rem;
+  box-shadow:0 10px 30px rgba(32,74,43,.06);
+}
+.market-eyebrow,.market-card-kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  color:#2D6A45;
+  font-size:.67rem;
+  font-weight:850;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+.market-hero-card h1{
+  margin:.35rem 0 0;
+  color:#17352A;
+  font-size:clamp(1.45rem,3vw,2.1rem);
+  line-height:1.08;
+  font-weight:900;
+}
+.market-hero-card p{
+  max-width:50rem;
+  margin:.45rem 0 0;
+  color:#65736A;
+  font-size:.88rem;
+  line-height:1.55;
+}
+.market-primary-action{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  min-height:44px;
+  margin-top:.75rem;
+  border:1px solid #2D6A45;
+  border-radius:12px;
+  background:#2D6A45;
+  color:#fff;
+  padding:.65rem .85rem;
+  font-size:.75rem;
+  font-weight:850;
+}
+.market-card{
+  border:1px solid #E0E7DE;
+  border-radius:18px;
+  background:#fff;
+  padding:1rem;
+  box-shadow:0 6px 20px rgba(32,74,43,.045);
+}
+.market-card-heading{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:.75rem;
+}
+.market-card-heading h2{
+  margin:.2rem 0 0;
+  color:#17352A;
+  font-size:1rem;
+  font-weight:850;
+}
+.market-count,.market-status{
+  border-radius:999px;
+  background:#EEF4EC;
+  color:#557060;
+  padding:.3rem .55rem;
+  font-size:.62rem;
+  font-weight:800;
+}
+.market-empty{
+  display:grid;
+  justify-items:center;
+  text-align:center;
+  border:1px dashed #CBD8C9;
+  border-radius:14px;
+  padding:1.25rem;
+  color:#65736A;
+}
+.market-empty-icon{width:1.5rem;height:1.5rem;color:#6A9474}
+.market-empty strong{margin-top:.5rem;color:#304B38;font-size:.78rem}
+.market-empty p{margin:.25rem 0 0;font-size:.68rem;line-height:1.45}
+.market-list-row,.market-demand-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:.75rem;
+  border:1px solid #E5EBE3;
+  border-radius:13px;
+  padding:.75rem;
+  background:#FAFCF9;
+}
+.market-demand-row{display:block}
+.market-row-title{color:#304B38;font-size:.76rem;font-weight:850}
+.market-row-meta{margin-top:.18rem;color:#718076;font-size:.66rem;line-height:1.4}
+.market-tonnage{color:#2D6A45;font-size:.72rem;font-weight:850;white-space:nowrap}
+.market-secondary-action{
+  display:inline-flex;
+  align-items:center;
+  gap:.35rem;
+  min-height:38px;
+  margin-top:.6rem;
+  border:1px solid #CFE0CF;
+  border-radius:10px;
+  background:#F2F8F1;
+  color:#285C3C;
+  padding:.5rem .7rem;
+  font-size:.68rem;
+  font-weight:850;
+}
+.market-full-action{width:100%;justify-content:center}
+.market-pool-card{
+  border:1px solid #E1E9DF;
+  border-radius:15px;
+  background:#FAFCF9;
+  padding:.85rem;
+}
+.market-progress{
+  height:8px;
+  overflow:hidden;
+  margin-top:.75rem;
+  border-radius:999px;
+  background:#E8EEE6;
+}
+.market-progress > div{
+  height:100%;
+  border-radius:inherit;
+  background:#2D6A45;
+}
+.market-progress-meta{
+  display:flex;
+  justify-content:space-between;
+  margin-top:.4rem;
+  color:#718076;
+  font-size:.63rem;
+}
+.market-notice{
+  border:1px solid #BFD9C4;
+  border-radius:12px;
+  background:#F0F8F1;
+  color:#285C3C;
+  padding:.7rem .8rem;
+  font-size:.7rem;
+}
+.market-footnote{
+  display:flex;
+  align-items:center;
+  gap:.4rem;
+  color:#718076;
+  font-size:.65rem;
+}
