@@ -1,4 +1,4 @@
-# NIRDHOOM — Competition Readiness Checklist
+# NIRDHOOM — Product Release Readiness Checklist
 
 ## Product
 - [x] Farmer-first five-step journey
@@ -14,7 +14,7 @@
 - [x] Payment movement disabled
 - [x] Accessible workspace loading state
 - [x] Lazy-loaded secondary/3D workspaces
-- [x] Competition pitch center
+- [x] Product-first public shell with presentation-only surfaces removed
 
 ## Reliability
 - [x] Server-authoritative booking boundary
@@ -38,20 +38,11 @@ Use the following evidence in the pitch, with the caveat that these are research
 - CEEW reports an all-inclusive CRM rental package around INR 2,000/acre in Punjab; this is useful market context, not a NIRDHOOM price.
 - The product thesis should therefore be stated as a coordination/evidence layer, not as another generic farmer app.
 
-## Competition presentation
-- [x] RIDE startup story
-- [x] WarriorHacks community-solution story
-- [x] 2-minute demo route
-- [x] Research-backed problem proof
-- [x] Judge scorecard mapped to Impact / Feasibility / UX / Technical Craft
-- [x] Field Clearance Passport as final demo trust artifact
-- [x] Evidence-based unit-economics hypothesis for RIDE
-- [x] Judge defence with truth boundaries
-- [x] No payment/settlement overclaims
-- [ ] Record final demo video
-- [ ] Capture final screenshots
-- [ ] Verify live demo URL from an external device
-- [ ] Complete each event's final form/track selection
+## Launch validation
+- [ ] Verify the deployed site from an external device
+- [ ] Capture final product screenshots
+- [ ] Complete a real Telegram bot webhook/link test
+- [ ] Complete a supervised end-to-end field-pilot validation
 
 ## Evidence discipline
 
