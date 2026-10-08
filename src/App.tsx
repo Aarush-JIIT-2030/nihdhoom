@@ -1,6 +1,5 @@
 import { lazy, Suspense, useEffect, useCallback, startTransition } from 'react';
 import { Header, ActiveTab } from './components/Header';
-import { LiveKPIDashboard } from './components/LiveKPIDashboard';
 const OpsMap = lazy(() => import('./components/OpsConsole/OpsMap').then((m) => ({ default: m.OpsMap })));
 const VRPDispatchPanel = lazy(() => import('./components/OpsConsole/VRPDispatchPanel').then((m) => ({ default: m.VRPDispatchPanel })));
 const FieldDetailDrawer = lazy(() => import('./components/OpsConsole/FieldDetailDrawer').then((m) => ({ default: m.FieldDetailDrawer })));
