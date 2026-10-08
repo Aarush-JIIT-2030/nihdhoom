@@ -129,12 +129,29 @@ export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: H
                 <Menu className="h-4 w-4" /> More <ChevronDown className={`h-3.5 w-3.5 transition-transform ${moreOpen ? 'rotate-180' : ''}`} />
               </button>
               {moreOpen && (
-                <div className="field-more-menu" role="menu">
-                  <div className="px-3 pb-2 pt-1">
-                    <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-900/45">Explore NIRDHOOM</div>
-                    <div className="mt-1 text-[11px] text-emerald-900/55">Machines, proof, buyers and advanced tools.</div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-1.5">
+                <>
+                  <button
+                    type="button"
+                    aria-label="Close More menu"
+                    className="field-more-backdrop"
+                    onClick={() => setMoreOpen(false)}
+                  />
+                  <div className="field-more-menu" role="menu" aria-label="More navigation">
+                    <div className="flex items-start justify-between gap-4 px-4 pb-3 pt-1">
+                      <div>
+                        <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-900/45">Explore NIRDHOOM</div>
+                        <div className="mt-1 text-[11px] text-emerald-900/55">Machines, proof, buyers and advanced tools.</div>
+                      </div>
+                      <button
+                        type="button"
+                        aria-label="Close More menu"
+                        onClick={() => setMoreOpen(false)}
+                        className="field-more-close"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2.5">
                     {secondaryNav.map((item) => {
                       const Icon = item.icon;
                       return (
@@ -145,8 +162,9 @@ export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: H
                         </button>
                       );
                     })}
+                    </div>
                   </div>
-                </div>
+                </>
               )}
             </div>
           </nav>
