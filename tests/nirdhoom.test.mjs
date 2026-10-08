@@ -240,42 +240,24 @@ test('Telegram Mini App identity is verified server-side', () => {
 });
 
 
-test('competition demo ends with a field clearance passport and avoids unsupported claims', () => {
-  const demo = read('src/components/DemoWalkthrough.tsx');
-  const passport = read('src/components/VerificationLayer/ClearancePassport.tsx');
-  assert.match(demo, /ClearancePassport/);
-  assert.match(demo, /trust proof/i);
-  assert.doesNotMatch(demo, /subsidised balers/);
-  assert.doesNotMatch(demo, /late-sowing penalty exposure/);
-  assert.match(passport, /Field Clearance Passport/);
-  assert.match(passport, /not a legal certificate/);
-  assert.match(passport, /payment receipt/);
-});
-
-
-test('research-backed competition story', () => {
-  const home = read('src/components/CommandCenter/CommandCenter.tsx');
-  const center = read('src/components/PitchDefense/CompetitionCenter.tsx');
-  assert.match(home, /86%/);
-  assert.match(home, /15%/);
-  assert.match(center, /WHY THIS PROBLEM, WHY NOW/);
-  assert.match(center, /Impact/);
-  assert.match(center, /Feasibility/);
-  assert.match(center, /Technical craft/);
-});
-
-test('competition center is wired for both RIDE and WarriorHacks', () => {
-  const header = read('src/components/Header.tsx');
+test('product shell does not expose pitch-only surfaces', () => {
   const app = read('src/App.tsx');
-  const center = read('src/components/PitchDefense/CompetitionCenter.tsx');
-  assert.match(header, /COMPETITION_CENTER/);
-  assert.match(header, /Competition Pitch/);
-  assert.match(app, /const CompetitionCenter = lazy/);
-  assert.match(app, /activeTab === 'COMPETITION_CENTER'/);
-  assert.match(center, /RIDE HACK/);
-  assert.match(center, /WARRIORHACKS 2\.0/);
-  for (const step of ['Field', 'Book', 'Machine', 'Proof', 'Parali']) assert.match(center, new RegExp(step));
-  assert.match(center, /Real payment or payout movement/);
+  const header = read('src/components/Header.tsx');
+  const prefetch = read('src/lib/workspacePrefetch.ts');
+  const home = read('src/components/CommandCenter/CommandCenter.tsx');
+  assert.doesNotMatch(app, /DemoWalkthrough|JudgesQnAPanel|CompetitionCenter|JudgePitchDrawer|DEMO_RUNNER|JUDGE_DEFENSE|COMPETITION_CENTER/);
+  assert.doesNotMatch(header, /Competition Pitch|Product Q&A|How NIRDHOOM Works|openPitchDrawer/);
+  assert.doesNotMatch(prefetch, /DemoWalkthrough|JudgesQnAPanel|CompetitionCenter/);
+  assert.doesNotMatch(home, /2-minute demo|Competition Demo|Pitch Center/);
+});
+
+test('product home routes users to real workflows instead of presentation flows', () => {
+  const home = read('src/components/CommandCenter/CommandCenter.tsx');
+  assert.match(home, /Book parali pickup/);
+  assert.match(home, /Track today's operation/);
+  assert.match(home, /home-product-status/);
+  assert.match(home, /Find residue demand/);
+  assert.doesNotMatch(home, /See the 2-minute demo/);
 });
 
 test('visible competition surfaces stay claim-safe', () => {
@@ -582,6 +564,7 @@ test('field-first UI kit and open-source interaction surfaces remain wired', () 
   const header = read('src/components/Header.tsx');
   const harvest = read('src/components/OfftakeAndForecast/HarvestForecast.tsx');
   const auction = read('src/components/OfftakeAndForecast/MultiOfftakeAuction.tsx');
+  const home = read('src/components/CommandCenter/CommandCenter.tsx');
   assert.match(css, /NIRDHOOM UI KIT v2/);
   assert.match(css, /prefers-reduced-motion/);
   assert.match(css, /spotlight/);
@@ -589,6 +572,7 @@ test('field-first UI kit and open-source interaction surfaces remain wired', () 
   assert.match(header, /Field-first crop-residue network/);
   assert.match(harvest, /Harvest pressure planning/);
   assert.match(auction, /Multi-offtake planning simulator/);
+  assert.match(home, /home-product-status/);
 });
 
 
