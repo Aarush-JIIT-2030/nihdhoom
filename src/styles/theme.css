@@ -2104,6 +2104,50 @@ html[data-theme="kisan"] .nirdhoom-field-app .leaflet-container {
 }
 
 
+/* Centered editorial alignment for the public product shell. */
+html[data-theme="kisan"] .nirdhoom-field-app .home-hero-content {
+  max-width: 980px;
+  width: 100%;
+  margin-inline: auto;
+  align-items: center;
+  text-align: center;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .home-eyebrow,
+html[data-theme="kisan"] .nirdhoom-field-app .home-photo-credit {
+  margin-inline: auto;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .home-hero p {
+  margin-inline: auto;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .home-actions,
+html[data-theme="kisan"] .nirdhoom-field-app .home-trust-row {
+  justify-content: center;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .home-intro {
+  grid-template-columns: 1fr;
+  max-width: 900px;
+  margin-inline: auto;
+  text-align: center;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .home-intro p {
+  max-width: 760px;
+  margin-inline: auto;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .home-field-stories-heading,
+html[data-theme="kisan"] .nirdhoom-field-app .home-role-heading {
+  grid-template-columns: 1fr;
+  text-align: center;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .home-field-stories-heading p,
+html[data-theme="kisan"] .nirdhoom-field-app .home-role-heading p {
+  max-width: 760px;
+  margin-inline: auto;
+}
+html[data-theme="kisan"] .nirdhoom-field-app .home-product-status > div:first-child {
+  text-align: center;
+  align-items: center;
+}
+
 /* =========================================================
    PRODUCT HOME — open-source-inspired motion + bento polish
    Uses Motion for React and the existing React Bits-style
