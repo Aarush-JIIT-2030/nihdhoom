@@ -74,13 +74,13 @@ const stageFor = (field: Field, job?: JobRecord, lot?: LotRecord) => {
 const journeyStages = ['REGISTERED', 'SCHEDULED', 'DISPATCH', 'BALING', 'EVIDENCE', 'VERIFIED', 'RESIDUE'] as const;
 
 const stageClasses: Record<string, string> = {
-  REGISTERED: 'border-slate-700 bg-slate-900/70 text-slate-300',
-  SCHEDULED: 'border-cyan-500/30 bg-cyan-500/10 text-cyan-200',
-  DISPATCH: 'border-indigo-500/30 bg-indigo-500/10 text-indigo-200',
-  BALING: 'border-amber-500/30 bg-amber-500/10 text-amber-200',
-  EVIDENCE: 'border-violet-500/30 bg-violet-500/10 text-violet-200',
-  RESIDUE: 'border-orange-500/30 bg-orange-500/10 text-orange-200',
-  VERIFIED: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-200',
+  REGISTERED: '',
+  SCHEDULED: 'is-sky',
+  DISPATCH: 'is-sky',
+  BALING: 'is-wheat',
+  EVIDENCE: 'is-wheat',
+  RESIDUE: 'is-ember',
+  VERIFIED: 'is-green',
 };
 
 export function FieldJobBoard({
@@ -227,58 +227,58 @@ export function FieldJobBoard({
   const lotCount = rows.filter((r) => r.lot).length;
 
   return (
-    <div className="field-job-board farmer-surface farmer-fields space-y-4">
-      <section className="rounded-2xl border border-emerald-500/20 bg-slate-950/75 p-5 shadow-xl shadow-emerald-950/10">
-        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 text-emerald-300 text-[11px] font-black uppercase tracking-[0.18em]">
+    <div className="tone-adapt field-job-board farmer-surface farmer-fields ui-stack">
+      <section className="ui-intro">
+        <>
+          <div className="ui-intro-copy">
+            <div className="ui-eyebrow">
               <Activity className="h-4 w-4" /> My fields & pickup status
             </div>
-            <h1 className="mt-1 text-2xl sm:text-3xl font-black text-white">Your fields, pickup and parali status</h1>
-            <p className="mt-1 max-w-3xl text-sm text-slate-400">
+            <h1 className="ui-title">Your fields, pickup and parali status</h1>
+            <p className="ui-lede">
               See what is happening to each field, what has been done, and what needs to happen next.
               This view surfaces the next operational action instead of only reporting totals.
             </p>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <button onClick={onOpenDispatch} className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-3 py-2 text-xs font-bold text-white hover:bg-indigo-500">
+          <div className="ui-actions">
+            <button onClick={onOpenDispatch} className="ui-btn is-primary">
               <Route className="h-3.5 w-3.5" /> Find machine
             </button>
-            <button onClick={onOpenResidue} className="inline-flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs font-bold text-amber-200 hover:bg-amber-500/20">
+            <button onClick={onOpenResidue} className="ui-btn is-wheat">
               <PackageCheck className="h-3.5 w-3.5" /> Parali
             </button>
-            <button onClick={onOpenImpact} className="inline-flex items-center gap-2 rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-2 text-xs font-bold text-cyan-200 hover:bg-cyan-500/20">
+            <button onClick={onOpenImpact} className="ui-btn is-ghost">
               <ShieldCheck className="h-3.5 w-3.5" /> Why it matters
             </button>
           </div>
-        </div>
+        </>
       </section>
 
-      <section className="grid grid-cols-2 lg:grid-cols-5 gap-2.5">
+      <section className="ui-stats">
         {[
-          ['My fields', rows.length, 'text-white'],
-          ['Needs action', actionCount, 'text-amber-300'],
-          ['Proof', evidenceCount, 'text-violet-300'],
-          ['Parali lots', lotCount, 'text-orange-300'],
-          ['Ready for buyer', readyCount, 'text-emerald-300'],
+          ['My fields', rows.length, ''],
+          ['Needs action', actionCount, 'is-wheat'],
+          ['Proof', evidenceCount, 'is-sky'],
+          ['Parali lots', lotCount, 'is-ember'],
+          ['Ready for buyer', readyCount, 'is-green'],
         ].map(([label, value, tone]) => (
-          <div key={String(label)} className="rounded-xl border border-slate-800 bg-slate-950/65 p-3">
-            <div className="text-[10px] uppercase tracking-wider text-slate-500">{label}</div>
-            <div className={`mt-1 text-xl font-black font-mono ${tone}`}>{value}</div>
+          <div key={String(label)} className={`ui-stat ${tone}`}>
+            <div className="ui-stat-label">{label}</div>
+            <div className="ui-stat-value">{value}</div>
           </div>
         ))}
       </section>
 
-      <section className="rounded-2xl border border-slate-800 bg-slate-950/60 p-3">
-        <div className="flex flex-col gap-3">
-          <label className="flex min-h-11 items-center gap-2 rounded-lg border border-slate-800 bg-slate-950 px-3 sm:max-w-md">
-            <MapPin className="h-4 w-4 shrink-0 text-emerald-400" aria-hidden="true" />
+      <section className="ui-stack">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <label className="ui-search w-full lg:max-w-sm">
+            <MapPin className="h-4 w-4 shrink-0" aria-hidden="true" />
             <span className="sr-only">Search fields</span>
             <input
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
               placeholder="Search field, village or machine"
-              className="min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-slate-500"
+              
               type="search"
               autoComplete="off"
             />
@@ -286,44 +286,45 @@ export function FieldJobBoard({
               <button
                 type="button"
                 onClick={() => setSearchTerm('')}
-                className="rounded-md px-2 py-1 text-xs font-bold text-slate-400 hover:bg-slate-800 hover:text-white"
+                className="ui-btn is-ghost is-sm"
                 aria-label="Clear field search"
               >
                 Clear
               </button>
             )}
           </label>
-          <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="flex rounded-lg border border-slate-800 bg-slate-950 p-1">
+          <div className="flex flex-wrap items-center gap-3 lg:ml-auto">
+          <div className="ui-seg" role="group" aria-label="Filter fields">
             {(['ALL', 'ACTION', 'READY'] as const).map((value) => (
               <button
                 key={value}
                 onClick={() => setFilter(value)}
-                className={`rounded-md px-3 py-1.5 text-[11px] font-bold transition ${filter === value ? 'bg-emerald-600 text-white' : 'text-slate-400 hover:text-white'}`}
+                className={filter === value ? 'is-on' : ''}
+                aria-pressed={filter === value}
               >
                 {value === 'ALL' ? 'All fields' : value === 'ACTION' ? 'Needs your attention' : 'Ready for buyer'}
               </button>
             ))}
           </div>
-          </div>
-          <div className="flex items-center gap-2 text-[11px] text-slate-500">
+          <div className="ui-chip">
             {loading && <Clock3 className="h-3.5 w-3.5 animate-spin" />}
             {demoMode ? 'Example data' : 'Live records'}
+          </div>
           </div>
         </div>
 
         {error && (
-          <div className="mt-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-200">
+          <div className="ui-note is-wheat">
             Live operational records could not be loaded: {error}
           </div>
         )}
 
         {visibleRows.length === 0 ? (
-          <div className="py-12 text-center text-sm text-slate-500">
+          <div className="ui-empty">
             {demoMode ? 'No synthetic fields match this filter.' : 'No authorized live field jobs match this filter.'}
           </div>
         ) : (
-          <div className="mt-3 grid gap-3">
+          <div className="grid gap-3">
             {visibleRows.map((row) => {
               const machine = row.machine;
               const latestProof = row.fieldProof[0];
@@ -332,16 +333,16 @@ export function FieldJobBoard({
               const stageTone = stageClasses[row.stage] || stageClasses.REGISTERED;
 
               return (
-                <article key={row.field.id} className="rounded-xl border border-slate-800 bg-slate-900/55 p-4 hover:border-slate-700 transition">
-                  <div className="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-4">
+                <article key={row.field.id} className="ui-row-card">
+                  <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:items-center">
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
-                        <button onClick={() => onSelectField(row.field)} className="text-left text-sm font-black text-white hover:text-emerald-300">
+                        <button onClick={() => onSelectField(row.field)} className="ui-row-title">
                           {row.field.khasra_no || row.field.id}
                         </button>
-                        <span className={`rounded-full border px-2 py-0.5 text-[10px] font-black ${stageTone}`}>{row.stage}</span>
+                        <span className={`ui-chip ${stageTone}`}>{row.stage}</span>
                         {deadlineRisk && (
-                          <span className="inline-flex items-center gap-1 rounded-full border border-red-500/30 bg-red-500/10 px-2 py-0.5 text-[10px] font-bold text-red-300">
+                          <span className="ui-chip is-ember">
                             <AlertTriangle className="h-3 w-3" /> Deadline risk
                           </span>
                         )}
@@ -357,52 +358,52 @@ export function FieldJobBoard({
                         })}
                       </div>
 
-                      <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500">
+                      <div className="ui-row-meta">
                         <span>{row.field.village || 'Village unknown'}</span>
                         <span>{Number(row.field.acreage || 0).toFixed(2)} acres</span>
                         <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" /> {row.field.center.lat.toFixed(4)}, {row.field.center.lng.toFixed(4)}</span>
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] min-w-0 xl:min-w-[500px]">
-                      <div className="rounded-lg border border-slate-800 bg-slate-950/70 p-2">
-                        <div className="text-slate-500">Machine</div>
-                        <div className="mt-1 flex items-center gap-1 text-slate-200 font-bold truncate">
-                          <Tractor className="h-3.5 w-3.5 text-emerald-300 shrink-0" /> {machine?.name || 'Unassigned'}
+                    <div className="ui-kv-grid grid-cols-2">
+                      <div className="ui-kv">
+                        <div className="ui-kv-label">Machine</div>
+                        <div className="ui-kv-value">
+                          <Tractor /> {machine?.name || 'Unassigned'}
                         </div>
                       </div>
-                      <div className="rounded-lg border border-slate-800 bg-slate-950/70 p-2">
-                        <div className="text-slate-500">Operator</div>
-                        <div className="mt-1 flex items-center gap-1 text-slate-200 font-bold truncate">
-                          <UserRound className="h-3.5 w-3.5 text-cyan-300 shrink-0" /> {machine?.operator_name || row.job?.operator_id || 'Unassigned'}
+                      <div className="ui-kv">
+                        <div className="ui-kv-label">Operator</div>
+                        <div className="ui-kv-value">
+                          <UserRound /> {machine?.operator_name || row.job?.operator_id || 'Unassigned'}
                         </div>
                       </div>
-                      <div className="rounded-lg border border-slate-800 bg-slate-950/70 p-2">
-                        <div className="text-slate-500">Proof</div>
-                        <div className="mt-1 flex items-center gap-1 text-slate-200 font-bold">
-                          {row.hasCompletionProof ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-300" /> : <FileCheck2 className="h-3.5 w-3.5 text-slate-500" />}
+                      <div className="ui-kv">
+                        <div className="ui-kv-label">Proof</div>
+                        <div className="ui-kv-value">
+                          {row.hasCompletionProof ? <CheckCircle2 /> : <FileCheck2 className="!text-[var(--faint)]" />}
                           {row.fieldProof.length} assets {row.hasLocationProof ? '· GPS' : ''}
                         </div>
                       </div>
-                      <div className="rounded-lg border border-slate-800 bg-slate-950/70 p-2">
-                        <div className="text-slate-500">Parali</div>
-                        <div className="mt-1 text-slate-200 font-bold">
+                      <div className="ui-kv">
+                        <div className="ui-kv-label">Parali</div>
+                        <div className="ui-kv-value">
                           {row.lot ? `${Number(row.lot.quantity_tonnes || 0).toFixed(1)} t · ${row.lot.status}` : 'No lot'}
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="mt-3 flex flex-col md:flex-row md:items-center md:justify-between gap-2 border-t border-slate-800 pt-3">
-                    <div className="text-[10px] text-slate-500">
+                  <div className="ui-row-foot">
+                    <div>
                       {row.job?.last_transition_at ? `Last transition ${new Date(row.job.last_transition_at).toLocaleString()}` : latestProof?.created_at ? `Proof received ${new Date(latestProof.created_at).toLocaleString()}` : 'No live transition/evidence timestamp available'}
-                      {row.job?.failure_reason && <span className="ml-2 text-red-300">Failure: {row.job.failure_reason}</span>}
+                      {row.job?.failure_reason && <span className="ml-2 text-[var(--ember-ink)]">Failure: {row.job.failure_reason}</span>}
                     </div>
                     <div className="flex items-center gap-2">
-                      {row.deadlineRisk && <span className="text-[10px] font-bold text-red-400">Deadline risk</span>}
-                      {row.action && <span className="text-[10px] font-bold text-amber-300">Next step</span>}
-                      {row.ready && <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-300"><CheckCircle2 className="h-3.5 w-3.5" /> Ready for buyer</span>}
-                      <button onClick={() => onSelectField(row.field)} className="rounded-md border border-slate-700 px-2.5 py-1.5 text-[10px] font-bold text-slate-200 hover:bg-slate-800">
+                      {row.deadlineRisk && <span className="ui-chip is-ember">Deadline risk</span>}
+                      {row.action && <span className="ui-chip is-wheat">Next step</span>}
+                      {row.ready && <span className="ui-chip is-green"><CheckCircle2 /> Ready for buyer</span>}
+                      <button onClick={() => onSelectField(row.field)} className="ui-btn is-sm">
                         See field
                       </button>
                     </div>
@@ -414,8 +415,8 @@ export function FieldJobBoard({
         )}
       </section>
 
-      <div className="flex items-center gap-2 text-[11px] text-slate-500">
-        <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
+      <div className="ui-note">
+        <ShieldCheck />
         Payment is not shown here because payments are not connected. Ready for buyer means operational records are sufficiently linked; settlement remains intentionally disabled.
       </div>
     </div>

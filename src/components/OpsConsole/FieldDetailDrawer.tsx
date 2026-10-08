@@ -34,21 +34,21 @@ export const FieldDetailDrawer: React.FC<FieldDetailDrawerProps> = ({
   const isCleared = field.status === 'CLEARED_PENDING_AUDIT' || field.status === 'VERIFIED_NON_BURN';
 
   return (
-    <div className="glass-panel p-4 border-emerald-500/40 shadow-2xl relative animate-in fade-in slide-in-from-bottom duration-200">
+    <div className="tone-adapt ui-card relative fade-in">
       {/* Header with Close */}
-      <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm">
+      <div className="mb-4 flex items-start justify-between gap-3 border-b border-[var(--line)] pb-4">
+        <div className="flex items-center gap-3">
+          <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[var(--wheat-soft)] text-lg">
             🌾
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h4 className="font-bold text-base text-white">{field.khasra_no}</h4>
-              <span className="badge badge-emerald text-[10px]">
+              <h4 className="ui-row-title">{field.khasra_no}</h4>
+              <span className="ui-chip is-sky">
                 {field.status.replace(/_/g, ' ')}
               </span>
             </div>
-            <p className="text-xs text-slate-400">
+            <p className="mt-0.5 text-[13px] text-[var(--muted)]">
               {field.village}, Block {field.block}, District {field.district}
             </p>
           </div>
@@ -56,73 +56,74 @@ export const FieldDetailDrawer: React.FC<FieldDetailDrawerProps> = ({
 
         <button
           onClick={onClose}
-          className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer"
+          className="ui-btn is-sm !px-2"
+          aria-label="Close field details"
         >
           <X className="w-4 h-4" />
         </button>
       </div>
 
       {/* Main Grid Info */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4 text-xs">
-        <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800 flex items-center gap-2.5">
+      <div className="ui-kv-grid mb-4 grid-cols-2">
+        <div className="ui-kv !flex-row items-center !gap-3">
           <img 
             src="/images/farmer_gurpreet.jpg" 
             alt={field.farmer_name} 
-            className="w-10 h-10 rounded-full border border-emerald-500/50 object-cover shrink-0"
+            className="h-10 w-10 shrink-0 rounded-full object-cover ring-2 ring-[var(--brand-line)]"
            loading="lazy" decoding="async" />
           <div className="min-w-0">
-            <span className="text-slate-400 text-[10px] block">Farmer / Owner</span>
-            <strong className="text-white text-xs block truncate">{field.farmer_name}</strong>
-            <span className="text-emerald-400 font-mono text-[10px]">{field.farmer_phone}</span>
+            <span className="ui-kv-label block">Farmer / Owner</span>
+            <strong className="ui-kv-value">{field.farmer_name}</strong>
+            <span className="text-[12px] tabular-nums text-[var(--muted)]">{field.farmer_phone}</span>
           </div>
         </div>
 
-        <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
-          <span className="text-slate-400 text-[11px] block">Acreage & Variety</span>
-          <strong className="text-white text-sm block mt-0.5">
+        <div className="ui-kv">
+          <span className="ui-kv-label">Acreage & Variety</span>
+          <strong className="ui-kv-value">
             {field.acreage} Acres
           </strong>
-          <span className="text-amber-400 font-semibold text-[11px]">{field.paddy_variety}</span>
+          <span className="text-[12px] font-semibold text-[var(--wheat-ink)]">{field.paddy_variety}</span>
         </div>
 
-        <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
-          <span className="text-slate-400 text-[11px] block">Clearance Window</span>
-          <strong className="text-emerald-400 text-xs block mt-0.5">
+        <div className="ui-kv">
+          <span className="ui-kv-label">Clearance Window</span>
+          <strong className="ui-kv-value !text-[var(--brand-ink)]">
             {field.clearance_deadline}
           </strong>
-          <span className="text-slate-400 text-[10px]">{demoMode ? 'Demo scheduling window' : 'Server-authorized booking window'}</span>
+          <span className="text-[12px] text-[var(--muted)]">{demoMode ? 'Demo scheduling window' : 'Server-authorized booking window'}</span>
         </div>
 
-        <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
-          <span className="text-slate-400 text-[11px] block">Late Sowing Penalty</span>
-          <strong className="text-amber-300 text-sm block mt-0.5">
+        <div className="ui-kv">
+          <span className="ui-kv-label">Late Sowing Penalty</span>
+          <strong className="ui-kv-value !text-[var(--wheat-ink)]">
             {demoMode ? `₹${Math.max(2500, Math.round(field.acreage * 1250)).toLocaleString()}` : '—'}
           </strong>
-          <span className="text-emerald-400 text-[10px] font-semibold">{demoMode ? 'Simulation only' : 'Server-enforced booking terms'}</span>
+          <span className="text-[12px] text-[var(--muted)]">{demoMode ? 'Simulation only' : 'Server-enforced booking terms'}</span>
         </div>
       </div>
 
       {/* Satellite Audit & QR Lot Status */}
-      <div className="bg-slate-950/70 p-3 rounded-lg border border-slate-800 mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0">
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+      <div className="ui-note is-sky mb-4 flex-col !items-stretch sm:flex-row sm:!items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[var(--surface)]">
+            <ShieldCheck className="h-4 w-4 text-[var(--sky)]" />
           </div>
           <div>
-            <div className="font-bold text-white flex items-center gap-1.5">
+            <div className="flex flex-wrap items-center gap-1.5 font-semibold text-[var(--ink)]">
               <span>Remote-sensing audit:</span>
-              <span className="text-emerald-400">{demoMode ? '0 synthetic fires' : 'Awaiting provider observations'}</span>
+              <span className="text-[var(--brand-ink)]">{demoMode ? '0 synthetic fires' : 'Awaiting provider observations'}</span>
             </div>
-            <div className="text-slate-400 text-[11px]">
+            <div className="text-[12px] text-[var(--muted)]">
               {demoMode ? 'Illustrative FIRMS / NDVI values shown for the prototype' : 'No remote-sensing conclusion is shown until verified observations are attached'}
             </div>
           </div>
         </div>
 
         {field.qr_lot_code && (
-          <div className="flex items-center gap-2 bg-slate-900 px-3 py-1.5 rounded border border-slate-800 shrink-0">
-            <QrCode className="w-4 h-4 text-cyan-400" />
-            <span className="font-mono text-cyan-300 font-semibold">{field.qr_lot_code}</span>
+          <div className="flex shrink-0 items-center gap-2 rounded-lg border border-[var(--sky-line)] bg-[var(--surface)] px-3 py-1.5">
+            <QrCode className="h-4 w-4 text-[var(--sky)]" />
+            <span className="font-mono text-[12.5px] font-semibold text-[var(--sky-ink)]">{field.qr_lot_code}</span>
           </div>
         )}
       </div>
@@ -131,28 +132,28 @@ export const FieldDetailDrawer: React.FC<FieldDetailDrawerProps> = ({
       <div className="flex flex-wrap items-center justify-end gap-2.5">
         <button
           onClick={() => onViewCertificate(field)}
-          className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 cursor-pointer"
+          className="ui-btn"
         >
-          <ShieldCheck className="w-4 h-4 text-emerald-400" />
+          <ShieldCheck className="text-[var(--brand)]" />
           <span>{demoMode ? 'View demo verification record' : 'View verification record'}</span>
         </button>
 
         {!isCleared && demoMode ? (
           <button
             onClick={() => onTriggerUpiPayout(field)}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg shadow-emerald-600/30 cursor-pointer"
+            className="ui-btn is-primary"
           >
             <Zap className="w-4 h-4" />
             <span>Simulate field completion</span>
           </button>
         ) : isCleared && demoMode ? (
-          <div className="flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-950/60 px-3 py-1.5 rounded-lg border border-emerald-500/30 font-bold">
+          <div className="ui-note is-green !py-2 font-semibold">
             <CheckCircle2 className="w-4 h-4" />
             <span>Demo completion recorded locally • no payment made</span>
           </div>
         ) : (
-          <div className="flex items-center gap-1.5 text-xs text-slate-300 bg-slate-900/70 px-3 py-1.5 rounded-lg border border-slate-700">
-            <ShieldCheck className="w-4 h-4 text-cyan-300" />
+          <div className="ui-note is-sky !py-2">
+            <ShieldCheck />
             <span>Live status changes require the authorized job-transition workflow.</span>
           </div>
         )}

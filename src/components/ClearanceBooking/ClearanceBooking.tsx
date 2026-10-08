@@ -28,6 +28,8 @@ export function ClearanceBooking({ fields, demoMode, onBooked }: Props) {
 
   const selected = bookable.find((f) => f.id === fieldId);
   const estimate = selected ? Math.round(Math.max(0, Number(selected.acreage || 0)) * 1500) : 0;
+  const bookingStep = !selected ? 1 : !date ? 2 : 3;
+  const stepClass = (step: number) => (step < bookingStep ? 'is-done' : step === bookingStep ? 'is-current' : '');
 
   async function book() {
     setError('');
@@ -68,18 +70,18 @@ export function ClearanceBooking({ fields, demoMode, onBooked }: Props) {
   }
 
   return (
-    <div className="farmer-surface farmer-booking mx-auto max-w-5xl space-y-4">
-      <section className="rounded-2xl border border-emerald-500/20 bg-slate-950/75 p-5 shadow-xl shadow-emerald-950/10">
-        <div className="flex items-start gap-3">
-          <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-emerald-500/15 text-emerald-300">
+    <div className="tone-adapt farmer-surface farmer-booking ui-stack">
+      <section className="ui-intro">
+        <div className="flex items-start gap-4">
+          <div className="hidden h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[var(--brand-soft)] text-[var(--brand)] sm:grid">
             <Tractor className="h-5 w-5" />
           </div>
-          <div>
-            <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.16em] text-emerald-300">
+          <div className="ui-intro-copy">
+            <div className="ui-eyebrow">
               <ClipboardCheck className="h-3.5 w-3.5" /> Book parali pickup
             </div>
-            <h1 className="mt-1 text-2xl font-black text-white sm:text-3xl">Book parali pickup</h1>
-            <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-400">
+            <h1 className="ui-title">Book parali pickup</h1>
+            <p className="ui-lede">
               Choose your field and the day you want the machine to come. In Live mode, the final quote is decided by the server.
             </p>
           </div>
@@ -87,17 +89,17 @@ export function ClearanceBooking({ fields, demoMode, onBooked }: Props) {
       </section>
 
       <section className="farmer-step-strip" aria-label="Booking steps">
-        <div className="is-current"><span>1</span><strong>Choose your field</strong><small>Select the field where parali needs to be collected</small></div>
+        <div className={stepClass(1)}><span>1</span><strong>Choose your field</strong><small>Select the field where parali needs to be collected</small></div>
         <i aria-hidden="true" />
-        <div><span>2</span><strong>Choose a date</strong><small>Tell us when you want the machine</small></div>
+        <div className={stepClass(2)}><span>2</span><strong>Choose a date</strong><small>Tell us when you want the machine</small></div>
         <i aria-hidden="true" />
-        <div><span>3</span><strong>Confirm</strong><small>Check details and book</small></div>
+        <div className={stepClass(3)}><span>3</span><strong>Confirm</strong><small>Check details and book</small></div>
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-[1.2fr_.8fr]">
-        <div className="rounded-2xl border border-slate-800 bg-slate-950/65 p-5">
-          <label className="mb-2 block text-xs font-bold text-slate-400">Field</label>
-          <select value={fieldId} onChange={(e) => setFieldId(e.target.value)} className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-3 text-sm font-semibold text-white focus:border-emerald-500 focus:outline-none">
+      <section className="ui-split">
+        <div className="ui-card">
+          <label className="ui-label mb-2 block">Field</label>
+          <select value={fieldId} onChange={(e) => setFieldId(e.target.value)} className="ui-select">
             {bookable.length === 0 && <option value="">No bookable fields</option>}
             {bookable.map((field) => (
               <option key={field.id} value={field.id}>{field.khasra_no} · {field.village} · {Number(field.acreage).toFixed(2)} ac</option>
@@ -105,54 +107,54 @@ export function ClearanceBooking({ fields, demoMode, onBooked }: Props) {
           </select>
 
           {selected && (
-            <div className="mt-3 grid gap-2 sm:grid-cols-3">
-              <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-3">
-                <span className="block text-[10px] uppercase tracking-wider text-slate-500">Current status</span>
-                <strong className="mt-1 block text-sm text-emerald-300">{selected.status.replace(/_/g, ' ')}</strong>
+            <div className="ui-kv-grid mt-3 sm:grid-cols-3">
+              <div className="ui-kv">
+                <span className="ui-kv-label">Current status</span>
+                <strong className="ui-kv-value !text-[var(--brand-ink)]">{selected.status.replace(/_/g, ' ')}</strong>
               </div>
-              <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-3">
-                <span className="block text-[10px] uppercase tracking-wider text-slate-500">Area</span>
-                <strong className="mt-1 block text-sm text-white">{Number(selected.acreage).toFixed(2)} acres</strong>
+              <div className="ui-kv">
+                <span className="ui-kv-label">Area</span>
+                <strong className="ui-kv-value">{Number(selected.acreage).toFixed(2)} acres</strong>
               </div>
-              <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-3">
-                <span className="block text-[10px] uppercase tracking-wider text-slate-500">Location</span>
-                <strong className="mt-1 flex items-center gap-1 text-sm text-white"><MapPin className="h-3.5 w-3.5 text-emerald-300" /> {selected.village}</strong>
+              <div className="ui-kv">
+                <span className="ui-kv-label">Location</span>
+                <strong className="ui-kv-value"><MapPin /> {selected.village}</strong>
               </div>
             </div>
           )}
 
-          <label className="mt-5 mb-2 block text-xs font-bold text-slate-400">When should the machine come?</label>
+          <label className="ui-label mt-6 mb-2 block">When should the machine come?</label>
           <div className="relative">
-            <CalendarDays className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-emerald-300" />
-            <input type="date" value={date} min={new Date().toISOString().slice(0, 10)} onChange={(e) => setDate(e.target.value)} className="w-full rounded-xl border border-slate-700 bg-slate-900 py-3 pl-10 pr-3 text-sm font-semibold text-white focus:border-emerald-500 focus:outline-none" />
+            <CalendarDays className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--brand)]" />
+            <input type="date" value={date} min={new Date().toISOString().slice(0, 10)} onChange={(e) => setDate(e.target.value)} className="ui-input pl-10" />
           </div>
 
-          <label className="mt-4 flex items-start gap-3 rounded-xl border border-emerald-900/10 bg-emerald-50/50 p-3 text-xs leading-5 text-emerald-950/70">
-            <input type="checkbox" checked={consentAccepted} onChange={(e) => setConsentAccepted(e.target.checked)} className="mt-1 h-4 w-4 accent-emerald-700" />
+          <label className="ui-check mt-5">
+            <input type="checkbox" checked={consentAccepted} onChange={(e) => setConsentAccepted(e.target.checked)} />
             <span>I consent to NIRDHOOM using this field and booking information to coordinate the requested clearance service.</span>
           </label>
 
-          <button type="button" onClick={() => void book()} disabled={!selected || busy || !consentAccepted} className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-black text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-40">
+          <button type="button" onClick={() => void book()} disabled={!selected || busy || !consentAccepted} className="ui-btn is-primary is-lg is-block mt-5">
             {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
             {busy ? 'Confirming booking…' : demoMode ? 'Book example pickup' : 'Book my pickup'}
           </button>
 
-          {error && <div role="alert" className="mt-3 rounded-xl border border-red-500/25 bg-red-500/10 p-3 text-xs text-red-200">{error}</div>}
-          {message && <div role="status" className="mt-3 rounded-xl border border-emerald-500/25 bg-emerald-500/10 p-3 text-xs text-emerald-200">{message}</div>}
+          {error && <div role="alert" className="ui-note is-ember mt-3">{error}</div>}
+          {message && <div role="status" className="ui-note is-green mt-3">{message}</div>}
         </div>
 
-        <aside className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-5">
-          <div className="flex items-center gap-2 text-amber-200"><ShieldCheck className="h-4 w-4" /><strong className="text-sm">Good to know</strong></div>
-          <div className="mt-4 space-y-3 text-xs leading-5 text-slate-300">
+        <aside className="ui-card is-wheat lg:sticky lg:top-24">
+          <div className="ui-card-title"><ShieldCheck className="!text-[var(--wheat-ink)]" /><strong>Good to know</strong></div>
+          <div className="mt-4 space-y-3 text-[13.5px] leading-6 text-[var(--ink-2)]">
             <p>• Your final Live quote comes from NIRDHOOM — you cannot change it from this screen.</p>
             <p>• Live booking needs your consent and a registered field.</p>
             <p>• Demo mode changes example data only.</p>
             <p>• Payment is not connected in this version.</p>
           </div>
-          <div className="mt-5 rounded-xl border border-amber-500/15 bg-slate-950/40 p-3">
-            <span className="block text-[10px] uppercase tracking-wider text-amber-900/55">{demoMode ? 'Example estimate' : 'Server quote'}</span>
-            <strong className="mt-1 block text-xl font-black text-amber-900">{demoMode ? `₹${estimate.toLocaleString()}` : 'Shown after booking'}</strong>
-            <span className="text-[10px] text-amber-900/55">{demoMode ? 'Example only · no payment is made' : 'Authoritative quote comes from the server'}</span>
+          <div className="mt-6 rounded-2xl border border-[var(--wheat-line)] bg-[var(--surface)] p-4 shadow-sm">
+            <span className="ui-kv-label block">{demoMode ? 'Example estimate' : 'Server quote'}</span>
+            <strong className="mt-1 block font-[family-name:var(--font-display)] text-[30px] font-semibold leading-tight text-[var(--ink)]">{demoMode ? `₹${estimate.toLocaleString()}` : 'Shown after booking'}</strong>
+            <span className="text-[12px] text-[var(--muted)]">{demoMode ? 'Example only · no payment is made' : 'Authoritative quote comes from the server'}</span>
           </div>
         </aside>
       </section>

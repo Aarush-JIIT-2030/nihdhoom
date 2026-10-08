@@ -291,7 +291,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
 
   if (!currentField) {
     return (
-      <section className="field-empty mx-auto max-w-3xl" aria-live="polite">
+      <section className="tone-adapt field-empty mx-auto max-w-3xl" aria-live="polite">
         <h2>No field is assigned to this operator session.</h2>
         <p>Live operator actions appear only after a field and job are assigned by the connected dispatch workflow.</p>
       </section>
@@ -299,56 +299,56 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
   }
 
   return (
-    <div className="field-operator-surface flex flex-col lg:flex-row items-center lg:items-start justify-center gap-6 p-2 max-w-6xl mx-auto">
+    <div className="tone-adapt field-operator-surface grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_440px]">
       {/* Operator context */}
-      <div className="w-full lg:w-5/12 flex flex-col gap-4">
-        <div className="glass-panel-emerald p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <Sparkles className="w-5 h-5 text-emerald-400" />
-            <h3 className="font-bold text-base text-white">
+      <div className="flex w-full flex-col gap-4 lg:sticky lg:top-24">
+        <div className="ui-card is-green">
+          <div className="mb-2 flex items-center gap-3">
+            <Sparkles className="h-6 w-6 shrink-0 text-[var(--brand)]" />
+            <h3 className="ui-title !mt-0">
               Field operator workspace
             </h3>
           </div>
-          <p className="text-xs text-slate-300 leading-relaxed">
+          <p className="ui-lede">
             Capture the job state, device location, measured residue and field evidence. 
           </p>
-          <div className="mt-3 bg-slate-950/70 p-2.5 rounded-lg border border-emerald-500/20 text-xs text-slate-300">
+          <div className="ui-note mt-4 !bg-[var(--surface)] !text-[var(--ink-2)]">
             <strong>The field workflow should capture GPS, job state, quantity and evidence. Payment remains intentionally disabled in this release.</strong>
           </div>
         </div>
 
         {/* Machine Telemetry Card */}
-        <div className="glass-panel p-4 flex flex-col gap-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-xl">🚜</span>
+        <div className="ui-card flex flex-col gap-4">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <span className="grid h-11 w-11 place-items-center rounded-xl bg-[var(--wheat-soft)] text-xl">🚜</span>
               <div>
-                <h4 className="font-bold text-sm text-white">{activeMachine.name}</h4>
-                <p className="text-[11px] text-slate-400">{activeMachine.home_chc}</p>
+                <h4 className="text-[15.5px] font-bold text-[var(--ink)]">{activeMachine.name}</h4>
+                <p className="text-[12.5px] text-[var(--muted)]">{activeMachine.home_chc}</p>
               </div>
             </div>
-            <span className="badge badge-emerald text-[10px]">
+            <span className="ui-chip is-green">
               {activeMachine.status}
             </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            <div className="bg-slate-900/80 p-2 rounded border border-slate-800">
-              <span className="text-slate-400 text-[10px] block">Operator</span>
-              <strong className="text-white text-xs">{activeMachine.operator_name}</strong>
-              <span className="text-slate-500 text-[10px] block">{activeMachine.operator_phone}</span>
+          <div className="ui-kv-grid grid-cols-2">
+            <div className="ui-kv">
+              <span className="ui-kv-label">Operator</span>
+              <strong className="ui-kv-value">{activeMachine.operator_name}</strong>
+              <span className="text-[12px] text-[var(--muted)]">{activeMachine.operator_phone}</span>
             </div>
-            <div className="bg-slate-900/80 p-2 rounded border border-slate-800">
-              <span className="text-slate-400 text-[10px] block">Daily Capacity</span>
-              <strong className="text-emerald-400 text-xs">{activeMachine.capacity_acres_day} Acres / day</strong>
-              <span className="text-slate-500 text-[10px] block">CRM programme reference</span>
+            <div className="ui-kv">
+              <span className="ui-kv-label">Daily Capacity</span>
+              <strong className="ui-kv-value !text-[var(--brand-ink)]">{activeMachine.capacity_acres_day} Acres / day</strong>
+              <span className="text-[12px] text-[var(--muted)]">CRM programme reference</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Right side: Mobile Field Device UI */}
-      <div className="w-full lg:w-7/12 flex justify-center">
+      <div className="flex w-full justify-center">
         <div className="device-frame">
           {/* Status Bar */}
           <div className="device-header">

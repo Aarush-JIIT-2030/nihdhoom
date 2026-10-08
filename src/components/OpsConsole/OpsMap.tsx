@@ -2,7 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import { Field, Machine, BurnEvent, StorageYard, Buyer, LatLng } from '../../types';
 import { supabase } from '../../lib/supabase';
-import { Layers, Flame, MapPin, PackageCheck, Route, CloudSun, Building2 } from 'lucide-react';
+import { Layers, Flame, MapPin, PackageCheck, Route, CloudSun, Building2, ChevronDown, Minus, Plus, LocateFixed } from 'lucide-react';
+
+// Popups pan clear of the floating map controls (GPS badge, layers, zoom, legend).
+L.Popup.mergeOptions({
+  autoPanPaddingTopLeft: L.point(24, 72),
+  autoPanPaddingBottomRight: L.point(64, 120),
+  maxWidth: 300,
+});
 
 interface OpsMapProps {
   fields: Field[];
@@ -42,6 +49,7 @@ export const OpsMap: React.FC<OpsMapProps> = ({
   const [showBuyers, setShowBuyers] = useState(true);
   const [showRoute, setShowRoute] = useState(true);
   const [showWeather, setShowWeather] = useState(true);
+  const [layersOpen, setLayersOpen] = useState(false);
   const [weatherPoint, setWeatherPoint] = useState<{ temperature: number; precipitationProbability: number; precipitationMm: number; windGustKmh: number } | null>(null);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [mapError, setMapError] = useState<string | null>(null);
@@ -61,7 +69,7 @@ export const OpsMap: React.FC<OpsMapProps> = ({
       map = L.map(mapContainerRef.current, {
       center: [30.2458, 75.8421],
       zoom: 11,
-      zoomControl: true,
+      zoomControl: false,
       attributionControl: false,
     });
     } catch (error) {
@@ -177,30 +185,30 @@ export const OpsMap: React.FC<OpsMapProps> = ({
           .map((p) => [Number(p.lat), Number(p.lng)] as [number, number]);
         if (coords.length < 3) return;
 
-        let fillColor = '#10b981'; // Green: Cleared / Verified
-        let strokeColor = '#34d399';
+        let fillColor = '#4f9a6a'; // Field green: Cleared / Verified
+        let strokeColor = '#9fd4b0';
 
         if (field.status === 'BALING_IN_PROGRESS') {
-          fillColor = '#f59e0b'; // Amber
-          strokeColor = '#fbbf24';
+          fillColor = '#d49c35'; // Wheat
+          strokeColor = '#f0c66e';
         } else if (field.status === 'SCHEDULED') {
-          fillColor = '#06b6d4'; // Cyan
-          strokeColor = '#22d3ee';
+          fillColor = '#367a96'; // Monsoon sky
+          strokeColor = '#9fd0e3';
         } else if (field.status === 'REGISTERED') {
-          fillColor = '#8b5cf6'; // Purple
-          strokeColor = '#a78bfa';
+          fillColor = '#f1efe8'; // Paper (declared, not yet booked)
+          strokeColor = '#ffffff';
         }
 
         const polygon = L.polygon(coords, {
           color: isSelected ? '#ffffff' : strokeColor,
-          weight: isSelected ? 3 : 2,
+          weight: isSelected ? 3.5 : 2,
           fillColor: fillColor,
-          fillOpacity: isSelected ? 0.65 : 0.35,
+          fillOpacity: isSelected ? 0.6 : 0.32,
           dashArray: field.status === 'REGISTERED' ? '4, 4' : undefined,
         });
 
         polygon.bindTooltip(
-          `<strong>${field.khasra_no}</strong><br/>${field.farmer_name}<br/>${field.acreage} ac (${field.paddy_variety})<br/><span style="color:#10b981;font-weight:bold;">FIRMS observations are supporting evidence only • Planning window</span>`,
+          `<div class="map-pop-title">${field.khasra_no}</div><div class="map-pop-sub">${field.farmer_name}</div><div>${field.acreage} ac (${field.paddy_variety})</div><div class="map-pop-note">FIRMS observations are supporting evidence only • Planning window</div>`,
           { direction: 'top', className: 'leaflet-custom-tooltip' }
         );
 
@@ -216,13 +224,9 @@ export const OpsMap: React.FC<OpsMapProps> = ({
     if (showMachines) {
       machines.forEach((machine) => {
         const iconHtml = `
-          <div style="position:relative;display:flex;align-items:center;justify-content:center;">
-            <div style="width:34px;height:34px;border-radius:50%;background:#022c22;border:2px solid #10b981;display:flex;align-items:center;justify-content:center;box-shadow:0 0 14px rgba(16,185,129,0.8);">
-              <span style="font-size:16px;">🚜</span>
-            </div>
-            <div style="position:absolute;bottom:-18px;white-space:nowrap;background:#0f172a;border:1px solid #10b981;border-radius:4px;padding:1px 5px;font-size:10px;font-weight:bold;color:#34d399;">
-              ${machine.name.split(' ')[0]} #${machine.id.slice(-2)}
-            </div>
+          <div class="map-machine">
+            <div class="map-machine-dot"><span>🚜</span></div>
+            <div class="map-machine-label">${machine.name.split(' ')[0]} #${machine.id.slice(-2)}</div>
           </div>
         `;
 
@@ -240,16 +244,18 @@ export const OpsMap: React.FC<OpsMapProps> = ({
         });
 
         marker.bindPopup(`
-          <div style="padding:4px;font-family:sans-serif;font-size:12px;">
-            <div style="font-weight:bold;color:#10b981;font-size:14px;">${machine.name}</div>
-            <div style="color:#94a3b8;margin-bottom:6px;">${machine.home_chc}</div>
+          <div class="map-pop">
+            <div class="map-pop-title">${machine.name}</div>
+            <div class="map-pop-sub">${machine.home_chc}</div>
+            <div class="map-pop-rows">
             <div><strong>Type:</strong> ${machine.type}</div>
             <div><strong>Capacity:</strong> ${machine.capacity_acres_day} acres/day</div>
             <div><strong>Tractor:</strong> ${machine.tractor_hp_required ? machine.tractor_hp_required + " HP" : "Not sourced"}</div>
             <div><strong>Residue:</strong> ${(machine.residue_types || ["Not established"]).join(", ")}</div>
             <div><strong>Operator:</strong> ${machine.operator_name} (${machine.operator_phone})</div>
-            <div style="margin-top:4px;color:#718076;">Capability source: ${machine.capability_source || "Not established"}${machine.capability_source_date ? " · " + machine.capability_source_date : ""}</div>
-            <div><strong>Status:</strong> <span style="color:#34d399;font-weight:bold;">${machine.status}</span></div>
+            </div>
+            <div class="map-pop-note">Capability source: ${machine.capability_source || "Not established"}${machine.capability_source_date ? " · " + machine.capability_source_date : ""}</div>
+            <div class="map-pop-status"><strong>Status:</strong> <span class="map-pop-chip is-green">${machine.status}</span></div>
           </div>
         `);
 
@@ -261,11 +267,9 @@ export const OpsMap: React.FC<OpsMapProps> = ({
     if (showFires && highlightFirmsFire) {
       fireEvents.forEach((fire) => {
         const fireHtml = `
-          <div style="position:relative;display:flex;align-items:center;justify-content:center;">
-            <div style="width:28px;height:28px;border-radius:50%;background:rgba(239,68,68,0.25);position:absolute;animation:ping-slow 2s infinite;"></div>
-            <div style="width:20px;height:20px;border-radius:50%;background:#ef4444;border:2px solid #ffffff;display:flex;align-items:center;justify-content:center;box-shadow:0 0 16px #ef4444;">
-              <span style="font-size:10px;">🔥</span>
-            </div>
+          <div class="map-fire">
+            <div class="map-fire-pulse"></div>
+            <div class="map-fire-dot"><span>🔥</span></div>
           </div>
         `;
 
@@ -282,12 +286,14 @@ export const OpsMap: React.FC<OpsMapProps> = ({
         });
 
         marker.bindPopup(`
-          <div style="padding:6px;font-family:sans-serif;font-size:12px;color:#f87171;">
-            <div style="font-weight:bold;font-size:13px;color:#ef4444;">🔥 NASA FIRMS VIIRS Active Fire</div>
-            <div style="color:#cbd5e1;margin-top:2px;">Location: ${fire.nearest_village}</div>
-            <div style="color:#94a3b8;margin-top:2px;">Satellite: ${fire.satellite}</div>
-            <div style="color:#fbbf24;margin-top:2px;">Confidence: ${fire.confidence}% | Temp: ${fire.brightness_temp_kelvin} K</div>
-            <div style="margin-top:4px;padding:3px 6px;border-radius:4px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);color:#fca5a5;font-weight:bold;font-size:11px;">
+          <div class="map-pop">
+            <div class="map-pop-title is-ember">🔥 NASA FIRMS VIIRS Active Fire</div>
+            <div class="map-pop-rows">
+            <div>Location: ${fire.nearest_village}</div>
+            <div>Satellite: ${fire.satellite}</div>
+            <div>Confidence: ${fire.confidence}% | Temp: ${fire.brightness_temp_kelvin} K</div>
+            </div>
+            <div class="map-pop-chip is-ember">
               ⚠️ UNREGISTERED FIELD (NO NIRDHOOM CONTRACT)
             </div>
           </div>
@@ -305,13 +311,13 @@ export const OpsMap: React.FC<OpsMapProps> = ({
           const pos = field.center;
           if (!Number.isFinite(Number(pos?.lat)) || !Number.isFinite(Number(pos?.lng))) return;
           const icon = L.divIcon({
-            html: '<div style="width:26px;height:26px;border-radius:7px;background:#F0F7EF;border:2px solid #2D6A45;display:flex;align-items:center;justify-content:center;color:#2D6A45;font-size:12px;">🌾</div>',
+            html: '<div class="map-tile-icon is-green">🌾</div>',
             className: 'residue-lot-icon',
             iconSize: [26, 26],
             iconAnchor: [13, 13],
           });
           L.marker([Number(pos.lat), Number(pos.lng)], { icon })
-            .bindPopup(`<div style="padding:4px;font-family:sans-serif;font-size:12px;"><strong style="color:#2D6A45;">Residue lot</strong><div>Field: ${field.khasra_no}</div><div>Status: ${field.status.replaceAll('_',' ')}</div><div>Source: field record</div></div>`)
+            .bindPopup(`<div class="map-pop"><div class="map-pop-title">Residue lot</div><div class="map-pop-rows"><div>Field: ${field.khasra_no}</div><div>Status: ${field.status.replaceAll('_',' ')}</div><div>Source: field record</div></div></div>`)
             .addTo(layerGroup);
         });
     }
@@ -322,13 +328,13 @@ export const OpsMap: React.FC<OpsMapProps> = ({
         const pos = buyer.location;
         if (!pos || !Number.isFinite(Number(pos.lat)) || !Number.isFinite(Number(pos.lng))) return;
         const icon = L.divIcon({
-          html: '<div style="width:27px;height:27px;border-radius:7px;background:#FFF7E8;border:2px solid #C8953D;display:flex;align-items:center;justify-content:center;color:#76521B;font-size:12px;">🏭</div>',
+          html: '<div class="map-tile-icon is-wheat">🏭</div>',
           className: 'buyer-icon',
           iconSize: [27, 27],
           iconAnchor: [13.5, 13.5],
         });
         L.marker([Number(pos.lat), Number(pos.lng)], { icon })
-          .bindPopup(`<div style="padding:4px;font-family:sans-serif;font-size:12px;"><strong style="color:#76521B;">${buyer.name}</strong><div>${buyer.location_name}</div><div>Demand: ${buyer.demand_tonnes.toLocaleString('en-IN')} t</div><div>Price: ₹${buyer.price_per_tonne.toLocaleString('en-IN')}/t</div><div style="margin-top:4px;color:#718076;">Buyer coordinates are explicit demo/reference data when present.</div></div>`)
+          .bindPopup(`<div class="map-pop"><div class="map-pop-title is-wheat">${buyer.name}</div><div class="map-pop-sub">${buyer.location_name}</div><div class="map-pop-rows"><div>Demand: ${buyer.demand_tonnes.toLocaleString('en-IN')} t</div><div>Price: ₹${buyer.price_per_tonne.toLocaleString('en-IN')}/t</div></div><div class="map-pop-note">Buyer coordinates are explicit demo/reference data when present.</div></div>`)
           .addTo(layerGroup);
       });
     }
@@ -338,13 +344,13 @@ export const OpsMap: React.FC<OpsMapProps> = ({
       const pos = selectedField.center;
       const risk = weatherPoint.precipitationProbability >= 70 || weatherPoint.precipitationMm >= 8 || weatherPoint.windGustKmh >= 35;
       const icon = L.divIcon({
-        html: `<div style="width:30px;height:30px;border-radius:50%;background:${risk ? '#FFF3D6' : '#EFF7F0'};border:2px solid ${risk ? '#C8953D' : '#2D6A45'};display:flex;align-items:center;justify-content:center;font-size:13px;">☁️</div>`,
+        html: `<div class="map-tile-icon is-round ${risk ? 'is-wheat' : 'is-green'}">☁️</div>`,
         className: 'weather-icon',
         iconSize: [30, 30],
         iconAnchor: [15, 15],
       });
       L.marker([Number(pos.lat), Number(pos.lng)], { icon })
-        .bindPopup(`<div style="padding:4px;font-family:sans-serif;font-size:12px;"><strong style="color:#2D6A45;">Weather planning signal</strong><div>${weatherPoint.temperature.toFixed(0)}°C · rain probability ${weatherPoint.precipitationProbability.toFixed(0)}%</div><div>${weatherPoint.precipitationMm.toFixed(1)} mm rain · gusts ${weatherPoint.windGustKmh.toFixed(0)} km/h</div><div style="margin-top:4px;color:#718076;">Planning signal only; confirm field and machine conditions before dispatch.</div></div>`)
+        .bindPopup(`<div class="map-pop"><div class="map-pop-title">Weather planning signal</div><div class="map-pop-rows"><div>${weatherPoint.temperature.toFixed(0)}°C · rain probability ${weatherPoint.precipitationProbability.toFixed(0)}%</div><div>${weatherPoint.precipitationMm.toFixed(1)} mm rain · gusts ${weatherPoint.windGustKmh.toFixed(0)} km/h</div></div><div class="map-pop-note">Planning signal only; confirm field and machine conditions before dispatch.</div></div>`)
         .addTo(layerGroup);
     }
 
@@ -352,9 +358,7 @@ export const OpsMap: React.FC<OpsMapProps> = ({
     if (showYards) {
       storageYards.forEach((yard) => {
         const yardHtml = `
-          <div style="width:26px;height:26px;border-radius:6px;background:#1e293b;border:2px solid #3b82f6;display:flex;align-items:center;justify-content:center;box-shadow:0 0 10px rgba(59,130,246,0.6);">
-            <span style="font-size:12px;">🏭</span>
-          </div>
+          <div class="map-tile-icon is-sky">🏭</div>
         `;
 
         const yardIcon = L.divIcon({
@@ -370,10 +374,12 @@ export const OpsMap: React.FC<OpsMapProps> = ({
         });
 
         marker.bindPopup(`
-          <div style="padding:4px;font-family:sans-serif;font-size:12px;">
-            <div style="font-weight:bold;color:#60a5fa;">${yard.name}</div>
+          <div class="map-pop">
+            <div class="map-pop-title is-sky">${yard.name}</div>
+            <div class="map-pop-rows">
             <div>Capacity: ${yard.capacity_tonnes} tonnes</div>
             <div>Current Stock: ${yard.current_load} tonnes</div>
+            </div>
           </div>
         `);
 
@@ -385,10 +391,11 @@ export const OpsMap: React.FC<OpsMapProps> = ({
     if (showRoute && activeRoutePolyline && activeRoutePolyline.length > 1) {
       const lineCoords: [number, number][] = activeRoutePolyline.map((p) => [p.lat, p.lng]);
       const routeLine = L.polyline(lineCoords, {
-        color: '#10b981',
+        color: '#f0c66e',
         weight: 4,
-        opacity: 0.9,
-        dashArray: '8, 8',
+        opacity: 0.95,
+        dashArray: '10, 8',
+        lineCap: 'round',
       });
       routeLine.addTo(layerGroup);
     }
@@ -424,15 +431,33 @@ export const OpsMap: React.FC<OpsMapProps> = ({
     }
   }, [selectedField]);
 
+  const layerToggles: { key: string; checked: boolean; set: (value: boolean) => void; label: React.ReactNode; swatch: React.ReactNode; tone?: string }[] = [
+    { key: 'fields', checked: showFields, set: setShowFields, swatch: <span className="map-swatch is-green" />, label: <span>Field polygons ({fields.length})</span> },
+    { key: 'machines', checked: showMachines, set: setShowMachines, swatch: <span className="map-swatch is-dot" />, label: <span>Machines ({machines.length})</span> },
+    { key: 'fires', checked: showFires, set: setShowFires, swatch: <Flame className="h-3.5 w-3.5 text-[var(--ember)]" />, label: <span className="font-semibold text-[var(--ember-ink)]">FIRMS observations ({fireEvents.length})</span>, tone: 'is-ember' },
+    { key: 'yards', checked: showYards, set: setShowYards, swatch: <span className="map-swatch is-sky" />, label: <span>Yards & offtake ({storageYards.length})</span> },
+    { key: 'residue', checked: showResidue, set: setShowResidue, swatch: <PackageCheck className="h-3.5 w-3.5 text-[var(--brand)]" />, label: <span>Residue lots</span> },
+    { key: 'buyers', checked: showBuyers, set: setShowBuyers, swatch: <Building2 className="h-3.5 w-3.5 text-[var(--wheat-ink)]" />, label: <span>Buyer demand ({buyers.filter((buyer) => buyer.location).length} mapped)</span> },
+    { key: 'weather', checked: showWeather, set: setShowWeather, swatch: <CloudSun className="h-3.5 w-3.5 text-[var(--sky)]" />, label: <span>Weather planning</span> },
+    { key: 'route', checked: showRoute, set: setShowRoute, swatch: <Route className="h-3.5 w-3.5 text-[var(--wheat-ink)]" />, label: <span>Pickup route</span> },
+  ];
+  const activeLayerCount = layerToggles.filter((layer) => layer.checked).length;
+  const clusters: [string, [number, number], number][] = [
+    ['Sangrur', [30.2458, 75.8421], 12],
+    ['Sunam', [30.1311, 75.8016], 13],
+    ['Dhuri', [30.3683, 75.8672], 13],
+    ['Bhawanigarh', [30.2766, 76.0427], 13],
+  ];
+
   return (
-    <div className="ops-map-surface relative w-full h-[540px] lg:h-[620px] rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
+    <div className="ops-map-surface map-shell relative w-full h-[540px] lg:h-[620px] overflow-hidden">
       {/* Field GIS map — the operational tracking surface. */}
       {mapError ? (
-        <div className="w-full h-full grid place-items-center bg-slate-50 p-6 text-center">
+        <div className="map-error">
           <div className="max-w-md">
-            <div className="text-sm font-bold text-amber-700">Operational map unavailable</div>
-            <p className="mt-2 text-xs text-slate-500">Check your network/map tile access and reload.</p>
-            <p className="mt-2 text-[10px] text-slate-500 break-words">{mapError}</p>
+            <div className="map-error-title">Operational map unavailable</div>
+            <p>Check your network/map tile access and reload.</p>
+            <p className="map-error-detail">{mapError}</p>
           </div>
         </div>
       ) : (
@@ -440,118 +465,81 @@ export const OpsMap: React.FC<OpsMapProps> = ({
       )}
 
       {/* GPS Live Ticker Top-Left */}
-      <div className="absolute top-3 left-3 z-10 bg-white/95 backdrop-blur-md border border-slate-200 rounded-lg px-3 py-1.5 flex items-center gap-2 text-xs shadow-lg">
-        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-        <span className="text-emerald-700 font-bold">{demoMode ? 'GPS DEMO' : 'GPS LIVE'}</span>
-        <span className="text-slate-400">·</span>
-        <span className="text-slate-600 font-mono">{machines.length} balers {demoMode ? 'simulated' : 'tracked'}</span>
-        <span className="text-slate-500 text-[10px] ml-1">Updated {lastRefresh.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
+      <div className="map-gps">
+        <span className="map-gps-dot" />
+        <span className="map-gps-mode">{demoMode ? 'GPS DEMO' : 'GPS LIVE'}</span>
+        <span className="map-gps-sep">·</span>
+        <span className="map-gps-count">{machines.length} balers {demoMode ? 'simulated' : 'tracked'}</span>
+        <span className="map-gps-time">Updated {lastRefresh.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
       </div>
 
-      {/* Floating Control Overlay Top-Right */}
-      <div className="absolute top-3 right-3 z-10">
-        <div className="rounded-lg border border-slate-200 bg-white/95 p-2 text-xs font-semibold text-slate-700 shadow-lg backdrop-blur-md">
-          Satellite field map
-        </div>
-        <div className="mt-2 flex flex-col gap-1.5 rounded-lg border border-slate-200 bg-white/95 p-2 text-xs font-medium text-slate-700 shadow-lg backdrop-blur-md">
-          <div className="mb-0.5 flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">
-            <Layers className="h-3 w-3 text-emerald-600" />
-            <span>GIS map layers</span>
+      {/* Layers control Top-Right */}
+      <div className="map-layers">
+        <button
+          type="button"
+          className={`map-layers-button ${layersOpen ? 'is-open' : ''}`}
+          onClick={() => setLayersOpen((open) => !open)}
+          aria-expanded={layersOpen}
+        >
+          <Layers className="h-4 w-4" />
+          <span>Satellite field map</span>
+          <span className="map-layers-count">{activeLayerCount}</span>
+          <ChevronDown className="h-4 w-4 map-layers-chevron" />
+        </button>
+        {layersOpen && (
+          <div className="map-layers-panel">
+            <div className="map-layers-heading">
+              <Layers className="h-3.5 w-3.5" />
+              <span>GIS map layers</span>
+            </div>
+            {layerToggles.map((layer) => (
+              <label key={layer.key} className={`map-layer-row ${layer.tone || ''}`}>
+                <span className="flex min-w-0 items-center gap-2">
+                  <span className="map-layer-swatch">{layer.swatch}</span>
+                  {layer.label}
+                </span>
+                <input type="checkbox" className="map-switch" checked={layer.checked} onChange={(e) => layer.set(e.target.checked)} />
+              </label>
+            ))}
           </div>
-          <label className="flex min-h-9 items-center justify-between gap-3 cursor-pointer rounded-md px-1 hover:bg-slate-50">
-            <span className="flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-sm bg-emerald-500" />
-              <span>Field polygons ({fields.length})</span>
-            </span>
-            <input type="checkbox" checked={showFields} onChange={(e) => setShowFields(e.target.checked)} className="accent-emerald-600 rounded" />
-          </label>
-          <label className="flex min-h-9 items-center justify-between gap-3 cursor-pointer rounded-md px-1 hover:bg-slate-50">
-            <span className="flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
-              <span>Machines ({machines.length})</span>
-            </span>
-            <input type="checkbox" checked={showMachines} onChange={(e) => setShowMachines(e.target.checked)} className="accent-emerald-600 rounded" />
-          </label>
-          <label className="flex min-h-9 items-center justify-between gap-3 cursor-pointer rounded-md px-1 hover:bg-slate-50">
-            <span className="flex items-center gap-1.5">
-              <Flame className="h-3.5 w-3.5 text-red-500" />
-              <span className="font-semibold text-red-600">FIRMS observations ({fireEvents.length})</span>
-            </span>
-            <input type="checkbox" checked={showFires} onChange={(e) => setShowFires(e.target.checked)} className="accent-red-500 rounded" />
-          </label>
-          <label className="flex min-h-9 items-center justify-between gap-3 cursor-pointer rounded-md px-1 hover:bg-slate-50">
-            <span className="flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-sm bg-blue-500" />
-              <span>Yards & offtake ({storageYards.length})</span>
-            </span>
-            <input type="checkbox" checked={showYards} onChange={(e) => setShowYards(e.target.checked)} className="accent-blue-600 rounded" />
-          </label>
-          <label className="flex min-h-9 items-center justify-between gap-3 cursor-pointer rounded-md px-1 hover:bg-slate-50">
-            <span className="flex items-center gap-1.5"><PackageCheck className="h-3.5 w-3.5 text-emerald-600" /><span>Residue lots</span></span>
-            <input type="checkbox" checked={showResidue} onChange={(e) => setShowResidue(e.target.checked)} className="accent-emerald-600 rounded" />
-          </label>
-          <label className="flex min-h-9 items-center justify-between gap-3 cursor-pointer rounded-md px-1 hover:bg-slate-50">
-            <span className="flex items-center gap-1.5"><Building2 className="h-3.5 w-3.5 text-amber-600" /><span>Buyer demand ({buyers.filter((buyer) => buyer.location).length} mapped)</span></span>
-            <input type="checkbox" checked={showBuyers} onChange={(e) => setShowBuyers(e.target.checked)} className="accent-amber-600 rounded" />
-          </label>
-          <label className="flex min-h-9 items-center justify-between gap-3 cursor-pointer rounded-md px-1 hover:bg-slate-50">
-            <span className="flex items-center gap-1.5"><CloudSun className="h-3.5 w-3.5 text-sky-600" /><span>Weather planning</span></span>
-            <input type="checkbox" checked={showWeather} onChange={(e) => setShowWeather(e.target.checked)} className="accent-sky-600 rounded" />
-          </label>
-          <label className="flex min-h-9 items-center justify-between gap-3 cursor-pointer rounded-md px-1 hover:bg-slate-50">
-            <span className="flex items-center gap-1.5"><Route className="h-3.5 w-3.5 text-blue-600" /><span>Pickup route</span></span>
-            <input type="checkbox" checked={showRoute} onChange={(e) => setShowRoute(e.target.checked)} className="accent-blue-600 rounded" />
-          </label>
+        )}
+      </div>
 
+      {/* Zoom + recenter Right */}
+      <div className="map-zoom">
+        <button type="button" aria-label="Zoom in" onClick={() => mapInstanceRef.current?.zoomIn()}><Plus className="h-4 w-4" /></button>
+        <button type="button" aria-label="Zoom out" onClick={() => mapInstanceRef.current?.zoomOut()}><Minus className="h-4 w-4" /></button>
+        <button type="button" aria-label="Recenter map" onClick={() => mapInstanceRef.current?.flyTo([30.2458, 75.8421], 11)}><LocateFixed className="h-4 w-4" /></button>
+      </div>
+
+      {/* Bottom: legend above the hotspot cluster shortcuts */}
+      <div className="map-bottom">
+        <div className="map-legend">
+          <span className="flex items-center gap-1.5">
+            <span className="map-swatch is-green"></span>
+            <span>Field status / verified evidence</span>
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="map-swatch is-wheat"></span>
+            <span>Baler Active</span>
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="map-swatch is-fire"></span>
+            <span className="font-semibold text-[var(--ember-ink)]">External thermal observation</span>
+          </span>
         </div>
-      </div>
 
-      {/* Floating Bottom Quick Zoom Bar */}
-      <div className="absolute bottom-3 left-3 z-10 bg-white/95 backdrop-blur-md border border-slate-200 rounded-lg p-1.5 flex items-center gap-2 shadow-lg text-xs text-slate-700">
-        <span className="text-slate-400 font-medium px-1 flex items-center gap-1">
-          <MapPin className="w-3.5 h-3.5 text-emerald-600" />
-          <span>Hotspot Clusters:</span>
-        </span>
-        <button
-          onClick={() => mapInstanceRef.current?.flyTo([30.2458, 75.8421], 12)}
-          className="px-2 py-0.5 rounded bg-slate-50 hover:bg-emerald-50 text-slate-700 border border-slate-200 text-xs cursor-pointer"
-        >
-          Sangrur
-        </button>
-        <button
-          onClick={() => mapInstanceRef.current?.flyTo([30.1311, 75.8016], 13)}
-          className="px-2 py-0.5 rounded bg-slate-50 hover:bg-emerald-50 text-slate-700 border border-slate-200 text-xs cursor-pointer"
-        >
-          Sunam
-        </button>
-        <button
-          onClick={() => mapInstanceRef.current?.flyTo([30.3683, 75.8672], 13)}
-          className="px-2 py-0.5 rounded bg-slate-50 hover:bg-emerald-50 text-slate-700 border border-slate-200 text-xs cursor-pointer"
-        >
-          Dhuri
-        </button>
-        <button
-          onClick={() => mapInstanceRef.current?.flyTo([30.2766, 76.0427], 13)}
-          className="px-2 py-0.5 rounded bg-slate-50 hover:bg-emerald-50 text-slate-700 border border-slate-200 text-xs cursor-pointer"
-        >
-          Bhawanigarh
-        </button>
-      </div>
-
-      {/* Floating Map Legend Bottom-Right */}
-      <div className="absolute bottom-3 right-3 z-10 hidden sm:flex items-center gap-3 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-200 text-[11px] text-slate-700 shadow-lg">
-        <span className="flex items-center gap-1">
-          <span className="w-3 h-2 rounded bg-emerald-500 border border-emerald-300 inline-block"></span>
-          <span>Field status / verified evidence</span>
-        </span>
-        <span className="flex items-center gap-1">
-          <span className="w-3 h-2 rounded bg-amber-500 border border-amber-300 inline-block"></span>
-          <span>Baler Active</span>
-        </span>
-        <span className="flex items-center gap-1">
-          <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping inline-block"></span>
-          <span className="text-red-600 font-semibold">External thermal observation</span>
-        </span>
+        <div className="map-clusters">
+          <span className="map-clusters-label">
+            <MapPin className="w-3.5 h-3.5" />
+            <span>Hotspot Clusters:</span>
+          </span>
+          {clusters.map(([name, center, zoom]) => (
+            <button key={name} type="button" onClick={() => mapInstanceRef.current?.flyTo(center, zoom)}>
+              {name}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

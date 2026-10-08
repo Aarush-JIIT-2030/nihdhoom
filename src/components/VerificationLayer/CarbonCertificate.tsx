@@ -11,7 +11,7 @@ export const CarbonCertificate: React.FC<CarbonCertificateProps> = ({ certificat
   const handlePrint = () => window.print();
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
+    <div className="tone-adapt fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
       <div className="relative w-full max-w-3xl my-8 bg-slate-900 border border-amber-500/40 rounded-2xl shadow-2xl p-6 sm:p-8 printable-cert">
         <div className="flex items-center justify-between no-print border-b border-slate-800 pb-3 mb-5">
           <div>

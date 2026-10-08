@@ -18,6 +18,7 @@ interface Props {
   onOpenResidue: () => void;
   onOpenImpact: () => void;
   onNavigate: (tab: string) => void;
+  demoMode?: boolean;
 }
 
 const heroImage = '/images/punjab_farm_hero.jpg';
@@ -31,7 +32,7 @@ const circularUseImage = '/images/cbg_mushroom_offtake_1790447167269.jpg';
 const monsoonImage = '/images/farmer_manpreet.jpg';
 
 export function CommandCenter({
-  fields, machines, fireEvents, storageYards, buyers, onSelectField, onOpenResidue, onOpenImpact, onNavigate
+  fields, machines, fireEvents, storageYards, buyers, onSelectField, onOpenResidue, onOpenImpact, onNavigate, demoMode = false
 }: Props) {
   const activeJobs = fields.filter(f => ['SCHEDULED', 'BALING_IN_PROGRESS'].includes(f.status)).length;
   const verified = fields.filter(f => f.status === 'VERIFIED_NON_BURN' || f.is_verified_non_burn).length;
@@ -184,7 +185,7 @@ export function CommandCenter({
             <div><span>FIELD VIEW</span><strong>Operations map</strong></div>
             <span className="home-live-pill"><i /> Loaded records</span>
           </div>
-          <OpsMap fields={fields} machines={machines} fireEvents={fireEvents} storageYards={storageYards} buyers={buyers} selectedField={null} onSelectField={onSelectField} activeRoutePolyline={[]} />
+          <OpsMap fields={fields} machines={machines} fireEvents={fireEvents} storageYards={storageYards} buyers={buyers} selectedField={null} onSelectField={onSelectField} activeRoutePolyline={[]} demoMode={demoMode} />
         </div>
       </section>
 
@@ -241,7 +242,7 @@ export function CommandCenter({
         <div><span>VERIFIED</span><strong>{verified}</strong><small>verified non-burn fields</small></div>
       </section>
 
-      <section className="mx-auto mt-5 flex max-w-7xl items-start gap-3 rounded-2xl border border-emerald-900/10 bg-white/70 p-4 text-emerald-950 shadow-sm" aria-label="Data boundary">
+      <section className="home-data-note" aria-label="Data boundary">
         <Activity />
         <div>
           <strong>What you see is scoped to the records available here.</strong>
