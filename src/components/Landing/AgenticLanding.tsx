@@ -58,7 +58,6 @@ const PUNJAB_DISTRICT_TICKERS = [
 
 export const AgenticLanding: React.FC<AgenticLandingProps> = ({
   onNavigateTab,
-  openPitchDrawer,
   acresScheduled = 0,
   co2Avoided = 0,
   firmsZeroBurnCount = 0,
