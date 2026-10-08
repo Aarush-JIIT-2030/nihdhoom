@@ -389,7 +389,7 @@ test('performance architecture keeps heavy workspace libraries off the shell', (
   assert.match(header, /startTransition/);
   assert.match(header, /prefetchWorkspace/);
   assert.match(prefetch, /OpsMap/);
-  assert.match(prefetch, /SatelliteEarth3D/);
+  assert.doesNotMatch(prefetch, /SatelliteEarth3D|BalerModel3D|AgenticCommandCenter/);
   assert.match(vite, /cssCodeSplit: true/);
 });
 
