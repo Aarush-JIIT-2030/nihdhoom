@@ -143,7 +143,7 @@ export function Header({ activeTab, setActiveTab, demoMode }: HeaderProps) {
                     <div className="flex items-start justify-between gap-4 px-4 pb-3 pt-1">
                       <div>
                         <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-900/45">Explore NIRDHOOM</div>
-                        <div className="mt-1 text-[11px] text-emerald-900/55">Machines, proof, buyers and advanced tools.</div>
+                        <div className="mt-1 text-[11px] text-emerald-900/55">Machines, proof, buyers and account tools.</div>
                       </div>
                       <button
                         type="button"
