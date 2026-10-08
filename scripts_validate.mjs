@@ -90,6 +90,7 @@ const residueJourney = read('src/components/ResidueNetwork/FieldEvidenceTimeline
 const residueModel = read('src/types/index.ts');
 const machineCapability = read('supabase/migrations/202610080003_nirdhoom_machine_capability_provenance.sql');
 const farmerLabels = read('src/i18n/farmerLabels.ts');
+const rlsMatrix = read('tests/rls_role_matrix.sql');
 const opsMap = read('src/components/OpsConsole/OpsMap.tsx');
 
 const checks = [
@@ -151,6 +152,7 @@ const checks = [
   ['machine map is field-only', !opsMap.includes("Network Globe") && !opsMap.includes('dark_all') && !opsMap.includes("setMapMode")],
   ['farmer bilingual navigation', farmerLabels.includes("hi: {") && app.includes("farmerLabels") && read('src/components/Header.tsx').includes('हिंदी')],
   ['field evidence timeline', residueJourney.includes('FIELD EVIDENCE TIMELINE') && residueJourney.includes('supporting evidence only')],
+  ['RLS role matrix contract', rlsMatrix.includes('farmer_a_cannot_read_farmer_b_field') && rlsMatrix.includes('operator_a_cannot_read_operator_b_job') && rlsMatrix.includes('buyer_a_cannot_read_buyer_b_demand')],
   ['stale GPS is surfaced to operators', read('src/components/FieldOperator/BalerPWA.tsx').includes('gpsStale') && read('src/components/FieldOperator/BalerPWA.tsx').includes('GPS reading is stale')],
   ['settlement surfaces disclosed', read('src/components/FieldOperator/UpiSettlementModal.tsx').includes('no money movement') && !read('src/App.tsx').includes('Instant UPI Settlement')],
   ['farmer onboarding avoids financial identifiers', !read('src/components/FarmerOnboarding/FarmerOnboarding.tsx').includes('UPI ID (Preferred)')],
