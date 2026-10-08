@@ -42,6 +42,7 @@ const required = [
   'supabase/migrations/202610080001_nirdhoom_residue_lot_provenance.sql',
   'supabase/migrations/202610080002_nirdhoom_residue_lot_first_class.sql',
   'supabase/migrations/202610080003_nirdhoom_machine_capability_provenance.sql',
+  'supabase/migrations/202610080004_nirdhoom_residue_control_tower.sql',
   'supabase/migrations/202609270001_nirdhoom_core.sql',
   'supabase/migrations/202609270002_nirdhoom_production.sql',
   'supabase/migrations/202609270003_nirdhoom_v6.sql',
