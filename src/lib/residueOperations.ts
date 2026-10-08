@@ -39,31 +39,36 @@ export function estimatedResidueTonnes(field: Field, lot?: ResidueLot | null): n
   return Number((acreage * 2.1).toFixed(1));
 }
 
+function distanceKm(a?: { lat: number; lng: number }, b?: { lat: number; lng: number }): number | null {
+  if (!a || !b) return null;
+  const r = Math.PI / 180, p1 = a.lat * r, p2 = b.lat * r;
+  const dLat = (b.lat - a.lat) * r, dLng = (b.lng - a.lng) * r;
+  const h = Math.sin(dLat/2)**2 + Math.cos(p1)*Math.cos(p2)*Math.sin(dLng/2)**2;
+  return 6371 * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1-h));
+}
+
 export function machineRecommendations(fields: Field[], machines: Machine[], now = Date.now()): MachineCapacityRecommendation[] {
   const out: MachineCapacityRecommendation[] = [];
   for (const field of fields) {
     const pressure = harvestPressure(field, now);
     if (pressure === 'NORMAL') continue;
-    const candidates = machines
-      .filter((machine) => machine.status !== 'MAINTENANCE')
-      .map((machine) => {
-        const assigned = machine.assigned_field_ids?.length ?? 0;
-        const loadPenalty = assigned * 8;
-        const fitPenalty = machine.capacity_acres_day > 0 ? Math.max(0, 24 - machine.capacity_acres_day) : 40;
-        const statusBonus = machine.status === 'IDLE' ? 30 : machine.status === 'EN_ROUTE' ? 12 : 0;
-        const score = Math.max(0, 100 + statusBonus - loadPenalty - fitPenalty);
-        return {
-          machine_id: machine.id,
-          field_id: field.id,
-          score,
-          reason: machine.status === 'IDLE'
-            ? 'Idle capacity is available for a high-pressure field.'
-            : 'Available operational machine with remaining planning capacity.',
-          capacity_acres_day: machine.capacity_acres_day,
-          available: machine.status !== 'MAINTENANCE',
-        };
-      })
-      .sort((a, b) => b.score - a.score);
+    const candidates = machines.filter((machine) => machine.status !== 'MAINTENANCE').map((machine) => {
+      const assigned = machine.assigned_field_ids?.length ?? 0;
+      const loadPenalty = assigned * 10;
+      const distance = distanceKm(machine.current_location, field.center);
+      const distancePenalty = distance === null ? 12 : Math.min(35, distance * 1.2);
+      const residueFit = !machine.residue_types?.length || machine.residue_types.includes('PADDY_STRAW') ? 0 : 35;
+      const hpPenalty = machine.tractor_hp_required && machine.tractor_hp_required > 0 ? 0 : 8;
+      const capacityBonus = Math.min(30, Math.max(0, Number(machine.capacity_acres_day || 0) - 12));
+      const statusBonus = machine.status === 'IDLE' ? 32 : machine.status === 'EN_ROUTE' ? 12 : 0;
+      const score = Math.max(0, 100 + statusBonus + capacityBonus - loadPenalty - distancePenalty - residueFit - hpPenalty);
+      const distanceNote = distance === null ? 'distance unavailable' : distance.toFixed(1) + ' km from field';
+      return {
+        machine_id: machine.id, field_id: field.id, score,
+        reason: residueFit > 0 ? 'Capability does not explicitly list paddy straw; verify attachment before assignment.' : (machine.status === 'IDLE' ? 'Idle compatible capacity; ' + distanceNote + '.' : 'Available compatible machine; ' + distanceNote + '.'),
+        capacity_acres_day: machine.capacity_acres_day, available: machine.status !== 'MAINTENANCE',
+      };
+    }).sort((x, y) => y.score - x.score);
     if (candidates[0]) out.push(candidates[0]);
   }
   return out;
@@ -132,22 +137,12 @@ export function buildResidueExceptions(
 }
 
 export function buildDemandCoverage(buyers: Buyer[], lots: ResidueLot[] = []): BuyerDemandCoverage[] {
-  const verifiedTotal = lots.reduce((sum, lot) => sum + Number(lot.verified_quantity_tonnes || 0), 0);
   return buyers.map((buyer) => {
     const required = Number(buyer.demand_tonnes || 0);
-    const committed = Math.min(required, verifiedTotal);
-    const verified = Math.min(committed, verifiedTotal);
+    const verified = lots.filter((lot) => lot.assigned_buyer_id === buyer.id).reduce((sum, lot) => sum + Number(lot.verified_quantity_tonnes || 0), 0);
+    const committed = Math.min(required, verified);
     const coverage = required > 0 ? Math.round((verified / required) * 100) : 0;
-    return {
-      buyer_id: buyer.id,
-      buyer_name: buyer.name,
-      required_tonnes: required,
-      committed_tonnes: committed,
-      verified_tonnes: verified,
-      delivered_tonnes: 0,
-      coverage_pct: coverage,
-      status: coverage >= 90 ? 'COVERED' : coverage >= 60 ? 'WATCH' : 'OPEN',
-    };
+    return { buyer_id: buyer.id, buyer_name: buyer.name, required_tonnes: required, committed_tonnes: committed, verified_tonnes: verified, delivered_tonnes: 0, coverage_pct: coverage, status: coverage >= 90 ? 'COVERED' : coverage >= 60 ? 'WATCH' : 'OPEN' };
   });
 }
 
