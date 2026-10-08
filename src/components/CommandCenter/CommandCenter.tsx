@@ -22,13 +22,13 @@ interface Props {
 
 const heroImage = '/images/punjab_farm_hero.jpg';
 const farmImage = '/images/punjab_farm_hero.jpg';
-const balerImage = '/images/baling_fleet.jpg';
-const fleetImage = '/images/baling_fleet.jpg';
+const balerImage = '/images/baler_machine.jpg';
+const fleetImage = '/images/baling_dispatch_fleet_1790447115856.jpg';
 const offtakeImage = '/images/offtake_facility.jpg';
 const satelliteImage = '/images/satellite_firms.jpg';
 const farmerPhoneImage = '/images/farmer_phone.jpg';
 const circularUseImage = '/images/cbg_mushroom_offtake_1790447167269.jpg';
-const monsoonImage = '/images/punjab_farm_hero.jpg';
+const monsoonImage = '/images/farmer_manpreet.jpg';
 
 export function CommandCenter({
   fields, machines, fireEvents, storageYards, buyers, onSelectField, onOpenResidue, onOpenImpact, onNavigate
@@ -58,7 +58,7 @@ export function CommandCenter({
     <div className="field-page field-home pb-12">
       <section className="home-hero">
         <Spotlight className="home-hero-spotlight" fill="#f2a900" />
-        <img src={heroImage} alt="Paddy fields in Batala, Gurdaspur, Punjab" className="home-hero-image" decoding="async" fetchPriority="high" />
+        <img src={heroImage} alt="Punjab agricultural field context" className="home-hero-image" decoding="async" fetchPriority="high" />
         <div className="home-hero-overlay" />
         <div className="home-hero-content">
           <div className="home-eyebrow"><Leaf className="h-4 w-4" /> FIELD OPERATIONS • NIRDHOOM</div>
