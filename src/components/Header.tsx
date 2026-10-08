@@ -9,15 +9,14 @@ import {
 
 export type ActiveTab =
   | 'OVERVIEW' | 'RESIDUE_POOLS' | 'IMPACT_RESEARCH' | 'HARVEST_INTELLIGENCE'
-  | 'FIELD_PROVENANCE' | 'FIELD_JOBS' | 'AGENTIC_CONSOLE' | 'DEMO_RUNNER'
+  | 'FIELD_PROVENANCE' | 'FIELD_JOBS' | 'AGENTIC_CONSOLE'
   | 'DIGITAL_TWIN_3D' | 'MACHINERY_3D' | 'OPS_CONSOLE' | 'FARMER_SURFACE'
   | 'BALER_OPERATOR' | 'SATELLITE_AUDIT' | 'OFFTAKE_AUCTION' | 'CARBON_MARKET'
-  | 'FARMER_ONBOARDING' | 'FARMER_KYC' | 'JUDGE_DEFENSE' | 'COMPETITION_CENTER';
+  | 'FARMER_ONBOARDING' | 'FARMER_KYC';
 
 interface HeaderProps {
   activeTab: ActiveTab;
   setActiveTab: (tab: ActiveTab) => void;
-  openPitchDrawer: () => void;
   demoMode: boolean;
 }
 
@@ -47,15 +46,12 @@ const secondaryNav: NavItem[] = [
   { id: 'FARMER_KYC', label: 'My Profile', icon: UserCheck, description: 'Phone verification and farmer consent' },
   { id: 'OFFTAKE_AUCTION', label: 'Buyers', icon: TrendingUp, description: 'See buyer needs for collected parali' },
   { id: 'CARBON_MARKET', label: 'Carbon (Advanced)', icon: CircleDollarSign, description: 'Advanced carbon evidence workspace' },
-  { id: 'AGENTIC_CONSOLE', label: 'AI Helper (Advanced)', icon: Bot, description: 'Advanced assistant for operations' },
-  { id: 'DIGITAL_TWIN_3D', label: '3D Field View', icon: Activity, description: 'Advanced 3D view of fields' },
-  { id: 'MACHINERY_3D', label: '3D Machine View', icon: Activity, description: 'Advanced 3D machine view' },
-  { id: 'DEMO_RUNNER', label: 'How NIRDHOOM Works', icon: Sparkles, description: 'See the complete journey step by step' },
-  { id: 'COMPETITION_CENTER', label: 'Competition Pitch', icon: Trophy, description: 'RIDE and WarriorHacks demo and submission guide' },
-  { id: 'JUDGE_DEFENSE', label: 'Product Q&A', icon: HelpCircle, description: 'Questions and answers about the product' },
+  { id: 'AGENTIC_CONSOLE', label: 'AI Helper (Advanced)', icon: Bot, description: 'Bounded operations assistant' },
+  { id: 'DIGITAL_TWIN_3D', label: '3D Field View', icon: Activity, description: 'Spatial field context' },
+  { id: 'MACHINERY_3D', label: '3D Machine View', icon: Activity, description: 'Machine context' },
 ];
 
-export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: HeaderProps) {
+export function Header({ activeTab, setActiveTab, demoMode }: HeaderProps) {
   const [moreOpen, setMoreOpen] = useState(false);
   const [farmerLanguage, setFarmerLanguage] = useState<FarmerLanguage>(() => {
     if (typeof window === 'undefined') return 'en';
@@ -195,9 +191,6 @@ export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: H
               <span className={farmerLanguage === 'en' ? 'font-black text-emerald-900' : 'opacity-45'}>EN</span>
               <span className="text-emerald-900/25">/</span>
               <span className={farmerLanguage === 'hi' ? 'font-black text-emerald-900' : 'opacity-45'}>हिंदी</span>
-            </button>
-            <button onClick={openPitchDrawer} className="hidden sm:flex items-center gap-1.5 rounded-xl border border-emerald-700/15 bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-800 transition hover:bg-emerald-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500">
-              <Search className="h-3.5 w-3.5" /> Brief
             </button>
             <button
               type="button"
