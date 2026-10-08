@@ -39,7 +39,6 @@ export function useAppController() {
   const [loadingLiveData, setLoadingLiveData] = useState(!DEMO_MODE && Boolean(supabase));
   const [liveDataError, setLiveDataError] = useState<string | null>(null);
   const [activeRoutePolyline, setActiveRoutePolyline] = useState<LatLng[]>([]);
-  const [isPitchDrawerOpen, setIsPitchDrawerOpen] = useState(false);
   const [certificateField, setCertificateField] = useState<Field | null>(null);
   const [fieldForUpiModal, setFieldForUpiModal] = useState<Field | null>(null);
 
@@ -233,8 +232,6 @@ export function useAppController() {
     setSelectedField,
     activeRoutePolyline,
     setActiveRoutePolyline,
-    isPitchDrawerOpen,
-    setIsPitchDrawerOpen,
     certificateField,
     setCertificateField,
     fieldForUpiModal,
