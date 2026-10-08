@@ -646,3 +646,32 @@ test('farmer navigation has bilingual core labels', () => {
   assert.match(header, /nirdhoom\.farmer\.language/);
   assert.match(header, /हिंदी/);
 });
+
+test('residue control tower is backed by first-class operational objects', () => {
+  const tower = read('src/components/ResidueNetwork/ResidueControlTower.tsx');
+  const engine = read('src/lib/residueOperations.ts');
+  const migration = read('supabase/migrations/202610080004_nirdhoom_residue_control_tower.sql');
+  assert.match(tower, /Residue Control Tower/);
+  assert.match(tower, /What needs attention now/);
+  assert.match(tower, /Yard capacity/);
+  assert.match(tower, /48-hour operating rule/);
+  assert.match(engine, /harvestPressure/);
+  assert.match(engine, /machineRecommendations/);
+  assert.match(engine, /buildResidueExceptions/);
+  assert.match(engine, /buildDemandCoverage/);
+  assert.match(migration, /machine_capacity_windows/);
+  assert.match(migration, /storage_yards/);
+  assert.match(migration, /residue_matches/);
+  assert.match(migration, /residue_transport_jobs/);
+  assert.match(migration, /residue_exceptions/);
+  assert.match(migration, /revoke insert, update, delete/);
+});
+
+test('satellite observations remain supporting evidence and are sensor-agnostic', () => {
+  const types = read('src/types/index.ts');
+  const source = read('src/components/ThreeD/SatelliteEarth3D.tsx');
+  assert.match(types, /sensor\?: string/);
+  assert.match(types, /product\?: string/);
+  assert.match(types, /observation_role\?: 'SUPPORTING_EVIDENCE'/);
+  assert.match(source, /supporting evidence only/);
+});
