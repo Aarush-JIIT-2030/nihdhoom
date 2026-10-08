@@ -65,9 +65,8 @@ const PRESET_PROMPTS = [
 ];
 
 export const AgenticCommandCenter: React.FC<{
-  onTriggerDemoBeat?: (beatNumber: number) => void;
   onNavigateTab?: (tab: string) => void;
-}> = ({ onTriggerDemoBeat, onNavigateTab }) => {
+}> = ({ onNavigateTab }) => {
   const [selectedPrompt, setSelectedPrompt] = useState(PRESET_PROMPTS[0].prompt);
   const [isExecuting, setIsExecuting] = useState(false);
   const [activeAgentId, setActiveAgentId] = useState<string>('vrp');
