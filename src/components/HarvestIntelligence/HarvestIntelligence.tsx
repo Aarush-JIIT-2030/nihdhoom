@@ -206,6 +206,7 @@ export function HarvestIntelligence({ fields, machines, demoMode }: Props) {
         {weatherError ? (
           <div className="mt-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-200">{weatherError}</div>
         ) : weather ? (
+          <>
           <div className="mt-3 grid grid-cols-3 gap-2">
             <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-3">
               <div className="text-[10px] text-slate-500">Max rain probability</div>
@@ -227,6 +228,7 @@ export function HarvestIntelligence({ fields, machines, demoMode }: Props) {
               <div className="mt-1 text-[10px] opacity-70">Planning heuristic based on the authenticated forecast response; not a machine-safety guarantee.</div>
             </div>
           )}
+          </>
         ) : (
           <div className="mt-3 rounded-lg border border-dashed border-slate-700 p-4 text-xs text-slate-500">
             {demoMode ? 'Weather is intentionally not fabricated in demo mode.' : 'Select a field with valid coordinates to load the live forecast.'}
