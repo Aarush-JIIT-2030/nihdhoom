@@ -107,7 +107,7 @@ const farmerLabels = read('src/i18n/farmerLabels.ts');
 const rlsMatrix = read('tests/rls_role_matrix.sql');
 const opsMap = read('src/components/OpsConsole/OpsMap.tsx');
 const runtimeSource = runtimeSourceFiles.map(file => fs.readFileSync(file, 'utf8')).join('\n');
-const localImageRefs = [...new Set([...runtimeSource.matchAll(/[\"'\`]\\/images\\/([^\"'\`?#]+)/g)].map(match => match[1]))];
+const localImageRefs = [...new Set([...runtimeSource.matchAll(/["'\`]\/images\/([^"'\`?#]+)/g)].map(match => match[1]))];
 
 const checks = [
   ['modular React entrypoint', entry.includes("import { App } from './App.tsx'") && entry.includes("import './index.css'")],
