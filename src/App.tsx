@@ -221,6 +221,7 @@ export function App() {
 
   const navigate = useCallback((tab: ActiveTab) => {
     startTransition(() => setActiveTab(tab));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [setActiveTab]);
 
   const handleSelectField = (field: Field) => {
@@ -228,7 +229,7 @@ export function App() {
   };
 
   return (
-    <div data-active-tab={activeTab} className="nirdhoom-field-app min-h-screen bg-[var(--bg-deep)] text-[var(--text)] flex flex-col font-sans selection:bg-emerald-500 selection:text-slate-950 relative overflow-x-hidden">
+    <div data-active-tab={activeTab} className="nirdhoom-field-app min-h-screen flex flex-col font-sans relative overflow-x-clip">
       <a href="#main-content" className="skip-link">Skip to main content</a>
       {/* Top Header */}
       <Header
@@ -241,7 +242,7 @@ export function App() {
       {!demoMode && liveDataError && <div className="live-state-banner live-state-banner-error" role="alert">Live data unavailable: {liveDataError}</div>}
 
       {/* Main Content Area */}
-      <main id="main-content" className="field-main flex-1 w-full max-w-[1480px] mx-auto px-3 sm:px-5 lg:px-7 py-5 sm:py-7 relative z-10">
+      <main id="main-content" className="field-main flex-1 relative z-10">
         <Suspense fallback={<WorkspaceLoading />}>
         {activeTab !== 'OVERVIEW' && <WorkspaceHeader activeTab={activeTab} demoMode={demoMode} onNavigate={navigate} />}
 
@@ -305,7 +306,122 @@ export function App() {
           <HarvestIntelligence fields={fields} machines={machines} demoMode={demoMode} />
         )}
 
-        {/* TAB: FARMER ONBOARDING KYC */}
+        {activeTab === 'OPS_CONSOLE' && (
+          <div className="workspace-stack">
+            <ResidueControlTower
+              fields={fields}
+              machines={machines}
+              buyers={demoMode ? INITIAL_BUYERS : liveBuyers}
+              storageYards={demoMode ? INITIAL_STORAGE_YARDS : liveStorageYards}
+              residueLots={demoMode ? INITIAL_RESIDUE_LOTS : residueLots}
+              demoMode={demoMode}
+              onSelectField={handleSelectField}
+              onNavigate={(tab) => navigate(tab as ActiveTab)}
+            />
+
+            <section className="ops-console" aria-labelledby="ops-console-title">
+              <div className="section-bar">
+                <div>
+                  <h2 id="ops-console-title" className="section-bar-title">
+                    <Map className="h-4 w-4" aria-hidden="true" />
+                    Central Ops & VRP Dispatch Console
+                  </h2>
+                  <p className="section-bar-sub">
+                    GIS operations prototype for a Sangrur cluster using demo machinery and FIRMS-style event data
+                  </p>
+                </div>
+                <div className="section-bar-meta">
+                  <span className="pill pill-green">{demoMode ? 'Demo GPS feed' : 'Live operator telemetry'}</span>
+                  <span className="pill">{fields.length} Farms • {machines.length} Balers</span>
+                </div>
+              </div>
+
+              <div className="ops-console-grid">
+                <div className="ops-console-map">
+                  <OpsMap
+                    fields={fields}
+                    machines={machines}
+                    fireEvents={fireEvents}
+                    storageYards={demoMode ? INITIAL_STORAGE_YARDS : liveStorageYards}
+                    buyers={demoMode ? INITIAL_BUYERS : liveBuyers}
+                    selectedField={selectedField}
+                    demoMode={demoMode}
+                    onSelectField={handleSelectField}
+                    activeRoutePolyline={activeRoutePolyline}
+                  />
+
+                  {selectedField && (
+                    <FieldDetailDrawer
+                      demoMode={demoMode}
+                      field={selectedField}
+                      onClose={() => setSelectedField(null)}
+                      onTriggerUpiPayout={(f) => handleUpdateFieldStatus(f.id, 'CLEARED_PENDING_AUDIT')}
+                      onViewCertificate={(f) => setCertificateField(f)}
+                    />
+                  )}
+                </div>
+
+                <div className="ops-console-side">
+                  <VRPDispatchPanel
+                    fields={fields}
+                    machines={machines}
+                    onRouteSelected={(route) => setActiveRoutePolyline(route)}
+                    onSelectField={handleSelectField}
+                  />
+                </div>
+              </div>
+            </section>
+          </div>
+        )}
+
+        {activeTab === 'FARMER_SURFACE' && (
+          <TelegramChannel />
+        )}
+
+        {activeTab === 'BALER_OPERATOR' && (
+          machines[0] ? (
+            <BalerPWA
+              fields={fields}
+              activeMachine={machines[0]}
+              demoMode={demoMode}
+              onJobCompleted={(fId, amt) => demoMode ? handleUpdateFieldStatus(fId, 'CLEARED_PENDING_AUDIT', amt) : void refreshLiveData()}
+            />
+          ) : (
+            <section className="empty-workspace">
+              <span className="empty-workspace-icon"><Zap className="h-5 w-5" aria-hidden="true" /></span>
+              <h2>Field Operator PWA</h2>
+              <p>
+                No live machine is assigned yet. Connect an operator machine record before starting field operations.
+              </p>
+              <div className="empty-workspace-stats">
+                <div>
+                  <span>Live fields</span>
+                  <strong>{fields.length}</strong>
+                </div>
+                <div>
+                  <span>Assigned machines</span>
+                  <strong>{machines.length}</strong>
+                </div>
+              </div>
+            </section>
+          )
+        )}
+
+        {activeTab === 'SATELLITE_AUDIT' && (
+          <SatelliteAudit
+            fields={fields}
+            fireEvents={fireEvents}
+            demoMode={demoMode}
+            onVerified={() => { void refreshLiveData(); }}
+          />
+        )}
+
+        {activeTab === 'OFFTAKE_AUCTION' && (
+          <div className="workspace-stack">
+            <MultiOfftakeAuction />
+            <HarvestForecast />
+          </div>
+        )}
         </Suspense>
       </main>
 
@@ -317,20 +433,21 @@ export function App() {
           onClose={() => setCertificateField(null)}
         />
       )}
-\n\n      {/* Modern Footer */}
-      <footer className="mt-auto border-t border-emerald-500/15 bg-slate-950/95 py-5 text-center text-xs text-slate-400">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <span className="font-extrabold text-emerald-400 font-['Outfit'] text-base">NIRDHOOM (ਨਿਰਧੂਮ)</span>
-            <span className="text-slate-600">•</span>
-            <span className="text-slate-400">The Parali Reframe</span>
+
+      {/* Modern Footer */}
+      <footer className="site-footer">
+        <div className="site-footer-inner">
+          <div className="site-footer-brand">
+            <strong>NIRDHOOM (ਨਿਰਧੂਮ)</strong>
+            <span className="sep">•</span>
+            <span className="tag">The Parali Reframe</span>
           </div>
 
-          <div className="text-slate-500 text-[11px] text-center">
+          <div className="site-footer-links">
             Field operations • Evidence • Residue • Buyer pathways
           </div>
 
-          <span className="rounded-full border border-emerald-900/20 bg-emerald-900/20 px-3 py-1.5 text-[10px] font-semibold text-emerald-200">Evidence-first prototype</span>
+          <span className="site-footer-badge">Evidence-first prototype</span>
         </div>
       </footer>
     </div>

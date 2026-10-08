@@ -10,8 +10,40 @@ const DEMO_STATE_KEY = 'nirdhoom.demo.state.v2';
 
 type DemoState = { fields: Field[]; machines: Machine[]; fireEvents: BurnEvent[] };
 
+const ROUTABLE_TABS: ActiveTab[] = [
+  'OVERVIEW', 'FIELD_JOBS', 'FARMER_ONBOARDING', 'OPS_CONSOLE', 'RESIDUE_POOLS',
+  'HARVEST_INTELLIGENCE', 'FIELD_PROVENANCE', 'SATELLITE_AUDIT', 'IMPACT_RESEARCH',
+  'BALER_OPERATOR', 'FARMER_SURFACE', 'FARMER_KYC', 'OFFTAKE_AUCTION',
+];
+
+const tabToSlug = (tab: ActiveTab) => tab.toLowerCase().replace(/_/g, '-');
+
+function tabFromLocation(): ActiveTab {
+  if (typeof window === 'undefined') return 'OVERVIEW';
+  const slug = window.location.hash.replace(/^#\/?/, '').toLowerCase();
+  return ROUTABLE_TABS.find((tab) => tabToSlug(tab) === slug) ?? 'OVERVIEW';
+}
+
 export function useAppController() {
-  const [activeTab, setActiveTab] = useState<ActiveTab>('OVERVIEW');
+  const [activeTab, setActiveTab] = useState<ActiveTab>(tabFromLocation);
+
+  // Keep the URL in sync so every workspace is linkable and the back button works.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const target = activeTab === 'OVERVIEW' ? '' : `#/${tabToSlug(activeTab)}`;
+    const current = window.location.hash;
+    if ((current === '' || current === '#' || current === '#/') && target === '') return;
+    if (current !== target) {
+      window.history.pushState(null, '', target || `${window.location.pathname}${window.location.search}`);
+    }
+  }, [activeTab]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const onPop = () => setActiveTab(tabFromLocation());
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
 
   const [demoSeed] = useState<DemoState>(() => {
     const fallback = { fields: INITIAL_FIELDS, machines: INITIAL_MACHINES, fireEvents: MOCK_FIRMS_FIRE_EVENTS };
