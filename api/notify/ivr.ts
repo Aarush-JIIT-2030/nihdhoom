@@ -1,3 +1,4 @@
+import { rateLimit } from '../_lib/rateLimit';
 declare const process: { env: Record<string, string | undefined> };
 
 async function verifyDispatcher(req: any) {
@@ -26,6 +27,8 @@ function validPhone(value: unknown) {
 }
 
 export default async function handler(req: any, res: any) {
+  if (!rateLimit(req, res, 'api-ivr.ts', 10)) return res.status(429).json({ error: 'Too many IVR requests; please retry shortly.' });
+
   if (req.method !== 'POST') {
     res.setHeader?.('Allow', 'POST');
     return res.status(405).json({ error: 'Method not allowed' });

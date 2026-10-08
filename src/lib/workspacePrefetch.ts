@@ -11,14 +11,7 @@ const loaders: Partial<Record<ActiveTab, () => Promise<unknown>>> = {
   SATELLITE_AUDIT: () => import('../components/VerificationLayer/SatelliteAudit'),
   OFFTAKE_AUCTION: () => import('../components/OfftakeAndForecast/MultiOfftakeAuction'),
   HARVEST_INTELLIGENCE: () => import('../components/HarvestIntelligence/HarvestIntelligence'),
-  CARBON_MARKET: () => import('../components/CarbonMarketplace/CarbonMarketplace'),
-  AGENTIC_CONSOLE: () => import('../components/AgenticConsole/AgenticCommandCenter'),
-  DIGITAL_TWIN_3D: () => import('../components/ThreeD/SatelliteEarth3D'),
-  MACHINERY_3D: () => import('../components/ThreeD/BalerModel3D'),
-  DEMO_RUNNER: () => import('../components/DemoWalkthrough'),
-  JUDGE_DEFENSE: () => import('../components/PitchDefense/JudgesQnAPanel'),
-  FARMER_SURFACE: () => import('../components/FarmerSurface/TelegramSimulator'),
-  COMPETITION_CENTER: () => import('../components/PitchDefense/CompetitionCenter'),
+  FARMER_SURFACE: () => import('../components/FarmerSurface/TelegramChannel'),
 };
 
 const warmed = new Set<ActiveTab>();

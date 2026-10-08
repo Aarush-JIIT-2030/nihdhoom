@@ -32,7 +32,6 @@ import { ActiveTab } from '../Header';
 
 interface AgenticLandingProps {
   onNavigateTab: (tab: ActiveTab) => void;
-  openPitchDrawer: () => void;
   acresScheduled?: number;
   co2Avoided?: number;
   firmsZeroBurnCount?: number;
@@ -59,7 +58,6 @@ const PUNJAB_DISTRICT_TICKERS = [
 
 export const AgenticLanding: React.FC<AgenticLandingProps> = ({
   onNavigateTab,
-  openPitchDrawer,
   acresScheduled = 0,
   co2Avoided = 0,
   firmsZeroBurnCount = 0,
@@ -134,14 +132,6 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
           {/* Interactive CTAs Bar */}
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-10">
             <button
-              onClick={() => onNavigateTab('DEMO_RUNNER')}
-              className="px-6 py-3.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-emerald-950 font-extrabold text-sm flex items-center gap-2.5 cursor-pointer shadow-xl shadow-emerald-500/30 hover:scale-[1.02] transition-all"
-            >
-              <Play className="w-4 h-4 fill-slate-950" />
-              <span>Start the 2-Minute Competition Demo</span>
-            </button>
-
-            <button
               onClick={() => onNavigateTab('OPS_CONSOLE')}
               className="px-6 py-3.5 rounded-xl bg-emerald-800 hover:bg-emerald-700 text-white border border-emerald-900/20 font-bold text-sm flex items-center gap-2 cursor-pointer shadow-lg shadow-cyan-500/10 hover:scale-[1.02] transition-all"
             >
@@ -157,13 +147,6 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
               <span>Field Proof View</span>
             </button>
 
-            <button
-              onClick={() => onNavigateTab('COMPETITION_CENTER')}
-              className="px-5 py-3.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-900/10 font-semibold text-sm flex items-center gap-2 cursor-pointer transition-all"
-            >
-              <Sparkles className="w-4 h-4" />
-              <span>Competition Pitch Center</span>
-            </button>
           </div>
 
           {/* Quick Metrics Bar in Hero with subtle borders */}
@@ -255,7 +238,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
 
         {/* Full-Width Interactive 3D Geospatial Digital Twin Banner */}
         <div 
-          onClick={() => onNavigateTab('DIGITAL_TWIN_3D')}
+          onClick={() => onNavigateTab('OPS_CONSOLE')}
           className="relative z-10 mt-4 rounded-2xl overflow-hidden border border-emerald-500/40 group bg-gradient-to-r from-emerald-50 via-white to-amber-50 p-4 max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 cursor-pointer hover:border-emerald-400 transition-all shadow-xl hover:shadow-emerald-500/20"
         >
           <div className="flex items-center gap-3.5">
@@ -338,8 +321,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
           else if (id === 'vrp') onNavigateTab('OPS_CONSOLE');
           else if (id === 'baler') onNavigateTab('BALER_OPERATOR');
           else if (id === 'nasa') onNavigateTab('SATELLITE_AUDIT');
-          else if (id === 'carbon') onNavigateTab('CARBON_MARKET');
-          else onNavigateTab('AGENTIC_CONSOLE');
+          else onNavigateTab('OPS_CONSOLE');
         }} />
       </section>
 
@@ -372,10 +354,10 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
 
           <div className="flex items-center gap-2">
             <button
-              onClick={() => onNavigateTab('DEMO_RUNNER')}
+              onClick={() => onNavigateTab('OPS_CONSOLE')}
               className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold font-mono transition-all flex items-center gap-1.5 cursor-pointer shadow"
             >
-              <span>4-Beat Runner</span>
+              <span>Open operations</span>
               <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -384,7 +366,6 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {[
             {
-              tab: 'AGENTIC_CONSOLE' as ActiveTab,
               title: '🤖 Agentic Swarm Console',
               desc: 'Operational coordination concepts with routing, evidence and assistant workflows.',
               tag: 'Agentic AI',
@@ -398,14 +379,12 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
               badgeColor: 'text-emerald-300 bg-emerald-950/60 border-emerald-500/30',
             },
             {
-              tab: 'DIGITAL_TWIN_3D' as ActiveTab,
               title: '🌐 3D Geospatial Digital Twin',
               desc: 'Three.js interactive Punjab Malwa hotspot with orbiting NOAA-20 satellite, radar scan cone, and fire plumes.',
               tag: 'Three.js 3D',
               badgeColor: 'text-teal-300 bg-teal-950/60 border-teal-500/30',
             },
             {
-              tab: 'MACHINERY_3D' as ActiveTab,
               title: '🚜 3D Baler Twin',
               desc: 'Interactive illustrative machine visualization; availability must come from registered operational records.',
               tag: 'CRM Fleet',
@@ -447,30 +426,16 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
               badgeColor: 'text-teal-300 bg-teal-950/60 border-teal-500/30',
             },
             {
-              tab: 'CARBON_MARKET' as ActiveTab,
-              title: '🌿 Carbon Market Simulator',
-              desc: 'Illustrative carbon-market workflow; registry issuance and retirement are not connected.',
-              tag: 'Outcome Credits',
-              badgeColor: 'text-emerald-300 bg-emerald-950/60 border-emerald-500/30',
-            },
-            {
               tab: 'FARMER_ONBOARDING' as ActiveTab,
               title: '📍 Polygon Drawing & KYC',
               desc: 'Interactive field boundary workflow with explicit verification status and crop details.',
               tag: 'KYC & Demand',
               badgeColor: 'text-cyan-300 bg-cyan-950/60 border-cyan-500/30',
             },
-            {
-              tab: 'JUDGE_DEFENSE' as ActiveTab,
-              title: '🛡️ Judge Defense & Unit Economics',
-              desc: 'Direct cross-examination answers for Verbio comparison, in-situ alternatives, 10-month baler downtime, and margins.',
-              tag: 'Q&A Prep',
-              badgeColor: 'text-purple-300 bg-purple-950/60 border-purple-500/30',
-            },
           ].map((item, idx) => (
             <div
               key={idx}
-              onClick={() => onNavigateTab(item.tab)}
+              onClick={() => item.tab && onNavigateTab(item.tab)}
               className="p-4 rounded-xl border border-slate-800 bg-slate-900/60 hover:border-emerald-500/50 hover:bg-slate-900/90 transition-all cursor-pointer flex flex-col justify-between group shadow-sm hover:shadow-emerald-500/10"
             >
               <div>

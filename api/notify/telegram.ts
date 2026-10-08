@@ -1,3 +1,4 @@
+import { rateLimit } from '../_lib/rateLimit';
 declare const process: { env: Record<string, string | undefined> };
 
 async function verifyDispatcher(req: any) {
@@ -28,6 +29,8 @@ function validChatId(value: unknown) {
 }
 
 export default async function handler(req: any, res: any) {
+  if (!rateLimit(req, res, 'api-telegram.ts', 20)) return res.status(429).json({ error: 'Too many Telegram requests; please retry shortly.' });
+
   if (req.method !== 'POST') {
     res.setHeader?.('Allow', 'POST');
     return res.status(405).json({ error: 'Method not allowed' });

@@ -158,13 +158,7 @@ export const BentoGrid: React.FC<{
           </p>
         </div>
 
-        <button
-          onClick={() => onNavigateTab('JUDGE_DEFENSE')}
-          className="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-900/10 text-xs font-bold font-mono transition-all cursor-pointer flex items-center gap-1.5 shrink-0"
-        >
-          <span>Judge Q&A Deck</span>
-          <ArrowUpRight className="w-3.5 h-3.5" />
-        </button>
+        <span className="rounded-full border border-emerald-900/10 bg-emerald-50 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-emerald-800">Product strategy</span>
       </div>
 
       {/* Bento Grid Layout */}

@@ -1,4 +1,5 @@
 import { createHmac, createHash } from 'node:crypto';
+import { rateLimit } from '../_lib/rateLimit';
 
 declare const process: { env: Record<string, string | undefined> };
 
@@ -48,7 +49,7 @@ export default async function handler(req: any, res: any) {
     res.setHeader?.('Allow', 'POST');
     return res.status(405).json({ error: 'Method not allowed' });
   }
-
+  if (!rateLimit(req, res, 'telegram-miniapp-auth', 30, 60_000)) return res.status(429).json({ error: 'Too many authentication requests' });
   const initData = String(req.body?.initData || '');
   const verified = verifyInitData(initData);
   if (!verified) return res.status(401).json({ error: 'Invalid or expired Telegram Mini App identity' });

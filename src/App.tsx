@@ -1,27 +1,15 @@
 import { lazy, Suspense, useEffect, useCallback, startTransition } from 'react';
 import { Header, ActiveTab } from './components/Header';
-const DemoWalkthrough = lazy(() => import('./components/DemoWalkthrough').then((m) => ({ default: m.DemoWalkthrough })));
-import { LiveKPIDashboard } from './components/LiveKPIDashboard';
 const OpsMap = lazy(() => import('./components/OpsConsole/OpsMap').then((m) => ({ default: m.OpsMap })));
 const VRPDispatchPanel = lazy(() => import('./components/OpsConsole/VRPDispatchPanel').then((m) => ({ default: m.VRPDispatchPanel })));
 const FieldDetailDrawer = lazy(() => import('./components/OpsConsole/FieldDetailDrawer').then((m) => ({ default: m.FieldDetailDrawer })));
-const TelegramSimulator = lazy(() => import('./components/FarmerSurface/TelegramSimulator').then((m) => ({ default: m.TelegramSimulator })));
+const TelegramChannel = lazy(() => import('./components/FarmerSurface/TelegramChannel').then((m) => ({ default: m.TelegramChannel })));
 const BalerPWA = lazy(() => import('./components/FieldOperator/BalerPWA').then((m) => ({ default: m.BalerPWA })));
-const UpiSettlementModal = lazy(() => import('./components/FieldOperator/UpiSettlementModal').then((m) => ({ default: m.UpiSettlementModal })));
 const SatelliteAudit = lazy(() => import('./components/VerificationLayer/SatelliteAudit').then((m) => ({ default: m.SatelliteAudit })));
 const CarbonCertificate = lazy(() => import('./components/VerificationLayer/CarbonCertificate').then((m) => ({ default: m.CarbonCertificate })));
 const MultiOfftakeAuction = lazy(() => import('./components/OfftakeAndForecast/MultiOfftakeAuction').then((m) => ({ default: m.MultiOfftakeAuction })));
 const HarvestForecast = lazy(() => import('./components/OfftakeAndForecast/HarvestForecast').then((m) => ({ default: m.HarvestForecast })));
-const JudgesQnAPanel = lazy(() => import('./components/PitchDefense/JudgesQnAPanel').then((m) => ({ default: m.JudgesQnAPanel })));
-const JudgePitchDrawer = lazy(() => import('./components/PitchDefense/JudgePitchDrawer').then((m) => ({ default: m.JudgePitchDrawer })));
-const CompetitionCenter = lazy(() => import('./components/PitchDefense/CompetitionCenter').then((m) => ({ default: m.CompetitionCenter })));
-const SatelliteEarth3D = lazy(() => import('./components/ThreeD/SatelliteEarth3D').then((m) => ({ default: m.SatelliteEarth3D })));
-const BalerModel3D = lazy(() => import('./components/ThreeD/BalerModel3D').then((m) => ({ default: m.BalerModel3D })));
-const CardTilt3D = lazy(() => import('./components/ThreeD/CardTilt3D').then((m) => ({ default: m.CardTilt3D })));
-const CarbonMarketplace = lazy(() => import('./components/CarbonMarketplace/CarbonMarketplace').then((m) => ({ default: m.CarbonMarketplace })));
 const FarmerOnboarding = lazy(() => import('./components/FarmerOnboarding/FarmerOnboarding').then((m) => ({ default: m.FarmerOnboarding })));
-const AgenticCommandCenter = lazy(() => import('./components/AgenticConsole/AgenticCommandCenter').then((m) => ({ default: m.AgenticCommandCenter })));
-const AgenticTelemetryToast = lazy(() => import('./components/AgenticConsole/AgenticTelemetryToast').then((m) => ({ default: m.AgenticTelemetryToast })));
 import { CommandCenter } from './components/CommandCenter/CommandCenter';
 const ResiduePooling = lazy(() => import('./components/ResiduePooling/ResiduePooling').then((m) => ({ default: m.ResiduePooling })));
 const ImpactResearch = lazy(() => import('./components/ImpactResearch/ImpactResearch').then((m) => ({ default: m.ImpactResearch })));
@@ -39,7 +27,7 @@ import { prefetchWorkspace } from './lib/workspacePrefetch';
 import { WorkspaceLoading } from './components/WorkspaceLoading';
 import { useAppController } from './state/useAppController';
 import { generateNonBurnCertificate } from './utils/spatialVerification';
-import { Globe, Box, Map, Sparkles, ShieldCheck, Zap, UserCheck, Leaf } from 'lucide-react';
+import { Map, ShieldCheck, Zap, UserCheck, Leaf } from 'lucide-react';
 
 type WorkspaceHeaderProps = {
   activeTab: ActiveTab;
@@ -151,60 +139,6 @@ const WORKSPACE_META: Partial<Record<ActiveTab, {
     accent: 'amber',
     action: { label: 'Open residue pools', tab: 'RESIDUE_POOLS' },
   },
-  CARBON_MARKET: {
-    eyebrow: 'CARBON & IMPACT',
-    title: 'Carbon market simulator',
-    description: 'Explore an illustrative registry pathway and evidence model. Credits are not issued or retired in this release.',
-    image: '/images/satellite_firms.jpg',
-    accent: 'green',
-    action: { label: 'View verification', tab: 'SATELLITE_AUDIT' },
-  },
-  AGENTIC_CONSOLE: {
-    eyebrow: 'AI OPERATIONS',
-    title: 'AI dispatch assistant',
-    description: 'Use bounded automation to inspect field conditions, propose routes and surface evidence. Human approval stays in the loop for consequential actions.',
-    image: '/images/baling_dispatch_fleet_1790447115856.jpg',
-    accent: 'sky',
-    action: { label: 'Open operations', tab: 'OPS_CONSOLE' },
-  },
-  DIGITAL_TWIN_3D: {
-    eyebrow: 'SPATIAL VIEW',
-    title: '3D field twin',
-    description: 'Explore the spatial model as an explanatory view of fields and operations. It is not a substitute for authoritative field geometry.',
-    image: '/images/punjab_farm_hero.jpg',
-    accent: 'sky',
-    action: { label: 'Open 2D map', tab: 'OPS_CONSOLE' },
-  },
-  MACHINERY_3D: {
-    eyebrow: 'MACHINE VIEW',
-    title: '3D baler twin',
-    description: 'Inspect the machinery concept and connect it back to the operator workflow and dispatch system.',
-    image: '/images/baler_machine.jpg',
-    accent: 'sky',
-    action: { label: 'Open operator PWA', tab: 'BALER_OPERATOR' },
-  },
-  DEMO_RUNNER: {
-    eyebrow: 'PRODUCT WALKTHROUGH',
-    title: 'NIRDHOOM end-to-end walkthrough',
-    description: 'A controlled demonstration of the field → machine → evidence → residue journey. Demo records are clearly separated from live records.',
-    image: '/images/baling_dispatch_fleet_1790447115856.jpg',
-    accent: 'amber',
-  },
-  COMPETITION_CENTER: {
-    eyebrow: 'COMPETITION READY',
-    title: 'RIDE & WarriorHacks pitch center',
-    description: 'A focused judging workspace for the two competitions: startup/incubation for RIDE and community impact + technical craft for WarriorHacks.',
-    image: '/images/punjab_farmer_hero.jpg',
-    accent: 'amber',
-    action: { label: 'Start the 2-minute demo', tab: 'DEMO_RUNNER' },
-  },
-  JUDGE_DEFENSE: {
-    eyebrow: 'PITCH DEFENCE',
-    title: 'Judge Q&A & product proof',
-    description: 'Keep the story, constraints, evidence and release boundaries in one place for a clear technical demonstration.',
-    image: '/images/punjab_farm_hero.jpg',
-    accent: 'green',
-  },
 };
 
 function WorkspaceHeader({ activeTab, demoMode, onNavigate }: WorkspaceHeaderProps) {
@@ -255,7 +189,7 @@ function WorkspaceHeader({ activeTab, demoMode, onNavigate }: WorkspaceHeaderPro
         </div>
       </div>
       <div className="workspace-hero-image" aria-hidden="true">
-        <img src={meta.image} alt="" loading="lazy" />
+        <img src={meta.image} alt="" loading="lazy" decoding="async" />
         <div className="workspace-hero-image-scrim" />
       </div>
     </section>
@@ -273,12 +207,8 @@ export function App() {
     setSelectedField,
     activeRoutePolyline,
     setActiveRoutePolyline,
-    isPitchDrawerOpen,
-    setIsPitchDrawerOpen,
     certificateField,
     setCertificateField,
-    fieldForUpiModal,
-    setFieldForUpiModal,
     handleUpdateFieldStatus,
     refreshLiveData,
     demoMode,
@@ -288,21 +218,6 @@ export function App() {
     buyers: liveBuyers,
     storageYards: liveStorageYards,
   } = useAppController();
-
-  const acresScheduled = fields.reduce((sum, field) => sum + (Number(field.acreage) || 0), 0);
-  const verifiedCount = fields.filter((field) => field.is_verified_non_burn || field.status === 'VERIFIED_NON_BURN').length;
-
-  useEffect(() => {
-    const demoOnlyTabs: ActiveTab[] = [
-      'AGENTIC_CONSOLE',
-      'DIGITAL_TWIN_3D',
-      'MACHINERY_3D',
-      'OFFTAKE_AUCTION',
-      'CARBON_MARKET',
-      'JUDGE_DEFENSE',
-    ];
-    if (!demoMode && demoOnlyTabs.includes(activeTab)) setActiveTab('OVERVIEW');
-  }, [activeTab, demoMode, setActiveTab]);
 
   const navigate = useCallback((tab: ActiveTab) => {
     startTransition(() => setActiveTab(tab));
@@ -319,7 +234,6 @@ export function App() {
       <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        openPitchDrawer={() => setIsPitchDrawerOpen(true)}
         demoMode={demoMode}
       />
 
@@ -391,314 +305,7 @@ export function App() {
           <HarvestIntelligence fields={fields} machines={machines} demoMode={demoMode} />
         )}
 
-        {/* TAB 0: AGENTIC AI MULTI-AGENT SWARM */}
-        {activeTab === 'AGENTIC_CONSOLE' && (
-          <AgenticCommandCenter
-            onTriggerDemoBeat={(_beat) => setActiveTab('DEMO_RUNNER')}
-            onNavigateTab={(tab) => setActiveTab(tab as ActiveTab)}
-          />
-        )}
-
-        {/* TAB 1: 4-BEAT DEMO WALKTHROUGH */}
-        {activeTab === 'DEMO_RUNNER' && (
-          <div className="flex flex-col gap-2">
-            <LiveKPIDashboard
-              demoMode={demoMode}
-              acresScheduled={acresScheduled}
-              co2Avoided={0}
-              firmsZeroBurnCount={verifiedCount}
-              activeMachines={machines.length}
-              fireEventsOutsideCount={fireEvents.length}
-            />
-            <DemoWalkthrough
-              fields={fields}
-              machines={machines}
-              fireEvents={fireEvents}
-              demoMode={demoMode}
-              onUpdateFieldStatus={handleUpdateFieldStatus}
-              onViewCertificateModal={(f) => setCertificateField(f)}
-            />
-          </div>
-        )}
-
-        {/* TAB: 3D DIGITAL TWIN (HOLOGRAPHIC SATELLITE & HOTSPOT SCAN) */}
-        {activeTab === 'DIGITAL_TWIN_3D' && (
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-slate-900/60 p-4 rounded-xl border border-emerald-500/30">
-              <div>
-                <div className="flex items-center gap-2">
-                  <Globe className="w-5 h-5 text-emerald-400" />
-                  <h2 className="font-extrabold text-lg text-white font-['Outfit']">
-                    3D Geospatial Agricultural Digital Twin
-                  </h2>
-                </div>
-                <p className="text-xs text-slate-300 mt-0.5">
-                  Interactive Three.js spatial model of the Punjab Malwa hotspot using demo field, satellite, and fire-event data.
-                </p>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setActiveTab('MACHINERY_3D')}
-                  className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs font-bold border border-slate-700 flex items-center gap-1.5 cursor-pointer"
-                >
-                  <Box className="w-3.5 h-3.5" />
-                  <span>Inspect 3D Baler</span>
-                </button>
-                <button
-                  onClick={() => setActiveTab('OPS_CONSOLE')}
-                  className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow"
-                >
-                  <Map className="w-3.5 h-3.5" />
-                  <span>Switch to 2D GIS Map</span>
-                </button>
-              </div>
-            </div>
-
-            <SatelliteEarth3D
-              fields={fields}
-              fireEvents={fireEvents}
-              onSelectField={handleSelectField}
-            />
-
-            {/* Telemetry Summary Cards with 3D Tilt */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <CardTilt3D>
-                <div className="glass-panel p-4 border-emerald-500/30 h-full">
-                  <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
-                    <span>3D Verified Parcels</span>
-                    <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                  </div>
-                  <div className="text-xl font-extrabold text-emerald-400 font-mono">
-                    {fields.length} Polygons
-                  </div>
-                  <p className="text-[11px] text-slate-400 mt-1">
-                    Illustrative thermal intersection check
-                  </p>
-                </div>
-              </CardTilt3D>
-
-              <CardTilt3D>
-                <div className="glass-panel p-4 border-red-500/30 h-full">
-                  <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
-                    <span>Active Thermal Plumes</span>
-                    <span className="text-sm">🔥</span>
-                  </div>
-                  <div className="text-xl font-extrabold text-red-400 font-mono">
-                    {fireEvents.length} Points
-                  </div>
-                  <p className="text-[11px] text-slate-400 mt-1">
-                    Demo fire events shown outside customer boundaries
-                  </p>
-                </div>
-              </CardTilt3D>
-
-              <CardTilt3D>
-                <div className="glass-panel p-4 border-cyan-500/30 h-full">
-                  <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
-                    <span>Satellite Sensor</span>
-                    <Globe className="w-4 h-4 text-cyan-400" />
-                  </div>
-                  <div className="text-xl font-extrabold text-cyan-300 font-mono">
-                    VIIRS 375m — Demo
-                  </div>
-                  <p className="text-[11px] text-slate-400 mt-1">
-                    Illustrative satellite metadata • demo freshness
-                  </p>
-                </div>
-              </CardTilt3D>
-            </div>
-          </div>
-        )}
-
-        {/* TAB: 3D BALER MACHINERY TWIN */}
-        {activeTab === 'MACHINERY_3D' && (
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-slate-900/60 p-4 rounded-xl border border-cyan-500/30">
-              <div>
-                <div className="flex items-center gap-2">
-                  <Box className="w-5 h-5 text-cyan-400" />
-                  <h2 className="font-extrabold text-lg text-white font-['Outfit']">
-                    3D Baler Machinery Twin — Demo
-                  </h2>
-                </div>
-                <p className="text-xs text-slate-300 mt-0.5">
-                  Wedge 1 Asset Strategy: Interactive 3D machinery model for the field-operations prototype.
-                </p>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setActiveTab('DIGITAL_TWIN_3D')}
-                  className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-300 text-xs font-bold border border-slate-700 flex items-center gap-1.5 cursor-pointer"
-                >
-                  <Globe className="w-3.5 h-3.5" />
-                  <span>3D Digital Twin</span>
-                </button>
-                <button
-                  onClick={() => setActiveTab('BALER_OPERATOR')}
-                  className="px-3 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow"
-                >
-                  <span>Open Field PWA</span>
-                </button>
-              </div>
-            </div>
-
-            <BalerModel3D />
-          </div>
-        )}
-
-        {/* TAB 2: RESIDUE CONTROL TOWER + OPS COMMAND CONSOLE */}
-        {activeTab === 'OPS_CONSOLE' && (
-          <div className="flex flex-col gap-6">
-            <ResidueControlTower
-              fields={fields}
-              machines={machines}
-              buyers={demoMode ? INITIAL_BUYERS : liveBuyers}
-              storageYards={demoMode ? INITIAL_STORAGE_YARDS : liveStorageYards}
-              residueLots={demoMode ? INITIAL_RESIDUE_LOTS : residueLots}
-              demoMode={demoMode}
-              onSelectField={handleSelectField}
-              onNavigate={(tab) => setActiveTab(tab as ActiveTab)}
-            />
-
-            <div className="flex flex-col gap-4">
-
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 bg-slate-900/60 p-3 rounded-xl border border-slate-800">
-              <div>
-                <h2 className="font-extrabold text-base text-white font-['Outfit']">
-                  Central Ops & VRP Dispatch Console
-                </h2>
-                <p className="text-xs text-slate-400">
-                  GIS operations prototype for a Sangrur cluster using demo machinery and FIRMS-style event data
-                </p>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setActiveTab('DIGITAL_TWIN_3D')}
-                  className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-emerald-400 text-xs font-bold border border-emerald-500/30 flex items-center gap-1 cursor-pointer"
-                >
-                  <Globe className="w-3 h-3" />
-                  <span>View in 3D</span>
-                </button>
-                <span className="badge badge-emerald text-xs">
-                  {demoMode ? 'Demo GPS feed' : 'Live operator telemetry'}
-                </span>
-                <span className="text-xs text-slate-400">
-                  {fields.length} Farms • {machines.length} Balers
-                </span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
-              <div className="lg:col-span-8 flex flex-col gap-3">
-                <OpsMap
-                  fields={fields}
-                  machines={machines}
-                  fireEvents={fireEvents}
-                  storageYards={demoMode ? INITIAL_STORAGE_YARDS : liveStorageYards}
-                  buyers={demoMode ? INITIAL_BUYERS : liveBuyers}
-                  selectedField={selectedField}
-                  demoMode={demoMode}
-                  onSelectField={handleSelectField}
-                  activeRoutePolyline={activeRoutePolyline}
-                />
-
-                {selectedField && (
-                  <FieldDetailDrawer
-                    demoMode={demoMode}
-                    field={selectedField}
-                    onClose={() => setSelectedField(null)}
-                    onTriggerUpiPayout={(f) => setFieldForUpiModal(f)}
-                    onViewCertificate={(f) => setCertificateField(f)}
-                  />
-                )}
-              </div>
-
-              <div className="lg:col-span-4 h-full">
-                <VRPDispatchPanel
-                  fields={fields}
-                  machines={machines}
-                  onRouteSelected={(route) => setActiveRoutePolyline(route)}
-                  onSelectField={handleSelectField}
-                />
-              </div>
-            </div>
-          </div>
-            </div>
-          </div>
-        )}
-
-        {/* TAB 3: FARMER TELEGRAM & IVR SURFACE */}
-        {activeTab === 'FARMER_SURFACE' && (
-          <TelegramSimulator
-            onSlotConfirmed={(fId) => handleUpdateFieldStatus(fId, 'SCHEDULED')}
-          />
-        )}
-
-        {/* TAB 4: FIELD BALER OPERATOR PWA */}
-        {activeTab === 'BALER_OPERATOR' && (
-          machines[0] ? (
-            <BalerPWA
-              fields={fields}
-              activeMachine={machines[0]}
-              demoMode={demoMode}
-              onJobCompleted={(fId, amt) => demoMode ? handleUpdateFieldStatus(fId, 'CLEARED_PENDING_AUDIT', amt) : void refreshLiveData()}
-            />
-          ) : (
-            <div className="glass-panel p-6 max-w-3xl mx-auto">
-              <h2 className="text-lg font-extrabold text-white">Field Operator PWA</h2>
-              <p className="text-sm text-slate-300 mt-2">
-                No live machine is assigned yet. Connect an operator machine record before starting field operations.
-              </p>
-              <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                <div className="rounded-lg border border-slate-800 bg-slate-950/70 p-3">
-                  <span className="text-slate-500 block">Live fields</span>
-                  <strong className="text-white">{fields.length}</strong>
-                </div>
-                <div className="rounded-lg border border-slate-800 bg-slate-950/70 p-3">
-                  <span className="text-slate-500 block">Assigned machines</span>
-                  <strong className="text-white">{machines.length}</strong>
-                </div>
-              </div>
-            </div>
-          )
-        )}
-
-        {/* TAB 5: REMOTE-SENSING EVIDENCE AUDIT */}
-        {activeTab === 'SATELLITE_AUDIT' && (
-          <SatelliteAudit
-            fields={fields}
-            fireEvents={fireEvents}
-            demoMode={demoMode}
-            onVerified={() => { void refreshLiveData(); }}
-          />
-        )}
-
-        {/* TAB 6: MULTI-OFFTAKE AUCTION & HARVEST FORECAST */}
-        {activeTab === 'OFFTAKE_AUCTION' && (
-          <div className="flex flex-col gap-8">
-            <MultiOfftakeAuction />
-            <HarvestForecast />
-          </div>
-        )}
-
-        {/* TAB: CARBON CREDIT MARKETPLACE */}
-        {activeTab === 'CARBON_MARKET' && (
-          <CarbonMarketplace />
-        )}
-
         {/* TAB: FARMER ONBOARDING KYC */}
-        {/* TAB 7: JUDGE DEFENSE & UNIT ECONOMICS */}
-        {activeTab === 'COMPETITION_CENTER' && (
-          <CompetitionCenter onNavigate={setActiveTab} />
-        )}
-
-        {activeTab === 'JUDGE_DEFENSE' && (
-          <JudgesQnAPanel />
-        )}
         </Suspense>
       </main>
 
@@ -710,29 +317,7 @@ export function App() {
           onClose={() => setCertificateField(null)}
         />
       )}
-
-      {/* 2. Simulated settlement record modal */}
-      {fieldForUpiModal && (
-        <UpiSettlementModal
-          field={fieldForUpiModal}
-          onClose={() => setFieldForUpiModal(null)}
-          onSettlementComplete={(fId, amt) => {
-            handleUpdateFieldStatus(fId, 'CLEARED_PENDING_AUDIT', amt);
-            setTimeout(() => setFieldForUpiModal(null), 2500);
-          }}
-        />
-      )}
-
-      {/* 3. Judge Pitch Brief Drawer */}
-      <JudgePitchDrawer
-        isOpen={isPitchDrawerOpen}
-        onClose={() => setIsPitchDrawerOpen(false)}
-      />
-
-      {/* Live Agentic Telemetry Toast Stream */}
-      <AgenticTelemetryToast demoMode={demoMode} onNavigateTab={(tab) => setActiveTab(tab as ActiveTab)} />
-
-      {/* Modern Footer */}
+\n\n      {/* Modern Footer */}
       <footer className="mt-auto border-t border-emerald-500/15 bg-slate-950/95 py-5 text-center text-xs text-slate-400">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
@@ -742,16 +327,10 @@ export function App() {
           </div>
 
           <div className="text-slate-500 text-[11px] text-center">
-            3D Digital Twin • Dispatch Simulation • Satellite Audit Prototype • Payment Simulation • Carbon Marketplace Demo
+            Field operations • Evidence • Residue • Buyer pathways
           </div>
 
-          <button
-            onClick={() => setIsPitchDrawerOpen(true)}
-            className="text-emerald-400 hover:text-emerald-300 font-semibold cursor-pointer flex items-center gap-1.5"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            Review Pitch Deck &rarr;
-          </button>
+          <span className="rounded-full border border-emerald-900/20 bg-emerald-900/20 px-3 py-1.5 text-[10px] font-semibold text-emerald-200">Evidence-first prototype</span>
         </div>
       </footer>
     </div>

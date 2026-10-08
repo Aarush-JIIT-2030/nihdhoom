@@ -1,3 +1,4 @@
+import { rateLimit } from './_lib/rateLimit';
 declare const process: { env: Record<string, string | undefined> };
 
 type Point = { id: string; lat: number; lng: number; acres?: number; deadline?: string };
@@ -123,6 +124,8 @@ async function verifyRole(req: any, roles: string[]) {
 }
 
 export default async function handler(req: any, res: any) {
+  if (!rateLimit(req, res, 'api-dispatch.ts', 20)) return res.status(429).json({ error: 'Too many dispatch requests; please retry shortly.' });
+
   if (req.method !== 'POST') {
     res.setHeader?.('Allow', 'POST');
     return res.status(405).json({ error: 'Method not allowed' });

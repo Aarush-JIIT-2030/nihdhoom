@@ -89,12 +89,6 @@ test('V7.5 blocks direct booking writes and farmer field tampering', () => {
   assert.match(sql, /New farmer fields must begin in REGISTERED state with unverified boundaries/);
 });
 
-test('simulation surfaces do not claim real transactions', () => {
-  assert.match(read('src/components/FieldOperator/UpiSettlementModal.tsx'), /no money movement/i);
-  assert.match(read('src/components/FarmerOnboarding/FarmerOnboarding.tsx'), /Demo only/);
-  assert.match(read('src/components/CarbonMarketplace/CarbonMarketplace.tsx'), /Illustrative carbon-market interface/);
-});
-
 
 test('demo operational data is opt-in and production starts empty', () => {
   const controller = read('src/state/useAppController.ts');
@@ -106,11 +100,14 @@ test('demo operational data is opt-in and production starts empty', () => {
 });
 
 
-test('live dashboard KPIs are derived from current records', () => {
-  const app = read('src/App.tsx');
-  assert.match(app, /const acresScheduled = fields\.reduce/);
-  assert.match(app, /acresScheduled=\{acresScheduled\}/);
-  assert.doesNotMatch(app, /acresScheduled=\{88\.4\}/);
+test('homepage status metrics are derived from current records', () => {
+  const home = read('src/components/CommandCenter/CommandCenter.tsx');
+  assert.match(home, /value: fields\.length/);
+  assert.match(home, /value: activeJobs/);
+  assert.match(home, /value: residueLots/);
+  assert.match(home, /value: verified/);
+  assert.match(home, /home-product-status/);
+  assert.doesNotMatch(home, /88\.4/);
 });
 
 test('payment KPI plumbing and browser alerts stay out of the release UI', () => {
@@ -240,49 +237,39 @@ test('Telegram Mini App identity is verified server-side', () => {
 });
 
 
-test('competition demo ends with a field clearance passport and avoids unsupported claims', () => {
-  const demo = read('src/components/DemoWalkthrough.tsx');
-  const passport = read('src/components/VerificationLayer/ClearancePassport.tsx');
-  assert.match(demo, /ClearancePassport/);
-  assert.match(demo, /trust proof/i);
-  assert.doesNotMatch(demo, /subsidised balers/);
-  assert.doesNotMatch(demo, /late-sowing penalty exposure/);
-  assert.match(passport, /Field Clearance Passport/);
-  assert.match(passport, /not a legal certificate/);
-  assert.match(passport, /payment receipt/);
-});
-
-
-test('research-backed competition story', () => {
-  const home = read('src/components/CommandCenter/CommandCenter.tsx');
-  const center = read('src/components/PitchDefense/CompetitionCenter.tsx');
-  assert.match(home, /86%/);
-  assert.match(home, /15%/);
-  assert.match(center, /WHY THIS PROBLEM, WHY NOW/);
-  assert.match(center, /Impact/);
-  assert.match(center, /Feasibility/);
-  assert.match(center, /Technical craft/);
-});
-
-test('competition center is wired for both RIDE and WarriorHacks', () => {
-  const header = read('src/components/Header.tsx');
+test('product shell does not expose pitch-only surfaces', () => {
   const app = read('src/App.tsx');
-  const center = read('src/components/PitchDefense/CompetitionCenter.tsx');
-  assert.match(header, /COMPETITION_CENTER/);
-  assert.match(header, /Competition Pitch/);
-  assert.match(app, /const CompetitionCenter = lazy/);
-  assert.match(app, /activeTab === 'COMPETITION_CENTER'/);
-  assert.match(center, /RIDE HACK/);
-  assert.match(center, /WARRIORHACKS 2\.0/);
-  for (const step of ['Field', 'Book', 'Machine', 'Proof', 'Parali']) assert.match(center, new RegExp(step));
-  assert.match(center, /Real payment or payout movement/);
+  const header = read('src/components/Header.tsx');
+  const prefetch = read('src/lib/workspacePrefetch.ts');
+  const home = read('src/components/CommandCenter/CommandCenter.tsx');
+  assert.doesNotMatch(app, /DemoWalkthrough|JudgesQnAPanel|CompetitionCenter|JudgePitchDrawer|DEMO_RUNNER|JUDGE_DEFENSE|COMPETITION_CENTER/);
+  assert.doesNotMatch(header, /Competition Pitch|Product Q&A|How NIRDHOOM Works|openPitchDrawer/);
+  assert.doesNotMatch(prefetch, /DemoWalkthrough|JudgesQnAPanel|CompetitionCenter/);
+  assert.doesNotMatch(home, /2-minute demo|Competition Demo|Pitch Center/);
 });
 
-test('visible competition surfaces stay claim-safe', () => {
+test('product home routes users to real workflows instead of presentation flows', () => {
+  const home = read('src/components/CommandCenter/CommandCenter.tsx');
+  assert.match(home, /Book parali pickup/);
+  assert.match(home, /Track today's operation/);
+  assert.match(home, /home-product-status/);
+  assert.match(home, /Open residue market/);
+  assert.doesNotMatch(home, /See the 2-minute demo/);
+  assert.doesNotMatch(home, /The gap we are attacking|CEEW research points/);
+
+});
+
+test('retired pitch-only source files are gone from the product surface', () => {
+  assert.ok(!exists('src/components/DemoWalkthrough.tsx'));
+  assert.ok(!exists('src/components/PitchDefense/JudgesQnAPanel.tsx'));
+  assert.ok(!exists('src/components/PitchDefense/CompetitionCenter.tsx'));
+  assert.ok(!exists('src/components/PitchDefense/JudgePitchDrawer.tsx'));
+});
+
+test('visible product surfaces stay claim-safe', () => {
   const sources = [
     read('src/components/OpsConsole/OpsMap.tsx'),
     read('src/components/Animated/BentoGrid.tsx'),
-    read('src/components/PitchDefense/JudgePitchDrawer.tsx'),
     read('src/components/AgenticConsole/AgenticCommandCenter.tsx'),
     read('src/components/ThreeD/BalerModel3D.tsx'),
   ].join('\n');
@@ -292,7 +279,6 @@ test('visible competition surfaces stay claim-safe', () => {
   assert.doesNotMatch(sources, /UPI payout/i);
   assert.match(read('src/components/CarbonMarketplace/CarbonMarketplace.tsx'), /Impact & carbon evidence/);
 });
-
 
 test('application uses one field-first theme and no theme switcher', () => {
   const html = read('index.html');
@@ -311,7 +297,7 @@ test('application uses one field-first theme and no theme switcher', () => {
 
 test('Hindi text converter is present and uses bounded transliteration requests', () => {
   const converter = read('src/components/FarmerSurface/HindiTextConverter.tsx');
-  const telegram = read('src/components/FarmerSurface/TelegramSimulator.tsx');
+  const telegram = read('src/components/FarmerSurface/TelegramChannel.tsx');
   assert.match(converter, /hi-t-i0-und/);
   assert.match(converter, /AbortController/);
   assert.match(converter, /7000/);
@@ -399,7 +385,7 @@ test('performance architecture keeps heavy workspace libraries off the shell', (
   assert.match(header, /startTransition/);
   assert.match(header, /prefetchWorkspace/);
   assert.match(prefetch, /OpsMap/);
-  assert.match(prefetch, /SatelliteEarth3D/);
+  assert.doesNotMatch(prefetch, /SatelliteEarth3D|BalerModel3D|AgenticCommandCenter/);
   assert.match(vite, /cssCodeSplit: true/);
 });
 
@@ -414,7 +400,7 @@ test('image optimization keeps JSX valid and the primary hero eager', () => {
     'src/components/VerificationLayer/SatelliteAudit.tsx',
     'src/components/FarmerOnboarding/FarmerOnboarding.tsx',
     'src/components/OfftakeAndForecast/MultiOfftakeAuction.tsx',
-    'src/components/FieldOperator/UpiSettlementModal.tsx',
+    'src/components/FieldOperator/BalerPWA.tsx',
   ];
   for (const file of files) {
     assert.doesNotMatch(read(file), /\/ loading=/);
@@ -474,19 +460,16 @@ test('operational map stays field-first and GIS-focused', () => {
 });
 
 
-test('homepage uses curated agriculture photography and visual storytelling', () => {
+test('homepage uses curated agriculture photography and product motion', () => {
   const home = read('src/components/CommandCenter/CommandCenter.tsx');
-  const css = read('src/index.css');
+  const css = read('src/styles/theme.css');
   assert.match(home, /from '..\/Animated\/Spotlight'/);
-  assert.match(home, /upload\.wikimedia\.org/);
-  assert.match(home, /home-visual-rail/);
-  assert.match(home, /home-photo-credit/);
-  assert.match(home, /fetchPriority="high"/);
-  assert.match(css, /home-hero-spotlight/);
-  assert.match(css, /home-visual-grid/);
-  assert.match(css, /prefers-reduced-motion:reduce/);
+  assert.match(home, /home-product-status/);
+  assert.match(home, /motion\/react/);
+  assert.match(home, /Track today's operation/);
+  assert.match(css, /home-status-grid/);
+  assert.match(css, /prefers-reduced-motion: reduce/);
 });
-
 
 test('provider and demo-label contracts stay truthful', () => {
   const assistant = read('api/assistant.ts');
@@ -500,7 +483,7 @@ test('provider and demo-label contracts stay truthful', () => {
   assert.doesNotMatch(map, /Subsidised Balers/);
   assert.doesNotMatch(map, /External Fire Storm/);
   assert.doesNotMatch(landing, /Carbon Credit Marketplace/);
-  assert.match(landing, /Carbon Market Simulator/);
+  assert.doesNotMatch(landing, /Carbon Market Simulator|Competition Pitch Center|Judge Defense|2-Minute Competition Demo/);
 });
 
 test('satellite and landing evidence labels stay truthful', () => {
@@ -535,10 +518,11 @@ test('landing telemetry is zero-by-default and demo-aware', () => {
 });
 
 test('Telegram UI does not fall back to generic t.me', () => {
-  const telegram = read('src/components/FarmerSurface/TelegramSimulator.tsx');
+  const telegram = read('src/components/FarmerSurface/TelegramChannel.tsx');
   assert.doesNotMatch(telegram, /'https:\/\/t\.me'/);
-  assert.match(telegram, /Telegram bot is not configured/);
-  assert.match(telegram, /href=\{botUrl \|\| undefined\}/);
+  assert.match(telegram, /Configure Telegram first/);
+  assert.match(telegram, /Connect my NIRDHOOM account/);
+  assert.match(telegram, /href=\{botUrl\}/);
 });
 test('landing district ticker records are explicitly demo-labelled', () => {
   const landing = read('src/components/Landing/AgenticLanding.tsx');
@@ -549,17 +533,16 @@ test('landing district ticker records are explicitly demo-labelled', () => {
 });
 
 
-test('field-first polish removes high-risk legacy landing and Telegram UI regressions', () => {
+test('field-first polish keeps Telegram channel and removes synthetic telemetry', () => {
   const landing = read('src/components/Landing/AgenticLanding.tsx');
-  const telegram = read('src/components/FarmerSurface/TelegramSimulator.tsx');
-  const telemetry = read('src/components/AgenticConsole/AgenticTelemetryToast.tsx');
-  assert.doesNotMatch(landing, /bg-gradient-to-b from=\["']#020409/i);
-  assert.match(landing, /field-first, with React Bits spotlight/i);
-  assert.match(telegram, /Configure VITE_TELEGRAM_BOT_USERNAME to enable direct opening/);
-  assert.match(telegram, /cursor-not-allowed/);
-  assert.doesNotMatch(telemetry, /Real-time Telemetry Stream/);
-  assert.match(telemetry, /operational signal stream/);
+  const telegram = read('src/components/FarmerSurface/TelegramChannel.tsx');
+  assert.doesNotMatch(landing, /2-Minute Competition Demo|Competition Pitch Center|Judge Defense|Q&A Prep/i);
+  assert.match(telegram, /Connect my NIRDHOOM account/);
+  assert.match(telegram, /Open Telegram/);
+  assert.doesNotMatch(telegram, /Demo slot confirmed|Preview booking handoff|confirmDemo/);
+  assert.doesNotMatch(read('src/App.tsx'), /AgenticTelemetryToast|AgenticCommandCenter|SatelliteEarth3D|BalerModel3D/);
 });
+
 
 
 test('landing and visual pipeline avoid unsupported machinery, fire, and buyer claims', () => {
@@ -582,13 +565,15 @@ test('field-first UI kit and open-source interaction surfaces remain wired', () 
   const header = read('src/components/Header.tsx');
   const harvest = read('src/components/OfftakeAndForecast/HarvestForecast.tsx');
   const auction = read('src/components/OfftakeAndForecast/MultiOfftakeAuction.tsx');
+  const home = read('src/components/CommandCenter/CommandCenter.tsx');
   assert.match(css, /NIRDHOOM UI KIT v2/);
   assert.match(css, /prefers-reduced-motion/);
   assert.match(css, /spotlight/);
   assert.match(header, /backdrop-blur-xl/);
-  assert.match(header, /Field-first crop-residue network/);
+  assert.match(header, /Crop-residue field network/);
   assert.match(harvest, /Harvest pressure planning/);
   assert.match(auction, /Multi-offtake planning simulator/);
+  assert.match(home, /home-product-status/);
 });
 
 

@@ -5,12 +5,12 @@
   <img src="https://img.shields.io/badge/React-19-2f7d46?logo=react&logoColor=white" alt="React 19">
   <img src="https://img.shields.io/badge/Vite-8-646cff?logo=vite&logoColor=white" alt="Vite 8">
   <img src="https://img.shields.io/badge/Supabase-Postgres-3ecf8e?logo=supabase&logoColor=white" alt="Supabase">
-  <img src="https://img.shields.io/badge/Status-Prototype%20%2F%20Integration-f0a52b" alt="Prototype / integration">
+  <img src="https://img.shields.io/badge/Product-Field--first-2f7d46" alt="Field-first product">
 </p>
 
 <p align="center"><b>Field → service → evidence → residue → buyer</b><br>Farmer-first coordination for crop-residue management.</p>
 
-> **Truth boundary:** NIRDHOOM is a prototype / integration foundation. Demo records, indicative quotes, heuristic dispatch, research figures and illustrative carbon/market views are labelled and must not be represented as live field outcomes or confirmed commercial commitments.
+> **Truth boundary:** NIRDHOOM is a prototype / integration foundation. Seeded records and indicative planning values are clearly separated from connected live records; they are never evidence of field-pilot outcomes or confirmed commercial commitments.
 
 ## Why this repository is different
 
@@ -25,7 +25,8 @@ NIRDHOOM treats residue management as an operational chain rather than a single 
 | **Track / Operator** | Map, machine workflow and evidence | Lazy; Leaflet deferred |
 | **Residue Market** | Verified lots, pooling and buyer demand | Lazy + prefetch |
 | **Impact / Research** | Evidence, methodology and context | Lazy + prefetch |
-| **Advanced** | 3D, AI, carbon and pitch surfaces | Lazy; heavy dependencies isolated |
+| **Telegram Help** | Farmer communication, secure account linking and status updates | Lazy + interaction prefetch |
+| **Buyers / Demand** | Buyer requirements and residue pathways | Lazy + prefetch |
 
 ### Performance principles
 
@@ -70,17 +71,17 @@ docs/                           # Architecture, research and release notes
 </p>
 
 <p align="center">
-  <img src="public/images/punjab_farm_hero.jpg" alt="Agricultural fields in Punjab" width="100%">
+  <b>Field → machine → evidence → residue → buyer</b><br>
+  A field-first product for coordinating crop-residue clearance and downstream supply.
 </p>
 
 <p align="center">
-  <b>Field → service → evidence → residue → buyer</b><br>
-  A farmer-first platform concept for coordinating crop-residue management.
+  <img src="public/images/punjab_farm_hero.jpg" alt="Punjab agricultural field context" width="92%">
 </p>
 
 NIRDHOOM (also referred to in the project materials as **Parali: The Reframe**) is a field-first web application for coordinating farmers, field records, machinery operators, dispatch, verification, and residue offtake. The V7 direction prioritizes the operational chain over adding more dashboard surfaces.
 
-> **Project status:** prototype / integration foundation. This repository is not evidence of an operating service or a completed field pilot. Demo records, indicative quotes, heuristic dispatch, and payment UI must not be represented as live operations, confirmed service commitments, or verified outcomes.
+> **Truth boundary:** this repository is a prototype/integration foundation. Seeded records and indicative planning values are clearly separated from connected live records; they are never evidence of field-pilot outcomes or confirmed commercial commitments.
 
 
 ## Connected backend
@@ -89,8 +90,8 @@ The dedicated NIRDHOOM Supabase project and deployed database state are document
 
 ## Contents
 
-- [Competition readiness](#competition-readiness)
 - [What the product is intended to do](#what-the-product-is-intended-to-do)
+- [Product release roadmap](docs/PRODUCT-RELEASE-ROADMAP.md)
 - [Current implementation](#current-implementation)
 - [Workflow and architecture](#workflow-and-architecture)
 - [Research findings and product implications](#research-findings-and-product-implications)
@@ -105,21 +106,41 @@ The dedicated NIRDHOOM Supabase project and deployed database state are document
 - [Research and references](#research-and-references)
 - [Contributing](#contributing)
 
-## Competition readiness
+## Product
 
-NIRDHOOM is prepared for two different competition stories without changing the underlying product:
+NIRDHOOM is a field-first crop-residue coordination product built around one operational chain:
 
-- **RIDE Hack '26:** startup/incubation story — asset-light rural logistics, machinery coordination, verification, market validation and a supervised pilot path.
-- **WarriorHacks 2.0:** community-impact story — a simple farmer workflow that makes crop-residue clearance easier to request, track and verify.
+**Field → Machine → Bale → Pickup → Buyer**
 
-Open **More → Competition Pitch** inside the app for the judge-facing demo route and truth labels.
+It is designed for the people who actually have to move residue: farmers, machine operators, dispatchers, verifiers and buyers.
 
-Submission briefs:
-- [RIDE Hack '26 submission](docs/RIDE-HACK-26-SUBMISSION.md)
-- [WarriorHacks 2.0 submission](docs/WARRIORHACKS-2-SUBMISSION.md)
-- [Competition readiness checklist](docs/COMPETITION-READINESS.md)
+### What is deliberately not in the product shell
 
-**WarriorHacks eligibility note:** the repository has development history predating the current event window. The public event page confirms the Hackathon requires code, a GitHub repository, a 2–3 minute demo and project images, but this repository does not assume that pre-existing work is eligible. Confirm the organizer's rule before submitting and never misrepresent development history.
+There is no in-app pitch deck, judge Q&A, competition walkthrough, fake payment confirmation, or presentation-only “demo runner”. The public UI is reserved for product workflows.
+
+### Product principles
+
+- **Evidence before impact** — operational claims need a traceable record.
+- **Capacity before promises** — a machine is available only when its current state supports it.
+- **Residue is a first-class object** — weight, quality, custody and destination stay connected.
+- **Remote sensing is supporting evidence** — a satellite observation is never presented as field-level proof by itself.
+- **Commercial state is explicit** — a buyer need is not a contract and a proposed match is not a transaction.
+- **Farmer UX stays small** — complexity belongs in operations, not in the farmer's first screen.
+- **Truth beats theatre** — unavailable integrations fail clearly instead of simulating success.
+
+### Visual language
+
+The product uses restrained agriculture photography, a warm field palette, compact operational cards, accessible motion and open-source UI primitives rather than generic AI-dashboard decoration.
+
+### Product UI stack
+
+- **Motion for React** for restrained entrance and interaction motion.
+- **Lucide** for consistent, lightweight operational icons.
+- **React Bits-inspired Spotlight / Stepper / CodeSlots patterns** for focused interaction surfaces.
+- **Leaflet + OpenStreetMap** for the field-first operations map.
+- **Native browser primitives** for responsive images, focus states and reduced-motion support.
+
+The visual goal is deliberately practical: a calm agricultural operations product, not an AI landing-page template.
 
 ## What the product is intended to do
 
@@ -396,6 +417,7 @@ Use [docs/FINAL-PILOT-READINESS.md](docs/FINAL-PILOT-READINESS.md) as the detail
 | `docs/PUNJAB-CROP-RESIDUE-RESEARCH.md` | Research notes and product implications |
 | `docs/RESEARCH-DATA.md` | Dated public data, source scope, and caveats |
 | `docs/FINAL-PILOT-READINESS.md` | Consolidated pilot checklist |
+| `docs/IMAGE-LICENSES.md` | Public photography sources and licenses |
 | `docs/NON-PAYMENT-RELEASE-SCOPE.md` | Explicit non-payment release boundary |
 | `LINE-BY-LINE-AUDIT.md` | Repository audit notes |
 | `PDF-FEATURE-MATRIX.md` | Feature mapping to supplied brief |

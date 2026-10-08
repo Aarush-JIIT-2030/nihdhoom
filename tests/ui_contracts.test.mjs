@@ -12,10 +12,10 @@ test('field UI keeps live-state messaging readable and truthful', () => {
   const css = read('src/styles/theme.css');
   assert.match(app, /Loading live operational records/);
   assert.match(app, /Live data unavailable/);
-  assert.match(app, /Carbon market simulator/);
-  assert.match(telemetry, /ops-telemetry-strip/);
+  assert.doesNotMatch(app, /Carbon market simulator|Competition Pitch|Judge Q&A|2-minute demo/);
+  assert.doesNotMatch(app, /AgenticTelemetryToast/);
   assert.match(css, /live-state-banner/);
-  assert.match(css, /ops-telemetry-strip/);
+  assert.match(css, /home-status-grid/);
 });
 
 test('high-risk demo surfaces avoid unsupported live-market language', () => {

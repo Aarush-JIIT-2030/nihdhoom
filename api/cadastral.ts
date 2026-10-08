@@ -1,3 +1,4 @@
+import { rateLimit } from './_lib/rateLimit';
 declare const process: { env: Record<string, string | undefined> };
 
 async function authenticated(req: any) {
@@ -16,6 +17,8 @@ async function authenticated(req: any) {
 }
 
 export default async function handler(req: any, res: any) {
+  if (!rateLimit(req, res, 'api-cadastral.ts', 30)) return res.status(429).json({ error: 'Too many cadastral requests; please retry shortly.' });
+
   if (req.method !== 'GET') {
     res.setHeader?.('Allow', 'GET');
     return res.status(405).json({ error: 'Method not allowed' });

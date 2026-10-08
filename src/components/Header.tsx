@@ -2,22 +2,20 @@ import { useEffect, useRef, useState, startTransition } from 'react';
 import { prefetchWorkspace } from '../lib/workspacePrefetch';
 import { farmerLanguageLabels, type FarmerLanguage } from '../i18n/farmerLabels';
 import {
-  Activity, BarChart3, Bot, ChevronDown, ClipboardList, HelpCircle, Leaf, Map,
-  Menu, MessageSquare, Satellite, Search, ShieldCheck, Sparkles, Smartphone,
-  TrendingUp, UserCheck, Wheat, X, Tractor, CircleDollarSign, Trophy
+  Activity, BarChart3, ChevronDown, ClipboardList, Leaf, Map,
+  Menu, MessageSquare, ShieldCheck, Smartphone, TrendingUp, UserCheck, Wheat,
+  X, Tractor
 } from 'lucide-react';
 
 export type ActiveTab =
   | 'OVERVIEW' | 'RESIDUE_POOLS' | 'IMPACT_RESEARCH' | 'HARVEST_INTELLIGENCE'
-  | 'FIELD_PROVENANCE' | 'FIELD_JOBS' | 'AGENTIC_CONSOLE' | 'DEMO_RUNNER'
-  | 'DIGITAL_TWIN_3D' | 'MACHINERY_3D' | 'OPS_CONSOLE' | 'FARMER_SURFACE'
-  | 'BALER_OPERATOR' | 'SATELLITE_AUDIT' | 'OFFTAKE_AUCTION' | 'CARBON_MARKET'
-  | 'FARMER_ONBOARDING' | 'FARMER_KYC' | 'JUDGE_DEFENSE' | 'COMPETITION_CENTER';
+  | 'FIELD_PROVENANCE' | 'FIELD_JOBS' | 'OPS_CONSOLE' | 'FARMER_SURFACE'
+  | 'BALER_OPERATOR' | 'SATELLITE_AUDIT' | 'OFFTAKE_AUCTION'
+  | 'FARMER_ONBOARDING' | 'FARMER_KYC';
 
 interface HeaderProps {
   activeTab: ActiveTab;
   setActiveTab: (tab: ActiveTab) => void;
-  openPitchDrawer: () => void;
   demoMode: boolean;
 }
 
@@ -46,16 +44,10 @@ const secondaryNav: NavItem[] = [
   { id: 'FARMER_SURFACE', label: 'Telegram Help', icon: MessageSquare, description: 'Get updates and help on Telegram' },
   { id: 'FARMER_KYC', label: 'My Profile', icon: UserCheck, description: 'Phone verification and farmer consent' },
   { id: 'OFFTAKE_AUCTION', label: 'Buyers', icon: TrendingUp, description: 'See buyer needs for collected parali' },
-  { id: 'CARBON_MARKET', label: 'Carbon (Advanced)', icon: CircleDollarSign, description: 'Advanced carbon evidence workspace' },
-  { id: 'AGENTIC_CONSOLE', label: 'AI Helper (Advanced)', icon: Bot, description: 'Advanced assistant for operations' },
-  { id: 'DIGITAL_TWIN_3D', label: '3D Field View', icon: Activity, description: 'Advanced 3D view of fields' },
-  { id: 'MACHINERY_3D', label: '3D Machine View', icon: Activity, description: 'Advanced 3D machine view' },
-  { id: 'DEMO_RUNNER', label: 'How NIRDHOOM Works', icon: Sparkles, description: 'See the complete journey step by step' },
-  { id: 'COMPETITION_CENTER', label: 'Competition Pitch', icon: Trophy, description: 'RIDE and WarriorHacks demo and submission guide' },
-  { id: 'JUDGE_DEFENSE', label: 'Product Q&A', icon: HelpCircle, description: 'Questions and answers about the product' },
+
 ];
 
-export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: HeaderProps) {
+export function Header({ activeTab, setActiveTab, demoMode }: HeaderProps) {
   const [moreOpen, setMoreOpen] = useState(false);
   const [farmerLanguage, setFarmerLanguage] = useState<FarmerLanguage>(() => {
     if (typeof window === 'undefined') return 'en';
@@ -112,10 +104,10 @@ export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: H
               <span className="flex items-center gap-2">
                 <span className="font-['DM_Sans'] text-[16px] font-black tracking-[0.08em] text-emerald-950">NIRDHOOM</span>
                 <span className="rounded-full border border-amber-300 bg-amber-50 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-800">
-                  {demoMode ? 'Demo' : 'Live'}
+                  Field network
                 </span>
               </span>
-              <span className="mt-0.5 block text-[10px] font-medium text-emerald-800/60">Field-first crop-residue network</span>
+              <span className="mt-0.5 block text-[10px] font-medium text-emerald-800/60">Crop-residue field network</span>
             </span>
           </button>
 
@@ -151,7 +143,7 @@ export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: H
                     <div className="flex items-start justify-between gap-4 px-4 pb-3 pt-1">
                       <div>
                         <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-900/45">Explore NIRDHOOM</div>
-                        <div className="mt-1 text-[11px] text-emerald-900/55">Machines, proof, buyers and advanced tools.</div>
+                        <div className="mt-1 text-[11px] text-emerald-900/55">Machines, proof, buyers and account tools.</div>
                       </div>
                       <button
                         type="button"
@@ -183,7 +175,7 @@ export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: H
           <div className="ml-auto flex shrink-0 items-center gap-1.5">
             <div className="hidden xl:flex items-center gap-2 rounded-full border border-emerald-900/10 bg-emerald-50 px-3 py-1.5 text-[10px]">
               <span className={`h-2 w-2 rounded-full ${demoMode ? 'bg-amber-500' : 'bg-emerald-500'}`} />
-              <span className="font-semibold text-emerald-900/65">{demoMode ? 'Demo records' : 'Live records'}</span>
+              <span className="font-semibold text-emerald-900/65">{demoMode ? 'Sample records' : 'Connected records'}</span>
             </div>
             <button
               type="button"
@@ -195,9 +187,6 @@ export function Header({ activeTab, setActiveTab, openPitchDrawer, demoMode }: H
               <span className={farmerLanguage === 'en' ? 'font-black text-emerald-900' : 'opacity-45'}>EN</span>
               <span className="text-emerald-900/25">/</span>
               <span className={farmerLanguage === 'hi' ? 'font-black text-emerald-900' : 'opacity-45'}>हिंदी</span>
-            </button>
-            <button onClick={openPitchDrawer} className="hidden sm:flex items-center gap-1.5 rounded-xl border border-emerald-700/15 bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-800 transition hover:bg-emerald-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500">
-              <Search className="h-3.5 w-3.5" /> Brief
             </button>
             <button
               type="button"

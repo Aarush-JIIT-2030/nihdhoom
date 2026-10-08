@@ -6,6 +6,16 @@ const read = file => fs.readFileSync(path.join(root, file), 'utf8');
 const exists = file => fs.existsSync(path.join(root, file));
 const errors = [];
 const apiRouteFiles = [];
+const runtimeSourceFiles = [];
+function collectRuntimeSources(dir) {
+  if (!fs.existsSync(dir)) return;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const absolute = path.join(dir, entry.name);
+    if (entry.isDirectory()) collectRuntimeSources(absolute);
+    else if (/\.(tsx?|jsx?)$/.test(entry.name)) runtimeSourceFiles.push(absolute);
+  }
+}
+collectRuntimeSources(path.join(root, 'src'));
 function collectApiRoutes(dir, prefix = '') {
   if (!fs.existsSync(dir)) return;
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -13,7 +23,7 @@ function collectApiRoutes(dir, prefix = '') {
     const relative = prefix ? `${prefix}/${entry.name}` : entry.name;
     const absolute = path.join(dir, entry.name);
     if (entry.isDirectory()) collectApiRoutes(absolute, relative);
-    else if (/\\.(m?js|cjs|ts)$/.test(entry.name)) apiRouteFiles.push(relative);
+    else if (/\.(m?js|cjs|ts)$/.test(entry.name)) apiRouteFiles.push(relative);
   }
 }
 collectApiRoutes(path.join(root, 'api'));
@@ -35,7 +45,7 @@ const required = [
   'api/notify/telegram-webhook.ts',
   'api/notify/telegram-link.ts',
   'api/notify/telegram-miniapp-auth.ts',
-  'src/components/FarmerSurface/TelegramSimulator.tsx',
+  'src/components/FarmerSurface/TelegramChannel.tsx',
   'supabase/migrations/202610050001_nirdhoom_telegram_identity.sql',
   'supabase/migrations/202610050002_nirdhoom_telegram_webhook_idempotency.sql',
   'supabase/migrations/202610070001_nirdhoom_consent_withdrawal.sql',
@@ -96,6 +106,9 @@ const residueEngine = read('src/lib/residueOperations.ts');
 const farmerLabels = read('src/i18n/farmerLabels.ts');
 const rlsMatrix = read('tests/rls_role_matrix.sql');
 const opsMap = read('src/components/OpsConsole/OpsMap.tsx');
+const runtimeSource = runtimeSourceFiles.map(file => fs.readFileSync(file, 'utf8')).join('\n');
+const styleSource = [exists('src/index.css') ? read('src/index.css') : '', exists('src/styles/theme.css') ? read('src/styles/theme.css') : ''].join('\n');
+const localImageRefs = [...new Set([...`${runtimeSource}\n${styleSource}`.matchAll(/["'\`]\/images\/([^"'\`?#]+)/g)].map(match => match[1]))];
 
 const checks = [
   ['modular React entrypoint', entry.includes("import { App } from './App.tsx'") && entry.includes("import './index.css'")],
@@ -127,8 +140,7 @@ const checks = [
   ['trigger-only execute revoked', v81.includes('revoke all on function public.prevent_role_escalation()') && v81.includes('revoke all on function public.refresh_field_geometry_metrics()') && v81.includes('revoke all on function public.sync_field_boundary()')],
   ['pool member privacy policy', v80.includes('create policy "authorized read pool members"') && v80.includes("farmer_id=(select auth.uid())")],
   ['pool requires verified residue', v79.includes("l.status in ('VERIFIED','VERIFIED_NON_BURN')") && v79.includes('status=case when current_tonnes+p_quantity_tonnes >= target_tonnes then \'MATCHED\'')],
-  ['demo payment disclosure', read('src/components/FieldOperator/UpiSettlementModal.tsx').includes('no money movement')],
-  ['live payment routes are absent', !exists('api/payments/webhook.ts') && !exists('api/payments/initiate.ts') && read('docs/NON-PAYMENT-RELEASE-SCOPE.md').includes('Do not add provider credentials')],
+  ['payment routes and simulation UI are absent', !exists('api/payments/webhook.ts') && !exists('api/payments/initiate.ts') && !exists('src/components/FieldOperator/UpiSettlementModal.tsx') && !read('src/App.tsx').includes('UpiSettlementModal') && read('docs/NON-PAYMENT-RELEASE-SCOPE.md').includes('Do not add provider credentials')],
   ['legacy WhatsApp webhook is absent', !exists('api/notify/whatsapp-webhook.ts')],
   ['demo onboarding disclosure', read('src/components/FarmerOnboarding/FarmerOnboarding.tsx').includes('Demo only')],
   ['demo carbon disclosure', read('src/components/CarbonMarketplace/CarbonMarketplace.tsx').includes('Illustrative carbon-market interface')],
@@ -162,7 +174,6 @@ const checks = [
   ['field evidence timeline', residueJourney.includes('FIELD EVIDENCE TIMELINE') && residueJourney.includes('supporting evidence only')],
   ['RLS role matrix contract', rlsMatrix.includes('farmer_a_cannot_read_farmer_b_field') && rlsMatrix.includes('operator_a_cannot_read_operator_b_job') && rlsMatrix.includes('buyer_a_cannot_read_buyer_b_demand')],
   ['stale GPS is surfaced to operators', read('src/components/FieldOperator/BalerPWA.tsx').includes('gpsStale') && read('src/components/FieldOperator/BalerPWA.tsx').includes('GPS reading is stale')],
-  ['settlement surfaces disclosed', read('src/components/FieldOperator/UpiSettlementModal.tsx').includes('no money movement') && !read('src/App.tsx').includes('Instant UPI Settlement')],
   ['farmer onboarding avoids financial identifiers', !read('src/components/FarmerOnboarding/FarmerOnboarding.tsx').includes('UPI ID (Preferred)')],
   ['demo data is opt-in', controller.includes("VITE_NIRDHOOM_DEMO_MODE === 'true'") && controller.includes('useState<Field[]>(DEMO_MODE ? demoSeed.fields : [])') && controller.includes('useState<Machine[]>(DEMO_MODE ? demoSeed.machines : [])') && envExample.includes('VITE_NIRDHOOM_DEMO_MODE=false')],
   ['live data loader exists', controller.includes("client.from('fields')") && controller.includes("client.from('machines')") && controller.includes('setLoadingLiveData(false)')],
@@ -174,6 +185,13 @@ const checks = [
   ['unsupported payment lifecycle removed from client domain', !read('src/lib/domain.ts').includes("'PAYMENT_PROCESSING','PAID'")],
   ['verification record is not registry certificate', read('src/utils/spatialVerification.ts').includes("certificate_status: 'ILLUSTRATIVE_DEMO'") && read('src/utils/spatialVerification.ts').includes("verra_vm0042_eligible: false")],
 ];
+
+checks.push(
+  ['runtime local image references exist', localImageRefs.every((file) => exists(`public/images/${file}`))],
+  ['runtime images use lazy loading', [...runtimeSource.matchAll(/<img\b[^>]*>/g)].every((match) => /loading=["']lazy["']/.test(match[0]) || /fetchPriority=["']high["']/.test(match[0]))],
+  ['runtime imagery is self-hosted', !runtimeSource.includes('upload.wikimedia.org') && !runtimeSource.includes('commons.wikimedia.org/wiki/Special:Redirect/file')],
+  ['presentation-only components are removed', !exists('src/components/DemoWalkthrough.tsx') && !exists('src/components/PitchDefense/CompetitionCenter.tsx') && !exists('src/components/PitchDefense/JudgesQnAPanel.tsx') && !exists('src/components/PitchDefense/JudgePitchDrawer.tsx')],
+);
 
 for (const [name, ok] of checks) if (!ok) errors.push(`failed check: ${name}`);
 
