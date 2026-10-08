@@ -29,6 +29,7 @@ Migrations are applied in filename order:
 21. `20261006_nirdhoom_integrity_hardening.sql` — SECURITY DEFINER search-path hardening and residue allocation concurrency protections.
 22. `20261006_nirdhoom_residue_quantity_invariants.sql` — positive-lot and pool-target quantity invariants.
 23. `202610070001_nirdhoom_consent_withdrawal.sql` — self-service farmer consent withdrawal and profile revocation boundary.
+24. `202610080001_nirdhoom_residue_lot_provenance.sql` — residue-lot provenance fields and server-authoritative chronological event ledger.
 
 ## Release rules
 - Never reorder or rename an already-applied migration.
@@ -40,7 +41,7 @@ Migrations are applied in filename order:
 - Before a production release, record the Supabase migration status and run the RLS/integrity test suite.
 
 ## Verification checklist
-- [ ] All 23 migrations are present in the repository.
+- [ ] All 24 migrations are present in the repository.
 - [ ] Supabase migration history matches this order.
 - [ ] RLS is enabled on every tenant/business table.
 - [ ] Role escalation is blocked.
