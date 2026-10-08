@@ -620,6 +620,7 @@ test('residue is a first-class traceable domain object', () => {
   const types = read('src/types/index.ts');
   const migration = read('supabase/migrations/202610080002_nirdhoom_residue_lot_first_class.sql');
   const timeline = read('src/components/ResidueNetwork/FieldEvidenceTimeline.tsx');
+  const baler = read('src/components/FieldOperator/BalerPWA.tsx');
   assert.match(types, /export interface ResidueLot/);
   assert.match(types, /verified_quantity_tonnes/);
   assert.match(types, /geometry_provenance/);
@@ -628,6 +629,8 @@ test('residue is a first-class traceable domain object', () => {
   assert.match(migration, /revoke insert, update, delete on public\.residue_lot_events/);
   assert.match(timeline, /FIELD EVIDENCE TIMELINE/);
   assert.match(timeline, /absence of a detection does not prove no burning/);
+  assert.match(baler, /estimated_quantity_tonnes: quantity/);
+  assert.match(baler, /geometry_provenance:/);
 });
 
 test('machine capability claims carry source metadata', () => {
