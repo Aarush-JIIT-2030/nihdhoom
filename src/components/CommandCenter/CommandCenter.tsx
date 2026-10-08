@@ -20,15 +20,15 @@ interface Props {
   onNavigate: (tab: string) => void;
 }
 
-const heroImage = 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Paddy_fields_in_Batala%2C_Gurdaspur%2C_Punjab.jpg/1280px-Paddy_fields_in_Batala%2C_Gurdaspur%2C_Punjab.jpg';
-const farmImage = 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Paddy_fields_in_Batala%2C_Gurdaspur%2C_Punjab.jpg/1280px-Paddy_fields_in_Batala%2C_Gurdaspur%2C_Punjab.jpg';
-const balerImage = 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Tractor_with_baler.jpg/1280px-Tractor_with_baler.jpg';
-const fleetImage = 'https://upload.wikimedia.org/wikipedia/commons/7/7e/Agriculture_in_India_tractor_farming_Punjab_preparing_field_for_a_wheat_crop_without_burning_previous_crop_stalk.jpg';
+const heroImage = '/images/punjab_farm_hero.jpg';
+const farmImage = '/images/punjab_farm_hero.jpg';
+const balerImage = '/images/baling_fleet.jpg';
+const fleetImage = '/images/baling_fleet.jpg';
 const offtakeImage = '/images/offtake_facility.jpg';
 const satelliteImage = '/images/satellite_firms.jpg';
 const farmerPhoneImage = '/images/farmer_phone.jpg';
 const circularUseImage = '/images/cbg_mushroom_offtake_1790447167269.jpg';
-const monsoonImage = 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Paddy_Fields%2C_Batala%2C_Punjab%2C_India_in_early_monsoon._IMG20260705172241_02.jpg?width=1280';
+const monsoonImage = '/images/punjab_farm_hero.jpg';
 
 export function CommandCenter({
   fields, machines, fireEvents, storageYards, buyers, onSelectField, onOpenResidue, onOpenImpact, onNavigate
@@ -73,7 +73,7 @@ export function CommandCenter({
             <span><Map /> Field-level provenance</span>
             <span><Truck /> Machine-linked operations</span>
           </div>
-          <a className="home-photo-credit" href="https://commons.wikimedia.org/wiki/File:Paddy_fields_in_Batala,_Gurdaspur,_Punjab.jpg" target="_blank" rel="noreferrer">Photo: Rohitjahnavi / Wikimedia Commons · CC BY-SA 3.0 ↗</a>
+          <a className="home-photo-credit" href="https://commons.wikimedia.org/wiki/File:Paddy_fields_in_Batala,_Gurdaspur,_Punjab.jpg" >Photo: project photography · source attribution documented in docs/IMAGE-LICENSES.md</span>
         </div>
       </section>
 
@@ -154,7 +154,7 @@ export function CommandCenter({
           </figure>
           <figure>
             <img src={monsoonImage} alt="Paddy fields near Batala, Punjab in early monsoon" loading="lazy" decoding="async" />
-            <figcaption><span>Early-season field landscape</span><a href="https://commons.wikimedia.org/wiki/File:Paddy_Fields,_Batala,_Punjab,_India_in_early_monsoon._IMG20260705172241_02.jpg" target="_blank" rel="noreferrer">Rohitjahnavi · CC0 ↗</a></figcaption>
+            <figcaption><span>Early-season field landscape</span><a href="/images/punjab_farm_hero.jpg">Project photography ↗</a></figcaption>
           </figure>
           <figure>
             <img src="/images/farmer_phone.jpg" alt="Farmer using a phone for field coordination" loading="lazy" decoding="async" />
