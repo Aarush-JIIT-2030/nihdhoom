@@ -3016,3 +3016,11 @@ html[data-theme="kisan"] .home-workflow{grid-template-columns:repeat(5,minmax(0,
   html[data-theme="kisan"] .home-proof{grid-template-columns:1fr}
   html[data-theme="kisan"] .home-proof > div{border-right:0}
 }
+
+/* Product grid rhythm: the five-step operating chain stays balanced on wide screens. */
+@media(min-width:1180px){
+  html[data-theme="kisan"] .home-workflow{grid-template-columns:repeat(5,minmax(0,1fr));}
+}
+@media(min-width:721px) and (max-width:1179px){
+  html[data-theme="kisan"] .home-workflow{grid-template-columns:repeat(3,minmax(0,1fr));}
+}
