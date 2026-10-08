@@ -11,6 +11,7 @@ The public product uses a small set of real agricultural photographs instead of 
 | Crop-residue management training | https://commons.wikimedia.org/wiki/File:Manav_Vikas_Sansthan_on_Crop_residue_management.jpg | Singhbrarraj636 | CC BY-SA 4.0 |
 | Additional Punjab field reference | https://commons.wikimedia.org/wiki/File:Paddy_field_in_Punjab.jpg | Sarbjit Bahga | CC BY-SA 4.0 |
 | Aerial field reference | https://commons.wikimedia.org/wiki/File:Aerial_view_of_agricultural_fields_in_Punjab,_India.jpg | Bhullargraphic | CC BY-SA 4.0 |
+| Early-season Batala field landscape | https://commons.wikimedia.org/wiki/File:Paddy_Fields,_Batala,_Punjab,_India_in_early_monsoon._IMG20260705172241_02.jpg | Rohitjahnavi | CC0 |
 
 The UI links the displayed photography back to its source page so attribution remains visible.
 
