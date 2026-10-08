@@ -34,7 +34,7 @@ export const FieldDetailDrawer: React.FC<FieldDetailDrawerProps> = ({
   const isCleared = field.status === 'CLEARED_PENDING_AUDIT' || field.status === 'VERIFIED_NON_BURN';
 
   return (
-    <div className="glass-panel p-4 border-emerald-500/40 shadow-2xl relative animate-in fade-in slide-in-from-bottom duration-200">
+    <div className="tone-adapt glass-panel p-4 border-emerald-500/40 shadow-2xl relative animate-in fade-in slide-in-from-bottom duration-200">
       {/* Header with Close */}
       <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
         <div className="flex items-center gap-2">

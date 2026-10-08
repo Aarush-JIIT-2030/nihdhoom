@@ -98,9 +98,9 @@ export const VRPDispatchPanel: React.FC<VRPDispatchPanelProps> = ({
   };
 
   return (
-    <div className="glass-panel p-4 flex flex-col gap-4">
+    <div className="tone-adapt glass-panel p-4 flex flex-col gap-4">
       {/* Panel Header & Run Action */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+      <div className="flex flex-col items-start justify-between gap-3 border-b border-slate-800 pb-4">
         <div>
           <div className="flex items-center gap-2">
             <Cpu className="w-5 h-5 text-emerald-400" />
@@ -116,7 +116,7 @@ export const VRPDispatchPanel: React.FC<VRPDispatchPanelProps> = ({
         <button
           onClick={handleRunOptimizer}
           disabled={isSolving}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-xs shadow-lg transition-all cursor-pointer ${
+          className={`flex w-full items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm shadow-sm transition-all cursor-pointer ${
             isSolving
               ? 'bg-slate-700 text-slate-300'
               : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-500/20 active:scale-95'
@@ -148,7 +148,7 @@ export const VRPDispatchPanel: React.FC<VRPDispatchPanelProps> = ({
 
       {/* Real-time Optimization Telemetry Tiles */}
       {optimizerResult && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+        <div className="grid grid-cols-2 gap-2.5">
           <div className="bg-slate-900/90 border border-emerald-500/30 rounded-lg p-2.5">
             <div className="flex items-center justify-between text-slate-400 text-[11px]">
               <span>Scheduled Load</span>
@@ -214,7 +214,7 @@ export const VRPDispatchPanel: React.FC<VRPDispatchPanelProps> = ({
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 gap-2.5">
           {optimizerResult?.assignments.map((assign) => {
             const isSelected = selectedMachineId === assign.machineId;
             return (

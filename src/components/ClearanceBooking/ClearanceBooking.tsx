@@ -68,7 +68,7 @@ export function ClearanceBooking({ fields, demoMode, onBooked }: Props) {
   }
 
   return (
-    <div className="farmer-surface farmer-booking mx-auto max-w-5xl space-y-4">
+    <div className="tone-adapt farmer-surface farmer-booking mx-auto max-w-5xl space-y-4">
       <section className="rounded-2xl border border-emerald-500/20 bg-slate-950/75 p-5 shadow-xl shadow-emerald-950/10">
         <div className="flex items-start gap-3">
           <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-emerald-500/15 text-emerald-300">
@@ -127,7 +127,7 @@ export function ClearanceBooking({ fields, demoMode, onBooked }: Props) {
             <input type="date" value={date} min={new Date().toISOString().slice(0, 10)} onChange={(e) => setDate(e.target.value)} className="w-full rounded-xl border border-slate-700 bg-slate-900 py-3 pl-10 pr-3 text-sm font-semibold text-white focus:border-emerald-500 focus:outline-none" />
           </div>
 
-          <label className="mt-4 flex items-start gap-3 rounded-xl border border-emerald-900/10 bg-emerald-50/50 p-3 text-xs leading-5 text-emerald-950/70">
+          <label className="tone-native mt-4 flex items-start gap-3 rounded-xl border border-emerald-900/10 bg-emerald-50/50 p-3 text-xs leading-5 text-emerald-950/70">
             <input type="checkbox" checked={consentAccepted} onChange={(e) => setConsentAccepted(e.target.checked)} className="mt-1 h-4 w-4 accent-emerald-700" />
             <span>I consent to NIRDHOOM using this field and booking information to coordinate the requested clearance service.</span>
           </label>
@@ -149,7 +149,7 @@ export function ClearanceBooking({ fields, demoMode, onBooked }: Props) {
             <p>• Demo mode changes example data only.</p>
             <p>• Payment is not connected in this version.</p>
           </div>
-          <div className="mt-5 rounded-xl border border-amber-500/15 bg-slate-950/40 p-3">
+          <div className="tone-native mt-5 rounded-xl border border-amber-500/20 bg-amber-50/70 p-3">
             <span className="block text-[10px] uppercase tracking-wider text-amber-900/55">{demoMode ? 'Example estimate' : 'Server quote'}</span>
             <strong className="mt-1 block text-xl font-black text-amber-900">{demoMode ? `₹${estimate.toLocaleString()}` : 'Shown after booking'}</strong>
             <span className="text-[10px] text-amber-900/55">{demoMode ? 'Example only · no payment is made' : 'Authoritative quote comes from the server'}</span>

@@ -68,7 +68,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
   };
 
   return (
-    <div className="farmer-surface farmer-verification flex flex-col gap-6 max-w-6xl mx-auto p-2">
+    <div className="tone-adapt farmer-surface farmer-verification flex flex-col gap-6 max-w-6xl mx-auto p-2">
       {/* Top Banner: The Money Shot Pitch Framing */}
       <div className="glass-panel-emerald p-5">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">

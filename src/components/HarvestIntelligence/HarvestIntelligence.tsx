@@ -140,7 +140,7 @@ export function HarvestIntelligence({ fields, machines, demoMode }: Props) {
     : null;
 
   return (
-    <div className="harvest-intelligence-surface space-y-4">
+    <div className="tone-adapt harvest-intelligence-surface space-y-4">
       <section className="rounded-2xl border border-emerald-500/25 bg-slate-950/75 p-5">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
@@ -222,7 +222,7 @@ export function HarvestIntelligence({ fields, machines, demoMode }: Props) {
             </div>
           </div>
           {weatherSignal && (
-            <div className={`mt-3 rounded-xl border p-3 ${weatherSignal.tone === 'caution' ? 'border-amber-200 bg-amber-50 text-amber-900' : 'border-emerald-200 bg-emerald-50 text-emerald-900'}`}>
+            <div className={`tone-native mt-3 rounded-xl border p-3 ${weatherSignal.tone === 'caution' ? 'border-amber-200 bg-amber-50 text-amber-900' : 'border-emerald-200 bg-emerald-50 text-emerald-900'}`}>
               <div className="text-xs font-extrabold">{weatherSignal.label}</div>
               <div className="mt-1 text-xs leading-5">{weatherSignal.detail}</div>
               <div className="mt-1 text-[10px] opacity-70">Planning heuristic based on the authenticated forecast response; not a machine-safety guarantee.</div>

@@ -291,7 +291,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
 
   if (!currentField) {
     return (
-      <section className="field-empty mx-auto max-w-3xl" aria-live="polite">
+      <section className="tone-adapt field-empty mx-auto max-w-3xl" aria-live="polite">
         <h2>No field is assigned to this operator session.</h2>
         <p>Live operator actions appear only after a field and job are assigned by the connected dispatch workflow.</p>
       </section>
@@ -299,7 +299,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
   }
 
   return (
-    <div className="field-operator-surface flex flex-col lg:flex-row items-center lg:items-start justify-center gap-6 p-2 max-w-6xl mx-auto">
+    <div className="tone-adapt field-operator-surface flex flex-col lg:flex-row items-center lg:items-start justify-center gap-6 p-2 max-w-6xl mx-auto">
       {/* Operator context */}
       <div className="w-full lg:w-5/12 flex flex-col gap-4">
         <div className="glass-panel-emerald p-4">

@@ -35,7 +35,7 @@ export function FieldProvenancePanel({ fields, demoMode }: Props) {
   const unknown = fields.filter(f => Object.values(resolveProvenance(f)).includes('UNKNOWN')).length;
 
   return (
-    <section className="glass-panel p-4 sm:p-5 border-indigo-500/20">
+    <section className="tone-adapt glass-panel p-4 sm:p-5 border-indigo-500/20">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">

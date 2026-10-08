@@ -88,32 +88,29 @@ export function Header({ activeTab, setActiveTab, demoMode }: HeaderProps) {
 
   return (
     <>
-      <header className="nirdhoom-field-header sticky top-0 z-50 border-b border-emerald-900/10 bg-white/90 px-3 shadow-[0_8px_30px_rgba(35,76,44,.06)] backdrop-blur-xl sm:px-5">
+      <header className="nirdhoom-field-header sticky top-0 z-50 backdrop-blur-xl">
       <div className="mx-auto max-w-[1480px]">
-        <div className="flex min-h-[72px] items-center gap-3">
+        <div className="flex min-h-[68px] items-center gap-3">
           <button
             onClick={() => navigate('OVERVIEW')} onMouseEnter={() => prefetchWorkspace('OVERVIEW')}
-            className="group flex min-w-0 items-center gap-3 rounded-2xl px-1 py-1.5 text-left transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+            className="group flex min-w-0 shrink-0 items-center gap-3 rounded-xl py-1.5 text-left"
             aria-label="Go to NIRDHOOM Home"
           >
-            <span className="relative grid h-11 w-11 shrink-0 place-items-center rounded-2xl border bg-emerald-50 shadow-sm">
-              <span className="text-lg font-black text-emerald-700">नि</span>
-              <span className="absolute -right-1 -top-1 h-3 w-3 rounded-full border-2 border-white bg-emerald-500" />
-            </span>
+            <span className="brand-mark" aria-hidden="true">नि</span>
             <span className="hidden min-w-0 sm:block">
               <span className="flex items-center gap-2">
-                <span className="font-['DM_Sans'] text-[16px] font-black tracking-[0.08em] text-emerald-950">NIRDHOOM</span>
-                <span className="rounded-full border border-amber-300 bg-amber-50 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-800">
+                <span className="brand-name">NIRDHOOM</span>
+                <span className="brand-chip">
                   Field network
                 </span>
               </span>
-              <span className="mt-0.5 block text-[10px] font-medium text-emerald-800/60">Crop-residue field network</span>
+              <span className="brand-tag">Crop-residue field network</span>
             </span>
           </button>
 
-          <div className="hidden h-9 w-px bg-emerald-900/10 xl:block" />
+          <div className="hidden h-7 w-px bg-[var(--line)] xl:block" />
 
-          <nav className="hidden min-w-0 flex-1 items-center gap-1 lg:flex" aria-label="Primary navigation">
+          <nav className="hidden min-w-0 flex-1 items-center gap-0.5 lg:flex" aria-label="Primary navigation">
             {primaryNav.map((item) => {
               const Icon = item.icon;
               const active = activeTab === item.id;
@@ -142,8 +139,8 @@ export function Header({ activeTab, setActiveTab, demoMode }: HeaderProps) {
                   <div className="field-more-menu" role="menu" aria-label="More navigation">
                     <div className="flex items-start justify-between gap-4 px-4 pb-3 pt-1">
                       <div>
-                        <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-900/45">Explore NIRDHOOM</div>
-                        <div className="mt-1 text-[11px] text-emerald-900/55">Machines, proof, buyers and account tools.</div>
+                        <div className="text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--brand)]">Explore NIRDHOOM</div>
+                        <div className="mt-1 text-[13px] text-[var(--muted)]">Machines, proof, buyers and account tools.</div>
                       </div>
                       <button
                         type="button"
@@ -154,14 +151,14 @@ export function Header({ activeTab, setActiveTab, demoMode }: HeaderProps) {
                         <X className="h-4 w-4" />
                       </button>
                     </div>
-                    <div className="grid grid-cols-2 gap-2.5">
+                    <div className="grid grid-cols-2 gap-1">
                     {secondaryNav.map((item) => {
                       const Icon = item.icon;
                       return (
                         <button key={item.id} role="menuitem" onClick={() => navigate(item.id)} onMouseEnter={() => prefetchWorkspace(item.id)} onFocus={() => prefetchWorkspace(item.id)}
                           className={`field-more-item ${activeTab === item.id ? 'is-active' : ''}`}>
                           <Icon className="mt-0.5 h-4 w-4 shrink-0" />
-                          <span className="min-w-0"><span className="block truncate text-[11px] font-bold">{item.label}</span><span className="mt-0.5 block text-[9px] leading-3 opacity-65">{item.description}</span></span>
+                          <span className="min-w-0"><span className="block truncate text-[13px] font-semibold">{item.label}</span><span className="mt-0.5 block text-[11.5px] leading-snug text-[var(--muted)]">{item.description}</span></span>
                         </button>
                       );
                     })}
@@ -172,31 +169,31 @@ export function Header({ activeTab, setActiveTab, demoMode }: HeaderProps) {
             </div>
           </nav>
 
-          <div className="ml-auto flex shrink-0 items-center gap-1.5">
-            <div className="hidden xl:flex items-center gap-2 rounded-full border border-emerald-900/10 bg-emerald-50 px-3 py-1.5 text-[10px]">
-              <span className={`h-2 w-2 rounded-full ${demoMode ? 'bg-amber-500' : 'bg-emerald-500'}`} />
-              <span className="font-semibold text-emerald-900/65">{demoMode ? 'Sample records' : 'Connected records'}</span>
+          <div className="ml-auto flex shrink-0 items-center gap-2">
+            <div className="header-status hidden xl:inline-flex">
+              <span className={`header-status-dot ${demoMode ? 'is-sample' : ''}`} />
+              <span>{demoMode ? 'Sample records' : 'Connected records'}</span>
             </div>
             <button
               type="button"
               onClick={() => setFarmerLanguage((value) => value === 'en' ? 'hi' : 'en')}
-              className="hidden sm:flex items-center gap-1.5 rounded-xl border border-emerald-700/15 bg-white px-2.5 py-2 text-[10px] font-extrabold text-emerald-800 transition hover:bg-emerald-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+              className="lang-toggle hidden lg:inline-flex"
               aria-label={farmerLabels.language}
               title={farmerLabels.language}
             >
-              <span className={farmerLanguage === 'en' ? 'font-black text-emerald-900' : 'opacity-45'}>EN</span>
-              <span className="text-emerald-900/25">/</span>
-              <span className={farmerLanguage === 'hi' ? 'font-black text-emerald-900' : 'opacity-45'}>हिंदी</span>
+              <span className={farmerLanguage === 'en' ? 'is-on' : ''}>EN</span>
+              <span className="sr-only">/</span>
+              <span className={farmerLanguage === 'hi' ? 'is-on' : ''}>हिंदी</span>
             </button>
             <button
               type="button"
               onClick={() => setFarmerLanguage((value) => value === 'en' ? 'hi' : 'en')}
-              className="grid h-11 min-w-11 place-items-center rounded-xl border border-emerald-900/10 bg-emerald-50 px-2 text-[10px] font-extrabold text-emerald-900 lg:hidden"
+              className="icon-button lg:hidden"
               aria-label={farmerLabels.language}
             >
               {farmerLanguage === 'en' ? 'हिंदी' : 'EN'}
             </button>
-            <button onClick={() => setMobileOpen((value) => !value)} className="field-menu-button grid h-11 w-11 place-items-center rounded-xl border border-emerald-900/10 bg-white text-emerald-900 lg:hidden" aria-label={mobileOpen ? 'Close navigation' : 'Open navigation'} aria-expanded={mobileOpen}>
+            <button onClick={() => setMobileOpen((value) => !value)} className="field-menu-button icon-button lg:hidden" aria-label={mobileOpen ? 'Close navigation' : 'Open navigation'} aria-expanded={mobileOpen}>
               {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
             </button>
           </div>
@@ -206,8 +203,8 @@ export function Header({ activeTab, setActiveTab, demoMode }: HeaderProps) {
 
         {mobileOpen && (
           <div className="field-mobile-panel lg:hidden">
-            <div className="mb-2 px-1 text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-900/45">All NIRDHOOM surfaces</div>
-            <div className="grid grid-cols-2 gap-1.5">
+            <div className="mb-3 px-1 text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--brand)]">All NIRDHOOM surfaces</div>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               {secondaryNav.map((item) => {
                 const Icon = item.icon;
                 return <button key={item.id} onClick={() => navigate(item.id)} className={`field-mobile-item ${activeTab === item.id ? 'is-active' : ''}`}><Icon className="h-4 w-4" />{item.label}</button>;

@@ -128,7 +128,7 @@ export const MultiOfftakeAuction: React.FC = () => {
                   className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                     testSilica === tier
                       ? 'bg-amber-400 text-emerald-950'
-                      : 'bg-slate-800 text-emerald-950/55 hover:text-emerald-950'
+                      : 'bg-slate-100 text-emerald-950/55 hover:text-emerald-950'
                   }`}
                 >
                   {tier}
@@ -157,7 +157,7 @@ export const MultiOfftakeAuction: React.FC = () => {
         </div>
 
         {/* Optimal Match Outcome Banner */}
-        <div className="p-4 rounded-xl bg-gradient-to-r from-emerald-950/80 via-slate-900 to-slate-950 border border-emerald-500/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="p-4 rounded-xl bg-gradient-to-r from-emerald-50 via-white to-amber-50/60 border border-emerald-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <span className="badge badge-emerald text-[10px] mb-1">
               Scenario recommendation
