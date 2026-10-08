@@ -352,6 +352,22 @@ test('residue pool RPC cannot over-commit a verified lot and definer search path
 });
 
 
+test('residue operations do not double-count verified supply across buyers', () => {
+  const source = read('src/lib/residueOperations.ts');
+  assert.match(source, /lot\.assigned_buyer_id === buyer\.id/);
+  assert.doesNotMatch(source, /const verifiedTotal = lots\.reduce/);
+  assert.match(source, /distanceKm/);
+  assert.match(source, /machine\.residue_types/);
+});
+
+test('homepage imagery is self-hosted and non-hero images are deferred', () => {
+  const home = read('src/components/CommandCenter/CommandCenter.tsx');
+  assert.match(home, /fetchPriority="high"/);
+  assert.match(home, /loading="lazy"/);
+  assert.doesNotMatch(home, /upload\.wikimedia\.org/);
+  assert.doesNotMatch(home, /commons\.wikimedia\.org\/wiki\/Special:Redirect/);
+});
+
 test('audit command includes latest Supabase integrity hardening checks', () => {
   const pkg = JSON.parse(read('package.json'));
   const audit = read('scripts_integrity_validate.mjs');
