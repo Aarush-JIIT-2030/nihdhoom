@@ -73,7 +73,7 @@ export function CommandCenter({
             <span><Map /> Field-level provenance</span>
             <span><Truck /> Machine-linked operations</span>
           </div>
-          <a className="home-photo-credit" href="https://commons.wikimedia.org/wiki/File:Paddy_fields_in_Batala,_Gurdaspur,_Punjab.jpg" >Photo: project photography · source attribution documented in docs/IMAGE-LICENSES.md</span>
+          <span className="home-photo-credit">Photo: project photography · source attribution documented in docs/IMAGE-LICENSES.md</span>
         </div>
       </section>
 
