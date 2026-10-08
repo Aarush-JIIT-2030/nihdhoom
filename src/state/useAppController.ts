@@ -40,7 +40,6 @@ export function useAppController() {
   const [liveDataError, setLiveDataError] = useState<string | null>(null);
   const [activeRoutePolyline, setActiveRoutePolyline] = useState<LatLng[]>([]);
   const [certificateField, setCertificateField] = useState<Field | null>(null);
-  const [fieldForUpiModal, setFieldForUpiModal] = useState<Field | null>(null);
 
   useEffect(() => {
     if (!DEMO_MODE || typeof window === 'undefined') return;
@@ -234,8 +233,6 @@ export function useAppController() {
     setActiveRoutePolyline,
     certificateField,
     setCertificateField,
-    fieldForUpiModal,
-    setFieldForUpiModal,
     handleUpdateFieldStatus,
     refreshLiveData,
   };
