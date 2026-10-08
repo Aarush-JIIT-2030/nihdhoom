@@ -28,7 +28,7 @@ const ImpactResearch = lazy(() => import('./components/ImpactResearch/ImpactRese
 const HarvestIntelligence = lazy(() => import('./components/HarvestIntelligence/HarvestIntelligence').then((m) => ({ default: m.HarvestIntelligence })));
 const FieldProvenancePanel = lazy(() => import('./components/FieldProvenance/FieldProvenancePanel').then((m) => ({ default: m.FieldProvenancePanel })));
 const FieldJobBoard = lazy(() => import('./components/FieldJobs/FieldJobBoard').then((m) => ({ default: m.FieldJobBoard })));
-const ResidueLotJourney = lazy(() => import('./components/ResidueNetwork/ResidueLotJourney').then((m) => ({ default: m.ResidueLotJourney })));
+const FieldEvidenceTimeline = lazy(() => import('./components/ResidueNetwork/FieldEvidenceTimeline').then((m) => ({ default: m.FieldEvidenceTimeline })));
 const ClearanceBooking = lazy(() => import('./components/ClearanceBooking/ClearanceBooking').then((m) => ({ default: m.ClearanceBooking })));
 
 
@@ -370,7 +370,7 @@ export function App() {
               onOpenImpact={() => navigate('IMPACT_RESEARCH')}
             />
             {(selectedField || fields[0]) && (
-            <ResidueLotJourney
+            <FieldEvidenceTimeline
               field={(selectedField || fields[0])!}
               machine={machines.find((machine) => machine.id === (selectedField || fields[0])?.assigned_machine_id) || machines[0] || null}
               demoMode={demoMode}
