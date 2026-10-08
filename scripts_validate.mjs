@@ -35,7 +35,7 @@ const required = [
   'api/notify/telegram-webhook.ts',
   'api/notify/telegram-link.ts',
   'api/notify/telegram-miniapp-auth.ts',
-  'src/components/FarmerSurface/TelegramSimulator.tsx',
+  'src/components/FarmerSurface/TelegramChannel.tsx',
   'supabase/migrations/202610050001_nirdhoom_telegram_identity.sql',
   'supabase/migrations/202610050002_nirdhoom_telegram_webhook_idempotency.sql',
   'supabase/migrations/202610070001_nirdhoom_consent_withdrawal.sql',
