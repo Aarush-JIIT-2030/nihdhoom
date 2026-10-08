@@ -1938,3 +1938,24 @@ html[data-theme="kisan"] .nirdhoom-field-app .leaflet-container {
 .harvest-intelligence-surface :where(.text-cyan-300,.text-cyan-200){color:#2D6A45!important}
 .harvest-intelligence-surface :where(.text-emerald-300,.text-emerald-400){color:#2D6A45!important}
 .harvest-intelligence-surface :where(.text-amber-200){color:#76521B!important}
+
+
+.nirdhoom-telemetry .telemetry-card{
+  border-color:#DDE5DC;
+  background:#FFFFFF;
+  color:#17352A;
+}
+.nirdhoom-telemetry .telemetry-kicker{color:#2D6A45}
+.nirdhoom-telemetry .telemetry-muted{color:#7A887F}
+.nirdhoom-telemetry .telemetry-actions{color:#5D6D62}
+.nirdhoom-telemetry .telemetry-icon-button{color:#5D6D62}
+.nirdhoom-telemetry .telemetry-icon-button:hover{background:#F0F5EE;color:#17352A}
+.nirdhoom-telemetry .telemetry-event-icon{
+  border-color:#D9E6D7;
+  background:#F0F7EF;
+}
+.nirdhoom-telemetry .telemetry-event-icon svg{color:#2D6A45!important}
+.nirdhoom-telemetry .telemetry-title{color:#17352A}
+.nirdhoom-telemetry .telemetry-detail{color:#65736A}
+.nirdhoom-telemetry .telemetry-inspect{color:#2D6A45}
+.nirdhoom-telemetry .telemetry-badge{background:#EEF5EB;color:#2D6A45;border-color:#D4E3D0}
