@@ -133,7 +133,7 @@ export function TelegramSimulator({ onSlotConfirmed }: TelegramSimulatorProps) {
               className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-extrabold text-white shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 ${botUrl ? 'bg-[#229ED9] hover:-translate-y-0.5 hover:brightness-105' : 'cursor-not-allowed bg-slate-300'}`}
               onClick={(event) => { if (!botUrl) event.preventDefault(); }}
             >
-              <Send className="h-4 w-4" /> {botUrl ? copy.cta : 'Telegram bot unavailable'}
+              <Send className="h-4 w-4" /> {botUrl ? copy.cta : 'Telegram bot is not configured'}
             </a>
             {!botUrl && (
               <p className="text-center text-xs font-semibold text-slate-500">
