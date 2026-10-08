@@ -2079,3 +2079,26 @@ html[data-theme="kisan"] .nirdhoom-field-app .leaflet-container {
 @media(max-width:450px){
   .field-evidence-trust-strip{grid-template-columns:1fr}
 }
+
+
+.market-supply-card{
+  align-items:flex-start;
+}
+.market-supply-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.35rem .7rem;
+  margin-top:.35rem;
+  color:#718076;
+  font-size:.62rem;
+}
+.market-supply-meta span::before{
+  content:"";
+  display:inline-block;
+  width:4px;
+  height:4px;
+  margin-right:.3rem;
+  border-radius:999px;
+  background:#8AA596;
+  vertical-align:middle;
+}
