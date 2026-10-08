@@ -359,22 +359,24 @@ export function App() {
         )}
 
         {activeTab === 'FIELD_JOBS' && (
-          <FieldJobBoard
-            fields={fields}
-            machines={machines}
-            demoMode={demoMode}
-            onSelectField={handleSelectField}
-            onOpenDispatch={() => navigate('OPS_CONSOLE')}
-            onOpenResidue={() => navigate('RESIDUE_POOLS')}
-            onOpenImpact={() => navigate('IMPACT_RESEARCH')}
-          />
-          {(selectedField || fields[0]) && (
+          <>
+            <FieldJobBoard
+              fields={fields}
+              machines={machines}
+              demoMode={demoMode}
+              onSelectField={handleSelectField}
+              onOpenDispatch={() => navigate('OPS_CONSOLE')}
+              onOpenResidue={() => navigate('RESIDUE_POOLS')}
+              onOpenImpact={() => navigate('IMPACT_RESEARCH')}
+            />
+            {(selectedField || fields[0]) && (
             <ResidueLotJourney
               field={(selectedField || fields[0])!}
               machine={machines.find((machine) => machine.id === (selectedField || fields[0])?.assigned_machine_id) || machines[0] || null}
               demoMode={demoMode}
             />
-          )}
+            )}
+          </>
         )}
 
         {activeTab === 'FIELD_PROVENANCE' && (
