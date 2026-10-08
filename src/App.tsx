@@ -28,6 +28,7 @@ const ImpactResearch = lazy(() => import('./components/ImpactResearch/ImpactRese
 const HarvestIntelligence = lazy(() => import('./components/HarvestIntelligence/HarvestIntelligence').then((m) => ({ default: m.HarvestIntelligence })));
 const FieldProvenancePanel = lazy(() => import('./components/FieldProvenance/FieldProvenancePanel').then((m) => ({ default: m.FieldProvenancePanel })));
 const FieldJobBoard = lazy(() => import('./components/FieldJobs/FieldJobBoard').then((m) => ({ default: m.FieldJobBoard })));
+const ResidueLotJourney = lazy(() => import('./components/ResidueNetwork/ResidueLotJourney').then((m) => ({ default: m.ResidueLotJourney })));
 const ClearanceBooking = lazy(() => import('./components/ClearanceBooking/ClearanceBooking').then((m) => ({ default: m.ClearanceBooking })));
 
 
@@ -310,7 +311,7 @@ export function App() {
   };
 
   return (
-    <div className="nirdhoom-field-app min-h-screen bg-[var(--bg-deep)] text-[var(--text)] flex flex-col font-sans selection:bg-emerald-500 selection:text-slate-950 relative overflow-x-hidden">
+    <div data-active-tab={activeTab} className="nirdhoom-field-app min-h-screen bg-[var(--bg-deep)] text-[var(--text)] flex flex-col font-sans selection:bg-emerald-500 selection:text-slate-950 relative overflow-x-hidden">
       <a href="#main-content" className="skip-link">Skip to main content</a>
       {/* Top Header */}
       <Header
@@ -369,6 +370,13 @@ export function App() {
             onOpenResidue={() => navigate('RESIDUE_POOLS')}
             onOpenImpact={() => navigate('IMPACT_RESEARCH')}
           />
+          {(selectedField || fields[0]) && (
+            <ResidueLotJourney
+              field={(selectedField || fields[0])!}
+              machine={machines.find((machine) => machine.id === (selectedField || fields[0])?.assigned_machine_id) || machines[0] || null}
+              demoMode={demoMode}
+            />
+          )}
         )}
 
         {activeTab === 'FIELD_PROVENANCE' && (
@@ -566,7 +574,7 @@ export function App() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
               <div className="lg:col-span-8 flex flex-col gap-3">
                 <OpsMap
                   fields={fields}
@@ -591,7 +599,7 @@ export function App() {
                 )}
               </div>
 
-              <div className="lg:col-span-4">
+              <div className="lg:col-span-4 h-full">
                 <VRPDispatchPanel
                   fields={fields}
                   machines={machines}
