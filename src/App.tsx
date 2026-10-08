@@ -30,9 +30,10 @@ const FieldProvenancePanel = lazy(() => import('./components/FieldProvenance/Fie
 const FieldJobBoard = lazy(() => import('./components/FieldJobs/FieldJobBoard').then((m) => ({ default: m.FieldJobBoard })));
 const FieldEvidenceTimeline = lazy(() => import('./components/ResidueNetwork/FieldEvidenceTimeline').then((m) => ({ default: m.FieldEvidenceTimeline })));
 const ClearanceBooking = lazy(() => import('./components/ClearanceBooking/ClearanceBooking').then((m) => ({ default: m.ClearanceBooking })));
+const ResidueControlTower = lazy(() => import('./components/ResidueNetwork/ResidueControlTower').then((m) => ({ default: m.ResidueControlTower })));
 
 
-import { INITIAL_STORAGE_YARDS, INITIAL_BUYERS } from './data/mockData';
+import { INITIAL_STORAGE_YARDS, INITIAL_BUYERS, INITIAL_RESIDUE_LOTS } from './data/mockData';
 import { Field } from './types';
 import { prefetchWorkspace } from './lib/workspacePrefetch';
 import { WorkspaceLoading } from './components/WorkspaceLoading';
@@ -283,6 +284,9 @@ export function App() {
     demoMode,
     loadingLiveData,
     liveDataError,
+    residueLots,
+    buyers: liveBuyers,
+    storageYards: liveStorageYards,
   } = useAppController();
 
   const acresScheduled = fields.reduce((sum, field) => sum + (Number(field.acreage) || 0), 0);
@@ -544,8 +548,22 @@ export function App() {
           </div>
         )}
 
-        {/* TAB 2: OPS COMMAND CONSOLE (The Real Product) */}
+        {/* TAB 2: RESIDUE CONTROL TOWER + OPS COMMAND CONSOLE */}
         {activeTab === 'OPS_CONSOLE' && (
+          <div className="flex flex-col gap-6">
+            <ResidueControlTower
+              fields={fields}
+              machines={machines}
+              buyers={demoMode ? INITIAL_BUYERS : liveBuyers}
+              storageYards={demoMode ? INITIAL_STORAGE_YARDS : liveStorageYards}
+              residueLots={demoMode ? INITIAL_RESIDUE_LOTS : residueLots}
+              demoMode={demoMode}
+              onSelectField={handleSelectField}
+              onNavigate={(tab) => setActiveTab(tab as ActiveTab)}
+            />
+
+            <div className="flex flex-col gap-4">
+
           <div className="flex flex-col gap-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 bg-slate-900/60 p-3 rounded-xl border border-slate-800">
               <div>
@@ -607,6 +625,9 @@ export function App() {
                   onSelectField={handleSelectField}
                 />
               </div>
+            </div>
+          </div>
+        )}
             </div>
           </div>
         )}
