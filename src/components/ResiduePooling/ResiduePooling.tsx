@@ -5,6 +5,20 @@ import { supabase } from '../../lib/supabase';
 
 type Pool = { id: string; name: string; target_tonnes: number; current_tonnes: number; status: string; buyer_demand_id?: string | null };
 type Demand = { id: string; buyer_name: string; target_tonnes: number; pickup_deadline: string; radius_km: number; status: string };
+type SupplyLot = {
+  id: string;
+  field_id: string;
+  quantity_tonnes: number | null;
+  verified_quantity_tonnes?: number | null;
+  moisture_pct: number | null;
+  quality_grade?: string | null;
+  residue_type?: string | null;
+  ready_from?: string | null;
+  pickup_deadline?: string | null;
+  status: string;
+  assigned_buyer_id?: string | null;
+};
+type BuyerOffer = { id: string; lot_id: string; price_per_tonne: number; quantity_tonnes: number; status: string };
 
 interface Props { fields: Field[]; demoMode: boolean; }
 
@@ -14,6 +28,8 @@ export function ResiduePooling({ fields, demoMode }: Props) {
     try { const raw = window.localStorage.getItem('nirdhoom.demo.pools.v1'); return raw ? (JSON.parse(raw) as Pool[]) : []; } catch { return []; }
   });
   const [demands, setDemands] = useState<Demand[]>([]);
+  const [lots, setLots] = useState<SupplyLot[]>([]);
+  const [offers, setOffers] = useState<BuyerOffer[]>([]);
   const [notice, setNotice] = useState('');
 
   useEffect(() => {
@@ -21,23 +37,58 @@ export function ResiduePooling({ fields, demoMode }: Props) {
     try { window.localStorage.setItem('nirdhoom.demo.pools.v1', JSON.stringify(pools)); } catch { /* optional demo persistence */ }
   }, [demoMode, pools]);
 
-  const localSupply = useMemo(() => fields.filter((f) => demoMode || f.status === 'VERIFIED_NON_BURN' || f.is_verified_non_burn).map(f => ({
-    fieldId: f.id,
-    farmer: f.farmer_name,
-    village: f.village,
-    tonnes: Number(f.acreage || 0) * 1.8, // illustrative planning coefficient
-    status: f.status,
-  })), [fields]);
+  const localSupply = useMemo(() => {
+    if (!demoMode && lots.length > 0) {
+      return lots.map((lot) => {
+        const field = fields.find((f) => (f.dbId || f.id) === lot.field_id);
+        const lotOffer = offers
+          .filter((offer) => offer.lot_id === lot.id && offer.status === 'OPEN')
+          .sort((a, b) => b.price_per_tonne - a.price_per_tonne)[0];
+        return {
+          lotId: lot.id,
+          fieldId: lot.field_id,
+          farmer: field?.farmer_name || 'Farmer record',
+          village: field?.village || 'Location not established',
+          tonnes: Number(lot.verified_quantity_tonnes ?? lot.quantity_tonnes ?? 0),
+          status: lot.status,
+          moisture: lot.moisture_pct,
+          quality: lot.quality_grade,
+          readyFrom: lot.ready_from,
+          pickupDeadline: lot.pickup_deadline,
+          price: lotOffer?.price_per_tonne ?? null,
+        };
+      });
+    }
+    return fields
+      .filter((f) => demoMode || f.status === 'VERIFIED_NON_BURN' || f.is_verified_non_burn)
+      .map((f) => ({
+        lotId: f.residue_lot_id || `planning-${f.id}`,
+        fieldId: f.id,
+        farmer: f.farmer_name,
+        village: f.village,
+        tonnes: Number(f.moisture_pct ? Math.max(0.1, f.acreage * 1.8) : Math.max(0.1, f.acreage * 1.8)),
+        status: f.status,
+        moisture: f.moisture_pct ?? null,
+        quality: f.is_verified_non_burn ? 'Verified field' : null,
+        readyFrom: f.expected_harvest_date,
+        pickupDeadline: f.clearance_deadline,
+        price: null,
+      }));
+  }, [demoMode, fields, lots, offers]);
 
   async function load() {
     if (demoMode || !supabase) return;
     const db = supabase as any;
-    const [p, d] = await Promise.all([
+    const [p, d, l, o] = await Promise.all([
       db.from('residue_pools').select('id,name,target_tonnes,current_tonnes,status,buyer_demand_id').order('created_at', { ascending: false }),
       db.from('buyer_demands').select('id,buyer_name,target_tonnes,pickup_deadline,radius_km,status').eq('status','OPEN').order('created_at', { ascending: false }),
+      db.from('residue_lots').select('id,field_id,quantity_tonnes,verified_quantity_tonnes,moisture_pct,quality_grade,residue_type,ready_from,pickup_deadline,status,assigned_buyer_id').in('status',['AVAILABLE','VERIFIED','VERIFIED_NON_BURN']).order('created_at', { ascending: false }),
+      db.from('buyer_offers').select('id,lot_id,price_per_tonne,quantity_tonnes,status').eq('status','OPEN').order('price_per_tonne', { ascending: false }),
     ]);
     if (!p.error) setPools(p.data || []);
     if (!d.error) setDemands(d.data || []);
+    if (!l.error) setLots(l.data || []);
+    if (!o.error) setOffers(o.data || []);
   }
 
   useEffect(() => { void load(); }, [demoMode]);
@@ -88,10 +139,20 @@ export function ResiduePooling({ fields, demoMode }: Props) {
         <section className="market-card">
           <div className="market-card-heading"><div><span className="market-card-kicker">FIELD</span><h2>Field-derived supply</h2></div><span className="market-count">{localSupply.length} lots</span></div>
           <div className="mt-3 space-y-2">
-            {localSupply.length === 0 ? <div className="market-empty"><LeafIcon className="market-empty-icon" /><strong>No verified field supply yet</strong><p>Verified field lots will appear here when they are ready for pooling.</p></div> : localSupply.map(s => (
-              <div key={s.fieldId} className="market-list-row">
-                <div><div className="market-row-title">{s.farmer}</div><div className="market-row-meta">{s.village} · {s.status}</div></div>
-                <div className="market-tonnage">{s.tonnes.toFixed(1)} t planning</div>
+            {localSupply.length === 0 ? <div className="market-empty"><LeafIcon className="market-empty-icon" /><strong>No verified field supply yet</strong><p>Verified residue lots will appear here when they are ready for pooling.</p></div> : localSupply.map(s => (
+              <div key={s.lotId} className="market-list-row market-supply-card">
+                <div className="min-w-0">
+                  <div className="market-row-title">{s.tonnes.toFixed(2)} t {s.quality ? `· ${s.quality}` : ''}</div>
+                  <div className="market-row-meta">{s.village} · {s.status.replaceAll('_', ' ')}</div>
+                  <div className="market-supply-meta">
+                    <span>Moisture: {s.moisture !== null && s.moisture !== undefined ? `${s.moisture}%` : 'not verified'}</span>
+                    <span>Pickup: {s.pickupDeadline ? new Date(s.pickupDeadline).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) : 'not set'}</span>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="market-tonnage">{s.price !== null ? `₹${s.price.toLocaleString('en-IN')}/t` : 'Price not established'}</div>
+                  <div className="market-row-meta">{s.readyFrom ? `Ready ${new Date(s.readyFrom).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) }` : 'Readiness not established'}</div>
+                </div>
               </div>
             ))}
           </div>
