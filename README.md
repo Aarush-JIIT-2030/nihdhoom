@@ -1,11 +1,11 @@
 # NIRDHOOM — Field-First Crop-Residue Network
 
 <p align="center">
-  <a href="https://github.com/kaustubhdua/nihdhoom/actions/workflows/ci.yml"><img src="https://github.com/coolbandariya/nihdhoom/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/kaustubhdua/nihdhoom/actions/workflows/ci.yml"><img src="https://github.com/kaustubhdua/nihdhoom/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <img src="https://img.shields.io/badge/React-19-2f7d46?logo=react&logoColor=white" alt="React 19">
   <img src="https://img.shields.io/badge/Vite-8-646cff?logo=vite&logoColor=white" alt="Vite 8">
   <img src="https://img.shields.io/badge/Supabase-Postgres-3ecf8e?logo=supabase&logoColor=white" alt="Supabase">
-  <img src="https://img.shields.io/badge/Status-Prototype%20%2F%20Integration-f0a52b" alt="Prototype / integration">
+  <img src="https://img.shields.io/badge/Product-Field--first-2f7d46" alt="Field-first product">
 </p>
 
 <p align="center"><b>Field → service → evidence → residue → buyer</b><br>Farmer-first coordination for crop-residue management.</p>
@@ -75,8 +75,12 @@ docs/                           # Architecture, research and release notes
 </p>
 
 <p align="center">
-  <b>Field → service → evidence → residue → buyer</b><br>
-  A farmer-first platform concept for coordinating crop-residue management.
+  <b>Field → machine → evidence → residue → buyer</b><br>
+  A field-first product for coordinating crop-residue clearance and downstream supply.
+</p>
+
+<p align="center">
+  <img src="public/images/punjab_farm_hero.jpg" alt="Punjab agricultural field context" width="92%">
 </p>
 
 NIRDHOOM (also referred to in the project materials as **Parali: The Reframe**) is a field-first web application for coordinating farmers, field records, machinery operators, dispatch, verification, and residue offtake. The V7 direction prioritizes the operational chain over adding more dashboard surfaces.
@@ -130,6 +134,16 @@ There is no in-app pitch deck, judge Q&A, competition walkthrough, fake payment 
 ### Visual language
 
 The product uses restrained agriculture photography, a warm field palette, compact operational cards, accessible motion and open-source UI primitives rather than generic AI-dashboard decoration.
+
+### Product UI stack
+
+- **Motion for React** for restrained entrance and interaction motion.
+- **Lucide** for consistent, lightweight operational icons.
+- **React Bits-inspired Spotlight / Stepper / CodeSlots patterns** for focused interaction surfaces.
+- **Leaflet + OpenStreetMap** for the field-first operations map.
+- **Native browser primitives** for responsive images, focus states and reduced-motion support.
+
+The visual goal is deliberately practical: a calm agricultural operations product, not an AI landing-page template.
 
 ## What the product is intended to do
 
@@ -263,7 +277,7 @@ Versions and commands are defined in `package.json`. The repository requires Nod
 ### Install and start
 
 ```bash
-git clone https://github.com/coolbandariya/nihdhoom.git
+git clone https://github.com/kaustubhdua/nihdhoom.git
 cd nihdhoom
 npm install
 npm run dev
