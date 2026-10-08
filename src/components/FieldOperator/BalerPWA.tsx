@@ -15,7 +15,6 @@ import {
   Clock
 } from 'lucide-react';
 import { Field, Machine } from '../../types';
-import { UpiSettlementModal } from './UpiSettlementModal';
 import { supabase } from '../../lib/supabase';
 import { queuedEvidenceCount, queueEvidence, registerEvidenceQueueReplay } from '../../lib/offlineEvidenceQueue';
 import { validateEvidenceFile } from '../../lib/evidenceValidation';
@@ -37,7 +36,6 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
   const [moistureValue, setMoistureValue] = useState<number>(14.2);
   const [balesCount, setBalesCount] = useState<number>(38);
   const [residueTonnes, setResidueTonnes] = useState<number>(0);
-  const [showUpiModal, setShowUpiModal] = useState(false);
   const [jobStatus, setJobStatus] = useState<string | null>(null);
   const [jobBusy, setJobBusy] = useState(false);
   const [jobMessage, setJobMessage] = useState('');
@@ -302,17 +300,17 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
 
   return (
     <div className="field-operator-surface flex flex-col lg:flex-row items-center lg:items-start justify-center gap-6 p-2 max-w-6xl mx-auto">
-      {/* Left side: Context for Judges */}
+      {/* Operator context */}
       <div className="w-full lg:w-5/12 flex flex-col gap-4">
         <div className="glass-panel-emerald p-4">
           <div className="flex items-center gap-2 mb-2">
             <Sparkles className="w-5 h-5 text-emerald-400" />
             <h3 className="font-bold text-base text-white">
-              Field Operator PWA • Evidence & Job Completion
+              Field operator workspace
             </h3>
           </div>
           <p className="text-xs text-slate-300 leading-relaxed">
-            In rural Punjab, network connectivity in the middle of a 20-acre paddy field is notoriously spotty. The Baler Operator PWA runs offline-first with IndexedDB caching and GPS geofencing. 
+            Capture the job state, device location, measured residue and field evidence. 
           </p>
           <div className="mt-3 bg-slate-950/70 p-2.5 rounded-lg border border-emerald-500/20 text-xs text-slate-300">
             <strong>The field workflow should capture GPS, job state, quantity and evidence. Payment remains intentionally disabled in this release.</strong>
@@ -567,14 +565,13 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
               {!isJobFinished ? (
                 <button
                   onClick={() => {
-                    if (demoMode) setShowUpiModal(true);
-                    else void advanceLiveJob();
+                    void advanceLiveJob();
                   }}
                   disabled={jobBusy || (!demoMode && (!jobStatus || (jobStatus === 'PROOF_PENDING' && residueTonnes <= 0)))}
                   className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 disabled:from-slate-800 disabled:to-slate-800 disabled:text-slate-500 text-white font-extrabold text-xs shadow-lg shadow-emerald-600/30 disabled:shadow-none flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95"
                 >
                   <Zap className="w-4 h-4 fill-current text-amber-300" />
-                  <span>{jobBusy ? 'Updating job…' : demoMode ? 'Simulate field completion' : jobStatus === 'PROOF_PENDING' && residueTonnes <= 0 ? 'Enter measured tonnes to complete' : jobStatus ? `Advance job: ${jobStatus.replace(/_/g, ' ')} →` : 'No active server job'}</span>
+                  <span>{jobBusy ? 'Updating job…' : demoMode ? 'Complete demo field record' : jobStatus === 'PROOF_PENDING' && residueTonnes <= 0 ? 'Enter measured tonnes to complete' : jobStatus ? `Advance job: ${jobStatus.replace(/_/g, ' ')} →` : 'No active server job'}</span>
                 </button>
               ) : (
                 <div className="p-2.5 rounded-xl bg-emerald-950/70 border border-emerald-500/50 text-emerald-300 text-xs font-bold text-center flex items-center justify-center gap-2">
@@ -586,18 +583,6 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
           </div>
         </div>
       </div>
-
-      {/* Settlement Modal */}
-      {showUpiModal && (
-        <UpiSettlementModal
-          field={currentField}
-          onClose={() => setShowUpiModal(false)}
-          onSettlementComplete={(fId, amt) => {
-            onJobCompleted(fId, amt);
-            setTimeout(() => setShowUpiModal(false), 2400);
-          }}
-        />
-      )}
     </div>
   );
 };
