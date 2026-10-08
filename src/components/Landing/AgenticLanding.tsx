@@ -357,10 +357,10 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
 
           <div className="flex items-center gap-2">
             <button
-              onClick={() => onNavigateTab('DEMO_RUNNER')}
+              onClick={() => onNavigateTab('OPS_CONSOLE')}
               className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold font-mono transition-all flex items-center gap-1.5 cursor-pointer shadow"
             >
-              <span>4-Beat Runner</span>
+              <span>Open operations</span>
               <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
