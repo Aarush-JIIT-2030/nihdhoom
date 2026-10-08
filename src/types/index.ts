@@ -279,7 +279,11 @@ export interface BurnEvent {
   detected_at: string;
   confidence: number; // 0-100%
   brightness_temp_kelvin: number;
-  satellite: 'VIIRS Suomi-NPP' | 'VIIRS NOAA-20';
+  satellite: string;
+  sensor?: string;
+  product?: string;
+  source_version?: string;
+  observation_role?: 'SUPPORTING_EVIDENCE';
   matched_field_id: string | null;
   nearest_village: string;
   is_registered_customer: boolean;
