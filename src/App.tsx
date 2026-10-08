@@ -5,7 +5,6 @@ const VRPDispatchPanel = lazy(() => import('./components/OpsConsole/VRPDispatchP
 const FieldDetailDrawer = lazy(() => import('./components/OpsConsole/FieldDetailDrawer').then((m) => ({ default: m.FieldDetailDrawer })));
 const TelegramChannel = lazy(() => import('./components/FarmerSurface/TelegramChannel').then((m) => ({ default: m.TelegramChannel })));
 const BalerPWA = lazy(() => import('./components/FieldOperator/BalerPWA').then((m) => ({ default: m.BalerPWA })));
-const UpiSettlementModal = lazy(() => import('./components/FieldOperator/UpiSettlementModal').then((m) => ({ default: m.UpiSettlementModal })));
 const SatelliteAudit = lazy(() => import('./components/VerificationLayer/SatelliteAudit').then((m) => ({ default: m.SatelliteAudit })));
 const CarbonCertificate = lazy(() => import('./components/VerificationLayer/CarbonCertificate').then((m) => ({ default: m.CarbonCertificate })));
 const MultiOfftakeAuction = lazy(() => import('./components/OfftakeAndForecast/MultiOfftakeAuction').then((m) => ({ default: m.MultiOfftakeAuction })));
@@ -210,8 +209,6 @@ export function App() {
     setActiveRoutePolyline,
     certificateField,
     setCertificateField,
-    fieldForUpiModal,
-    setFieldForUpiModal,
     handleUpdateFieldStatus,
     refreshLiveData,
     demoMode,
@@ -320,21 +317,7 @@ export function App() {
           onClose={() => setCertificateField(null)}
         />
       )}
-
-      {/* 2. Simulated settlement record modal */}
-      {fieldForUpiModal && (
-        <UpiSettlementModal
-          field={fieldForUpiModal}
-          onClose={() => setFieldForUpiModal(null)}
-          onSettlementComplete={(fId, amt) => {
-            handleUpdateFieldStatus(fId, 'CLEARED_PENDING_AUDIT', amt);
-            setTimeout(() => setFieldForUpiModal(null), 2500);
-          }}
-        />
-      )}
-
-
-      {/* Modern Footer */}
+\n\n      {/* Modern Footer */}
       <footer className="mt-auto border-t border-emerald-500/15 bg-slate-950/95 py-5 text-center text-xs text-slate-400">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
