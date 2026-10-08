@@ -594,7 +594,7 @@ test('field-first UI kit and open-source interaction surfaces remain wired', () 
   assert.match(header, /backdrop-blur-xl/);
   assert.match(header, /Field-first crop-residue network/);
   assert.match(harvest, /Harvest pressure planning/);
-  assert.match(auction, /field-first/);
+  assert.match(auction, /Multi-offtake planning simulator/);
 });
 
 
