@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { HindiTextConverter } from './HindiTextConverter';
-import { Bell, Camera, ExternalLink, Link2, MapPin, Send, ShieldCheck, Smartphone as SmartphoneIcon } from 'lucide-react';
+import { Bell, CalendarCheck, Camera, ExternalLink, Link2, MapPin, Send, ShieldCheck, Smartphone as SmartphoneIcon } from 'lucide-react';
 
 const BOT_USERNAME = import.meta.env.VITE_TELEGRAM_BOT_USERNAME || '';
 
-export function TelegramChannel({ onSlotConfirmed }: TelegramSimulatorProps) {
+export function TelegramChannel() {
   const [language, setLanguage] = useState<'pa' | 'hi' | 'en'>('pa');
   const [linking, setLinking] = useState(false);
   const [linkError, setLinkError] = useState('');
