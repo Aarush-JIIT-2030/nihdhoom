@@ -271,6 +271,7 @@ Vite prints the local development URL in the terminal.
 | `npm run audit` | Run the repository's static validation/audit script |
 | `npm run syntaxcheck` | Run the TypeScript project build check |
 | `npm test` | Run Node test files matching `tests/*.test.mjs` |
+| `npm run release:check` | Run syntax check, audit, tests and production build in sequence |
 
 A command existing in `package.json` does not mean its tests have passed. Run the commands against your current checkout and inspect the results.
 
