@@ -15,7 +15,7 @@ const loaders: Partial<Record<ActiveTab, () => Promise<unknown>>> = {
   AGENTIC_CONSOLE: () => import('../components/AgenticConsole/AgenticCommandCenter'),
   DIGITAL_TWIN_3D: () => import('../components/ThreeD/SatelliteEarth3D'),
   MACHINERY_3D: () => import('../components/ThreeD/BalerModel3D'),
-  FARMER_SURFACE: () => import('../components/FarmerSurface/TelegramSimulator'),
+  FARMER_SURFACE: () => import('../components/FarmerSurface/TelegramChannel'),
 };
 
 const warmed = new Set<ActiveTab>();
