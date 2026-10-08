@@ -57,10 +57,11 @@ export const FarmerOnboarding: React.FC = () => {
 
   useEffect(() => {
     if (DEMO_MODE || !supabase) return;
+    const client = supabase;
     let cancelled = false;
-    void supabase.auth.getUser().then(async ({ data }) => {
+    void client.auth.getUser().then(async ({ data }) => {
       if (!data.user) return;
-      const { data: consent } = await supabase
+      const { data: consent } = await client
         .from('consents')
         .select('id')
         .eq('profile_id', data.user.id)
