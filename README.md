@@ -91,6 +91,7 @@ The dedicated NIRDHOOM Supabase project and deployed database state are document
 ## Contents
 
 - [What the product is intended to do](#what-the-product-is-intended-to-do)
+- [Product release roadmap](docs/PRODUCT-RELEASE-ROADMAP.md)
 - [Current implementation](#current-implementation)
 - [Workflow and architecture](#workflow-and-architecture)
 - [Research findings and product implications](#research-findings-and-product-implications)
