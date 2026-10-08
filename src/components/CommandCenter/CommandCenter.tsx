@@ -241,7 +241,7 @@ export function CommandCenter({
         <div><span>VERIFIED</span><strong>{verified}</strong><small>verified non-burn fields</small></div>
       </section>
 
-      <section className="home-product-note" aria-label="Data boundary">
+      <section className="mx-auto mt-5 flex max-w-7xl items-start gap-3 rounded-2xl border border-emerald-900/10 bg-white/70 p-4 text-emerald-950 shadow-sm" aria-label="Data boundary">
         <Activity />
         <div>
           <strong>What you see is scoped to the records available here.</strong>
