@@ -3000,3 +3000,19 @@ html[data-theme="kisan"] .home-workflow{grid-template-columns:repeat(5,minmax(0,
 @media(max-width:640px){
   html[data-theme="kisan"] .home-workflow{grid-template-columns:1fr;}
 }
+
+
+/* Small-screen stability: keep hero controls and evidence cards readable without overflow. */
+@media(max-width:720px){
+  html[data-theme="kisan"] .home-hero-content{min-width:0;overflow-wrap:anywhere}
+  html[data-theme="kisan"] .home-trust-row{align-items:flex-start}
+  html[data-theme="kisan"] .home-trust-row span{min-width:0}
+  html[data-theme="kisan"] .home-status-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:480px){
+  html[data-theme="kisan"] .home-status-grid{grid-template-columns:1fr}
+  html[data-theme="kisan"] .home-evidence-points{grid-template-columns:1fr}
+  html[data-theme="kisan"] .home-mini-grid{grid-template-columns:1fr}
+  html[data-theme="kisan"] .home-proof{grid-template-columns:1fr}
+  html[data-theme="kisan"] .home-proof > div{border-right:0}
+}
