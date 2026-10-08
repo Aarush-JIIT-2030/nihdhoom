@@ -134,14 +134,6 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
           {/* Interactive CTAs Bar */}
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-10">
             <button
-              onClick={() => onNavigateTab('DEMO_RUNNER')}
-              className="px-6 py-3.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-emerald-950 font-extrabold text-sm flex items-center gap-2.5 cursor-pointer shadow-xl shadow-emerald-500/30 hover:scale-[1.02] transition-all"
-            >
-              <Play className="w-4 h-4 fill-slate-950" />
-              <span>Start the 2-Minute Competition Demo</span>
-            </button>
-
-            <button
               onClick={() => onNavigateTab('OPS_CONSOLE')}
               className="px-6 py-3.5 rounded-xl bg-emerald-800 hover:bg-emerald-700 text-white border border-emerald-900/20 font-bold text-sm flex items-center gap-2 cursor-pointer shadow-lg shadow-cyan-500/10 hover:scale-[1.02] transition-all"
             >
@@ -157,13 +149,6 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
               <span>Field Proof View</span>
             </button>
 
-            <button
-              onClick={() => onNavigateTab('COMPETITION_CENTER')}
-              className="px-5 py-3.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-900/10 font-semibold text-sm flex items-center gap-2 cursor-pointer transition-all"
-            >
-              <Sparkles className="w-4 h-4" />
-              <span>Competition Pitch Center</span>
-            </button>
           </div>
 
           {/* Quick Metrics Bar in Hero with subtle borders */}
@@ -459,13 +444,6 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
               desc: 'Interactive field boundary workflow with explicit verification status and crop details.',
               tag: 'KYC & Demand',
               badgeColor: 'text-cyan-300 bg-cyan-950/60 border-cyan-500/30',
-            },
-            {
-              tab: 'JUDGE_DEFENSE' as ActiveTab,
-              title: '🛡️ Judge Defense & Unit Economics',
-              desc: 'Direct cross-examination answers for Verbio comparison, in-situ alternatives, 10-month baler downtime, and margins.',
-              tag: 'Q&A Prep',
-              badgeColor: 'text-purple-300 bg-purple-950/60 border-purple-500/30',
             },
           ].map((item, idx) => (
             <div
