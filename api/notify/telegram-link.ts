@@ -49,6 +49,10 @@ export default async function handler(req: any, res: any) {
     return res.status(503).json({ error: 'Server-side Supabase service role is not configured' });
   }
 
+  if (String(req.headers?.['content-length'] || '') && Number(req.headers['content-length']) > 4096) {
+    return res.status(413).json({ error: 'Request too large' });
+  }
+
   const raw = randomBytes(32).toString('base64url');
   const hash = createHash('sha256').update(raw).digest('hex');
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
