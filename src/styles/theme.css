@@ -1922,3 +1922,19 @@ html[data-theme="kisan"] .nirdhoom-field-app .leaflet-container {
   color:#718076;
   font-size:.65rem;
 }
+
+
+/* Harvest planning surface: operational, evidence-aware, not a dark analytics HUD. */
+.harvest-intelligence-surface > section{
+  border-color:#DDE5DC!important;
+  background:#FFFFFF!important;
+  color:#17352A!important;
+  box-shadow:0 6px 20px rgba(32,74,43,.045);
+}
+.harvest-intelligence-surface :where(.text-white,.text-slate-200,.text-slate-300){color:#304B38!important}
+.harvest-intelligence-surface :where(.text-slate-400,.text-slate-500){color:#718076!important}
+.harvest-intelligence-surface :where(.bg-slate-950,.bg-slate-950\/75,.bg-slate-950\/65,.bg-slate-900\/60){background:#F8FAF7!important}
+.harvest-intelligence-surface :where(.border-slate-800,.border-slate-700){border-color:#E1E9DF!important}
+.harvest-intelligence-surface :where(.text-cyan-300,.text-cyan-200){color:#2D6A45!important}
+.harvest-intelligence-surface :where(.text-emerald-300,.text-emerald-400){color:#2D6A45!important}
+.harvest-intelligence-surface :where(.text-amber-200){color:#76521B!important}
