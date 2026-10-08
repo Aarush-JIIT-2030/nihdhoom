@@ -1047,7 +1047,7 @@ html[data-theme="kisan"] {
 }
 
 /* Map surface */
-.ops-map-surface { border-color: var(--line) !important; box-shadow: var(--shadow-sm) !important; background: #e9eee4; }
+
 .leaflet-container { font-family: var(--font-body); background: #e9eee4; }
 .leaflet-popup-content-wrapper { border-radius: 14px; box-shadow: var(--shadow-pop); }
 

@@ -258,6 +258,7 @@ export function App() {
             onOpenResidue={() => navigate('RESIDUE_POOLS')}
             onOpenImpact={() => navigate('IMPACT_RESEARCH')}
             onNavigate={(tab) => navigate(tab as ActiveTab)}
+            demoMode={demoMode}
           />
         )}
 

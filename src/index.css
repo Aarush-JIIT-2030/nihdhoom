@@ -11,6 +11,7 @@
 @import "./styles/palette.css";
 @import "./styles/theme.css";
 @import "./styles/workspace-ui.css";
+@import "./styles/map.css";
 
 @layer base {
 

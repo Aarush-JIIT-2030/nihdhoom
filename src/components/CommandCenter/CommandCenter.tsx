@@ -18,6 +18,7 @@ interface Props {
   onOpenResidue: () => void;
   onOpenImpact: () => void;
   onNavigate: (tab: string) => void;
+  demoMode?: boolean;
 }
 
 const heroImage = '/images/punjab_farm_hero.jpg';
@@ -31,7 +32,7 @@ const circularUseImage = '/images/cbg_mushroom_offtake_1790447167269.jpg';
 const monsoonImage = '/images/farmer_manpreet.jpg';
 
 export function CommandCenter({
-  fields, machines, fireEvents, storageYards, buyers, onSelectField, onOpenResidue, onOpenImpact, onNavigate
+  fields, machines, fireEvents, storageYards, buyers, onSelectField, onOpenResidue, onOpenImpact, onNavigate, demoMode = false
 }: Props) {
   const activeJobs = fields.filter(f => ['SCHEDULED', 'BALING_IN_PROGRESS'].includes(f.status)).length;
   const verified = fields.filter(f => f.status === 'VERIFIED_NON_BURN' || f.is_verified_non_burn).length;
@@ -184,7 +185,7 @@ export function CommandCenter({
             <div><span>FIELD VIEW</span><strong>Operations map</strong></div>
             <span className="home-live-pill"><i /> Loaded records</span>
           </div>
-          <OpsMap fields={fields} machines={machines} fireEvents={fireEvents} storageYards={storageYards} buyers={buyers} selectedField={null} onSelectField={onSelectField} activeRoutePolyline={[]} />
+          <OpsMap fields={fields} machines={machines} fireEvents={fireEvents} storageYards={storageYards} buyers={buyers} selectedField={null} onSelectField={onSelectField} activeRoutePolyline={[]} demoMode={demoMode} />
         </div>
       </section>
 
