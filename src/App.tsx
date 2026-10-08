@@ -190,7 +190,7 @@ function WorkspaceHeader({ activeTab, demoMode, onNavigate }: WorkspaceHeaderPro
         </div>
       </div>
       <div className="workspace-hero-image" aria-hidden="true">
-        <img src={meta.image} alt="" loading="lazy" />
+        <img src={meta.image} alt="" loading="lazy" decoding="async" />
         <div className="workspace-hero-image-scrim" />
       </div>
     </section>
