@@ -1959,3 +1959,123 @@ html[data-theme="kisan"] .nirdhoom-field-app .leaflet-container {
 .nirdhoom-telemetry .telemetry-detail{color:#65736A}
 .nirdhoom-telemetry .telemetry-inspect{color:#2D6A45}
 .nirdhoom-telemetry .telemetry-badge{background:#EEF5EB;color:#2D6A45;border-color:#D4E3D0}
+
+
+.field-evidence-timeline-list{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  gap:.2rem;
+  margin:1rem 0 0;
+  padding:0;
+  list-style:none;
+}
+.field-evidence-timeline-list::before{
+  content:"";
+  position:absolute;
+  left:.82rem;
+  top:.9rem;
+  bottom:.9rem;
+  width:1px;
+  background:#DCE6DA;
+}
+.field-evidence-event{
+  position:relative;
+  display:grid;
+  grid-template-columns:2.2rem minmax(0,1fr);
+  gap:.55rem;
+  padding:.4rem 0;
+}
+.field-evidence-line{
+  position:relative;
+  display:flex;
+  justify-content:center;
+}
+.field-evidence-dot{
+  position:relative;
+  z-index:1;
+  display:grid;
+  place-items:center;
+  width:1.7rem;
+  height:1.7rem;
+  border:1px solid #D7E2D4;
+  border-radius:999px;
+  background:#F8FBF7;
+  color:#617269;
+}
+.field-evidence-event.is-active .field-evidence-dot{
+  border-color:#B8D4BF;
+  background:#EEF7EF;
+  color:#2D6A45;
+}
+.field-evidence-event.is-evidence .field-evidence-dot{
+  border-color:#C7D9E8;
+  background:#F1F7FC;
+  color:#35627D;
+}
+.field-evidence-event.is-verified .field-evidence-dot{
+  border-color:#B8D4BF;
+  background:#EAF6EC;
+  color:#267044;
+}
+.field-evidence-content{
+  min-width:0;
+  border:1px solid #E5EBE3;
+  border-radius:13px;
+  background:#FBFDFB;
+  padding:.7rem .8rem;
+}
+.field-evidence-top{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:1rem;
+}
+.field-evidence-top strong{
+  color:#17352A;
+  font-size:.76rem;
+  font-weight:850;
+}
+.field-evidence-top time{
+  flex:0 0 auto;
+  color:#7A887F;
+  font-size:.61rem;
+}
+.field-evidence-content p{
+  margin:.25rem 0 0;
+  color:#65736A;
+  font-size:.68rem;
+  line-height:1.5;
+}
+.field-evidence-source{
+  display:inline-flex;
+  margin-top:.45rem;
+  border-radius:999px;
+  background:#EEF4EC;
+  color:#5D7063;
+  padding:.2rem .45rem;
+  font-size:.59rem;
+  font-weight:800;
+}
+.field-evidence-trust-strip{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:.6rem;
+  margin-top:.8rem;
+  padding-top:.8rem;
+  border-top:1px solid #E7ECE5;
+}
+.field-evidence-trust-strip > div{
+  display:flex;
+  flex-direction:column;
+  gap:.15rem;
+}
+.field-evidence-trust-strip strong{font-size:.64rem;color:#304B38}
+.field-evidence-trust-strip span{font-size:.62rem;color:#718076}
+@media(max-width:700px){
+  .field-evidence-top{align-items:flex-start;flex-direction:column;gap:.15rem}
+  .field-evidence-trust-strip{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:450px){
+  .field-evidence-trust-strip{grid-template-columns:1fr}
+}
