@@ -443,7 +443,7 @@ export const AgenticLanding: React.FC<AgenticLandingProps> = ({
           ].map((item, idx) => (
             <div
               key={idx}
-              onClick={() => onNavigateTab(item.tab)}
+              onClick={() => item.tab && onNavigateTab(item.tab)}
               className="p-4 rounded-xl border border-slate-800 bg-slate-900/60 hover:border-emerald-500/50 hover:bg-slate-900/90 transition-all cursor-pointer flex flex-col justify-between group shadow-sm hover:shadow-emerald-500/10"
             >
               <div>
