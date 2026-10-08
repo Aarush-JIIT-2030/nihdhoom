@@ -32,6 +32,7 @@ Migrations are applied in filename order:
 24. `202610080001_nirdhoom_residue_lot_provenance.sql` — residue-lot provenance fields and server-authoritative chronological event ledger.
 25. `202610080002_nirdhoom_residue_lot_first_class.sql` — first-class residue object fields, custody trigger and provenance contract.
 26. `202610080003_nirdhoom_machine_capability_provenance.sql` — machine capability requirements and external-source metadata.
+27. `202610080004_nirdhoom_residue_control_tower.sql` — machine capacity windows, storage yards, residue demand matches, transport jobs and operational exceptions.
 
 ## Release rules
 - Never reorder or rename an already-applied migration.
@@ -54,6 +55,9 @@ Migrations are applied in filename order:
 - [ ] Residue pooling requires verified residue.
 - [ ] Trigger-only functions cannot be called directly.
 - [ ] Payment endpoints remain explicit no-money-movement boundaries.
+- [ ] Control-tower capacity, yard, matching, transport and exception tables remain server-authoritative.
+- [ ] Residue matching is treated as a proposal until accepted by a real counterparty.
+- [ ] Storage capacity and machine availability are checked before dispatch proposals.
 
 ## Known external dependencies
 Cadastral/Khasra geometry, operator telemetry, evidence storage, weather, dispatch optimization, buyer/offtake integrations and messaging providers may depend on external services. Their availability must never be represented as verified field facts when unavailable.
