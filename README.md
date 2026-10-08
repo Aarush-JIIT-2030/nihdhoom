@@ -1,7 +1,7 @@
 # NIRDHOOM — Field-First Crop-Residue Network
 
 <p align="center">
-  <a href="https://github.com/coolbandariya/nihdhoom/actions/workflows/ci.yml"><img src="https://github.com/coolbandariya/nihdhoom/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/kaustubhdua/nihdhoom/actions/workflows/ci.yml"><img src="https://github.com/kaustubhdua/nihdhoom/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <img src="https://img.shields.io/badge/React-19-2f7d46?logo=react&logoColor=white" alt="React 19">
   <img src="https://img.shields.io/badge/Vite-8-646cff?logo=vite&logoColor=white" alt="Vite 8">
   <img src="https://img.shields.io/badge/Supabase-Postgres-3ecf8e?logo=supabase&logoColor=white" alt="Supabase">
@@ -253,7 +253,7 @@ Versions and commands are defined in `package.json`. The repository requires Nod
 ### Install and start
 
 ```bash
-git clone https://github.com/coolbandariya/nihdhoom.git
+git clone https://github.com/kaustubhdua/nihdhoom.git
 cd nihdhoom
 npm install
 npm run dev
