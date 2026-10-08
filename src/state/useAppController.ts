@@ -60,25 +60,29 @@ export function useAppController() {
     setLoadingLiveData(true);
     setLiveDataError(null);
     const client = supabase;
-    const [{ data: fieldRows, error: fieldError }, { data: machineRows, error: machineError }, { data: lotRows, error: lotError }, { data: demandRows, error: demandError }, { data: yardRows, error: yardError }] =
+    const [{ data: fieldRows, error: fieldError }, { data: machineRows, error: machineError }] =
       await Promise.all([
         client.from('fields').select('id,external_id,owner_id,khasra_no,village,block,district,acreage,crop,variety,expected_harvest_date,clearance_deadline,status,moisture_pct,center_lat,center_lng,geometry,boundary_geojson,boundary_source,boundary_verified,geometry_area_acres'),
         client.from('machines').select('id,external_id,name,machine_type,owner_name,operator_name,operator_phone,status,capacity_acres_day,tractor_hp_required,residue_types,operating_conditions,capability_source,capability_source_date,fuel_pct,current_lat,current_lng,operator_user_id'),
-        client.from('residue_lots').select('id,field_id,farmer_id,crop,residue_type,estimated_quantity_tonnes,quantity_tonnes,verified_quantity_tonnes,moisture_pct,quality_grade,quality_notes,bale_type,harvest_date,ready_from,pickup_deadline,machine_id,status,geometry_provenance,verification_source,verified_at,assigned_buyer_id,qr_code,baled_at,created_at'),
-        client.from('buyer_demands').select('id,buyer_id,buyer_name,residue_type,target_tonnes,pickup_deadline,status'),
-        client.from('storage_yards').select('id,external_id,name,latitude,longitude,capacity_tonnes,current_load_tonnes,incoming_tonnes,status,source'),
       ]);
-    if (fieldError || machineError || lotError || demandError || yardError) {
-      setLiveDataError(fieldError?.message || machineError?.message || lotError?.message || demandError?.message || yardError?.message || 'Unable to load live operational data');
+
+    if (fieldError || machineError) {
+      setLiveDataError(fieldError?.message || machineError?.message || 'Unable to load live operational data');
       setFields([]);
       setMachines([]);
       setResidueLots([]);
       setBuyers([]);
       setStorageYards([]);
-      setSelectedField(null);
       setLoadingLiveData(false);
       return;
     }
+
+    const [{ data: lotRows }, { data: demandRows }, { data: yardRows }] = await Promise.all([
+      client.from('residue_lots').select('id,field_id,farmer_id,crop,residue_type,estimated_quantity_tonnes,quantity_tonnes,verified_quantity_tonnes,moisture_pct,quality_grade,quality_notes,bale_type,harvest_date,ready_from,pickup_deadline,machine_id,status,geometry_provenance,verification_source,verified_at,assigned_buyer_id,qr_code,baled_at,created_at'),
+      client.from('buyer_demands').select('id,buyer_id,buyer_name,residue_type,target_tonnes,pickup_deadline,status'),
+      client.from('storage_yards').select('id,external_id,name,latitude,longitude,capacity_tonnes,current_load_tonnes,incoming_tonnes,status,source'),
+    ]);
+
     const rows = fieldRows || [];
     const normalizedFields: Field[] = rows.map(normalizeField).map((f) => ({
       ...f,
