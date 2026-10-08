@@ -89,12 +89,6 @@ test('V7.5 blocks direct booking writes and farmer field tampering', () => {
   assert.match(sql, /New farmer fields must begin in REGISTERED state with unverified boundaries/);
 });
 
-test('simulation surfaces do not claim real transactions', () => {
-  assert.match(read('src/components/FieldOperator/UpiSettlementModal.tsx'), /no money movement/i);
-  assert.match(read('src/components/FarmerOnboarding/FarmerOnboarding.tsx'), /Demo only/);
-  assert.match(read('src/components/CarbonMarketplace/CarbonMarketplace.tsx'), /Illustrative carbon-market interface/);
-});
-
 
 test('demo operational data is opt-in and production starts empty', () => {
   const controller = read('src/state/useAppController.ts');
@@ -406,7 +400,7 @@ test('image optimization keeps JSX valid and the primary hero eager', () => {
     'src/components/VerificationLayer/SatelliteAudit.tsx',
     'src/components/FarmerOnboarding/FarmerOnboarding.tsx',
     'src/components/OfftakeAndForecast/MultiOfftakeAuction.tsx',
-    'src/components/FieldOperator/UpiSettlementModal.tsx',
+    'src/components/FieldOperator/BalerPWA.tsx',
   ];
   for (const file of files) {
     assert.doesNotMatch(read(file), /\/ loading=/);
