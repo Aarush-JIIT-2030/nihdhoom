@@ -30,6 +30,8 @@ Migrations are applied in filename order:
 22. `20261006_nirdhoom_residue_quantity_invariants.sql` — positive-lot and pool-target quantity invariants.
 23. `202610070001_nirdhoom_consent_withdrawal.sql` — self-service farmer consent withdrawal and profile revocation boundary.
 24. `202610080001_nirdhoom_residue_lot_provenance.sql` — residue-lot provenance fields and server-authoritative chronological event ledger.
+25. `202610080002_nirdhoom_residue_lot_first_class.sql` — first-class residue object fields, custody trigger and provenance contract.
+26. `202610080003_nirdhoom_machine_capability_provenance.sql` — machine capability requirements and external-source metadata.
 
 ## Release rules
 - Never reorder or rename an already-applied migration.
@@ -41,7 +43,7 @@ Migrations are applied in filename order:
 - Before a production release, record the Supabase migration status and run the RLS/integrity test suite.
 
 ## Verification checklist
-- [ ] All 24 migrations are present in the repository.
+- [ ] All 26 migrations are present in the repository.
 - [ ] Supabase migration history matches this order.
 - [ ] RLS is enabled on every tenant/business table.
 - [ ] Role escalation is blocked.
