@@ -195,6 +195,7 @@ export interface Buyer {
   name: string;
   type: BuyerType;
   location_name: string;
+  location?: LatLng;
   price_per_tonne: number;
   moisture_ceiling: number;
   silica_tolerance: string;
