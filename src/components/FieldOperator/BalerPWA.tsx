@@ -229,7 +229,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
     setJobBusy(true);
     setJobMessage('');
     try {
-      const lookup = await client.from('jobs').select('id,status,booking_id').eq('field_id', currentField.dbId || currentField.id)
+      const lookup = await client.from('jobs').select('id,status,booking_id,machine_id').eq('field_id', currentField.dbId || currentField.id)
         .eq('status', jobStatus).order('created_at', { ascending: false }).limit(1).maybeSingle();
       if (lookup.error || !lookup.data?.id) throw new Error(lookup.error?.message || 'Active job not found.');
       const { error } = await client.rpc('transition_job', {
@@ -250,7 +250,19 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
             field_id: currentField.dbId || currentField.id,
             booking_id: lookup.data.booking_id,
             job_id: lookup.data.id,
+            farmer_id: currentField.farmer_id,
+            crop: currentField.crop,
+            residue_type: 'PADDY_STRAW',
+            estimated_quantity_tonnes: quantity,
             quantity_tonnes: quantity,
+            harvest_date: currentField.expected_harvest_date || null,
+            ready_from: new Date().toISOString(),
+            pickup_deadline: currentField.clearance_deadline || null,
+            machine_id: lookup.data.machine_id || currentField.assigned_machine_id || null,
+            geometry_provenance: {
+              source: currentField.provenance?.geometry || 'UNKNOWN',
+              field_id: currentField.dbId || currentField.id,
+            },
             moisture_pct: Number(moistureValue),
             quality_notes: `Operator-recorded completion • ${balesCount} bales • GPS ${gpsState ? 'available' : 'not available'}`,
             quality_grade: moistureValue <= 16 ? 'DRY' : moistureValue <= 20 ? 'STANDARD' : 'HIGH_MOISTURE',
