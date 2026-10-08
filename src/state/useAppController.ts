@@ -144,7 +144,7 @@ export function useAppController() {
       created_at: lot.created_at || undefined,
     }));
     const normalizedBuyers: Buyer[] = (demandRows || []).map((d) => ({
-      id: String(d.buyer_id || d.id),
+      id: String(d.id),
       name: String(d.buyer_name || 'Buyer demand'),
       type: 'CBG',
       location_name: 'Connected buyer',
