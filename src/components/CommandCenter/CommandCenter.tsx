@@ -67,7 +67,7 @@ export function CommandCenter({
           <p>NIRDHOOM connects the farmer request to available machine capacity, field evidence and the next residue pathway — so the messy middle becomes visible and actionable.</p>
           <div className="home-actions">
             <button onClick={() => onNavigate('FARMER_ONBOARDING')} className="home-primary">Book parali pickup <ArrowRight className="h-4 w-4" /></button>
-            <button onClick={() => onNavigate('DEMO_RUNNER')} className="home-secondary"><ShieldCheck className="h-4 w-4" /> See the 2-minute demo</button>
+            <button onClick={() => onNavigate('OPS_CONSOLE')} className="home-secondary"><Map className="h-4 w-4" /> Track today's operation</button>
           </div>
           <div className="home-trust-row">
             <span><CheckCircle2 /> Evidence before impact</span>
@@ -76,54 +76,6 @@ export function CommandCenter({
           </div>
           <a className="home-photo-credit" href="https://commons.wikimedia.org/wiki/File:Paddy_fields_in_Batala,_Gurdaspur,_Punjab.jpg" target="_blank" rel="noreferrer">Photo: Rohitjahnavi / Wikimedia Commons · CC BY-SA 3.0 ↗</a>
         </div>
-      </section>
-
-      {/* FARMER-FIRST QUICK ACTIONS */}
-      <section className="home-visual-rail" aria-label="Field stories">
-        <div className="home-visual-rail-heading">
-          <div>
-            <div className="home-section-kicker">Field stories</div>
-            <h2>From standing crop to useful residue.</h2>
-          </div>
-          <p>Real agricultural photography keeps the product grounded in the work happening on the field — not just dashboards and maps.</p>
-        </div>
-        <div className="home-visual-grid">
-          <article className="home-visual-card home-visual-card-wide">
-            <img src={heroImage} alt="Paddy fields in Batala, Gurdaspur, Punjab" loading="lazy" decoding="async" />
-            <div className="home-visual-scrim" />
-            <div className="home-visual-copy"><span>01 · FIELD</span><strong>Start with the actual field.</strong><small>Punjab paddy landscape · Wikimedia Commons</small></div>
-          </article>
-          <article className="home-visual-card">
-            <img src={balerImage} alt="Tractor with a baler working in a harvested field" loading="lazy" decoding="async" />
-            <div className="home-visual-scrim" />
-            <div className="home-visual-copy"><span>02 · BALING</span><strong>Turn loose residue into a movable resource.</strong><small>Tractor with baler · CC0</small></div>
-          </article>
-          <article className="home-visual-card">
-            <img src={fleetImage} alt="Tractor working on crop residue in Punjab" loading="lazy" decoding="async" />
-            <div className="home-visual-scrim" />
-            <div className="home-visual-copy"><span>03 · FIELD WORK</span><strong>Coordinate the machine before the window closes.</strong><small>Punjab field preparation · CIAT / Wikimedia Commons</small></div>
-          </article>
-        </div>
-      </section>
-
-      <section className="home-farmer-actions" aria-label="Quick farmer actions">
-        <div className="home-farmer-actions-intro">
-          <span className="home-section-kicker">For farmers</span>
-          <strong>Start with what you need today.</strong>
-          <span>No technical setup. Just choose an action.</span>
-        </div>
-        <button type="button" onClick={() => onNavigate('FARMER_ONBOARDING')}>
-          <MapPinned /><span><b>My field</b><small>Add or view your field</small></span><ChevronRight />
-        </button>
-        <button type="button" onClick={() => onNavigate('FARMER_ONBOARDING')}>
-          <CalendarDays /><span><b>Book clearance</b><small>Plan residue removal</small></span><ChevronRight />
-        </button>
-        <button type="button" onClick={() => onNavigate('OPS_CONSOLE')}>
-          <Truck /><span><b>Track machine</b><small>See today's operation</small></span><ChevronRight />
-        </button>
-        <button type="button" onClick={onOpenResidue}>
-          <Leaf /><span><b>Find residue demand</b><small>Explore verified pathways</small></span><ChevronRight />
-        </button>
       </section>
 
       {/* RESEARCH-BACKED GAP: why another booking app is not enough */}
@@ -176,52 +128,6 @@ export function CommandCenter({
             </button>
           );
         })}
-      </section>
-
-      {/* RESEARCH-BACKED STORY: the problem, the field workflow and the utilisation chain */}
-      <section className="home-research-story" aria-labelledby="research-story-title">
-        <div className="home-research-copy">
-          <div className="home-section-kicker">Why this chain matters</div>
-          <h2 id="research-story-title">Crop-residue management is a field-to-market problem.</h2>
-          <p>
-            India’s 2024 Crop Residue Management guidelines call for reducing air pollution and nutrient loss from burning,
-            while building supply chains for useful residue through appropriate mechanisation. Recent ICAR work in Punjab also
-            highlights demand-driven machinery deployment, digital mapping, baler tracking and viable biomass supply chains.
-          </p>
-          <div className="home-research-points">
-            <div>
-              <strong>1. Manage the field</strong>
-              <span>Choose an in-situ or collection pathway that fits the crop and field.</span>
-            </div>
-            <div>
-              <strong>2. Coordinate machines</strong>
-              <span>Match available machinery and operators to actual local demand.</span>
-            </div>
-            <div>
-              <strong>3. Move verified biomass</strong>
-              <span>Aggregate, store and dispatch residue only after the operational record is clear.</span>
-            </div>
-          </div>
-          <div className="home-research-sources">
-            <span>Research basis</span>
-            <a href="https://agrimachinery.nic.in/Files/Guidelines/Guidelines_CRM2024.pdf" target="_blank" rel="noreferrer">Govt. of India • CRM Guidelines 2024</a>
-            <a href="https://icar.gov.in/index.php/en/punjab-stakeholders-forge-integrates-action-agenda-crop-residue-management" target="_blank" rel="noreferrer">ICAR-ATARI Ludhiana • Punjab workshop • 30 Sep 2026</a>
-          </div>
-        </div>
-        <div className="home-research-images">
-          <figure className="home-research-image home-research-image-main">
-            <img src={burningImage} alt="Crop-residue burning, shown as the problem NIRDHOOM is designed to help manage" loading="lazy" />
-            <figcaption>Problem: residue burning</figcaption>
-          </figure>
-          <figure className="home-research-image home-research-image-phone">
-            <img src={farmerPhoneImage} alt="Farmer using a phone for field coordination" loading="lazy" />
-            <figcaption>Coordination: farmer-first access</figcaption>
-          </figure>
-          <figure className="home-research-image home-research-image-circular">
-            <img src={circularUseImage} alt="Residue utilisation facility representing downstream demand" loading="lazy" />
-            <figcaption>Pathway: utilisation and offtake</figcaption>
-          </figure>
-        </div>
       </section>
 
       {/* LIVE PRODUCT LAYER */}
@@ -303,11 +209,17 @@ export function CommandCenter({
         <div><span>VERIFIED</span><strong>{verified}</strong><small>verified non-burn fields</small></div>
       </section>
 
-      {/* FINAL NAVIGATION LAYER */}
-      <section className="home-bottom-cta">
-        <div><div className="home-section-kicker">Go deeper</div><h2>A simple front door. A deep product underneath.</h2><p>Start with your field, then move into operations, evidence, residue, offtake and impact when you need more detail.</p></div>
-        <div className="home-cta-links">
-          <span><MapPinned /> My Fields</span><span><CalendarDays /> Book Clearance</span><span><Truck /> Track Clearance</span><span><Leaf /> Residue Market</span><span><ShieldCheck /> Verify</span><span><Activity /> Impact & Research</span>
+      <section className="home-product-status" aria-label="Operational status">
+        <div>
+          <span className="home-section-kicker">Today</span>
+          <strong>One place for the next field action.</strong>
+          <small>Use the live workflow surfaces below instead of a presentation flow.</small>
+        </div>
+        <div className="home-status-grid">
+          <button type="button" onClick={() => onNavigate('FIELD_JOBS')}><MapPinned /><span><b>{fields.length}</b><small>fields</small></span></button>
+          <button type="button" onClick={() => onNavigate('OPS_CONSOLE')}><Truck /><span><b>{activeJobs}</b><small>active jobs</small></span></button>
+          <button type="button" onClick={() => onNavigate('RESIDUE_POOLS')}><Leaf /><span><b>{residueLots}</b><small>residue lots</small></span></button>
+          <button type="button" onClick={() => onNavigate('SATELLITE_AUDIT')}><ShieldCheck /><span><b>{verified}</b><small>verified fields</small></span></button>
         </div>
       </section>
     </div>
