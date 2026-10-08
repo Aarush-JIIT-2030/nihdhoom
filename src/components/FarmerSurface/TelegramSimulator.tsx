@@ -126,7 +126,7 @@ export function TelegramSimulator({ onSlotConfirmed }: TelegramSimulatorProps) {
 
           <div className="flex w-full flex-col gap-2 sm:w-auto">
             <a
-              href={botUrl}
+              href={botUrl || undefined}
               target={botUrl ? '_blank' : undefined}
               rel={botUrl ? 'noreferrer' : undefined}
               aria-disabled={!botUrl}
