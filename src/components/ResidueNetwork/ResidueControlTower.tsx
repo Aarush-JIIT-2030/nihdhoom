@@ -37,25 +37,25 @@ export function ResidueControlTower({
     .sort((a, b) => { const rank: Record<string, number> = { CRITICAL: 0, HIGH: 1, WATCH: 2, NORMAL: 3 }; return rank[a.pressure] - rank[b.pressure]; });
 
   return (
-    <section className="field-page space-y-5" aria-labelledby="residue-control-tower-title">
-      <div className="rounded-3xl border border-emerald-900/10 bg-white p-5 shadow-sm sm:p-7">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <div className="mb-2 flex flex-wrap items-center gap-2">
-              <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-emerald-800">Residue operations</span>
-              <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] font-bold text-slate-600">{demoMode ? 'Demo planning records' : 'Live connected records'}</span>
+    <section className="field-page ui-stack" aria-labelledby="residue-control-tower-title">
+      <div className="ui-stack">
+        <div className="ui-intro">
+          <div className="ui-intro-copy">
+            <div className="mb-1 flex flex-wrap items-center gap-2">
+              <span className="ui-eyebrow">Residue operations</span>
+              <span className="ui-chip">{demoMode ? 'Demo planning records' : 'Live connected records'}</span>
             </div>
-            <h1 id="residue-control-tower-title" className="text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">Residue Control Tower</h1>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
+            <h1 id="residue-control-tower-title" className="ui-title">Residue Control Tower</h1>
+            <p className="ui-lede">
               Coordinate field readiness, machine capacity, residue lots, yards and buyer demand. Planning estimates are labelled; verified weights and counterparties remain authoritative.
             </p>
           </div>
-          <button type="button" onClick={() => onNavigate('RESIDUE_POOLS')} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-extrabold text-white hover:bg-emerald-800">
+          <button type="button" onClick={() => onNavigate('RESIDUE_POOLS')} className="ui-btn is-primary">
             Open residue network <ArrowRight className="h-4 w-4" />
           </button>
         </div>
 
-        <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+        <div className="ui-stats">
           {[
             { label: 'Ready / planned residue', value: `${summary.ready_tonnes} t`, icon: Gauge, note: 'planning estimate' },
             { label: 'Verified residue', value: `${summary.verified_tonnes} t`, icon: CheckCircle2, note: 'weighed records' },
@@ -63,30 +63,30 @@ export function ResidueControlTower({
             { label: 'Demand covered', value: `${summary.demand_coverage_pct}%`, icon: Route, note: 'verified ÷ demand' },
             { label: 'Fields at risk', value: String(summary.fields_at_risk), icon: ShieldAlert, note: 'next 48h / deadline' },
           ].map(({ label, value, icon: Icon, note }) => (
-            <div key={label} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-              <Icon className="h-5 w-5 text-emerald-700" />
-              <div className="mt-3 text-2xl font-black text-slate-950">{value}</div>
-              <div className="text-xs font-extrabold text-slate-700">{label}</div>
-              <div className="mt-1 text-[11px] text-slate-500">{note}</div>
+            <div key={label} className={`ui-stat ${label === 'Fields at risk' ? 'is-ember' : label === 'Buyer demand' || label === 'Demand covered' ? 'is-wheat' : 'is-green'}`}>
+              <Icon className="mb-1 h-[18px] w-[18px] text-[var(--muted)]" />
+              <div className="ui-stat-value">{value}</div>
+              <div className="ui-stat-label !text-[var(--ink-2)]">{label}</div>
+              <div className="ui-stat-note">{note}</div>
             </div>
           ))}
         </div>
       </div>
 
       <div className="grid gap-5 xl:grid-cols-[1.35fr_.65fr]">
-        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="ui-card">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <div className="text-[10px] font-black uppercase tracking-[0.16em] text-emerald-800/60">Dispatcher queue</div>
-              <h2 className="mt-1 text-xl font-black text-slate-950">What needs attention now?</h2>
+              <div className="ui-eyebrow">Dispatcher queue</div>
+              <h2 className="mt-1 font-[family-name:var(--font-display)] text-[22px] font-semibold text-[var(--ink)]">What needs attention now?</h2>
             </div>
-            <div className="flex rounded-xl border border-slate-200 bg-slate-50 p-1">
+            <div className="ui-seg">
               {[
                 ['exceptions', 'Exceptions'],
                 ['capacity', 'Machines'],
                 ['demand', 'Demand'],
               ].map(([id, label]) => (
-                <button key={id} type="button" onClick={() => setView(id as typeof view)} className={`rounded-lg px-3 py-2 text-xs font-extrabold ${view === id ? 'bg-white text-emerald-800 shadow-sm' : 'text-slate-500'}`}>
+                <button key={id} type="button" onClick={() => setView(id as typeof view)} className={view === id ? 'is-on' : ''}>
                   {label}
                 </button>
               ))}
@@ -163,8 +163,8 @@ export function ResidueControlTower({
         </div>
 
         <aside className="space-y-5">
-          <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="flex items-center gap-2"><Warehouse className="h-5 w-5 text-amber-700" /><h2 className="text-lg font-black text-slate-950">Yard capacity</h2></div>
+          <div className="ui-card">
+            <div className="ui-card-title"><Warehouse className="!text-[var(--wheat-ink)]" /><h2>Yard capacity</h2></div>
             <div className="mt-4 space-y-3">
               {storageYards.map((yard) => {
                 const ratio = yard.capacity_tonnes ? ((yard.current_load + Number(yard.incoming_tonnes || 0)) / yard.capacity_tonnes) * 100 : 0;
@@ -177,8 +177,8 @@ export function ResidueControlTower({
             </div>
           </div>
 
-          <div className="rounded-3xl border border-emerald-200 bg-emerald-50/70 p-5">
-            <div className="flex items-center gap-2"><Factory className="h-5 w-5 text-emerald-800" /><h2 className="text-lg font-black text-emerald-950">48-hour operating rule</h2></div>
+          <div className="ui-card is-green">
+            <div className="ui-card-title"><Factory /><h2>48-hour operating rule</h2></div>
             <p className="mt-2 text-sm leading-6 text-emerald-950/75">Prioritize fields with a near deadline, assign compatible available capacity, weigh residue before buyer commitment, and divert incoming loads when a yard approaches 80% capacity.</p>
             <div className="mt-4 flex items-center gap-2 text-xs font-black text-emerald-900"><Clock3 className="h-4 w-4" /> Planning signal — confirm field and machine conditions on site.</div>
           </div>

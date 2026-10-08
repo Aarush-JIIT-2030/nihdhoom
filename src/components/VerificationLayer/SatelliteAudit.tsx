@@ -68,60 +68,60 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
   };
 
   return (
-    <div className="tone-adapt farmer-surface farmer-verification flex flex-col gap-6 max-w-6xl mx-auto p-2">
+    <div className="tone-adapt farmer-surface farmer-verification ui-stack">
       {/* Top Banner: The Money Shot Pitch Framing */}
-      <div className="glass-panel-emerald p-5">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center shrink-0 shadow-lg shadow-emerald-500/30">
-              <Satellite className="w-6 h-6 animate-pulse" />
+      <div className="ui-card is-flush">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-5 p-5 sm:p-6">
+          <div className="flex items-start gap-4">
+            <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[var(--sky-soft)] text-[var(--sky)]">
+              <Satellite className="w-6 h-6" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h3 className="font-extrabold text-lg text-white font-['Outfit']">
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="font-[family-name:var(--font-display)] text-[24px] font-semibold leading-tight text-[var(--ink)]">
                   Check field proof
                 </h3>
-                <span className="badge badge-emerald text-xs">
+                <span className="ui-chip is-green">
                   {demoMode ? 'Synthetic observation demo' : auditReport.dataAvailability === 'NO_OBSERVATIONS' ? 'Awaiting observations' : 'Observation review'}
                 </span>
               </div>
-              <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
+              <p className="ui-card-sub max-w-2xl !text-[14px]">
                 We intersect registered field polygons with available remote-sensing observations and operational evidence. A missing detection is not absolute proof of no burning, and impact or registry claims remain gated by methodology and verification.
               </p>
             </div>
           </div>
 
-          <div className="bg-slate-900/90 border border-emerald-500/40 px-4 py-3 rounded-xl flex items-center gap-3 shrink-0">
+          <div className="flex shrink-0 items-center gap-4 rounded-2xl border border-[var(--brand-line)] bg-[var(--brand-soft)] px-5 py-4">
             <div>
-              <span className="text-[10px] text-slate-400 uppercase font-bold block">Fields checked</span>
-              <div className="text-2xl font-black text-emerald-400 font-mono">
+              <span className="ui-kv-label block">Fields checked</span>
+              <div className="font-[family-name:var(--font-display)] text-[34px] font-semibold leading-none text-[var(--brand-ink)]">
                 {auditReport.complianceRate}%
               </div>
             </div>
-            <ShieldCheck className="w-7 h-7 text-emerald-400" />
+            <ShieldCheck className="w-8 h-8 text-[var(--brand)]" />
           </div>
         </div>
 
         {/* Remote-sensing evidence context */}
-        <div className="mt-4 rounded-xl overflow-hidden border border-emerald-500/30 relative max-h-56 bg-slate-950">
+        <div className="tone-native relative max-h-64 overflow-hidden bg-slate-950">
           <img 
             src="/images/satellite_firms.jpg" 
             alt="Remote-sensing evidence illustration"
-            className="w-full h-52 object-cover object-center"
+            className="w-full h-64 object-cover object-center"
            loading="lazy" decoding="async" />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
-          <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between">
+          <div className="absolute bottom-4 left-5 right-5 flex items-end justify-between gap-4">
             <div>
-              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+              <span className="rounded-md border border-white/20 bg-white/10 px-2 py-1 font-mono text-[11px] font-semibold text-amber-200 backdrop-blur">
                 FIRMS / VIIRS thermal observations
               </span>
-              <p className="text-xs font-bold text-white mt-1">
+              <p className="mt-2 text-[15px] font-semibold text-white">
                 {auditReport.dataAvailability === 'NO_OBSERVATIONS' ? 'No remote-sensing observations are currently available for field screening' : `Matched ${auditReport.cleanFieldsCount} field(s) without a detected fire point in the supplied observations`}
               </p>
             </div>
             <div className="text-right hidden sm:block">
-              <span className="text-xs font-mono text-emerald-400 font-bold block">{demoMode ? 'Synthetic demo only' : auditReport.dataAvailability === 'NO_OBSERVATIONS' ? 'No observations available' : 'Supporting evidence only'}</span>
-              <span className="text-[10px] text-slate-400">No registry issuance or retirement</span>
+              <span className="block font-mono text-xs font-bold text-amber-200">{demoMode ? 'Synthetic demo only' : auditReport.dataAvailability === 'NO_OBSERVATIONS' ? 'No observations available' : 'Supporting evidence only'}</span>
+              <span className="text-[11px] text-white/70">No registry issuance or retirement</span>
             </div>
           </div>
         </div>
@@ -135,80 +135,80 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
       </section>
 
       {/* 4 Quantitative Proof Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <div className="glass-panel p-4 border-emerald-500/30">
-          <div className="flex items-center justify-between text-slate-400 text-xs mb-1">
+      <div className="ui-stats">
+        <div className="ui-stat is-green">
+          <div className="ui-stat-label flex items-center justify-between">
             <span>Fire points in this field</span>
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            <ShieldCheck className="w-4 h-4 text-[var(--brand)]" />
           </div>
-          <div className="text-2xl font-extrabold text-emerald-400 font-mono">
+          <div className="ui-stat-value">
             {auditReport.firesInRegisteredFields}{' '}
-            <span className="text-xs text-emerald-300 font-normal">fire points</span>
+            <span className="font-[family-name:var(--font-body)] text-[13px] font-semibold text-[var(--muted)]">fire points</span>
           </div>
-          <p className="text-[11px] text-emerald-400/90 mt-1 font-semibold">
+          <p className="ui-stat-note">
             No-fire observations do not equal absolute non-burn proof
           </p>
         </div>
 
-        <div className="glass-panel p-4 border-red-500/30">
-          <div className="flex items-center justify-between text-slate-400 text-xs mb-1">
+        <div className="ui-stat is-ember">
+          <div className="ui-stat-label flex items-center justify-between">
             <span>Nearby fire points</span>
-            <Flame className="w-4 h-4 text-red-500 animate-pulse" />
+            <Flame className="w-4 h-4 text-[var(--ember)]" />
           </div>
-          <div className="text-2xl font-extrabold text-red-400 font-mono">
+          <div className="ui-stat-value">
             {auditReport.firesInSurroundingBuffer}{' '}
-            <span className="text-xs text-slate-400 font-normal">fire points</span>
+            <span className="font-[family-name:var(--font-body)] text-[13px] font-semibold text-[var(--muted)]">fire points</span>
           </div>
-          <p className="text-[11px] text-red-400/90 mt-1 font-semibold">
+          <p className="ui-stat-note">
             {demoMode ? 'Synthetic demo observations' : 'Only provider-returned observations are shown'}
           </p>
         </div>
 
-        <div className="glass-panel p-4 border-cyan-500/30">
-          <div className="flex items-center justify-between text-slate-400 text-xs mb-1">
+        <div className="ui-stat is-sky">
+          <div className="ui-stat-label flex items-center justify-between">
             <span>Illustrative emissions estimate</span>
-            <Sparkles className="w-4 h-4 text-cyan-400" />
+            <Sparkles className="w-4 h-4 text-[var(--sky)]" />
           </div>
-          <div className="text-2xl font-extrabold text-cyan-300 font-mono">
+          <div className="ui-stat-value">
             {auditReport.co2eAvoided}{' '}
-            <span className="text-xs text-slate-400 font-normal">t CO₂e</span>
+            <span className="font-[family-name:var(--font-body)] text-[13px] font-semibold text-[var(--muted)]">t CO₂e</span>
           </div>
-          <p className="text-[11px] text-cyan-400/90 mt-1 font-semibold">
+          <p className="ui-stat-note">
             + {auditReport.pm25Prevented === 0 ? 'Not calculated' : `${auditReport.pm25Prevented} kg PM2.5 prevented`}
           </p>
         </div>
 
-        <div className="glass-panel p-4 border-amber-500/30">
-          <div className="flex items-center justify-between text-slate-400 text-xs mb-1">
+        <div className="ui-stat is-wheat">
+          <div className="ui-stat-label flex items-center justify-between">
             <span>Carbon market</span>
-            <Award className="w-4 h-4 text-amber-400" />
+            <Award className="w-4 h-4 text-[var(--wheat)]" />
           </div>
-          <div className="text-2xl font-extrabold text-amber-300 font-mono">
+          <div className="ui-stat-value">
             {auditReport.carbonCreditValueInr === 0 ? '—' : `₹${auditReport.carbonCreditValueInr.toLocaleString()}`}
           </div>
-          <p className="text-[11px] text-amber-400/90 mt-1 font-semibold">
+          <p className="ui-stat-note">
             Not available in this version
           </p>
         </div>
       </div>
 
       {/* Spatial Audit Table */}
-      <div className="glass-panel p-4 flex flex-col gap-3">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-          <div className="flex items-center gap-2">
-            <FileText className="w-4 h-4 text-emerald-400" />
-            <h4 className="font-bold text-sm text-white">
+      <div className="ui-card">
+        <div className="ui-card-head">
+          <div className="ui-card-title">
+            <FileText />
+            <h4>
               Field proof records
             </h4>
           </div>
-          <span className="text-xs text-slate-400">
+          <span className="ui-chip">
             {demoMode ? 'Synthetic observation stream' : 'Provider observations only when configured'}
           </span>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs text-left">
-            <thead className="bg-slate-900/80 text-slate-400 uppercase text-[10px] tracking-wider">
+        <div className="ui-table-wrap">
+          <table className="ui-table">
+            <thead>
               <tr>
                 <th className="py-2.5 px-3">Khasra #</th>
                 <th className="py-2.5 px-3">Farmer & Village</th>
@@ -219,32 +219,32 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
                 <th className="py-2.5 px-3 text-right">Record</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/80">
+            <tbody>
               {fields.map((field) => {
                 return (
-                  <tr key={field.id} className="hover:bg-slate-900/60 transition-colors">
-                    <td className="py-3 px-3 font-bold text-white font-mono">
+                  <tr key={field.id}>
+                    <td className="font-[family-name:var(--font-display)] text-[16px] font-semibold !text-[var(--ink)] whitespace-nowrap">
                       {field.khasra_no}
                     </td>
                     <td className="py-3 px-3">
-                      <div className="font-semibold text-slate-200">{field.farmer_name}</div>
-                      <div className="text-[11px] text-slate-400">{field.village}, {field.block}</div>
+                      <div className="font-semibold text-[var(--ink)]">{field.farmer_name}</div>
+                      <div className="text-[12px] text-[var(--muted)]">{field.village}, {field.block}</div>
                     </td>
-                    <td className="py-3 px-3 font-mono text-slate-200">
+                    <td className="tabular-nums whitespace-nowrap">
                       {field.acreage} ac
                     </td>
                     <td className="py-3 px-3">
-                      <div className="flex items-center gap-1.5 text-emerald-400 font-bold">
+                      <div className="flex items-center gap-1.5 font-semibold text-[var(--brand-ink)] whitespace-nowrap">
                         <CheckCircle2 className="w-3.5 h-3.5" />
                         <span>{auditReport.dataAvailability === 'NO_OBSERVATIONS' ? 'Not assessed' : `${auditReport.auditResults.find((result) => result.fieldId === field.id)?.firesInsideCount ?? 0} fire point(s)`}</span>
                       </div>
                     </td>
                     <td className="py-3 px-3">
-                      <span className="font-mono text-cyan-300">{demoMode ? 'Illustrative' : 'Not available'}</span>
-                      <span className="text-[10px] text-slate-500 block">{demoMode ? 'Synthetic demo value' : 'Awaiting evidence'}</span>
+                      <span className="font-semibold text-[var(--sky-ink)]">{demoMode ? 'Illustrative' : 'Not available'}</span>
+                      <span className="block text-[12px] text-[var(--muted)]">{demoMode ? 'Synthetic demo value' : 'Awaiting evidence'}</span>
                     </td>
                     <td className="py-3 px-3">
-                      <span className="badge badge-emerald text-[10px]">
+                      <span className="ui-chip is-wheat">
                         {demoMode ? 'DEMO / ILLUSTRATIVE' : field.status === 'VERIFIED_NON_BURN' ? 'INTERNAL VERIFIED' : 'NOT VERIFIED'}
                       </span>
                     </td>
@@ -254,14 +254,14 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
                           <button
                             onClick={() => void handleVerify(field)}
                             disabled={reviewingFieldId === field.id}
-                            className="px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-semibold border border-emerald-500 transition-all"
+                            className="ui-btn is-primary is-sm"
                           >
                             {reviewingFieldId === field.id ? 'Reviewing…' : 'Review field record'}
                           </button>
                         )}
                         <button
                           onClick={() => handleOpenRecord(field.id)}
-                          className="px-2.5 py-1 rounded bg-slate-800 hover:bg-emerald-600 hover:text-white text-emerald-300 text-xs font-semibold border border-slate-700 transition-all cursor-pointer"
+                          className="ui-btn is-sm"
                         >
                           See record
                         </button>
@@ -275,40 +275,40 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
         </div>
       </div>
 
-      {reviewMessage && <div role="status" className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-3 text-xs text-emerald-200">{reviewMessage}</div>}
+      {reviewMessage && <div role="status" className="ui-note is-green">{reviewMessage}</div>}
 
       {/* The 4 Inputs Architecture Diagram for Judges */}
-      <div className="glass-panel p-4 bg-slate-950/60 flex flex-col gap-3">
-        <h4 className="font-bold text-xs uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
-          <Layers className="w-4 h-4 text-emerald-400" />
+      <div className="flex flex-col gap-4">
+        <h4 className="ui-eyebrow">
+          <Layers className="w-4 h-4" />
           <span>How we check a field</span>
         </h4>
 
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
-          <div className="bg-slate-900/90 p-3 rounded-lg border border-slate-800">
-            <div className="text-emerald-400 font-bold mb-1">1. Field boundary</div>
-            <p className="text-slate-400 text-[11px]">
+        <div className="proof-steps">
+          <div className="proof-step">
+            <div className="proof-step-title">1. Field boundary</div>
+            <p>
               We keep the field boundary source and its verification status. A hand-drawn boundary is not treated as official land-record proof.
             </p>
           </div>
 
-          <div className="bg-slate-900/90 p-3 rounded-lg border border-slate-800">
-            <div className="text-emerald-400 font-bold mb-1">2. Satellite check</div>
-            <p className="text-slate-400 text-[11px]">
+          <div className="proof-step">
+            <div className="proof-step-title">2. Satellite check</div>
+            <p>
               Satellite observations are supporting evidence. They do not by themselves prove that no burning happened.
             </p>
           </div>
 
-          <div className="bg-slate-900/90 p-3 rounded-lg border border-slate-800">
-            <div className="text-emerald-400 font-bold mb-1">3. Pickup & weight proof</div>
-            <p className="text-slate-400 text-[11px]">
+          <div className="proof-step">
+            <div className="proof-step-title">3. Pickup & weight proof</div>
+            <p>
               Photos, pickup records and weight records can be linked when they are available.
             </p>
           </div>
 
-          <div className="bg-slate-900/90 p-3 rounded-lg border border-slate-800">
-            <div className="text-emerald-400 font-bold mb-1">4. Payment status</div>
-            <p className="text-slate-400 text-[11px]">
+          <div className="proof-step">
+            <div className="proof-step-title">4. Payment status</div>
+            <p>
               Payment is not connected in this release, so we never show a payment as completed when it is not.
             </p>
           </div>

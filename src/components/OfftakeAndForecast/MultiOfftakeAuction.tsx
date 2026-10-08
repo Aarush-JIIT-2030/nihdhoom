@@ -31,24 +31,24 @@ export const MultiOfftakeAuction: React.FC = () => {
   const premiumOverBiogas = topBuyer.price_per_tonne - cbgBaseline.price_per_tonne;
 
   return (
-    <div className="flex flex-col gap-6 max-w-6xl mx-auto p-2">
+    <div className="ui-stack">
       {/* Top Framing Card */}
-      <div className="glass-panel-emerald p-5 relative overflow-hidden"><div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-amber-400 via-emerald-600 to-emerald-800" />
+      <div className="ui-card relative overflow-hidden">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-800 border border-emerald-500/40 flex items-center justify-center shrink-0 shadow-lg shadow-emerald-500/30">
+            <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[var(--wheat-soft)] text-[var(--wheat-ink)]">
               <TrendingUp className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-extrabold text-lg text-emerald-950 font-['DM_Sans']">
+                <h3 className="font-[family-name:var(--font-display)] text-[24px] font-semibold leading-tight text-[var(--ink)]">
                   Multi-offtake planning simulator
                 </h3>
                 <span className="badge badge-emerald text-xs">
                   ILLUSTRATIVE SCENARIO
                 </span>
               </div>
-              <p className="text-xs text-emerald-950/65 mt-1 max-w-2xl leading-relaxed">
+              <p className="ui-card-sub max-w-2xl !text-[14px]">
                 This simulator demonstrates how residue lots could be compared against buyer requirements using moisture, quality and logistics. Prices below are mock records; no live offer or contract is created.
               </p>
             </div>

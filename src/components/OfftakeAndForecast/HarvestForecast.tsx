@@ -83,23 +83,23 @@ export const HarvestForecast: React.FC = () => {
   });
 
   return (
-    <div className="flex flex-col gap-6 max-w-6xl mx-auto p-2">
+    <div className="ui-stack">
       {/* Top Banner */}
-      <div className="glass-panel-emerald p-5 relative overflow-hidden"><div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-600 via-amber-400 to-emerald-600" />
+      <div className="ui-card relative overflow-hidden">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-800 border border-emerald-500/40 flex items-center justify-center shrink-0 shadow-lg shadow-emerald-500/30">
+          <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[var(--wheat-soft)] text-[var(--wheat-ink)]">
             <Calendar className="w-6 h-6" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-extrabold text-lg text-emerald-950 font-['DM_Sans']">
+              <h3 className="font-[family-name:var(--font-display)] text-[24px] font-semibold leading-tight text-[var(--ink)]">
                 Harvest pressure planning — illustrative
               </h3>
               <span className="badge badge-emerald text-xs">
                 Planning model • provider data required
               </span>
             </div>
-            <p className="text-xs text-emerald-950/65 mt-1 max-w-2xl leading-relaxed">
+            <p className="ui-card-sub max-w-2xl !text-[14px]">
               This workspace demonstrates how harvest timing could inform machine pre-positioning. The figures below are illustrative planning records unless a configured harvest-data provider supplies them.
             </p>
           </div>
@@ -107,7 +107,7 @@ export const HarvestForecast: React.FC = () => {
       </div>
 
       {/* Date Timeline Slider & Pre-positioning Engine */}
-      <div className="glass-panel p-5 flex flex-col gap-4">
+      <div className="ui-card flex flex-col gap-4">
         <div className="flex items-center justify-between border-b border-emerald-900/10 pb-3">
           <div>
             <span className="text-xs text-emerald-950/55 block">Harvest Horizon Slider:</span>

@@ -258,11 +258,11 @@ export const FarmerOnboarding: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Animated React Bits progress stepper */}
         <div className="lg:col-span-4">
-          <div className="farmer-onboarding-stepper tone-native">
+          <div className="farmer-onboarding-stepper tone-native ui-card lg:sticky lg:top-24">
             <div className="px-1 pb-3">
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Onboarding progress</h4>
-              <p className="text-sm font-bold text-slate-800 mt-1">{STEPS[stepIndex]?.label}</p>
-              <p className="text-xs text-slate-500 mt-0.5">{STEPS[stepIndex]?.sublabel}</p>
+              <h4 className="ui-eyebrow">Onboarding progress</h4>
+              <p className="mt-2 font-[family-name:var(--font-display)] text-[22px] font-semibold leading-tight text-[var(--ink)]">{STEPS[stepIndex]?.label}</p>
+              <p className="mt-1 text-[13px] text-[var(--muted)]">{STEPS[stepIndex]?.sublabel}</p>
             </div>
             <Stepper
               key={stepIndex}
@@ -281,12 +281,27 @@ export const FarmerOnboarding: React.FC = () => {
                 </Step>
               ))}
             </Stepper>
+            <ol className="kyc-steps" aria-hidden="true">
+              {STEPS.map((step, index) => {
+                const StepIcon = step.icon;
+                const state = index < stepIndex ? 'is-done' : index === stepIndex ? 'is-current' : '';
+                return (
+                  <li key={step.id} className={state}>
+                    <span className="kyc-step-icon">{index < stepIndex ? <CheckCircle2 className="h-4 w-4" /> : <StepIcon className="h-4 w-4" />}</span>
+                    <span className="min-w-0">
+                      <strong>{step.label}</strong>
+                      <small>{step.sublabel}</small>
+                    </span>
+                  </li>
+                );
+              })}
+            </ol>
           </div>
         </div>
 
         {/* Active Step Form */}
         <div className="lg:col-span-8">
-          <div className="glass-panel p-5 flex flex-col gap-4 min-h-[400px] rounded-3xl border border-slate-700/70">
+          <div className="ui-card flex min-h-[400px] flex-col gap-4 !p-6">
             {currentStep === 'PHONE' && (
               <>
                 <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
@@ -300,7 +315,7 @@ export const FarmerOnboarding: React.FC = () => {
                   <div>
                     <label className="text-xs text-slate-400 block mb-1">Full Name (as per land records)</label>
                     <input
-                      className="w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-emerald-500"
+                      className="ui-input"
                       placeholder="Gurpreet Singh Brar"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
@@ -311,7 +326,7 @@ export const FarmerOnboarding: React.FC = () => {
                     <input
                       type="tel"
                       maxLength={10}
-                      className="w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-emerald-500 font-mono"
+                      className="ui-input font-mono"
                       placeholder="98765 43210"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
@@ -321,7 +336,7 @@ export const FarmerOnboarding: React.FC = () => {
                     <div>
                       <label className="text-xs text-slate-400 block mb-1">Village</label>
                       <input
-                        className="w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-emerald-500"
+                        className="ui-input"
                         placeholder="Ubhawal"
                         value={village}
                         onChange={(e) => setVillage(e.target.value)}
@@ -330,7 +345,7 @@ export const FarmerOnboarding: React.FC = () => {
                     <div>
                       <label className="text-xs text-slate-400 block mb-1">Block</label>
                       <select
-                        className="w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-emerald-500"
+                        className="ui-select"
                         value={block}
                         onChange={(e) => setBlock(e.target.value)}
                       >
@@ -348,7 +363,7 @@ export const FarmerOnboarding: React.FC = () => {
                 <button
                   onClick={sendLiveOtp}
                   disabled={!phone || phone.length < 10 || !name || loading}
-                  className="mt-auto w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow transition-all"
+                  className="ui-btn is-primary is-lg is-block mt-auto"
                 >
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
                   {DEMO_MODE ? 'Send Demo OTP' : 'Send OTP via SMS'}
@@ -492,7 +507,7 @@ export const FarmerOnboarding: React.FC = () => {
                     setCurrentStep('AADHAAR');
                   }}
                   disabled={!consentAccepted || loading}
-                  className="mt-auto w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow transition-all"
+                  className="ui-btn is-primary is-lg is-block mt-auto"
                 >
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Shield className="w-4 h-4" />}
                   {DEMO_MODE ? 'Accept demo consent' : 'Record consent & continue'}
@@ -515,7 +530,7 @@ export const FarmerOnboarding: React.FC = () => {
                   <input
                     type="text"
                     maxLength={4}
-                    className="w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-emerald-500 font-mono tracking-widest"
+                    className="ui-input font-mono tracking-widest"
                     placeholder="1234"
                     value={aadhaarLast4}
                     onChange={(e) => {
@@ -530,7 +545,7 @@ export const FarmerOnboarding: React.FC = () => {
                 <button
                   onClick={advance}
                   disabled={!DEMO_MODE || aadhaarLast4.length < 4 || loading}
-                  className="mt-auto w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow transition-all"
+                  className="ui-btn is-primary is-lg is-block mt-auto"
                 >
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Fingerprint className="w-4 h-4" />}
                   {DEMO_MODE ? 'Simulate identity-provider handoff' : 'Identity provider not configured'}
@@ -590,7 +605,7 @@ export const FarmerOnboarding: React.FC = () => {
                 <button
                   onClick={advance}
                   disabled={!DEMO_MODE || !faceScanned || loading}
-                  className="w-full py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow transition-all"
+                  className="ui-btn is-primary is-lg is-block"
                 >
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
                   {DEMO_MODE ? 'Confirm demo biometric state' : 'Biometric provider not configured'}
@@ -625,7 +640,7 @@ export const FarmerOnboarding: React.FC = () => {
                 <button
                   onClick={advance}
                   disabled={!DEMO_MODE || !bankVerified || loading}
-                  className="mt-auto w-full py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 disabled:opacity-40 disabled:cursor-not-allowed text-slate-950 font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow transition-all"
+                  className="ui-btn is-primary is-lg is-block mt-auto"
                 >
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CreditCard className="w-4 h-4" />}
                   {DEMO_MODE ? 'Continue' : 'Bank verification unavailable'}
@@ -644,7 +659,7 @@ export const FarmerOnboarding: React.FC = () => {
                   <div>
                     <label className="text-xs text-slate-400 block mb-1">Khasra / Survey Number</label>
                     <input
-                      className="w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-emerald-500 font-mono"
+                      className="ui-input font-mono"
                       placeholder="412/1-2"
                       value={khasra}
                       onChange={(e) => setKhasra(e.target.value)}
@@ -657,7 +672,7 @@ export const FarmerOnboarding: React.FC = () => {
                       min={0.5}
                       max={50}
                       step={0.5}
-                      className="w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-emerald-500 font-mono"
+                      className="ui-input font-mono"
                       placeholder="3.5"
                       value={acreage}
                       onChange={(e) => setAcreage(e.target.value)}
@@ -671,7 +686,7 @@ export const FarmerOnboarding: React.FC = () => {
                 <button
                   onClick={advance}
                   disabled={!DEMO_MODE || !khasra || !acreage || loading}
-                  className="mt-auto w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow transition-all"
+                  className="ui-btn is-primary is-lg is-block mt-auto"
                 >
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <MapPin className="w-4 h-4" />}
                   {DEMO_MODE ? 'Simulate land-record link' : 'Official cadastral provider required'}
@@ -717,7 +732,7 @@ export const FarmerOnboarding: React.FC = () => {
 
                 <button
                   onClick={reset}
-                  className="px-6 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs cursor-pointer transition-all"
+                  className="ui-btn is-lg"
                 >
                   Register Another Farmer
                 </button>

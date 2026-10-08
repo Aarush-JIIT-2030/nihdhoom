@@ -10,6 +10,7 @@
 @import "leaflet/dist/leaflet.css";
 @import "./styles/palette.css";
 @import "./styles/theme.css";
+@import "./styles/workspace-ui.css";
 
 @layer base {
 
