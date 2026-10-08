@@ -106,11 +106,14 @@ test('demo operational data is opt-in and production starts empty', () => {
 });
 
 
-test('live dashboard KPIs are derived from current records', () => {
-  const app = read('src/App.tsx');
-  assert.match(app, /const acresScheduled = fields\.reduce/);
-  assert.match(app, /acresScheduled=\{acresScheduled\}/);
-  assert.doesNotMatch(app, /acresScheduled=\{88\.4\}/);
+test('homepage status metrics are derived from current records', () => {
+  const home = read('src/components/CommandCenter/CommandCenter.tsx');
+  assert.match(home, /value: fields\.length/);
+  assert.match(home, /value: activeJobs/);
+  assert.match(home, /value: residueLots/);
+  assert.match(home, /value: verified/);
+  assert.match(home, /home-product-status/);
+  assert.doesNotMatch(home, /88\.4/);
 });
 
 test('payment KPI plumbing and browser alerts stay out of the release UI', () => {
