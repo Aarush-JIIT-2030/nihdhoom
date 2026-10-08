@@ -329,11 +329,11 @@ export const OpsMap: React.FC<OpsMapProps> = ({
     <div className="ops-map-surface relative w-full h-[540px] lg:h-[620px] rounded-xl overflow-hidden border border-slate-800 shadow-2xl">
       {/* Field GIS map — the operational tracking surface. */}
       {mapError ? (
-        <div className="w-full h-full grid place-items-center bg-slate-950 p-6 text-center">
+        <div className="w-full h-full grid place-items-center bg-slate-50 p-6 text-center">
           <div className="max-w-md">
-            <div className="text-sm font-bold text-amber-300">Operational map unavailable</div>
-            <p className="mt-2 text-xs text-slate-400">The rest of NIRDHOOM is still available. Check your network/map tile access and reload.</p>
-            <p className="mt-2 text-[10px] text-slate-600 break-words">{mapError}</p>
+            <div className="text-sm font-bold text-amber-700">Operational map unavailable</div>
+            <p className="mt-2 text-xs text-slate-500">Check your network/map tile access and reload.</p>
+            <p className="mt-2 text-[10px] text-slate-500 break-words">{mapError}</p>
           </div>
         </div>
       ) : (
@@ -351,71 +351,43 @@ export const OpsMap: React.FC<OpsMapProps> = ({
 
       {/* Floating Control Overlay Top-Right */}
       <div className="absolute top-3 right-3 z-10">
-        <div className="bg-white/95 backdrop-blur-md border border-slate-200 rounded-lg p-2 shadow-lg text-xs font-semibold text-slate-700">
+        <div className="rounded-lg border border-slate-200 bg-white/95 p-2 text-xs font-semibold text-slate-700 shadow-lg backdrop-blur-md">
           Satellite field map
         </div>
-        <div className="mt-2 bg-white/95 backdrop-blur-md border border-slate-200 rounded-lg p-2 flex flex-col gap-1.5 shadow-lg text-xs font-medium">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">GIS map layers</div>
-
-        {/* Layer Toggles */}
-        {mapMode === 'field' && <div className="bg-slate-900/90 backdrop-blur-md border border-slate-700/80 rounded-lg p-2 flex flex-col gap-1.5 shadow-lg text-xs font-medium">
-          <div className="text-[10px] uppercase font-bold text-slate-500 tracking-wider mb-0.5 flex items-center gap-1">
-            <Layers className="w-3 h-3 text-emerald-600" />
-            <span>GIS Map Layers</span>
+        <div className="mt-2 flex flex-col gap-1.5 rounded-lg border border-slate-200 bg-white/95 p-2 text-xs font-medium text-slate-700 shadow-lg backdrop-blur-md">
+          <div className="mb-0.5 flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+            <Layers className="h-3 w-3 text-emerald-600" />
+            <span>GIS map layers</span>
           </div>
-
-          <label className="flex items-center justify-between gap-3 text-slate-700 cursor-pointer">
+          <label className="flex min-h-9 items-center justify-between gap-3 cursor-pointer rounded-md px-1 hover:bg-slate-50">
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm bg-emerald-500"></span>
-              <span>Customer Polygons ({fields.length})</span>
+              <span className="h-2.5 w-2.5 rounded-sm bg-emerald-500" />
+              <span>Field polygons ({fields.length})</span>
             </span>
-            <input
-              type="checkbox"
-              checked={showFields}
-              onChange={(e) => setShowFields(e.target.checked)}
-              className="accent-emerald-600 rounded"
-            />
+            <input type="checkbox" checked={showFields} onChange={(e) => setShowFields(e.target.checked)} className="accent-emerald-600 rounded" />
           </label>
-
-          <label className="flex items-center justify-between gap-3 text-slate-700 cursor-pointer">
+          <label className="flex min-h-9 items-center justify-between gap-3 cursor-pointer rounded-md px-1 hover:bg-slate-50">
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-              <span>Registered / available balers ({machines.length})</span>
+              <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+              <span>Machines ({machines.length})</span>
             </span>
-            <input
-              type="checkbox"
-              checked={showMachines}
-              onChange={(e) => setShowMachines(e.target.checked)}
-              className="accent-emerald-600 rounded"
-            />
+            <input type="checkbox" checked={showMachines} onChange={(e) => setShowMachines(e.target.checked)} className="accent-emerald-600 rounded" />
           </label>
-
-          <label className="flex items-center justify-between gap-3 text-slate-700 cursor-pointer">
+          <label className="flex min-h-9 items-center justify-between gap-3 cursor-pointer rounded-md px-1 hover:bg-slate-50">
             <span className="flex items-center gap-1.5">
-              <Flame className="w-3.5 h-3.5 text-red-500 animate-pulse" />
-              <span className="text-red-600 font-semibold">NASA FIRMS Fires ({fireEvents.length})</span>
+              <Flame className="h-3.5 w-3.5 text-red-500" />
+              <span className="font-semibold text-red-600">FIRMS observations ({fireEvents.length})</span>
             </span>
-            <input
-              type="checkbox"
-              checked={showFires}
-              onChange={(e) => setShowFires(e.target.checked)}
-              className="accent-red-500 rounded"
-            />
+            <input type="checkbox" checked={showFires} onChange={(e) => setShowFires(e.target.checked)} className="accent-red-500 rounded" />
           </label>
-
-          <label className="flex items-center justify-between gap-3 text-slate-700 cursor-pointer">
+          <label className="flex min-h-9 items-center justify-between gap-3 cursor-pointer rounded-md px-1 hover:bg-slate-50">
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm bg-blue-500"></span>
-              <span>Yards & Offtake ({storageYards.length})</span>
+              <span className="h-2.5 w-2.5 rounded-sm bg-blue-500" />
+              <span>Yards & offtake ({storageYards.length})</span>
             </span>
-            <input
-              type="checkbox"
-              checked={showYards}
-              onChange={(e) => setShowYards(e.target.checked)}
-              className="accent-blue-500 rounded"
-            />
+            <input type="checkbox" checked={showYards} onChange={(e) => setShowYards(e.target.checked)} className="accent-blue-600 rounded" />
           </label>
-        </div>}
+        </div>
       </div>
 
       {/* Floating Bottom Quick Zoom Bar */}
