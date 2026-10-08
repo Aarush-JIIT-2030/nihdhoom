@@ -420,7 +420,7 @@ export const OpsMap: React.FC<OpsMapProps> = ({
         >
           Bhawanigarh
         </button>
-      </div>}
+      </div>
 
       {/* Floating Map Legend Bottom-Right */}
       <div className="absolute bottom-3 right-3 z-10 hidden sm:flex items-center gap-3 bg-slate-950/85 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-800 text-[11px] text-slate-300">
@@ -436,7 +436,7 @@ export const OpsMap: React.FC<OpsMapProps> = ({
           <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping inline-block"></span>
           <span className="text-red-400 font-semibold">External thermal observation</span>
         </span>
-      </div>}
+      </div>
     </div>
   );
 };
