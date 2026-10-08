@@ -391,7 +391,7 @@ export const OpsMap: React.FC<OpsMapProps> = ({
       </div>
 
       {/* Floating Bottom Quick Zoom Bar */}
-      {mapMode === 'field' && <div className="absolute bottom-3 left-3 z-10 bg-slate-900/90 backdrop-blur-md border border-slate-700/80 rounded-lg p-1.5 flex items-center gap-2 shadow-lg text-xs">
+      <div className="absolute bottom-3 left-3 z-10 bg-slate-900/90 backdrop-blur-md border border-slate-700/80 rounded-lg p-1.5 flex items-center gap-2 shadow-lg text-xs">
         <span className="text-slate-400 font-medium px-1 flex items-center gap-1">
           <MapPin className="w-3.5 h-3.5 text-emerald-600" />
           <span>Hotspot Clusters:</span>
@@ -423,7 +423,7 @@ export const OpsMap: React.FC<OpsMapProps> = ({
       </div>}
 
       {/* Floating Map Legend Bottom-Right */}
-      {mapMode === 'field' && <div className="absolute bottom-3 right-3 z-10 hidden sm:flex items-center gap-3 bg-slate-950/85 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-800 text-[11px] text-slate-300">
+      <div className="absolute bottom-3 right-3 z-10 hidden sm:flex items-center gap-3 bg-slate-950/85 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-800 text-[11px] text-slate-300">
         <span className="flex items-center gap-1">
           <span className="w-3 h-2 rounded bg-emerald-500 border border-emerald-300 inline-block"></span>
           <span>Field status / verified evidence</span>
