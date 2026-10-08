@@ -671,16 +671,10 @@ export function App() {
           </div>
 
           <div className="text-slate-500 text-[11px] text-center">
-            3D Digital Twin • Dispatch Simulation • Satellite Audit Prototype • Payment Simulation • Carbon Marketplace Demo
+            Field operations • Evidence • Residue • Buyer pathways
           </div>
 
-          <button
-            onClick={() => setIsPitchDrawerOpen(true)}
-            className="text-emerald-400 hover:text-emerald-300 font-semibold cursor-pointer flex items-center gap-1.5"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            Review Pitch Deck &rarr;
-          </button>
+          <span className="rounded-full border border-emerald-900/20 bg-emerald-900/20 px-3 py-1.5 text-[10px] font-semibold text-emerald-200">Evidence-first prototype</span>
         </div>
       </footer>
     </div>
