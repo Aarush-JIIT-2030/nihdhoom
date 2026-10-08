@@ -71,10 +71,6 @@ docs/                           # Architecture, research and release notes
 </p>
 
 <p align="center">
-  <img src="public/images/punjab_farm_hero.jpg" alt="Agricultural fields in Punjab" width="100%">
-</p>
-
-<p align="center">
   <b>Field → machine → evidence → residue → buyer</b><br>
   A field-first product for coordinating crop-residue clearance and downstream supply.
 </p>
