@@ -244,7 +244,10 @@ export const OpsMap: React.FC<OpsMapProps> = ({
             <div style="color:#94a3b8;margin-bottom:6px;">${machine.home_chc}</div>
             <div><strong>Type:</strong> ${machine.type}</div>
             <div><strong>Capacity:</strong> ${machine.capacity_acres_day} acres/day</div>
+            <div><strong>Tractor:</strong> ${machine.tractor_hp_required ? machine.tractor_hp_required + " HP" : "Not sourced"}</div>
+            <div><strong>Residue:</strong> ${(machine.residue_types || ["Not established"]).join(", ")}</div>
             <div><strong>Operator:</strong> ${machine.operator_name} (${machine.operator_phone})</div>
+            <div style="margin-top:4px;color:#718076;">Capability source: ${machine.capability_source || "Not established"}${machine.capability_source_date ? " · " + machine.capability_source_date : ""}</div>
             <div><strong>Status:</strong> <span style="color:#34d399;font-weight:bold;">${machine.status}</span></div>
           </div>
         `);
