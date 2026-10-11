@@ -635,36 +635,32 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
                 </label>
                 <button
                   onClick={async () => {
-                    if (!consentAccepted) return;
+                    if (!consentAccepted || loading) return;
                     if (DEMO_MODE) { advance(); return; }
-                    if (!supabase) { setOtpError('Live authentication is not configured.'); return; }
+                    if (!supabase) {
+                      setOtpError('Live authentication is not configured.');
+                      return;
+                    }
                     setLoading(true);
                     setOtpError('');
-                    const { data: userData } = await supabase.auth.getUser();
-                    if (!userData.user) {
+                    try {
+                      const { data: userData } = await supabase.auth.getUser();
+                      if (!userData.user) {
+                        setOtpError('Your session expired. Please verify your phone again.');
+                        return;
+                      }
+                      const { error: consentError } = await supabase.rpc('record_farmer_network_consent');
+                      if (consentError) {
+                        setOtpError(consentError.message || 'Consent could not be recorded.');
+                        return;
+                      }
+                      setActiveConsent(true);
+                      setCurrentStep('LAND_RECORDS');
+                    } catch {
+                      setOtpError('Consent could not be recorded because the server was unreachable. Check your connection and try again.');
+                    } finally {
                       setLoading(false);
-                      setOtpError('Your session expired. Please verify your phone again.');
-                      return;
                     }
-                    const { error: consentError } = await supabase.from('consents').insert({
-                      profile_id: userData.user.id,
-                      consent_type: 'farmer_network',
-                      version: '2026-10-04',
-                      source: 'WEB_OTP_ONBOARDING',
-                    });
-                    if (consentError) {
-                      setLoading(false);
-                      setOtpError(consentError.message || 'Consent could not be recorded.');
-                      return;
-                    }
-                    const { error: profileError } = await supabase.from('profiles').update({ consent_status: 'GRANTED' }).eq('id', userData.user.id);
-                    setLoading(false);
-                    if (profileError) {
-                      setOtpError(profileError.message || 'Consent was recorded but profile status could not be updated.');
-                      return;
-                    }
-                    setActiveConsent(true);
-                    setCurrentStep(DEMO_MODE ? 'AADHAAR' : 'LAND_RECORDS');
                   }}
                   disabled={!consentAccepted || loading}
                   className="ui-btn is-primary is-lg is-block mt-auto"
