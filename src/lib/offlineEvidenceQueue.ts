@@ -6,6 +6,8 @@ const VERSION = 1;
 
 export interface QueuedEvidence {
   id: string;
+  /** Authenticated actor who captured the evidence; prevents cross-account replay. */
+  ownerUserId: string;
   fieldId: string;
   fileName: string;
   fileType: string;
@@ -87,12 +89,32 @@ export async function flushEvidenceQueue() {
 
   let flushed = 0;
   for (const item of await listQueued()) {
+    // Never upload evidence under whichever account happens to be signed in now.
+    // Legacy queue rows without ownerUserId are intentionally held for manual recovery.
+    if (!item.ownerUserId || item.ownerUserId !== user.id) continue;
     const path = `${user.id}/${item.fieldId}/${item.id}-${item.fileName.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+
+    // A previous replay may have uploaded the object or committed its metadata
+    // before the client lost the response. Detect committed metadata first so
+    // retries are idempotent instead of leaving a permanent duplicate-object loop.
+    const existing = await supabase.from('evidence_assets')
+      .select('id')
+      .eq('storage_path', path)
+      .maybeSingle();
+    if (existing.error) continue;
+    if (existing.data) {
+      await removeQueued(item.id);
+      flushed += 1;
+      continue;
+    }
+
     const upload = await supabase.storage.from('evidence').upload(path, item.blob, {
       contentType: item.fileType,
       upsert: false,
     });
-    if (upload.error) continue;
+    // A 409 means this deterministic per-queue-item object was uploaded by a
+    // previous attempt. Continue to metadata insertion; other errors are retryable.
+    if (upload.error && upload.error.statusCode !== '409') continue;
 
     const { error } = await supabase.from('evidence_assets').insert({
       field_id: item.fieldId,
