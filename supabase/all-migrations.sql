@@ -2,7 +2,7 @@
 -- This bundle is for a NEW project only. Do not paste into an existing production database.
 -- Production history uses legacy server-assigned migration versions; see docs/DATABASE-RELEASE-LEDGER.md.
 -- The buyer-offer/transport workflow proposal is intentionally excluded until its staging authorization matrix passes.
--- Generated 2026-10-11 from 36 approved migrations.
+-- Generated 2026-10-11 from 37 approved migrations.
 
 -- >>> 202609270001_nirdhoom_core.sql
 -- NIRDHOOM core schema. Run in Supabase SQL Editor or as a migration.
@@ -3556,3 +3556,24 @@ grant execute on function public.complete_job_with_residue_lot(uuid, numeric, nu
 
 comment on function public.complete_job_with_residue_lot(uuid, numeric, numeric, integer, jsonb) is
   'Atomically completes an authorized operator job and creates its residue lot; retries return the existing lot.';
+
+-- >>> 202610120005_consent_audit_immutability.sql
+-- Keep consent history auditable: authenticated farmers may only set revoked_at
+-- on their own active consent. Acceptance and consent metadata go through guarded RPCs.
+REVOKE UPDATE ON TABLE public.consents FROM authenticated;
+REVOKE UPDATE (profile_id, consent_type, version, accepted_at, source) ON TABLE public.consents FROM authenticated;
+GRANT UPDATE (revoked_at) ON TABLE public.consents TO authenticated;
+
+DROP POLICY IF EXISTS "profile revokes own consent" ON public.consents;
+CREATE POLICY "profile revokes own consent"
+ON public.consents
+FOR UPDATE
+TO authenticated
+USING (
+  profile_id = (SELECT auth.uid())
+  AND revoked_at IS NULL
+)
+WITH CHECK (
+  profile_id = (SELECT auth.uid())
+  AND revoked_at IS NOT NULL
+);
