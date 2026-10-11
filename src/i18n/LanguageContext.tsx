@@ -159,7 +159,7 @@ const translations: Record<string, string> = {
   'Unable to send OTP. Check phone authentication and SMS provider settings.': 'OTP नहीं भेजा जा सका। फ़ोन प्रमाणीकरण और SMS प्रदाता की सेटिंग जाँचें।',
   'OTP request failed before Supabase returned a response. Check your connection and try again.': 'Supabase से जवाब मिलने से पहले OTP अनुरोध विफल हुआ। कनेक्शन जाँचकर फिर प्रयास करें।',
   'OTP verification request failed. Check your connection and try again.': 'OTP सत्यापन अनुरोध विफल हुआ। कनेक्शन जाँचकर फिर प्रयास करें।',
-  'Your phone was verified, but your farmer profile could not be saved.': 'फ़ोन सत्यापित हो गया, लेकिन किसान प्रोफ़ाइल सहेजी नहीं जा सकी।'
+  'Your phone was verified, but your farmer profile could not be saved.': 'फ़ोन सत्यापित हो गया, लेकिन किसान प्रोफ़ाइल सहेजी नहीं जा सकी।',
   'Street map': 'सड़क मानचित्र',
   'Quality not verified': 'गुणवत्ता सत्यापित नहीं',
   'Moisture': 'नमी',
