@@ -33,6 +33,20 @@ function claimInMemory(updateId: number) {
   return 'claimed' as const;
 }
 
+async function resolveBotUsername() {
+  const configured = String(process.env.TELEGRAM_BOT_USERNAME || '').replace(/^@/, '').trim();
+  if (configured) return configured;
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  if (!token) return null;
+  try {
+    const response = await fetch(`https://api.telegram.org/bot${encodeURIComponent(token)}/getMe`, { signal: AbortSignal.timeout(5000) });
+    const payload = await response.json();
+    return payload?.ok && typeof payload?.result?.username === 'string' ? payload.result.username : null;
+  } catch {
+    return null;
+  }
+}
+
 function persistenceConfigured() {
   return Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY && ((process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL) || process.env.VITE_SUPABASE_URL));
 }
@@ -294,12 +308,13 @@ export default async function handler(req: any, res: any) {
     );
     // bot_ready: commands, menus and languages work. account_features: linking and private field status.
     const botReady = Boolean(process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_WEBHOOK_SECRET);
+    const botUsername = await resolveBotUsername();
     return res.status(configured ? 200 : 503).json({
       ok: configured,
       configured,
       bot_ready: botReady,
       account_features: persistenceConfigured(),
-      bot_username: process.env.TELEGRAM_BOT_USERNAME || null,
+      bot_username: botUsername,
       service: 'nirdhoom-telegram-webhook',
     });
   }
