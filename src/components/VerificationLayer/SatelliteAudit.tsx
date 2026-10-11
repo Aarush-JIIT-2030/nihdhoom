@@ -9,7 +9,6 @@ import {
   Satellite, 
   ShieldCheck, 
   Flame, 
-  CheckCircle2, 
   Award, 
   FileText, 
   Sparkles, 
@@ -37,26 +36,85 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
   const [reviewingFieldId, setReviewingFieldId] = useState<string | null>(null);
   const [reviewMessage, setReviewMessage] = useState('');
   const [reviewFocus, setReviewFocus] = useState<{ id: string; nonce: number } | null>(null);
+  const [firmsBusyFieldId, setFirmsBusyFieldId] = useState<string | null>(null);
+  const [firmsScreenings, setFirmsScreenings] = useState<Record<string, { count: number; matchedCount: number; queriedAt: string; error?: string }>>({});
+
+  const screenFieldWithFirms = async (field: Field) => {
+    if (demoMode || firmsBusyFieldId) return;
+    setFirmsBusyFieldId(field.id);
+    setFirmsScreenings((current) => {
+      const next = { ...current };
+      delete next[field.id];
+      return next;
+    });
+    try {
+      if (!supabase) throw new Error('Live Supabase is not configured.');
+      if (!field.dbId || !Number.isFinite(field.center?.lat) || !Number.isFinite(field.center?.lng) ||
+          field.center.lat < -90 || field.center.lat > 90 || field.center.lng < -180 || field.center.lng > 180 ||
+          !Array.isArray(field.geometry) || field.geometry.length < 3) {
+        throw new Error('A saved field UUID, valid centre and field boundary are required for spatial screening.');
+      }
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      const token = sessionData.session?.access_token;
+      if (sessionError || !token) throw new Error('Sign in again before requesting NASA FIRMS observations.');
+      const response = await fetch('/api/firms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          field_id: field.dbId,
+          radius_km: 12,
+        }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(String(payload.error || 'FIRMS screening request failed.'));
+      setFirmsScreenings((current) => ({
+        ...current,
+        [field.id]: {
+          count: Number(payload.count || 0),
+          matchedCount: Number(payload.matched_count || 0),
+          queriedAt: String(payload.queried_at || new Date().toISOString()),
+        },
+      }));
+    } catch (error) {
+      setFirmsScreenings((current) => ({
+        ...current,
+        [field.id]: {
+          count: 0,
+          matchedCount: 0,
+          queriedAt: new Date().toISOString(),
+          error: error instanceof Error ? error.message : 'FIRMS screening failed.',
+        },
+      }));
+    } finally {
+      setFirmsBusyFieldId(null);
+    }
+  };
 
   const handleVerify = async (field: Field) => {
     setReviewingFieldId(field.id);
     setReviewMessage('');
     try {
       if (demoMode) {
-        onVerified?.(field.id);
-        setReviewMessage(`Demo review recorded for ${field.khasra_no}. No registry or payment claim was issued.`);
+        setReviewMessage(`Simulated review note recorded for ${field.khasra_no}. Field status is unchanged; no certificate or payment claim was issued.`);
         return;
       }
       if (!supabase) throw new Error('Live Supabase is not configured.');
+      // The UI has no validated confidence model and cannot independently prove
+      // non-burning. Persist a review-required event; only a separate authorized
+      // evidence workflow may mark the field VERIFIED_NON_BURN.
       const { error } = await supabase.rpc('record_verification_review', {
         p_field_id: field.dbId || field.id,
-        p_result: 'VERIFIED_NON_BURN',
-        p_confidence: 92,
-        p_metadata: { source: 'nirdhoom-review-console', observation_mode: auditReport.dataAvailability },
+        p_result: 'REVIEW_REQUIRED',
+        p_confidence: 0,
+        p_metadata: {
+          source: 'nirdhoom-review-console',
+          observation_mode: auditReport.dataAvailability,
+          decision_basis: 'manual_review_required_no_validated_confidence_model',
+          client_reported_confidence: null,
+        },
       });
       if (error) throw new Error(error.message);
-      onVerified?.(field.id);
-      setReviewMessage(`Verification review recorded for ${field.khasra_no}.`);
+      setReviewMessage(`Review-required event recorded for ${field.khasra_no}. Field status is unchanged pending an authorized evidence-based decision.`);
     } catch (error) {
       setReviewMessage(error instanceof Error ? error.message : 'Verification review failed.');
     } finally {
@@ -97,12 +155,12 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
 
           <div className="flex shrink-0 items-center gap-4 rounded-2xl border border-[var(--brand-line)] bg-[var(--brand-soft)] px-5 py-4">
             <div>
-              <span className="ui-kv-label block">{t('Fields checked')}</span>
+              <span className="ui-kv-label block">{t('Fields in this review')}</span>
               <div className="font-[family-name:var(--font-display)] text-[34px] font-bold leading-none text-[var(--brand-ink)]">
-                {auditReport.complianceRate}%
+                {auditReport.totalFieldsAudited}
               </div>
             </div>
-            <ShieldCheck className="w-8 h-8 text-[var(--brand)]" />
+            <Satellite className="w-8 h-8 text-[var(--brand)]" />
           </div>
         </div>
 
@@ -120,7 +178,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
                 {t('FIRMS / VIIRS thermal observations')}
               </span>
               <p className="mt-2 text-[15px] font-semibold text-white">
-                {auditReport.dataAvailability === 'NO_OBSERVATIONS' ? 'No remote-sensing observations are currently available for field screening' : `Matched ${auditReport.cleanFieldsCount} field(s) without a detected fire point in the supplied observations`}
+                {auditReport.dataAvailability === 'NO_OBSERVATIONS' ? 'No remote-sensing observations are currently available for field screening' : `${auditReport.cleanFieldsCount} field(s) have no fire point matched in supplied observations; this is not proof of no burning`}
               </p>
             </div>
             <div className="text-right hidden sm:block">
@@ -249,7 +307,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
                     </td>
                     <td className="py-3 px-3">
                       <div className="flex items-center gap-1.5 font-semibold text-[var(--brand-ink)] whitespace-nowrap">
-                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <AlertCircle className="w-3.5 h-3.5" />
                         <span>{auditReport.dataAvailability === 'NO_OBSERVATIONS' ? 'Not assessed' : `${auditReport.auditResults.find((result) => result.fieldId === field.id)?.firesInsideCount ?? 0} fire point(s)`}</span>
                       </div>
                     </td>
@@ -259,7 +317,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
                     </td>
                     <td className="py-3 px-3">
                       <span className="ui-chip is-wheat">
-                        {demoMode ? 'DEMO / ILLUSTRATIVE' : field.status === 'VERIFIED_NON_BURN' ? 'INTERNAL VERIFIED' : 'NOT VERIFIED'}
+                        {demoMode ? 'DEMO / ILLUSTRATIVE' : field.status === 'VERIFIED_NON_BURN' ? 'INTERNAL STATUS — REVIEW SOURCE' : 'NOT VERIFIED'}
                       </span>
                     </td>
                     <td className="py-3 px-3 text-right">
@@ -273,12 +331,38 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
                             {reviewingFieldId === field.id ? 'Reviewing…' : 'Review field record'}
                           </button>
                         )}
-                        <button
-                          onClick={() => handleOpenRecord(field.id)}
-                          className="ui-btn is-sm"
-                        >
-                          See record
-                        </button>
+                        {!demoMode && (
+                          <button
+                            onClick={() => void screenFieldWithFirms(field)}
+                            disabled={firmsBusyFieldId !== null}
+                            className="ui-btn is-sm"
+                          >
+                            {firmsBusyFieldId === field.id ? 'Querying FIRMS…' : 'Query NASA FIRMS'}
+                          </button>
+                        )}
+                        {demoMode ? (
+                          <button
+                            onClick={() => handleOpenRecord(field.id)}
+                            className="ui-btn is-sm"
+                          >
+                            View illustrative record
+                          </button>
+                        ) : (
+                          <span className="text-xs text-[var(--muted)]" title="A production certificate is unavailable until an authorized verifier signs a validated evidence record.">
+                            Certificate unavailable
+                          </span>
+                        )}
+                        {firmsScreenings[field.id] && (
+                          <div className="mt-2 max-w-xs text-left text-xs" role="status">
+                            {firmsScreenings[field.id].error ? (
+                              <span className="text-red-700">{firmsScreenings[field.id].error}</span>
+                            ) : (
+                              <span className="text-[var(--muted)]">
+                                NASA FIRMS queried {new Date(firmsScreenings[field.id].queriedAt).toLocaleString()} · {firmsScreenings[field.id].count} nearby observations · {firmsScreenings[field.id].matchedCount} matched to this boundary. Screening only—not verification; results are not persisted.
+                              </span>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </td>
                   </tr>

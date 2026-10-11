@@ -34,7 +34,8 @@ type ReviewPhoto = {
 
 type CheckState = 'pass' | 'warn' | 'fail';
 type Check = { id: string; label: string; detail: string; state: CheckState; anchor: string };
-type Decision = { action: 'approved' | 'more-evidence' | 'rejected'; note: string; at: number };
+type ReviewAction = 'approved' | 'more-evidence' | 'rejected';
+type Decision = { action: 'review-submitted' | 'more-evidence' | 'rejected'; note: string; at: number };
 
 const AREA_OK = 0.10;
 const AREA_WARN = 0.25;
@@ -273,12 +274,12 @@ export function EvidenceReview({ fields, fireEvents, demoMode, focusFieldId, foc
     setPhotos((current) => ({ ...current, [field.id]: (current[field.id] ?? []).filter((p) => p.id !== photo.id) }));
   }
 
-  async function decide(action: Decision['action']) {
+  async function decide(action: ReviewAction) {
     if (!field) return;
     if (action === 'approved') await onApprove(field);
     setDecisions((current) => ({
       ...current,
-      [field.id]: [{ action, note: (notes[field.id] || '').trim(), at: Date.now() }, ...(current[field.id] ?? [])],
+      [field.id]: [{ action: action === 'approved' ? 'review-submitted' : action, note: (notes[field.id] || '').trim(), at: Date.now() }, ...(current[field.id] ?? [])],
     }));
     setNotes((current) => ({ ...current, [field.id]: '' }));
   }
@@ -468,7 +469,7 @@ export function EvidenceReview({ fields, fireEvents, demoMode, focusFieldId, foc
               onClick={() => void decide('approved')}
               title={blocking.length ? 'Resolve the failed checks first' : undefined}
             >
-              <CheckCircle2 /> {alreadyVerified ? 'Already verified' : reviewingFieldId === field.id ? 'Recording…' : 'Approve as verified'}
+              <CheckCircle2 /> {alreadyVerified ? 'Already verified' : reviewingFieldId === field.id ? 'Recording…' : demoMode ? 'Record demo review note' : 'Submit for manual review'}
             </button>
             <button type="button" className="ui-btn is-wheat" onClick={() => void decide('more-evidence')} disabled={alreadyVerified}>
               <MessageSquareWarning /> Request more evidence
@@ -485,8 +486,8 @@ export function EvidenceReview({ fields, fireEvents, demoMode, focusFieldId, foc
             <ol className="review-log">
               {fieldDecisions.map((d) => (
                 <li key={d.at}>
-                  <span className={`ui-chip ${d.action === 'approved' ? 'is-green' : d.action === 'rejected' ? 'is-ember' : 'is-wheat'}`}>
-                    {d.action === 'approved' ? 'Approved' : d.action === 'rejected' ? 'Rejected' : 'More evidence requested'}
+                  <span className={`ui-chip ${d.action === 'rejected' ? 'is-ember' : 'is-wheat'}`}>
+                    {d.action === 'review-submitted' ? (demoMode ? 'Demo review note recorded' : 'Review submitted — pending decision') : d.action === 'rejected' ? 'Rejected' : 'More evidence requested'}
                   </span>
                   <span className="text-[12px] text-[var(--muted)]">{new Date(d.at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</span>
                   {d.note && <p>{d.note}</p>}

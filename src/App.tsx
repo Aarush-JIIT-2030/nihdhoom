@@ -21,6 +21,7 @@ const FieldJobBoard = lazy(() => import('./components/FieldJobs/FieldJobBoard').
 const FieldEvidenceTimeline = lazy(() => import('./components/ResidueNetwork/FieldEvidenceTimeline').then((m) => ({ default: m.FieldEvidenceTimeline })));
 const ClearanceBooking = lazy(() => import('./components/ClearanceBooking/ClearanceBooking').then((m) => ({ default: m.ClearanceBooking })));
 const ResidueControlTower = lazy(() => import('./components/ResidueNetwork/ResidueControlTower').then((m) => ({ default: m.ResidueControlTower })));
+const DemoScenarioJourney = lazy(() => import('./components/DemoScenarioJourney/DemoScenarioJourney').then((m) => ({ default: m.DemoScenarioJourney })));
 
 
 import { INITIAL_STORAGE_YARDS, INITIAL_BUYERS, INITIAL_RESIDUE_LOTS } from './data/mockData';
@@ -289,6 +290,11 @@ export function App() {
             demoMode={demoMode}
           />
         )}
+        {activeTab === 'OVERVIEW' && demoMode && (
+          <div className="px-4 pb-6 sm:px-6 lg:px-8">
+            <DemoScenarioJourney onOpenMap={() => navigate('OPS_CONSOLE')} />
+          </div>
+        )}
 
         {activeTab === 'FARMER_ONBOARDING' && (
           <ClearanceBooking fields={fields} demoMode={demoMode} onBooked={(fieldId, amount) => handleUpdateFieldStatus(fieldId, 'BOOKED', amount)} onBookingChanged={() => { void refreshLiveData(); }} />
@@ -360,7 +366,7 @@ export function App() {
                   </p>
                 </div>
                 <div className="section-bar-meta">
-                  <span className="pill pill-green">{demoMode ? 'Demo GPS feed' : 'Live operator telemetry'}</span>
+                  <span className="pill pill-green">{demoMode ? 'Demo GPS feed' : 'Connected machine records'}</span>
                   <span className="pill">{fields.length} Farms • {machines.length} Balers</span>
                 </div>
               </div>
@@ -448,8 +454,8 @@ export function App() {
 
         {activeTab === 'OFFTAKE_AUCTION' && (
           <div className="workspace-stack">
-            <MultiOfftakeAuction />
-            <HarvestForecast />
+            <MultiOfftakeAuction buyers={liveBuyers} demoMode={demoMode} />
+            <HarvestForecast fields={fields} demoMode={demoMode} />
           </div>
         )}
         </Suspense>
