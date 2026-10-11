@@ -24,7 +24,7 @@ import {
 type KYCStep = 'PHONE' | 'OTP' | 'CONSENT' | 'AADHAAR' | 'FACE_SCAN' | 'BANK' | 'LAND_RECORDS' | 'DONE';
 
 const STEPS: { id: KYCStep; label: string; sublabel: string; icon: React.FC<{ className?: string }> }[] = [
-  { id: 'PHONE', label: 'Mobile Verification', sublabel: 'Enter registered mobile', icon: Phone },
+  { id: 'PHONE', label: t('Mobile Verification'), sublabel: t('Enter registered mobile'), icon: Phone },
   { id: 'OTP', label: 'OTP Confirm', sublabel: '6-digit SMS code', icon: Smartphone },
   { id: 'CONSENT', label: 'Farmer consent', sublabel: 'Operational data agreement', icon: Shield },
   { id: 'AADHAAR', label: 'Identity verification (demo)', sublabel: 'Demo only — no external identity API', icon: Fingerprint },
@@ -469,7 +469,7 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
               <>
                 <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
                   <Phone className="w-4 h-4 text-emerald-400" />
-                  <h4 className="font-bold text-sm text-white">Step 1: Mobile Number Verification</h4>
+                  <h4 className="font-bold text-sm text-white">{t('Step 1: Mobile Number Verification')}</h4>
                 </div>
                 <p className="text-xs text-slate-400 leading-relaxed">
                   Enter the farmer's mobile number. In live mode, Supabase Auth sends a real SMS OTP; demo mode uses a local test code.
@@ -485,7 +485,7 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-slate-400 block mb-1">Mobile Number (+91)</label>
+                    <label className="text-xs text-slate-400 block mb-1">{t('Mobile Number (+91)')}</label>
                     <input
                       type="tel"
                       maxLength={10}
@@ -544,11 +544,11 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
               <>
                 <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
                   <Smartphone className="w-4 h-4 text-emerald-400" />
-                  <h4 className="font-bold text-sm text-white">Step 2: OTP Verification</h4>
+                  <h4 className="font-bold text-sm text-white">{t('Step 2: OTP Verification')}</h4>
                 </div>
                 <div className="p-3 bg-slate-900/80 rounded-lg border border-slate-800 text-xs text-slate-400">
                   <div className="flex items-center justify-between gap-3">
-                    <span>OTP sent to <strong className="text-white">+91 {phone}</strong> via SMS.</span>
+                    <span>{t('OTP sent to')} <strong className="text-white">+91 {phone}</strong> SMS के माध्यम से।</span>
                     <button
                       type="button"
                       onClick={() => { setCurrentStep('PHONE'); setOtp(''); setOtpStatus('idle'); setOtpError(''); }}
@@ -567,8 +567,8 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
 
                 <div className="rounded-2xl border border-amber-400/20 bg-amber-400/5 p-4 sm:p-5">
                   <div className="flex items-center justify-between gap-3 mb-3">
-                    <label className="text-sm font-bold text-slate-200">Enter 6-digit OTP</label>
-                    <span className="text-[11px] font-semibold text-slate-500">Secure SMS code</span>
+                    <label className="text-sm font-bold text-slate-200">{t('Enter 6-digit OTP')}</label>
+                    <span className="text-[11px] font-semibold text-slate-500">{t('Secure SMS code')}</span>
                   </div>
                   <div className="flex justify-center overflow-x-auto py-2">
                     <CodeSlots
@@ -605,14 +605,14 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
                     onClick={sendLiveOtp}
                     className="min-h-11 text-sm font-bold text-amber-700 disabled:text-slate-600"
                   >
-                    {resendSeconds > 0 ? `Resend OTP in ${resendSeconds}s` : 'Resend OTP'}
+                    {resendSeconds > 0 ? `${t('Resend OTP')} ${t('in')} ${resendSeconds}s` : t('Resend OTP')}
                   </button>
                   <span className="text-xs text-slate-500">Verification runs automatically when all 6 digits are entered.</span>
                 </div>
 
                 {loading && (
                   <div className="text-xs text-emerald-300 bg-emerald-950/30 border border-emerald-500/30 rounded-lg p-2" role="status">
-                    Verifying your OTP securely…
+                    {t('Verifying your OTP securely…')}
                   </div>
                 )}
                 {otpError && (
@@ -627,7 +627,7 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
               <>
                 <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
                   <Shield className="w-4 h-4 text-emerald-400" />
-                  <h4 className="font-bold text-sm text-white">Step 3: Farmer consent</h4>
+                  <h4 className="font-bold text-sm text-white">{t('Step 3: Farmer consent')}</h4>
                 </div>
                 <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4 text-xs text-slate-400 leading-relaxed">
                   NIRDHOOM may use your field, booking, machine-operation, evidence and residue-lot records to coordinate clearance and produce an auditable operational record. Identity-provider, bank and registry services are separate integrations and are not implied by this consent.
@@ -680,7 +680,7 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
                   className="ui-btn is-primary is-lg is-block mt-auto"
                 >
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Shield className="w-4 h-4" />}
-                  {DEMO_MODE ? 'Accept demo consent' : 'Record consent & continue'}
+                  {DEMO_MODE ? t('Accept demo consent') : t('Record consent & continue')}
                 </button>
                 {otpError && <div className="text-xs text-red-300 bg-red-950/30 border border-red-500/30 rounded-lg p-2">{otpError}</div>}
               </>
