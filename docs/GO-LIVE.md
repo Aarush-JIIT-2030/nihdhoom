@@ -38,7 +38,7 @@ Farmers type 10 digits; the site adds `+91`. So a test number is entered in Supa
 
 ## 3. Put the values in Vercel
 
-Vercel > your project > **Settings > Environment Variables**. For each row, tick **Production and Preview** (see section 6 for why).
+Vercel > your project > **Settings > Environment Variables**. Select the environment deliberately for each variable. **Do not copy production Supabase credentials into Preview or Development.** Until an isolated staging Supabase project exists, keep all `VITE_SUPABASE_*`, `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` values scoped to **Production only**. Preview deployments without a staging database are expected not to have live database access.
 
 | Name | Value | Needed for |
 | --- | --- | --- |
@@ -79,10 +79,10 @@ The grey "Technical detail" line under the banner is the exact message from Supa
 
 A redeploy does not delete variables. They live on the Vercel project and are picked up by every new build. What looks like "removed" is almost always one of these:
 
-1. **Wrong environment ticked.** Each variable is set for Production, Preview and/or Development. Pushing any branch other than `main` (for example `redesign/ui-overhaul`) creates a **Preview** deployment, and it only sees variables with Preview ticked. Fix: edit each variable and tick all three.
+1. **Environment isolation is intentional.** A branch other than `main` creates a **Preview** deployment. Give Preview its own staging Supabase URL/key and separate test Telegram bot/secrets before enabling those integrations there. Do not tick Production service-role keys or the production Telegram webhook secret for Preview just to make the preview work. If no staging project exists yet, database-dependent preview flows should remain unavailable.
 2. **A different Vercel project.** If the repo was imported twice, or a new project was created for a fork, each project has its own variables. The live address `nihdhoom-9qiu.vercel.app` belongs to one specific project; add the variables there.
 3. **Looking at a different deployment.** Open the deployment that shows the problem and check its label (Production or Preview) and its branch.
 4. **Sensitive variables.** If a variable is marked Sensitive, Vercel hides its value after saving. It is still set; the empty box is not a missing value.
 5. **A change without a rebuild.** Editing a variable never changes a deployment that already exists. Redeploy after every change.
 
-To confirm quickly: Settings > Environment Variables > search `VITE_SUPABASE_URL` and check that all three environments are ticked and that you are inside the same project as `nihdhoom-9qiu.vercel.app`.
+To confirm quickly: Settings > Environment Variables > search `VITE_SUPABASE_URL` and verify it targets the intended project and environment. Production should point at the production project; Preview should point at a separate staging project. Never enable a service-role key in any `VITE_*` variable.
