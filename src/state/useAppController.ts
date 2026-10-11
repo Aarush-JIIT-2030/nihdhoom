@@ -20,8 +20,18 @@ const tabToSlug = (tab: ActiveTab) => tab.toLowerCase().replace(/_/g, '-');
 
 function tabFromLocation(): ActiveTab {
   if (typeof window === 'undefined') return 'OVERVIEW';
-  const slug = window.location.hash.replace(/^#\/?/, '').toLowerCase();
-  return ROUTABLE_TABS.find((tab) => tabToSlug(tab) === slug) ?? 'OVERVIEW';
+  const hashSlug = window.location.hash.replace(/^#\/?/, '').toLowerCase();
+  const view = new URLSearchParams(window.location.search).get('view')?.toLowerCase() || '';
+  const aliases: Record<string, ActiveTab> = {
+    fields: 'FIELD_JOBS',
+    booking: 'FARMER_ONBOARDING',
+    tracking: 'OPS_CONSOLE',
+    verification: 'SATELLITE_AUDIT',
+    market: 'RESIDUE_POOLS',
+    status: 'OVERVIEW',
+  };
+  if (aliases[view]) return aliases[view];
+  return ROUTABLE_TABS.find((tab) => tabToSlug(tab) === hashSlug) ?? 'OVERVIEW';
 }
 
 export function useAppController() {
