@@ -19,6 +19,20 @@ async function getUser(accessToken: string) {
   return response.json();
 }
 
+async function resolveBotUsername() {
+  const configured = String(process.env.TELEGRAM_BOT_USERNAME || '').replace(/^@/, '').trim();
+  if (configured) return configured;
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  if (!token) return '';
+  try {
+    const response = await fetch(`https://api.telegram.org/bot${encodeURIComponent(token)}/getMe`, { signal: AbortSignal.timeout(5000) });
+    const payload = await response.json();
+    return payload?.ok && typeof payload?.result?.username === 'string' ? payload.result.username : '';
+  } catch {
+    return '';
+  }
+}
+
 async function supabaseRpc(tokenHash: string, profileId: string, expiresAt: string) {
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!serviceKey || !(process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL)) return false;
@@ -46,8 +60,8 @@ export default async function handler(req: any, res: any) {
   const user = await getUser(bearer(req));
   if (!user?.id) return res.status(401).json({ error: 'Authenticated NIRDHOOM farmer required' });
 
-  const botUsername = process.env.TELEGRAM_BOT_USERNAME;
-  if (!botUsername) return res.status(503).json({ error: 'Telegram bot username is not configured' });
+  const botUsername = await resolveBotUsername();
+  if (!botUsername) return res.status(503).json({ error: 'Unable to resolve the Telegram bot username. Check TELEGRAM_BOT_TOKEN and verify the bot with @BotFather.' });
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
     return res.status(503).json({ error: 'Server-side Supabase service role is not configured' });
   }
