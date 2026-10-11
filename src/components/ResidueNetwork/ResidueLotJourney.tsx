@@ -1,4 +1,5 @@
 import type { Field, Machine } from '../../types';
+import { useAppLanguage } from '../../i18n/LanguageContext';
 
 type Props = {
   field: Field;
@@ -44,6 +45,7 @@ function provenanceLabel(source?: string) {
 }
 
 export function ResidueLotJourney({ field, machine, demoMode }: Props) {
+  const { t } = useAppLanguage();
   const provenance = field.provenance;
   const steps: Step[] = [
     {
@@ -89,7 +91,7 @@ export function ResidueLotJourney({ field, machine, demoMode }: Props) {
       <div className="residue-journey-header">
         <div>
           <span className="residue-journey-kicker">FIELD → RESIDUE → MARKET</span>
-          <h2 id="residue-journey-title">Residue lot journey</h2>
+          <h2 id="residue-journey-title">{t('Residue lot journey')}</h2>
           <p>
             One traceable story from the field to a potential buyer. External observations support the record; they do not replace it.
           </p>

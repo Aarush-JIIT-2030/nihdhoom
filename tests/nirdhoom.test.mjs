@@ -251,7 +251,7 @@ test('product shell does not expose pitch-only surfaces', () => {
 test('product home routes users to real workflows instead of presentation flows', () => {
   const home = read('src/components/CommandCenter/CommandCenter.tsx');
   assert.match(home, /Book parali pickup/);
-  assert.match(home, /Track today's operation/);
+  assert.match(home, /Track today(?:'|’)s operation/);
   assert.match(home, /home-product-status/);
   assert.match(home, /Open residue market/);
   assert.doesNotMatch(home, /See the 2-minute demo/);
@@ -482,7 +482,7 @@ test('homepage uses curated agriculture photography and product motion', () => {
   assert.match(home, /from '..\/Animated\/Spotlight'/);
   assert.match(home, /home-product-status/);
   assert.match(home, /motion\/react/);
-  assert.match(home, /Track today's operation/);
+  assert.match(home, /Track today(?:'|’)s operation/);
   assert.match(css, /home-status-grid/);
   assert.match(css, /prefers-reduced-motion: reduce/);
 });
@@ -641,10 +641,11 @@ test('machine capability claims carry source metadata', () => {
 test('farmer navigation has bilingual core labels', () => {
   const labels = read('src/i18n/farmerLabels.ts');
   const header = read('src/components/Header.tsx');
+  const language = read('src/i18n/LanguageContext.tsx');
   assert.match(labels, /मेरे खेत/);
   assert.match(labels, /पराली उठवाएँ/);
   assert.match(labels, /मशीन ट्रैक करें/);
-  assert.match(header, /nirdhoom\.farmer\.language/);
+  assert.match(language, /nirdhoom\.farmer\.language/);
   assert.match(header, /हिंदी/);
 });
 
