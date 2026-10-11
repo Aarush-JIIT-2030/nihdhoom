@@ -8,61 +8,6 @@
   <img src="https://img.shields.io/badge/Product-Field--first-2f7d46" alt="Field-first product">
 </p>
 
-<p align="center"><b>Field → service → evidence → residue → buyer</b><br>Farmer-first coordination for crop-residue management.</p>
-
-> **Truth boundary:** NIRDHOOM is a prototype / integration foundation. Seeded records and indicative planning values are clearly separated from connected live records; they are never evidence of field-pilot outcomes or confirmed commercial commitments.
-
-## Why this repository is different
-
-NIRDHOOM treats residue management as an operational chain rather than a single dashboard: a field needs consent, a service request needs a verified quote, a machine assignment needs capacity, completed work needs evidence, and residue needs verification before it enters a buyer pathway.
-
-### Product map
-
-| Surface | Purpose | Loading strategy |
-|---|---|---|
-| **Home / Field view** | Farmer-first starting point and today's work | Initial bundle |
-| **My Fields / Booking** | Field records, consent and clearance request | Lazy + interaction prefetch |
-| **Track / Operator** | Map, machine workflow and evidence | Lazy; Leaflet deferred |
-| **Residue Market** | Verified lots, pooling and buyer demand | Lazy + prefetch |
-| **Impact / Research** | Evidence, methodology and context | Lazy + prefetch |
-| **Telegram Help** | Farmer communication, secure account linking and status updates | Lazy + interaction prefetch |
-| **Buyers / Demand** | Buyer requirements and residue pathways | Lazy + prefetch |
-
-### Performance principles
-
-- Heavy workspaces use React `lazy()` + `Suspense` instead of shipping every screen up front.
-- Leaflet is deferred until Tracking is opened; Three.js stays behind the 3D workspaces.
-- Primary navigation uses React transitions so the current screen remains responsive while the next workspace loads.
-- Frequently reached workspaces begin loading on pointer/focus intent, reducing perceived navigation latency.
-- Images use native lazy loading and asynchronous decoding outside the primary hero.
-- Mobile removes expensive backdrop blur and respects `prefers-reduced-motion`.
-- Production builds use Vite's optimized asset pipeline with CSS code splitting.
-
-## Repository map
-
-```text
-src/
-├── App.tsx                     # Product shell + workspace routing
-├── components/
-│   ├── CommandCenter/          # Farmer-first home
-│   ├── ClearanceBooking/       # Booking flow
-│   ├── FieldJobs/              # Fields + job lifecycle
-│   ├── OpsConsole/             # Map + dispatch
-│   ├── FieldOperator/          # Operator/PWA workflow
-│   ├── ResiduePooling/         # Verified residue + buyer pooling
-│   ├── ImpactResearch/         # Research and evidence
-│   ├── VerificationLayer/      # Verification evidence
-│   └── ThreeD/                 # Deferred 3D experiences
-├── lib/                        # Supabase + lightweight app utilities
-├── state/                      # Application state/controller
-└── styles/                     # Theme and hero styles
-api/                            # Server-side Vercel API routes
-supabase/migrations/            # Database/RLS/integrity changes
-services/dispatch-ortools/      # Python dispatch service foundation
-tests/                          # Repository regression tests
-docs/                           # Architecture, research and release notes
-```
-
 ---
 <p align="center">
   <a href="README.md"><b>English</b></a> ·
@@ -93,6 +38,7 @@ The dedicated NIRDHOOM Supabase project and deployed database state are document
 - [What the product is intended to do](#what-the-product-is-intended-to-do)
 - [Product release roadmap](docs/PRODUCT-RELEASE-ROADMAP.md)
 - [Current implementation](#current-implementation)
+- [Operations map](#operations-map)
 - [Workflow and architecture](#workflow-and-architecture)
 - [Research findings and product implications](#research-findings-and-product-implications)
 - [Technology stack](#technology-stack)
@@ -141,6 +87,39 @@ The product uses restrained agriculture photography, a warm field palette, compa
 - **Native browser primitives** for responsive images, focus states and reduced-motion support.
 
 The visual goal is deliberately practical: a calm agricultural operations product, not an AI landing-page template.
+
+## Operations map
+
+The Tracking workspace uses Leaflet and explicitly labelled data layers to help field teams inspect operational context. It is a planning and coordination view—not an authoritative cadastral map or proof of service completion.
+
+### Map controls
+
+| Control | What it does | Important caveat |
+|---|---|---|
+| **Find a field** | Search visible fields by Khasra reference, village, farmer, or record ID; select a result to focus the map | Search is limited to the fields available to the current session |
+| **GIS map layers** | Toggle field boundaries, machines, NASA FIRMS observations, residue lots, buyers, yards, weather planning, and routes | A layer is shown only when matching data and valid coordinates exist |
+| **Basemap** | Switch between street tiles, satellite imagery, and NASA GIBS imagery | External tile services require network access and remain subject to provider availability/terms |
+| **Field status legend** | Filter fields by lifecycle stage and see counts for each stage | Counts describe loaded records, not all farms in a district |
+| **Hotspot shortcuts** | Move the map to selected Punjab reference areas | These are navigation shortcuts, not proof of an active fire or NIRDHOOM coverage |
+| **Zoom / show all fields** | Zoom in/out or fit the currently visible field set | The map falls back to a regional Punjab view when no valid field coordinates are available |
+
+### Data and trust rules
+
+- **Live GPS** comes from persisted device-location records with timestamps. Missing or stale readings must be shown as unavailable; the UI must not animate machines along invented routes in live mode.
+- **Demo GPS** is labelled as simulated. Never use demo positions to make operational claims.
+- **NASA FIRMS detections** are remote-sensing observations. They are not proof that a particular farmer burned a field, and no detection is not proof that no burning occurred.
+- **Field boundaries** are operational geometry until a trusted cadastral/Khasra source and provenance are attached.
+- **Buyer and yard pins** appear only when explicit valid coordinates exist. A reference listing or demand target is not a contract.
+- **Weather and routes** are planning aids; operators must confirm field conditions and actual assignments before dispatch.
+- Popup text is escaped before rendering through Leaflet's HTML popup API. Keep this protection in place whenever adding database-sourced labels.
+
+### Map troubleshooting
+
+1. If tiles are blank after opening a lazy-loaded workspace or resizing a drawer, resize the viewport and reload the map; the component observes container-size changes and calls Leaflet's `invalidateSize`.
+2. If the basemap is blank but controls work, check connectivity, browser network errors, and the tile provider's availability.
+3. If the field finder is empty, confirm the session can read field records and that the current filters are not hiding them.
+4. If live machine markers are absent, check authenticated access to location records and the last device timestamp. Do not switch to demo positions to conceal a live-data failure.
+5. On a small screen, collapse the field/layer panels and use the status legend's scroll area so map controls do not cover the entire map.
 
 ## What the product is intended to do
 
