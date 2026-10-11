@@ -36,7 +36,7 @@ export function TelegramChannel() {
     return () => { active = false; };
   }, []);
 
-  const botUsername = BOT_USERNAME || serverBotUsername;
+  const botUsername = (serverBotUsername || BOT_USERNAME).replace(/^@/, '').trim();
   const botUrl = useMemo(() => botUsername ? `https://t.me/${botUsername}` : undefined, [botUsername]);
 
   const copy = {
