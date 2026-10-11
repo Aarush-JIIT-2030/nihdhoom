@@ -171,47 +171,51 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
     if (!supabase) { setFieldError('Live database is not configured.'); return; }
     if (!khasra.trim()) { setFieldError('Enter the Khasra or survey number from your land record.'); return; }
     if (!village.trim()) { setFieldError('Enter the village.'); return; }
-    if (!Number.isFinite(acres) || acres <= 0 || acres > 500) { setFieldError('Enter the area in acres, between 0.01 and 500.'); return; }
+    if (!Number.isFinite(acres) || acres < 0.01 || acres > 500) { setFieldError('Enter the area in acres, between 0.01 and 500.'); return; }
     if (!lat || !lng || !Number.isFinite(latitude) || !Number.isFinite(longitude) || latitude < 6 || latitude > 38 || longitude < 68 || longitude > 98) {
       setFieldError('Add the field location with the button, or type a valid latitude and longitude.');
       return;
     }
     setFieldBusy(true);
-    const { data: userData } = await supabase.auth.getUser();
-    if (!userData.user) {
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) {
+        setFieldError('Your session expired. Please verify your phone again.');
+        return;
+      }
+      const { data, error } = await supabase
+        .from('fields')
+        .insert({
+          owner_id: userData.user.id,
+          khasra_no: khasra.trim(),
+          village: village.trim(),
+          block: block || null,
+          district,
+          crop: 'Paddy',
+          variety,
+          acreage: Math.round(acres * 100) / 100,
+          expected_harvest_date: harvestDate || null,
+          center_lat: latitude,
+          center_lng: longitude,
+          status: 'REGISTERED',
+        })
+        .select('id,khasra_no,village,acreage,status')
+        .single();
+      if (error || !data) {
+        setFieldError(error?.message || 'The field could not be saved. Please try again.');
+        return;
+      }
+      const saved = data as OwnedField;
+      setSavedField(saved);
+      setMyFields((list) => [saved, ...list]);
+      setKhasra(''); setAcreage(''); setHarvestDate(''); setLat(''); setLng('');
+      onFieldsChanged?.();
+      setCurrentStep('DONE');
+    } catch {
+      setFieldError('Field registration could not reach the server. Check your connection and try again.');
+    } finally {
       setFieldBusy(false);
-      setFieldError('Your session expired. Please verify your phone again.');
-      return;
     }
-    const { data, error } = await supabase
-      .from('fields')
-      .insert({
-        owner_id: userData.user.id,
-        khasra_no: khasra.trim(),
-        village: village.trim(),
-        block: block || null,
-        district,
-        crop: 'Paddy',
-        variety,
-        acreage: Math.round(acres * 100) / 100,
-        expected_harvest_date: harvestDate || null,
-        center_lat: latitude,
-        center_lng: longitude,
-        status: 'REGISTERED',
-      })
-      .select('id,khasra_no,village,acreage,status')
-      .single();
-    setFieldBusy(false);
-    if (error || !data) {
-      setFieldError(error?.message || 'The field could not be saved. Please try again.');
-      return;
-    }
-    const saved = data as OwnedField;
-    setSavedField(saved);
-    setMyFields((list) => [saved, ...list]);
-    setKhasra(''); setAcreage(''); setHarvestDate(''); setLat(''); setLng('');
-    onFieldsChanged?.();
-    setCurrentStep('DONE');
   };
 
   const withdrawConsent = async () => {
@@ -220,36 +224,26 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
     if (!confirmed) return;
     setWithdrawBusy(true);
     setWithdrawMessage('');
-    const { data } = await supabase.auth.getUser();
-    if (!data.user) {
+    try {
+      const { data } = await supabase.auth.getUser();
+      if (!data.user) {
+        setWithdrawMessage('Your session has expired. Sign in again to manage consent.');
+        return;
+      }
+      // Use the database transaction so consent history and profile status cannot diverge.
+      const { error } = await supabase.rpc('revoke_farmer_network_consent');
+      if (error) {
+        setWithdrawMessage(error.message || 'Consent could not be withdrawn.');
+        return;
+      }
+      setActiveConsent(false);
+      setConsentAccepted(false);
+      setWithdrawMessage('Consent withdrawn. New booking actions will require fresh consent.');
+    } catch {
+      setWithdrawMessage('Consent could not be updated because the server was unreachable. Check your connection and try again.');
+    } finally {
       setWithdrawBusy(false);
-      setWithdrawMessage('Your session has expired. Sign in again to manage consent.');
-      return;
     }
-    const now = new Date().toISOString();
-    const { error: consentError } = await supabase
-      .from('consents')
-      .update({ revoked_at: now })
-      .eq('profile_id', data.user.id)
-      .eq('consent_type', 'farmer_network')
-      .is('revoked_at', null);
-    if (consentError) {
-      setWithdrawBusy(false);
-      setWithdrawMessage(consentError.message || 'Consent could not be withdrawn.');
-      return;
-    }
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .update({ consent_status: 'REVOKED' })
-      .eq('id', data.user.id);
-    setWithdrawBusy(false);
-    if (profileError) {
-      setWithdrawMessage(profileError.message || 'Consent was revoked, but profile status could not be updated.');
-      return;
-    }
-    setActiveConsent(false);
-    setConsentAccepted(false);
-    setWithdrawMessage('Consent withdrawn. New booking actions will require fresh consent.');
   };
 
   useEffect(() => {
