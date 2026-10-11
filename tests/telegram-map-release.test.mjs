@@ -75,7 +75,9 @@ test('farmer onboarding wires OTP, consent and field creation', () => {
   has(onboarding, 'signInWithOtp');
   has(onboarding, 'verifyOtp');
   has(onboarding, 'CONSENT');
-  has(onboarding, 'consent_status');
+  has(onboarding, "rpc('record_farmer_network_consent')");
+  assert.doesNotMatch(onboarding, /from\('consents'\)\.insert/);
+  assert.doesNotMatch(onboarding, /from\('profiles'\)\.update\(\{\s*consent_status/);
   has(onboarding, "from('fields')");
   has(onboarding, '.insert({');
   has(codeSlots, 'autoComplete="one-time-code"');
