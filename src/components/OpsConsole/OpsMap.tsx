@@ -151,6 +151,25 @@ export const OpsMap: React.FC<OpsMapProps> = ({
     };
   }, []);
 
+  // Leaflet measures its container at initialization. Lazy-loaded panels, mobile
+  // drawers and responsive layout changes can otherwise leave grey/blank map tiles.
+  useEffect(() => {
+    const container = mapContainerRef.current;
+    const map = mapInstanceRef.current;
+    if (!container || !map || typeof ResizeObserver === 'undefined') return;
+    let frame = 0;
+    const observer = new ResizeObserver(() => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => map.invalidateSize({ pan: false, debounceMoveend: true }));
+    });
+    observer.observe(container);
+    frame = requestAnimationFrame(() => map.invalidateSize({ pan: false, debounceMoveend: true }));
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(frame);
+    };
+  }, []);
+
   // In live mode, machine markers come only from persisted device GPS records.
   // Never animate a vehicle toward a field: that would present fabricated positions as live telemetry.
   useEffect(() => {
