@@ -93,46 +93,54 @@ export function ResiduePooling({ fields, demoMode }: Props) {
   }, [demoMode, fields, lots, offers]);
 
   async function load() {
-    if (demoMode || !supabase) return;
-    const db = supabase as any;
-    const { data: userData } = await supabase.auth.getUser();
-    const profileId = userData.user?.id;
-    let role = '';
-    if (profileId) {
-      const { data: profile } = await db.from('profiles').select('role').eq('id', profileId).maybeSingle();
-      role = String(profile?.role || '');
+    if (demoMode) return;
+    if (!supabase) {
+      setNotice('Live Supabase is not configured. Marketplace records are unavailable and no live action can be completed.');
+      return;
     }
-    setCurrentRole(role);
-    if (role === 'buyer' && profileId) {
-      const { data: buyerProfile } = await db.from('buyers').select('name').eq('profile_id', profileId).eq('active', true).maybeSingle();
-      setCurrentBuyerName(String(buyerProfile?.name || ''));
-    } else setCurrentBuyerName('');
-    if (['buyer', 'dispatcher', 'admin'].includes(role)) {
-      const { data: matched, error: matchError } = await db.rpc('matchable_residue_lots');
-      if (!matchError) setMatchableLots(matched || []);
-      else setNotice('Buyer matching is not available until the marketplace workflow migration is installed.');
-    } else {
-      setMatchableLots([]);
-    }
-    if (['dispatcher', 'admin'].includes(role)) {
-      const { data: machines } = await db.from('machines').select('id,name').order('name');
-      setDispatchMachines(machines || []);
-    } else setDispatchMachines([]);
+    try {
+      const db = supabase as any;
+      const { data: userData } = await supabase.auth.getUser();
+      const profileId = userData.user?.id;
+      let role = '';
+      if (profileId) {
+        const { data: profile } = await db.from('profiles').select('role').eq('id', profileId).maybeSingle();
+        role = String(profile?.role || '');
+      }
+      setCurrentRole(role);
+      if (role === 'buyer' && profileId) {
+        const { data: buyerProfile } = await db.from('buyers').select('name').eq('profile_id', profileId).eq('active', true).maybeSingle();
+        setCurrentBuyerName(String(buyerProfile?.name || ''));
+      } else setCurrentBuyerName('');
+      if (['buyer', 'dispatcher', 'admin'].includes(role)) {
+        const { data: matched, error: matchError } = await db.rpc('matchable_residue_lots');
+        if (!matchError) setMatchableLots(matched || []);
+        else setNotice('Buyer matching is not available until the marketplace workflow migration is installed.');
+      } else {
+        setMatchableLots([]);
+      }
+      if (['dispatcher', 'admin'].includes(role)) {
+        const { data: machines } = await db.from('machines').select('id,name').order('name');
+        setDispatchMachines(machines || []);
+      } else setDispatchMachines([]);
 
-    const [p, d, l, o, j] = await Promise.all([
-      db.from('residue_pools').select('id,name,target_tonnes,current_tonnes,status,buyer_demand_id').order('created_at', { ascending: false }),
-      db.from('buyer_demands').select('id,buyer_name,target_tonnes,pickup_deadline,radius_km,status').eq('status','OPEN').order('created_at', { ascending: false }),
-      db.from('residue_lots').select('id,field_id,quantity_tonnes,verified_quantity_tonnes,moisture_pct,quality_grade,residue_type,ready_from,pickup_deadline,status,assigned_buyer_id').in('status',['AVAILABLE','VERIFIED','VERIFIED_NON_BURN']).order('created_at', { ascending: false }),
-      db.from('buyer_offers').select('id,lot_id,price_per_tonne,quantity_tonnes,status').eq('status','OPEN').order('price_per_tonne', { ascending: false }),
-      db.from('residue_transport_jobs').select('id,residue_lot_id,origin_type,destination_type,assigned_machine_id,status,planned_start,planned_arrival,actual_departure,actual_arrival,updated_at').order('created_at', { ascending: false }).limit(100),
-    ]);
-    if (!p.error) setPools(p.data || []);
-    if (!d.error) setDemands(d.data || []);
-    if (!l.error) setLots(l.data || []);
-    if (!o.error) setOffers(o.data || []);
-    if (!j.error) setTransportJobs(j.data || []);
-    const failed = [p, d, l, o, j].some((result) => Boolean(result.error));
-    if (failed) setNotice('Some live marketplace records could not be loaded. Refresh or check database permissions before acting on this information.');
+      const [p, d, l, o, j] = await Promise.all([
+        db.from('residue_pools').select('id,name,target_tonnes,current_tonnes,status,buyer_demand_id').order('created_at', { ascending: false }),
+        db.from('buyer_demands').select('id,buyer_name,target_tonnes,pickup_deadline,radius_km,status').eq('status','OPEN').order('created_at', { ascending: false }),
+        db.from('residue_lots').select('id,field_id,quantity_tonnes,verified_quantity_tonnes,moisture_pct,quality_grade,residue_type,ready_from,pickup_deadline,status,assigned_buyer_id').in('status',['AVAILABLE','VERIFIED','VERIFIED_NON_BURN']).order('created_at', { ascending: false }),
+        db.from('buyer_offers').select('id,lot_id,price_per_tonne,quantity_tonnes,status').eq('status','OPEN').order('price_per_tonne', { ascending: false }),
+        db.from('residue_transport_jobs').select('id,residue_lot_id,origin_type,destination_type,assigned_machine_id,status,planned_start,planned_arrival,actual_departure,actual_arrival,updated_at').order('created_at', { ascending: false }).limit(100),
+      ]);
+      if (!p.error) setPools(p.data || []);
+      if (!d.error) setDemands(d.data || []);
+      if (!l.error) setLots(l.data || []);
+      if (!o.error) setOffers(o.data || []);
+      if (!j.error) setTransportJobs(j.data || []);
+      const failed = [p, d, l, o, j].some((result) => Boolean(result.error));
+      if (failed) setNotice('Some live marketplace records could not be loaded. Refresh or check database permissions before acting on this information.');
+    } catch {
+      setNotice('Live marketplace records could not be loaded because the server was unreachable. Refresh and try again.');
+    }
   }
 
   useEffect(() => { void load(); }, [demoMode]);
@@ -144,7 +152,8 @@ export function ResiduePooling({ fields, demoMode }: Props) {
   }
 
   async function createPoolFromDemand(demand: Demand) {
-    if (demoMode || !supabase) { setNotice('Demo mode: buyer-demand pool creation is simulated.'); return; }
+    if (demoMode) { setNotice('Demo mode: buyer-demand pool creation is simulated and does not create a live pool.'); return; }
+    if (!supabase) { setNotice('Live Supabase is not configured. No buyer-demand pool was created.'); return; }
     const { data, error } = await (supabase as any).rpc('create_residue_pool', {
       p_name: `${demand.buyer_name} · ${demand.target_tonnes}t procurement pool`,
       p_target_tonnes: demand.target_tonnes,
@@ -156,7 +165,9 @@ export function ResiduePooling({ fields, demoMode }: Props) {
   }
 
   async function createBuyerDemand() {
-    if (!supabase || currentRole !== 'buyer') return;
+    if (demoMode) { setNotice('Demo mode: buyer demand is not published to the live marketplace.'); return; }
+    if (!supabase) { setNotice('Live Supabase is not configured. Buyer demand was not published.'); return; }
+    if (currentRole !== 'buyer') { setNotice('Only a signed-in buyer account can publish buyer demand.'); return; }
     const targetTonnes = Number(demandDraft.targetTonnes);
     const radiusKm = Number(demandDraft.radiusKm);
     const maxMoisturePct = Number(demandDraft.maxMoisturePct);
@@ -183,7 +194,8 @@ export function ResiduePooling({ fields, demoMode }: Props) {
   }
 
   async function createBuyerOffer(lot: MatchableLot) {
-    if (!supabase) return;
+    if (demoMode) { setNotice('Demo mode: buyer offers are not sent to the live marketplace.'); return; }
+    if (!supabase) { setNotice('Live Supabase is not configured. No buyer offer was created.'); return; }
     const draft = offerDrafts[lot.lot_id] || { price: '', quantity: String(lot.available_tonnes) };
     const price = Number(draft.price);
     const quantity = Number(draft.quantity);
@@ -200,14 +212,16 @@ export function ResiduePooling({ fields, demoMode }: Props) {
   }
 
   async function acceptOffer(offerId: string) {
-    if (!supabase) return;
+    if (demoMode) { setNotice('Demo mode: offers cannot be accepted in the live marketplace.'); return; }
+    if (!supabase) { setNotice('Live Supabase is not configured. No offer was accepted.'); return; }
     const { error } = await (supabase as any).rpc('accept_buyer_offer', { p_offer_id: offerId });
     setNotice(error ? error.message : 'Offer accepted. A field-to-buyer transport job has been created.');
     if (!error) await load();
   }
 
   async function transitionTransport(job: TransportJob, nextStatus: string, machineId?: string) {
-    if (!supabase) return;
+    if (demoMode) { setNotice('Demo mode: transport status is simulated and was not changed on the server.'); return; }
+    if (!supabase) { setNotice('Live Supabase is not configured. Transport status was not changed.'); return; }
     const { error } = await (supabase as any).rpc('transition_residue_transport_job', {
       p_job_id: job.id, p_next_status: nextStatus, p_machine_id: machineId || null,
     });
@@ -222,7 +236,7 @@ export function ResiduePooling({ fields, demoMode }: Props) {
       setNotice('Enter a positive quantity no greater than the pool quantity still needed.');
       return;
     }
-    if (demoMode || !supabase) {
+    if (demoMode) {
       setPools(prev => {
         const base = prev.length === 0 && pool?.id === 'demo-1' ? [pool] : prev;
         return base.map(p => {
@@ -234,6 +248,7 @@ export function ResiduePooling({ fields, demoMode }: Props) {
       setNotice(`Demo: committed ${tonnes.toFixed(1)} t to the pool. No sale or payment was executed.`);
       return;
     }
+    if (!supabase) { setNotice('Live Supabase is not configured. No residue was added to the pool.'); return; }
     const { error } = await (supabase as any).rpc('join_residue_pool', { p_pool_id: poolId, p_quantity_tonnes: tonnes });
     setNotice(error ? error.message : 'Residue committed to the pool.');
     if (!error) await load();
