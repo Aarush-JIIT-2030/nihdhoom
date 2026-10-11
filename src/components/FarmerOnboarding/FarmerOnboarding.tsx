@@ -24,7 +24,7 @@ import {
 type KYCStep = 'PHONE' | 'OTP' | 'CONSENT' | 'AADHAAR' | 'FACE_SCAN' | 'BANK' | 'LAND_RECORDS' | 'DONE';
 
 const STEPS: { id: KYCStep; label: string; sublabel: string; icon: React.FC<{ className?: string }> }[] = [
-  { id: 'PHONE', label: t('Mobile Verification'), sublabel: t('Enter registered mobile'), icon: Phone },
+  { id: 'PHONE', label: 'Mobile Verification', sublabel: 'Enter registered mobile', icon: Phone },
   { id: 'OTP', label: 'OTP Confirm', sublabel: '6-digit SMS code', icon: Smartphone },
   { id: 'CONSENT', label: 'Farmer consent', sublabel: 'Operational data agreement', icon: Shield },
   { id: 'AADHAAR', label: 'Identity verification (demo)', sublabel: 'Demo only — no external identity API', icon: Fingerprint },
@@ -440,7 +440,7 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
             >
               {VISIBLE_STEPS.map((step) => (
                 <Step key={step.id}>
-                  <span className="sr-only">{step.label}: {step.sublabel}</span>
+                  <span className="sr-only">{t(step.label)}: {t(step.sublabel)}</span>
                 </Step>
               ))}
             </Stepper>
@@ -452,8 +452,8 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
                   <li key={step.id} className={state}>
                     <span className="kyc-step-icon">{index < stepIndex ? <CheckCircle2 className="h-4 w-4" /> : <StepIcon className="h-4 w-4" />}</span>
                     <span className="min-w-0">
-                      <strong>{step.label}</strong>
-                      <small>{step.sublabel}</small>
+                      <strong>{t(step.label)}</strong>
+                      <small>{t(step.sublabel)}</small>
                     </span>
                   </li>
                 );
