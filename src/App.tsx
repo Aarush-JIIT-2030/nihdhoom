@@ -33,6 +33,7 @@ import { Map, ShieldCheck, Zap, UserCheck, Leaf } from 'lucide-react';
 type WorkspaceHeaderProps = {
   activeTab: ActiveTab;
   demoMode: boolean;
+  sampleMode?: boolean;
   onNavigate: (tab: ActiveTab) => void;
 };
 
@@ -142,7 +143,7 @@ const WORKSPACE_META: Partial<Record<ActiveTab, {
   },
 };
 
-function WorkspaceHeader({ activeTab, demoMode, onNavigate }: WorkspaceHeaderProps) {
+function WorkspaceHeader({ activeTab, demoMode, sampleMode, onNavigate }: WorkspaceHeaderProps) {
   const meta = WORKSPACE_META[activeTab];
   if (!meta) return null;
   const accentClass = meta.accent === 'amber' ? 'is-amber' : meta.accent === 'sky' ? 'is-sky' : 'is-green';
@@ -162,7 +163,7 @@ function WorkspaceHeader({ activeTab, demoMode, onNavigate }: WorkspaceHeaderPro
         <div className="workspace-eyebrow">
           <span className="workspace-eyebrow-dot" />
           {meta.eyebrow}
-          <span className="workspace-mode">{demoMode ? 'Demo records' : 'Live records'}</span>
+          <span className="workspace-mode">{sampleMode ? 'Sample records' : demoMode ? 'Demo records' : 'Live records'}</span>
         </div>
         <h1 id="workspace-title">{meta.title}</h1>
         <p>{meta.description}</p>
@@ -217,6 +218,8 @@ export function App() {
     liveDataError,
     liveSignedOut,
     liveConfigured,
+    explicitDemo,
+    sampleMode,
     residueLots,
     buyers: liveBuyers,
     storageYards: liveStorageYards,
@@ -241,26 +244,32 @@ export function App() {
         demoMode={demoMode}
       />
 
-      {!demoMode && !liveConfigured && (
+      {!explicitDemo && !liveConfigured && (
         <div className="live-state-banner live-state-banner-error" role="alert">
           <strong>This deployment is not connected to a database.</strong>
           <span>Add VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY in Vercel for the environment that built this page, then redeploy.</span>
         </div>
       )}
-      {!demoMode && liveConfigured && loadingLiveData && <div className="live-state-banner live-state-banner-loading" role="status">Loading live operational records…</div>}
-      {!demoMode && liveConfigured && !loadingLiveData && liveSignedOut && (
+      {!explicitDemo && liveConfigured && loadingLiveData && <div className="live-state-banner live-state-banner-loading" role="status">Loading live operational records…</div>}
+      {!explicitDemo && sampleMode && !loadingLiveData && !liveDataError && (
         <div className="live-state-banner live-state-banner-info" role="status">
-          <strong>Sign in to see live fields.</strong>
-          <span>Field and machine records are private. Use your mobile number to create or open your NIRDHOOM account.</span>
-          <button type="button" onClick={() => navigate('FARMER_KYC')}>Sign in or create account</button>
+          <strong>You are looking at sample data.</strong>
+          <span>
+            {liveSignedOut
+              ? 'These balers, fires, fields and yards are fictional examples so every screen is filled in. Sign in with your mobile number to see your own records.'
+              : liveConfigured
+                ? 'No live records exist yet, so fictional example balers, fires, fields and yards are shown. Register a field to see your own.'
+                : 'These balers, fires, fields and yards are fictional examples so every screen is filled in.'}
+          </span>
+          {liveConfigured && <button type="button" onClick={() => navigate('FARMER_KYC')}>{liveSignedOut ? 'Sign in or create account' : 'Register a field'}</button>}
         </div>
       )}
-      {!demoMode && liveDataError && (() => {
+      {!explicitDemo && liveDataError && (() => {
         const problem = describeLiveError(liveDataError);
         return (
           <div className="live-state-banner live-state-banner-error" role="alert">
             <strong>Live data unavailable: {problem.summary}</strong>
-            <span>{problem.hint}</span>
+            <span>{problem.hint} Sample data is shown in the meantime.</span>
             <small>Technical detail: {liveDataError}</small>
           </div>
         );
@@ -269,7 +278,7 @@ export function App() {
       {/* Main Content Area */}
       <main id="main-content" className="field-main flex-1 relative z-10">
         <Suspense fallback={<WorkspaceLoading />}>
-        {activeTab !== 'OVERVIEW' && <WorkspaceHeader activeTab={activeTab} demoMode={demoMode} onNavigate={navigate} />}
+        {activeTab !== 'OVERVIEW' && <WorkspaceHeader activeTab={activeTab} demoMode={demoMode} sampleMode={sampleMode} onNavigate={navigate} />}
 
         {/* PRIMARY PRODUCT SURFACE: RESIDUE-FIRST COMMAND CENTER */}
         {activeTab === 'OVERVIEW' && (
@@ -357,7 +366,7 @@ export function App() {
                   </p>
                 </div>
                 <div className="section-bar-meta">
-                  <span className="pill pill-green">{demoMode ? 'Demo GPS feed' : 'Live operator telemetry'}</span>
+                  <span className="pill pill-green">{sampleMode ? 'Sample GPS feed' : demoMode ? 'Demo GPS feed' : 'Live operator telemetry'}</span>
                   <span className="pill">{fields.length} Farms • {machines.length} Balers</span>
                 </div>
               </div>
@@ -380,6 +389,7 @@ export function App() {
                   {selectedField && (
                     <FieldDetailDrawer
                       demoMode={demoMode}
+                      fireEvents={fireEvents}
                       field={selectedField}
                       onClose={() => setSelectedField(null)}
                       onTriggerUpiPayout={(f) => handleUpdateFieldStatus(f.id, 'CLEARED_PENDING_AUDIT')}
@@ -394,6 +404,7 @@ export function App() {
                     machines={machines}
                     onRouteSelected={(route) => setActiveRoutePolyline(route)}
                     onSelectField={handleSelectField}
+                    demoMode={demoMode}
                   />
                 </div>
               </div>
@@ -456,7 +467,7 @@ export function App() {
       {/* 1. Illustrative internal verification record modal */}
       {certificateField && (
         <CarbonCertificate
-          certificate={generateNonBurnCertificate(certificateField)}
+          certificate={generateNonBurnCertificate(certificateField, { illustrative: demoMode })}
           onClose={() => setCertificateField(null)}
         />
       )}

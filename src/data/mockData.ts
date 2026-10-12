@@ -1,4 +1,7 @@
 import { Field, Machine, Buyer, StorageYard, BurnEvent, Farmer, Payout, ResidueLot } from '../types';
+import {
+  EXTRA_BUYERS, EXTRA_YARDS, buildSampleFields, buildSampleFires, buildSampleLots, buildSampleMachines, redateCoreFields, sampleProvenance,
+} from './sampleNetwork';
 
 export const INITIAL_FARMERS: Farmer[] = [
   {
@@ -78,7 +81,7 @@ export const INITIAL_FARMERS: Farmer[] = [
   },
 ];
 
-export const INITIAL_FIELDS: Field[] = [
+const CORE_FIELDS: Field[] = [
   {
     id: 'FIELD-101',
     farmer_id: 'FARMER-001',
@@ -217,7 +220,21 @@ export const INITIAL_FIELDS: Field[] = [
   },
 ];
 
-export const INITIAL_MACHINES: Machine[] = [
+
+// The hand-authored core fields get relative dates and links to their jobs and lots;
+// the generated network (see sampleNetwork.ts) fills out the rest of Punjab.
+const CORE_LINKS: Record<string, Partial<Field>> = {
+  'FIELD-103': { job_id: 'JOB-DEMO-103' },
+  'FIELD-104': { job_id: 'JOB-DEMO-104', residue_lot_id: 'LOT-DEMO-104' },
+  'FIELD-105': { job_id: 'JOB-DEMO-105', residue_lot_id: 'LOT-DEMO-105' },
+};
+
+export const INITIAL_FIELDS: Field[] = [
+  ...redateCoreFields(CORE_FIELDS).map((field) => ({ ...field, ...(CORE_LINKS[field.id] || {}) })),
+  ...buildSampleFields(CORE_FIELDS.length),
+].map((field, index) => ({ ...field, provenance: field.provenance ?? sampleProvenance(field, index) }));
+
+const CORE_MACHINES: Machine[] = [
   {
     id: 'MACH-01',
     name: 'Baler Unit #14 (Claas Markant)',
@@ -290,37 +307,15 @@ export const INITIAL_MACHINES: Machine[] = [
   },
 ];
 
-export const INITIAL_RESIDUE_LOTS: ResidueLot[] = [
-  {
-    id: 'LOT-DEMO-101', field_id: 'FIELD-101', farmer_id: 'FARMER-001', crop: 'Paddy', residue_type: 'PADDY_STRAW',
-    estimated_quantity_tonnes: 7.4, quantity_tonnes: 7.2, verified_quantity_tonnes: 7.1, moisture_pct: 14.2,
-    quality_grade: 'A', quality_notes: 'Demo weighment record; not a live buyer transaction.', bale_type: 'ROUND',
-    harvest_date: '2026-10-14', ready_from: '2026-10-14T08:00:00+05:30', pickup_deadline: '2026-10-16T18:00:00+05:30',
-    machine_id: 'MACH-01', status: 'VERIFIED', geometry_provenance: { source: 'FIELD_RECORD', authority: 'DEMO' },
-    verification_source: 'Demo operator weighment', verified_at: '2026-10-14T14:30:00+05:30', assigned_buyer_id: null,
-    qr_code: 'DEMO-LOT-101', baled_at: '2026-10-14T13:45:00+05:30', created_at: '2026-10-14T13:45:00+05:30'
-  },
-  {
-    id: 'LOT-DEMO-103', field_id: 'FIELD-103', farmer_id: 'FARMER-003', crop: 'Paddy', residue_type: 'PADDY_STRAW',
-    estimated_quantity_tonnes: 5.2, quantity_tonnes: 5.0, verified_quantity_tonnes: 4.9, moisture_pct: 13.5,
-    quality_grade: 'A', quality_notes: 'Demo weighment record; no settlement implied.', bale_type: 'SQUARE',
-    harvest_date: '2026-10-11', ready_from: '2026-10-11T08:00:00+05:30', pickup_deadline: '2026-10-13T16:00:00+05:30',
-    machine_id: 'MACH-02', status: 'VERIFIED', geometry_provenance: { source: 'FIELD_RECORD', authority: 'DEMO' },
-    verification_source: 'Demo operator weighment', verified_at: '2026-10-11T17:00:00+05:30', assigned_buyer_id: null,
-    qr_code: 'DEMO-LOT-103', baled_at: '2026-10-11T16:10:00+05:30', created_at: '2026-10-11T16:10:00+05:30'
-  },
-  {
-    id: 'LOT-DEMO-104', field_id: 'FIELD-104', farmer_id: 'FARMER-004', crop: 'Paddy', residue_type: 'PADDY_STRAW',
-    estimated_quantity_tonnes: 8.8, quantity_tonnes: 8.4, verified_quantity_tonnes: null, moisture_pct: 14.0,
-    quality_grade: 'PENDING', quality_notes: 'Awaiting weighment in demo flow.', bale_type: 'ROUND',
-    harvest_date: '2026-10-12', ready_from: '2026-10-12T08:00:00+05:30', pickup_deadline: '2026-10-14T18:00:00+05:30',
-    machine_id: 'MACH-03', status: 'AVAILABLE', geometry_provenance: { source: 'FIELD_RECORD', authority: 'DEMO' },
-    verification_source: null, verified_at: null, assigned_buyer_id: null,
-    qr_code: 'DEMO-LOT-104', baled_at: null, created_at: '2026-10-12T12:00:00+05:30'
-  },
+export const INITIAL_MACHINES: Machine[] = [
+  ...CORE_MACHINES,
+  ...buildSampleMachines(INITIAL_FIELDS, CORE_MACHINES.length),
 ];
 
-export const INITIAL_STORAGE_YARDS: StorageYard[] = [
+// Sample weighment records tied to the cleared and verified fields above.
+export const INITIAL_RESIDUE_LOTS: ResidueLot[] = buildSampleLots(INITIAL_FIELDS);
+
+const CORE_YARDS: StorageYard[] = [
   {
     id: 'YARD-01',
     name: 'Dirba Central Parali Depository',
@@ -347,14 +342,16 @@ export const INITIAL_STORAGE_YARDS: StorageYard[] = [
   },
 ];
 
+export const INITIAL_STORAGE_YARDS: StorageYard[] = [...CORE_YARDS, ...EXTRA_YARDS];
+
 // Demo-only buyer coordinates are illustrative map references, not live facility geocoding.
-export const INITIAL_BUYERS: Buyer[] = [
+const CORE_BUYERS: Buyer[] = [
   {
     id: 'BUYER-01',
     name: 'Punjab Agro-Fungi Ltd (Mushroom Substrate)',
     type: 'MUSHROOM',
     location_name: 'Zirakpur / Lalru Agro Corridor',
-    location: { lat: 30.32, lng: 76.84 },
+    location: { lat: 30.48, lng: 76.81 },
     price_per_tonne: 3850,
     moisture_ceiling: 16.0,
     silica_tolerance: 'Low to Medium silica preferred',
@@ -367,7 +364,7 @@ export const INITIAL_BUYERS: Buyer[] = [
     name: 'Craste Eco-Packaging & Moulded Fibre',
     type: 'PACKAGING',
     location_name: 'Derabassi Industrial Area',
-    location: { lat: 30.58, lng: 76.84 },
+    location: { lat: 30.59, lng: 76.84 },
     price_per_tonne: 3200,
     moisture_ceiling: 14.5,
     silica_tolerance: 'Standard straw fiber',
@@ -406,7 +403,7 @@ export const INITIAL_BUYERS: Buyer[] = [
     name: 'Verbio CBG India Plant (Biogas Incumbent)',
     type: 'CBG',
     location_name: 'Lehragaga, Sangrur',
-    location: { lat: 30.70, lng: 75.80 },
+    location: { lat: 30.23, lng: 75.82 },
     price_per_tonne: 1850,
     moisture_ceiling: 20.0,
     silica_tolerance: 'High silica damages digester impellers',
@@ -416,97 +413,11 @@ export const INITIAL_BUYERS: Buyer[] = [
   },
 ];
 
-// Synthetic FIRMS-style demo points. These are not live NASA/FIRMS observations and must never be presented as such.
-export const MOCK_FIRMS_FIRE_EVENTS: BurnEvent[] = [
-  {
-    id: 'FIRMS-2026-081',
-    firms_point: { lat: 30.2450, lng: 75.8450 },
-    detected_at: '2026-10-13 14:22:10 UTC',
-    confidence: 96,
-    brightness_temp_kelvin: 442.8,
-    satellite: 'VIIRS NOAA-20',
-    matched_field_id: null, // Outside registered polygons
-    nearest_village: 'Mangwal (Unregistered)',
-    is_registered_customer: false,
-  },
-  {
-    id: 'FIRMS-2026-082',
-    firms_point: { lat: 30.2520, lng: 75.8320 },
-    detected_at: '2026-10-13 14:23:45 UTC',
-    confidence: 89,
-    brightness_temp_kelvin: 418.5,
-    satellite: 'VIIRS NOAA-20',
-    matched_field_id: null,
-    nearest_village: 'Ubhawal North (Unregistered)',
-    is_registered_customer: false,
-  },
-  {
-    id: 'FIRMS-2026-083',
-    firms_point: { lat: 30.1450, lng: 75.8350 },
-    detected_at: '2026-10-13 14:25:12 UTC',
-    confidence: 94,
-    brightness_temp_kelvin: 436.2,
-    satellite: 'VIIRS Suomi-NPP',
-    matched_field_id: null,
-    nearest_village: 'Sunam Border (Unregistered)',
-    is_registered_customer: false,
-  },
-  {
-    id: 'FIRMS-2026-084',
-    firms_point: { lat: 30.1180, lng: 75.7950 },
-    detected_at: '2026-10-13 14:25:50 UTC',
-    confidence: 98,
-    brightness_temp_kelvin: 461.0,
-    satellite: 'VIIRS Suomi-NPP',
-    matched_field_id: null,
-    nearest_village: 'Shahpur Kalan (Unregistered)',
-    is_registered_customer: false,
-  },
-  {
-    id: 'FIRMS-2026-085',
-    firms_point: { lat: 30.3420, lng: 75.8750 },
-    detected_at: '2026-10-13 14:27:18 UTC',
-    confidence: 92,
-    brightness_temp_kelvin: 429.4,
-    satellite: 'VIIRS NOAA-20',
-    matched_field_id: null,
-    nearest_village: 'Dhuri East Bypass (Unregistered)',
-    is_registered_customer: false,
-  },
-  {
-    id: 'FIRMS-2026-086',
-    firms_point: { lat: 30.2850, lng: 76.0150 },
-    detected_at: '2026-10-13 14:28:30 UTC',
-    confidence: 95,
-    brightness_temp_kelvin: 448.6,
-    satellite: 'VIIRS NOAA-20',
-    matched_field_id: null,
-    nearest_village: 'Bhawanigarh Canal (Unregistered)',
-    is_registered_customer: false,
-  },
-  {
-    id: 'FIRMS-2026-087',
-    firms_point: { lat: 30.2110, lng: 75.8050 },
-    detected_at: '2026-10-13 14:29:40 UTC',
-    confidence: 88,
-    brightness_temp_kelvin: 412.0,
-    satellite: 'VIIRS Suomi-NPP',
-    matched_field_id: null,
-    nearest_village: 'Ramnagar (Unregistered)',
-    is_registered_customer: false,
-  },
-  {
-    id: 'FIRMS-2026-088',
-    firms_point: { lat: 30.3310, lng: 75.8320 },
-    detected_at: '2026-10-13 14:31:02 UTC',
-    confidence: 97,
-    brightness_temp_kelvin: 455.2,
-    satellite: 'VIIRS NOAA-20',
-    matched_field_id: null,
-    nearest_village: 'Bhalwan Outskirts (Unregistered)',
-    is_registered_customer: false,
-  },
-];
+export const INITIAL_BUYERS: Buyer[] = [...CORE_BUYERS, ...EXTRA_BUYERS];
+
+// Synthetic FIRMS-style demo points, timed to the real satellite overpass pattern. These are not live
+// NASA/FIRMS observations and must never be presented as such.
+export const MOCK_FIRMS_FIRE_EVENTS: BurnEvent[] = buildSampleFires(INITIAL_FIELDS);
 
 export const INITIAL_PAYOUTS: Payout[] = [
   {

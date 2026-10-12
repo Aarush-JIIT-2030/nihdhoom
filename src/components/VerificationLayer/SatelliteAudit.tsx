@@ -30,7 +30,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
   fireEvents,
   onVerified,
 }) => {
-  const auditReport = executeFirmsAudit(fields, fireEvents);
+  const auditReport = executeFirmsAudit(fields, fireEvents, { illustrative: demoMode });
   const [selectedFieldForCert, setSelectedFieldForCert] = useState<Field | null>(null);
   const [reviewingFieldId, setReviewingFieldId] = useState<string | null>(null);
   const [reviewMessage, setReviewMessage] = useState('');
@@ -176,7 +176,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
             <span className="font-[family-name:var(--font-body)] text-[13px] font-semibold text-[var(--muted)]">t CO₂e</span>
           </div>
           <p className="ui-stat-note">
-            + {auditReport.pm25Prevented === 0 ? 'Not calculated' : `${auditReport.pm25Prevented} kg PM2.5 prevented`}
+            + {auditReport.pm25Prevented === 0 ? 'Not calculated' : `${auditReport.pm25Prevented} kg PM2.5 · ${auditReport.strawClearedTonnes} t straw cleared (sample factors)`}
           </p>
         </div>
 
@@ -250,6 +250,10 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
                         <CheckCircle2 className="w-3.5 h-3.5" />
                         <span>{auditReport.dataAvailability === 'NO_OBSERVATIONS' ? 'Not assessed' : `${auditReport.auditResults.find((result) => result.fieldId === field.id)?.firesInsideCount ?? 0} fire point(s)`}</span>
                       </div>
+                      {auditReport.dataAvailability !== 'NO_OBSERVATIONS' && (() => {
+                        const row = auditReport.auditResults.find((result) => result.fieldId === field.id);
+                        return <span className="block text-[12px] text-[var(--muted)]">{row?.firesWithin1km ?? 0} within 1 km · {row?.firesWithin5km ?? 0} within 5 km</span>;
+                      })()}
                     </td>
                     <td className="py-3 px-3">
                       <span className="font-semibold text-[var(--sky-ink)]">{demoMode ? 'Illustrative' : 'Not available'}</span>
@@ -330,7 +334,7 @@ export const SatelliteAudit: React.FC<SatelliteAuditProps> = ({
       {/* Record Modal */}
       {selectedFieldForCert && (
         <CarbonCertificate
-          certificate={generateNonBurnCertificate(selectedFieldForCert)}
+          certificate={generateNonBurnCertificate(selectedFieldForCert, { illustrative: demoMode })}
           onClose={() => setSelectedFieldForCert(null)}
         />
       )}

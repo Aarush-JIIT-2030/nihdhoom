@@ -4,6 +4,28 @@ import { Field, Machine, BurnEvent, StorageYard, Buyer, LatLng } from '../../typ
 import { supabase } from '../../lib/supabase';
 import { Layers, Flame, MapPin, PackageCheck, Route, CloudSun, Building2, ChevronDown, Minus, Plus, LocateFixed, ListFilter, Search, X } from 'lucide-react';
 import { FIELD_STAGES, STAGE_META, fieldRing, fieldStage, type FieldStage } from '../../lib/fieldStatus';
+import { buyerSymbol, fireSymbol, machineStatusLabel, machineSymbol, residueSymbol, timeAgo, yardSymbol } from '../../lib/mapSymbols';
+import { INITIAL_BUYERS, INITIAL_MACHINES, INITIAL_STORAGE_YARDS, MOCK_FIRMS_FIRE_EVENTS } from '../../data/mockData';
+import { SAMPLE_CLUSTERS } from '../../data/sampleNetwork';
+
+const escapeHtml = (value: unknown) => String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] as string));
+
+/** The field with the most neighbours within 35 km, plus those neighbours: the densest area to open on. */
+function densestGroup<T extends { lat: number; lng: number }>(points: T[]): T[] {
+  if (points.length <= 2) return points;
+  const km = (a: T, b: T) => {
+    const dLat = (a.lat - b.lat) * 111.32;
+    const dLng = (a.lng - b.lng) * 111.32 * Math.cos((a.lat * Math.PI) / 180);
+    return Math.hypot(dLat, dLng);
+  };
+  let best: T[] = points;
+  let bestCount = 0;
+  points.forEach((p) => {
+    const group = points.filter((q) => km(p, q) <= 35);
+    if (group.length > bestCount) { best = group; bestCount = group.length; }
+  });
+  return best;
+}
 
 // Popups pan clear of the floating map controls (GPS badge, layers, zoom, legend).
 L.Popup.mergeOptions({
@@ -29,10 +51,10 @@ interface OpsMapProps {
 
 export const OpsMap: React.FC<OpsMapProps> = ({
   fields,
-  machines,
-  fireEvents,
-  storageYards,
-  buyers,
+  machines: machinesProp,
+  fireEvents: fireEventsProp,
+  storageYards: storageYardsProp,
+  buyers: buyersProp,
   selectedField,
   onSelectField,
   activeRoutePolyline,
@@ -40,6 +62,21 @@ export const OpsMap: React.FC<OpsMapProps> = ({
   demoMode = false,
   defaultFieldListOpen = false,
 }) => {
+  // Layers with no records of their own are filled from the labelled sample network, so the map is never bare.
+  const fallback = !demoMode;
+  const sampleLayers = {
+    machines: fallback && machinesProp.length === 0,
+    fires: fallback && fireEventsProp.length === 0,
+    yards: fallback && storageYardsProp.length === 0,
+    buyers: fallback && buyersProp.length === 0,
+  };
+  const machines = sampleLayers.machines ? INITIAL_MACHINES : machinesProp;
+  const fireEvents = sampleLayers.fires ? MOCK_FIRMS_FIRE_EVENTS : fireEventsProp;
+  const storageYards = sampleLayers.yards ? INITIAL_STORAGE_YARDS : storageYardsProp;
+  const buyers = sampleLayers.buyers ? INITIAL_BUYERS : buyersProp;
+  const anySample = Object.values(sampleLayers).some(Boolean);
+  const sampleNote = (on: boolean) => (demoMode || on ? '<div class="map-pop-chip is-sample">SAMPLE RECORD · fictional</div>' : '');
+
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const layerGroupRef = useRef<L.LayerGroup | null>(null);
@@ -58,6 +95,14 @@ export const OpsMap: React.FC<OpsMapProps> = ({
   const [fieldQuery, setFieldQuery] = useState('');
   const [hiddenStages, setHiddenStages] = useState<Set<FieldStage>>(() => new Set());
   const fittedRef = useRef(false);
+
+  // Popups must pan clear of the field finder panel while it is open (they inherit this default).
+  useEffect(() => {
+    const width = mapContainerRef.current?.clientWidth ?? 0;
+    const proto = L.Popup.prototype.options as L.PopupOptions;
+    proto.autoPanPaddingTopLeft = L.point(fieldListOpen && width > 640 ? 310 : 24, 72);
+    return () => { proto.autoPanPaddingTopLeft = L.point(24, 72); };
+  }, [fieldListOpen]);
 
   const stageCounts = useMemo(() => {
     const counts = Object.fromEntries(FIELD_STAGES.map((stage) => [stage, 0])) as Record<FieldStage, number>;
@@ -140,6 +185,9 @@ export const OpsMap: React.FC<OpsMapProps> = ({
 
     setMapError(null);
     mapInstanceRef.current = map;
+    const syncZoomClass = () => map.getContainer().classList.toggle('is-far', map.getZoom() < 12);
+    map.on('zoomend', syncZoomClass);
+    syncZoomClass();
     layerGroupRef.current = L.layerGroup().addTo(map);
 
     return () => {
@@ -148,21 +196,24 @@ export const OpsMap: React.FC<OpsMapProps> = ({
     };
   }, []);
 
-  // Live fleet tracking animation: machines drift toward assigned fields every 5s
+  // Fleet movement: only machines that are actually en route travel (toward their own field);
+  // baling machines hold station with a few metres of GPS jitter; idle machines stay in their yard.
   useEffect(() => {
     const tick = () => {
       setAnimatedPositions((prev) => {
         const next = { ...prev };
-        machines.forEach((machine, idx) => {
-          const assignedField = fields[idx % fields.length];
-          if (!assignedField) return;
-          const target = assignedField.center;
-          const cur = prev[machine.id] || machine.current_location;
-          // Lerp 8% toward target to simulate GPS drift
-          next[machine.id] = {
-            lat: cur.lat + (target.lat - cur.lat) * 0.08,
-            lng: cur.lng + (target.lng - cur.lng) * 0.08,
-          };
+        machines.forEach((machine) => {
+          const base = machine.current_location;
+          const cur = prev[machine.id] || base;
+          const target = fields.find((f) => f.id === machine.assigned_field_ids?.[0])?.center;
+          if (machine.status === 'EN_ROUTE' && target) {
+            const remainingM = Math.hypot((target.lat - cur.lat) * 111_320, (target.lng - cur.lng) * 111_320 * Math.cos((cur.lat * Math.PI) / 180));
+            next[machine.id] = remainingM < 120 ? cur : { lat: cur.lat + (target.lat - cur.lat) * 0.06, lng: cur.lng + (target.lng - cur.lng) * 0.06 };
+          } else if (machine.status === 'BALING') {
+            next[machine.id] = { lat: base.lat + (Math.random() - 0.5) * 0.00045, lng: base.lng + (Math.random() - 0.5) * 0.00045 };
+          } else {
+            next[machine.id] = base;
+          }
         });
         return next;
       });
@@ -280,42 +331,39 @@ export const OpsMap: React.FC<OpsMapProps> = ({
       });
     }
 
-    // 2. Render Registered Machine Capacity
+    // 2. Machines: status-coloured tractor badges.
     if (showMachines) {
       machines.forEach((machine) => {
-        const iconHtml = `
-          <div class="map-machine">
-            <div class="map-machine-dot"><span>🚜</span></div>
-            <div class="map-machine-label">${machine.name.split(' ')[0]} #${machine.id.slice(-2)}</div>
-          </div>
-        `;
-
         const customIcon = L.divIcon({
-          html: iconHtml,
+          html: machineSymbol(machine),
           className: 'custom-baler-icon',
-          iconSize: [34, 34],
-          iconAnchor: [17, 17],
+          iconSize: [38, 38],
+          iconAnchor: [19, 19],
         });
 
         const pos = animatedPositions[machine.id] || machine.current_location;
         if (!Number.isFinite(Number(pos?.lat)) || !Number.isFinite(Number(pos?.lng))) return;
         const marker = L.marker([Number(pos.lat), Number(pos.lng)], {
           icon: customIcon,
+          zIndexOffset: machine.status === 'BALING' ? 600 : 400,
         });
+        const job = fields.find((f) => f.id === machine.assigned_field_ids?.[0]);
 
         marker.bindPopup(`
           <div class="map-pop">
-            <div class="map-pop-title">${machine.name}</div>
-            <div class="map-pop-sub">${machine.home_chc}</div>
+            <div class="map-pop-title">${escapeHtml(machine.name)}</div>
+            <div class="map-pop-sub">${escapeHtml(machine.home_chc)}</div>
             <div class="map-pop-rows">
-            <div><strong>Type:</strong> ${machine.type}</div>
-            <div><strong>Capacity:</strong> ${machine.capacity_acres_day} acres/day</div>
-            <div><strong>Tractor:</strong> ${machine.tractor_hp_required ? machine.tractor_hp_required + " HP" : "Not sourced"}</div>
-            <div><strong>Residue:</strong> ${(machine.residue_types || ["Not established"]).join(", ")}</div>
-            <div><strong>Operator:</strong> ${machine.operator_name} (${machine.operator_phone})</div>
+            <div><strong>Type:</strong> ${escapeHtml(machine.type)}</div>
+            <div><strong>Capacity:</strong> ${escapeHtml(machine.capacity_acres_day)} acres/day</div>
+            <div><strong>Fuel:</strong> ${escapeHtml(Math.round(machine.battery_or_fuel_pct || 0))}%</div>
+            <div><strong>Tractor:</strong> ${machine.tractor_hp_required ? escapeHtml(machine.tractor_hp_required) + ' HP' : 'Not sourced'}</div>
+            <div><strong>Operator:</strong> ${escapeHtml(machine.operator_name)} (${escapeHtml(machine.operator_phone)})</div>
+            ${job ? `<div><strong>Job:</strong> ${escapeHtml(job.khasra_no)} · ${escapeHtml(job.village)} · ${escapeHtml(job.acreage)} ac</div>` : ''}
             </div>
-            <div class="map-pop-note">Capability source: ${machine.capability_source || "Not established"}${machine.capability_source_date ? " · " + machine.capability_source_date : ""}</div>
-            <div class="map-pop-status"><strong>Status:</strong> <span class="map-pop-chip is-green">${machine.status}</span></div>
+            <div class="map-pop-note">Capability source: ${escapeHtml(machine.capability_source || 'Not established')}${machine.capability_source_date ? ' · ' + escapeHtml(machine.capability_source_date) : ''}</div>
+            <div class="map-pop-status"><strong>Status:</strong> <span class="map-pop-chip is-status is-${String(machine.status).toLowerCase().replace('_', '-')}">${escapeHtml(machineStatusLabel(machine.status))}</span></div>
+            ${sampleNote(sampleLayers.machines)}
           </div>
         `);
 
@@ -323,39 +371,36 @@ export const OpsMap: React.FC<OpsMapProps> = ({
       });
     }
 
-    // 3. Render NASA FIRMS Active Fire Anomalies (Red Pulsing Beacons)
+    // 3. Satellite thermal detections (supporting evidence only).
     if (showFires && highlightFirmsFire) {
       fireEvents.forEach((fire) => {
-        const fireHtml = `
-          <div class="map-fire">
-            <div class="map-fire-pulse"></div>
-            <div class="map-fire-dot"><span>🔥</span></div>
-          </div>
-        `;
-
+        if (!Number.isFinite(Number(fire.firms_point?.lat)) || !Number.isFinite(Number(fire.firms_point?.lng))) return;
+        const registered = Boolean(fire.matched_field_id);
         const fireIcon = L.divIcon({
-          html: fireHtml,
+          html: fireSymbol(fire.confidence >= 90, registered),
           className: 'custom-fire-icon',
           iconSize: [28, 28],
           iconAnchor: [14, 14],
         });
-
-        if (!Number.isFinite(Number(fire.firms_point?.lat)) || !Number.isFinite(Number(fire.firms_point?.lng))) return;
         const marker = L.marker([Number(fire.firms_point.lat), Number(fire.firms_point.lng)], {
           icon: fireIcon,
+          zIndexOffset: registered ? 800 : 200,
         });
+        const matched = registered ? fields.find((f) => f.id === fire.matched_field_id) : null;
+        const sampleFire = demoMode || sampleLayers.fires;
 
         marker.bindPopup(`
           <div class="map-pop">
-            <div class="map-pop-title is-ember">🔥 NASA FIRMS VIIRS Active Fire</div>
+            <div class="map-pop-title is-ember">${sampleFire ? 'Satellite thermal detection' : 'NASA FIRMS active fire'}</div>
             <div class="map-pop-rows">
-            <div>Location: ${fire.nearest_village}</div>
-            <div>Satellite: ${fire.satellite}</div>
-            <div>Confidence: ${fire.confidence}% | Temp: ${fire.brightness_temp_kelvin} K</div>
+            <div><strong>Near:</strong> ${escapeHtml(fire.nearest_village)}</div>
+            <div><strong>Detected:</strong> ${escapeHtml(fire.detected_at)}${timeAgo(fire.detected_at) ? ' · ' + timeAgo(fire.detected_at) : ''}</div>
+            <div><strong>Satellite:</strong> ${escapeHtml(fire.satellite)}</div>
+            <div><strong>Confidence:</strong> ${escapeHtml(fire.confidence)}% · <strong>Brightness:</strong> ${escapeHtml(fire.brightness_temp_kelvin)} K</div>
             </div>
-            <div class="map-pop-chip is-ember">
-              ⚠️ UNREGISTERED FIELD (NO NIRDHOOM CONTRACT)
-            </div>
+            <div class="map-pop-chip is-ember">${registered ? `Inside registered field ${escapeHtml(matched?.khasra_no || '')}: review required` : 'Outside registered fields (no NIRDHOOM contract)'}</div>
+            <div class="map-pop-note">A detection is supporting evidence, not proof of what burned.</div>
+            ${sampleFire ? '<div class="map-pop-chip is-sample">SAMPLE RECORD · fictional</div>' : ''}
           </div>
         `);
 
@@ -371,7 +416,7 @@ export const OpsMap: React.FC<OpsMapProps> = ({
           const pos = field.center;
           if (!Number.isFinite(Number(pos?.lat)) || !Number.isFinite(Number(pos?.lng))) return;
           const icon = L.divIcon({
-            html: '<div class="map-tile-icon is-green">🌾</div>',
+            html: residueSymbol(),
             className: 'residue-lot-icon',
             iconSize: [26, 26],
             iconAnchor: [13, 13],
@@ -388,13 +433,13 @@ export const OpsMap: React.FC<OpsMapProps> = ({
         const pos = buyer.location;
         if (!pos || !Number.isFinite(Number(pos.lat)) || !Number.isFinite(Number(pos.lng))) return;
         const icon = L.divIcon({
-          html: '<div class="map-tile-icon is-wheat">🏭</div>',
+          html: buyerSymbol(buyer.type),
           className: 'buyer-icon',
           iconSize: [27, 27],
           iconAnchor: [13.5, 13.5],
         });
         L.marker([Number(pos.lat), Number(pos.lng)], { icon })
-          .bindPopup(`<div class="map-pop"><div class="map-pop-title is-wheat">${buyer.name}</div><div class="map-pop-sub">${buyer.location_name}</div><div class="map-pop-rows"><div>Demand: ${buyer.demand_tonnes.toLocaleString('en-IN')} t</div><div>Price: ₹${buyer.price_per_tonne.toLocaleString('en-IN')}/t</div></div><div class="map-pop-note">Buyer coordinates are explicit demo/reference data when present.</div></div>`)
+          .bindPopup(`<div class="map-pop"><div class="map-pop-title is-wheat">${escapeHtml(buyer.name)}</div><div class="map-pop-sub">${escapeHtml(buyer.location_name)}</div><div class="map-pop-rows"><div><strong>Demand:</strong> ${buyer.demand_tonnes.toLocaleString('en-IN')} t</div><div><strong>Price:</strong> ₹${buyer.price_per_tonne.toLocaleString('en-IN')}/t</div><div><strong>Moisture limit:</strong> ${escapeHtml(buyer.moisture_ceiling)}%</div></div><div class="map-pop-note">Buyer coordinates are explicit demo/reference data when present.</div>${sampleNote(sampleLayers.buyers)}</div>`)
           .addTo(layerGroup);
       });
     }
@@ -414,15 +459,11 @@ export const OpsMap: React.FC<OpsMapProps> = ({
         .addTo(layerGroup);
     }
 
-// 4. Render Storage Yards & Buyers
+    // Storage yards: fill level and alert state in the popup.
     if (showYards) {
       storageYards.forEach((yard) => {
-        const yardHtml = `
-          <div class="map-tile-icon is-sky">🏭</div>
-        `;
-
         const yardIcon = L.divIcon({
-          html: yardHtml,
+          html: yardSymbol(yard.status || 'AVAILABLE'),
           className: 'yard-icon',
           iconSize: [26, 26],
           iconAnchor: [13, 13],
@@ -432,14 +473,18 @@ export const OpsMap: React.FC<OpsMapProps> = ({
         const marker = L.marker([Number(yard.location.lat), Number(yard.location.lng)], {
           icon: yardIcon,
         });
+        const fill = yard.capacity_tonnes > 0 ? Math.round((yard.current_load / yard.capacity_tonnes) * 100) : 0;
 
         marker.bindPopup(`
           <div class="map-pop">
-            <div class="map-pop-title is-sky">${yard.name}</div>
+            <div class="map-pop-title is-sky">${escapeHtml(yard.name)}</div>
             <div class="map-pop-rows">
-            <div>Capacity: ${yard.capacity_tonnes} tonnes</div>
-            <div>Current Stock: ${yard.current_load} tonnes</div>
+            <div><strong>Capacity:</strong> ${yard.capacity_tonnes.toLocaleString('en-IN')} tonnes</div>
+            <div><strong>Current stock:</strong> ${yard.current_load.toLocaleString('en-IN')} tonnes (${fill}% full)</div>
+            ${yard.incoming_tonnes ? `<div><strong>Incoming:</strong> ${yard.incoming_tonnes.toLocaleString('en-IN')} tonnes</div>` : ''}
             </div>
+            <div class="map-pop-status"><span class="map-pop-chip is-status is-${String(yard.status || 'AVAILABLE').toLowerCase()}">${escapeHtml(yard.status || 'AVAILABLE')}</span></div>
+            ${sampleNote(sampleLayers.yards)}
           </div>
         `);
 
@@ -486,8 +531,12 @@ export const OpsMap: React.FC<OpsMapProps> = ({
     const map = mapInstanceRef.current;
     if (!map || fittedRef.current || fields.length === 0) return;
     fittedRef.current = true;
-    const points = fields.flatMap((field) => fieldRing(field));
-    if (points.length) map.fitBounds(L.latLngBounds(points), { ...fitPadding(), maxZoom: 15 });
+    const centres = fields
+      .map((field) => ({ field, lat: Number(field.center?.lat), lng: Number(field.center?.lng) }))
+      .filter((entry) => Number.isFinite(entry.lat) && Number.isFinite(entry.lng));
+    // A statewide sample network would open at state zoom where nothing is readable, so open on the densest area.
+    const opening = densestGroup(centres).flatMap((entry) => fieldRing(entry.field));
+    if (opening.length) map.fitBounds(L.latLngBounds(opening), { ...fitPadding(), maxZoom: 14 });
   }, [fields]);
 
   // Zoom to a field when it is picked elsewhere (list, dispatch panel, field cards).
@@ -504,21 +553,16 @@ export const OpsMap: React.FC<OpsMapProps> = ({
 
   const layerToggles: { key: string; checked: boolean; set: (value: boolean) => void; label: React.ReactNode; swatch: React.ReactNode; tone?: string }[] = [
     { key: 'fields', checked: showFields, set: setShowFields, swatch: <span className="map-swatch is-green" />, label: <span>Field polygons ({fields.length})</span> },
-    { key: 'machines', checked: showMachines, set: setShowMachines, swatch: <span className="map-swatch is-dot" />, label: <span>Machines ({machines.length})</span> },
-    { key: 'fires', checked: showFires, set: setShowFires, swatch: <Flame className="h-3.5 w-3.5 text-[var(--ember)]" />, label: <span className="font-semibold text-[var(--ember-ink)]">FIRMS observations ({fireEvents.length})</span>, tone: 'is-ember' },
-    { key: 'yards', checked: showYards, set: setShowYards, swatch: <span className="map-swatch is-sky" />, label: <span>Yards & offtake ({storageYards.length})</span> },
-    { key: 'residue', checked: showResidue, set: setShowResidue, swatch: <PackageCheck className="h-3.5 w-3.5 text-[var(--brand)]" />, label: <span>Residue lots</span> },
-    { key: 'buyers', checked: showBuyers, set: setShowBuyers, swatch: <Building2 className="h-3.5 w-3.5 text-[var(--wheat-ink)]" />, label: <span>Buyer demand ({buyers.filter((buyer) => buyer.location).length} mapped)</span> },
+    { key: 'machines', checked: showMachines, set: setShowMachines, swatch: <span className="map-swatch is-dot" />, label: <span>Balers & machines ({machines.length}){sampleLayers.machines && <em className="map-layer-tag">sample</em>}</span> },
+    { key: 'fires', checked: showFires, set: setShowFires, swatch: <Flame className="h-3.5 w-3.5 text-[var(--ember)]" />, label: <span className="font-semibold text-[var(--ember-ink)]">FIRMS observations ({fireEvents.length}){sampleLayers.fires && <em className="map-layer-tag">sample</em>}</span>, tone: 'is-ember' },
+    { key: 'yards', checked: showYards, set: setShowYards, swatch: <span className="map-swatch is-sky" />, label: <span>Yards & offtake ({storageYards.length}){sampleLayers.yards && <em className="map-layer-tag">sample</em>}</span> },
+    { key: 'residue', checked: showResidue, set: setShowResidue, swatch: <PackageCheck className="h-3.5 w-3.5 text-[var(--brand)]" />, label: <span>Residue lots ({fields.filter((field) => Boolean(field.residue_lot_id) || field.status === 'VERIFIED_NON_BURN').length})</span> },
+    { key: 'buyers', checked: showBuyers, set: setShowBuyers, swatch: <Building2 className="h-3.5 w-3.5 text-[var(--wheat-ink)]" />, label: <span>Buyer demand ({buyers.filter((buyer) => buyer.location).length} mapped){sampleLayers.buyers && <em className="map-layer-tag">sample</em>}</span> },
     { key: 'weather', checked: showWeather, set: setShowWeather, swatch: <CloudSun className="h-3.5 w-3.5 text-[var(--sky)]" />, label: <span>Weather planning</span> },
     { key: 'route', checked: showRoute, set: setShowRoute, swatch: <Route className="h-3.5 w-3.5 text-[var(--wheat-ink)]" />, label: <span>Pickup route</span> },
   ];
   const activeLayerCount = layerToggles.filter((layer) => layer.checked).length;
-  const clusters: [string, [number, number], number][] = [
-    ['Sangrur', [30.2458, 75.8421], 12],
-    ['Sunam', [30.1311, 75.8016], 13],
-    ['Dhuri', [30.3683, 75.8672], 13],
-    ['Bhawanigarh', [30.2766, 76.0427], 13],
-  ];
+  const clusters = SAMPLE_CLUSTERS;
 
   return (
     <div className="ops-map-surface map-shell relative w-full h-[540px] lg:h-[620px] overflow-hidden">
@@ -538,9 +582,9 @@ export const OpsMap: React.FC<OpsMapProps> = ({
       {/* GPS Live Ticker Top-Left */}
       <div className="map-gps">
         <span className="map-gps-dot" />
-        <span className="map-gps-mode">{demoMode ? 'GPS DEMO' : 'GPS LIVE'}</span>
+        <span className="map-gps-mode">{demoMode || anySample ? 'SAMPLE' : 'GPS LIVE'}</span>
         <span className="map-gps-sep">·</span>
-        <span className="map-gps-count">{machines.length} balers {demoMode ? 'simulated' : 'tracked'}</span>
+        <span className="map-gps-count">{machines.length} balers {demoMode || sampleLayers.machines ? 'simulated' : 'tracked'}</span>
         <span className="map-gps-time">Updated {lastRefresh.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
       </div>
 

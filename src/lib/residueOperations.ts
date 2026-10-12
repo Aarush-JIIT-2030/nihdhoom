@@ -21,6 +21,8 @@ export function hoursUntil(value?: string | null, now = Date.now()): number | nu
 }
 
 export function harvestPressure(field: Field, now = Date.now()): ResidueOperationPriority {
+  // Straw already cleared is no longer a time risk, whatever its original deadline was.
+  if (field.status === 'CLEARED_PENDING_AUDIT' || field.status === 'VERIFIED_NON_BURN') return 'NORMAL';
   const deadlineHours = hoursUntil(field.clearance_deadline, now);
   const harvestHours = hoursUntil(field.expected_harvest_date, now);
   if (deadlineHours !== null && deadlineHours <= 24 && deadlineHours >= -48) return 'CRITICAL';
@@ -153,7 +155,8 @@ export function buildResidueSummary(fields: Field[], machines: Machine[], buyers
   const verified = lots.reduce((sum, lot) => sum + Number(lot.verified_quantity_tonnes || 0), 0);
   const demand = buyers.reduce((sum, buyer) => sum + Number(buyer.demand_tonnes || 0), 0);
   const exceptions = buildResidueExceptions(fields, machines, yards, lots, now);
-  const coverage = demand > 0 ? Math.min(100, Math.round((verified / demand) * 100)) : 0;
+  // Two decimals: network-wide demand is large, so a whole-number percentage would read as 0 for real progress.
+  const coverage = demand > 0 ? Math.min(100, Math.round((verified / demand) * 10000) / 100) : 0;
   return {
     ready_tonnes: Number(ready.toFixed(1)),
     verified_tonnes: Number(verified.toFixed(1)),

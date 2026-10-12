@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Field, Machine, LatLng } from '../../types';
 import { runVRPOptimizer, fromServerDispatchPlan, VRPDispatchResult } from '../../utils/vrpOptimizer';
 import { supabase } from '../../lib/supabase';
@@ -20,6 +20,8 @@ interface VRPDispatchPanelProps {
   machines: Machine[];
   onRouteSelected: (route: LatLng[]) => void;
   onSelectField: (field: Field) => void;
+  /** Sample or demo records: the plan runs locally and never calls the dispatch service. */
+  demoMode?: boolean;
 }
 
 export const VRPDispatchPanel: React.FC<VRPDispatchPanelProps> = ({
@@ -27,10 +29,15 @@ export const VRPDispatchPanel: React.FC<VRPDispatchPanelProps> = ({
   machines,
   onRouteSelected,
   onSelectField,
+  demoMode = false,
 }) => {
   const [optimizerResult, setOptimizerResult] = useState<VRPDispatchResult | null>(() =>
     runVRPOptimizer(fields, machines)
   );
+  // Sample records can change after mount (the sample network switches on once live data is found empty).
+  useEffect(() => {
+    if (demoMode) setOptimizerResult(runVRPOptimizer(fields, machines));
+  }, [demoMode, fields, machines]);
   const [isSolving, setIsSolving] = useState(false);
   const [dispatchError, setDispatchError] = useState('');
   const [selectedMachineId, setSelectedMachineId] = useState<string>(machines[0]?.id || '');
@@ -39,7 +46,7 @@ export const VRPDispatchPanel: React.FC<VRPDispatchPanelProps> = ({
     setIsSolving(true);
     setDispatchError('');
     try {
-      if (supabase && import.meta.env.VITE_NIRDHOOM_DEMO_MODE !== 'true') {
+      if (supabase && !demoMode && import.meta.env.VITE_NIRDHOOM_DEMO_MODE !== 'true') {
         const { data: sessionData } = await supabase.auth.getSession();
         const token = sessionData.session?.access_token;
         if (!token) throw new Error('Sign in with an authorized dispatcher account before running live dispatch.');
