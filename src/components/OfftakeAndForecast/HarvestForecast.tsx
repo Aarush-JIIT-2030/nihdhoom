@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { Field } from '../../types';
+import { useAppLanguage } from '../../i18n/LanguageContext';
 import { 
   Calendar, 
   Sparkles, 
@@ -68,9 +70,62 @@ const BLOCK_DATA: BlockForecast[] = [
   },
 ];
 
-export const HarvestForecast: React.FC = () => {
+interface HarvestForecastProps { fields: Field[]; demoMode: boolean; }
+
+export const HarvestForecast: React.FC<HarvestForecastProps> = ({ fields, demoMode }) => {
+  const { t } = useAppLanguage();
   const [selectedDayIndex, setSelectedDayIndex] = useState<number>(14); // Mid-October
   const [selectedBlock, setSelectedBlock] = useState<string>('Sangrur Central');
+
+  if (!demoMode) {
+    const datedFields = fields
+      .filter((field) => Boolean(field.expected_harvest_date))
+      .slice()
+      .sort((a, b) => a.expected_harvest_date.localeCompare(b.expected_harvest_date));
+    const totalAcres = fields.reduce((sum, field) => sum + Math.max(0, Number(field.acreage) || 0), 0);
+    return (
+      <section className="ui-stack" aria-labelledby="live-harvest-title">
+        <div className="ui-card">
+          <div className="flex items-start justify-between gap-3 flex-wrap">
+            <div>
+              <h3 id="live-harvest-title" className="text-xl font-bold text-[var(--ink)]">{t('Harvest readiness from registered fields')}</h3>
+              <p className="ui-card-sub mt-1">{t('This view summarizes dates and acreage stored on connected field records. It is not a crop-maturity forecast and does not imply an external harvest-data provider is connected.')}</p>
+            </div>
+            <span className="badge">{t('LIVE FIELD RECORDS')}</span>
+          </div>
+          <div className="grid grid-cols-2 gap-3 mt-4">
+            <div className="ui-stat"><div className="ui-stat-label">{t('Registered fields')}</div><div className="ui-stat-value">{fields.length}</div></div>
+            <div className="ui-stat"><div className="ui-stat-label">{t('Declared area')}</div><div className="ui-stat-value">{totalAcres.toLocaleString()} <span className="text-sm">ac</span></div></div>
+          </div>
+        </div>
+        {datedFields.length === 0 ? (
+          <div className="ui-card" role="status">
+            <h4 className="font-semibold text-[var(--ink)]">{t('No harvest dates recorded')}</h4>
+            <p className="ui-card-sub mt-1">{t('Add expected harvest dates to field records before using this view for scheduling. No sample block statistics or projected baler counts are shown in live mode.')}</p>
+          </div>
+        ) : (
+          <div className="ui-card">
+            <h4 className="font-bold text-[var(--ink)]">{t('Declared harvest dates')}</h4>
+            <div className="mt-3 divide-y divide-[var(--line)]">
+              {datedFields.map((field) => (
+                <div key={field.id} className="py-3 flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <div className="font-semibold text-[var(--ink)]">{field.khasra_no || field.id}</div>
+                    <div className="text-sm text-[var(--muted)]">{field.village}, {field.district}</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-semibold text-[var(--ink)]">{new Date(field.expected_harvest_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
+                    <div className="text-sm text-[var(--muted)]">{Number(field.acreage || 0).toLocaleString()} ac · {field.status.replace(/_/g, ' ')}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        <p className="text-xs text-[var(--muted)]">{t('Dates and acreage are declarations from field records, not independently verified crop maturity. Machine recommendations remain unavailable until validated availability and capacity data are connected.')}</p>
+      </section>
+    );
+  }
 
   const currentBlock = BLOCK_DATA.find((b) => b.name === selectedBlock) || BLOCK_DATA[0];
 
@@ -93,14 +148,14 @@ export const HarvestForecast: React.FC = () => {
           <div>
             <div className="flex items-center gap-2">
               <h3 className="font-[family-name:var(--font-display)] text-[24px] font-bold leading-tight text-[var(--ink)]">
-                Harvest pressure planning — illustrative
+                {t('Harvest pressure planning — illustrative')}
               </h3>
               <span className="badge badge-emerald text-xs">
-                Planning model • provider data required
+                {t('Planning model • provider data required')}
               </span>
             </div>
             <p className="ui-card-sub max-w-2xl !text-[14px]">
-              This workspace demonstrates how harvest timing could inform machine pre-positioning. The figures below are illustrative planning records unless a configured harvest-data provider supplies them.
+              {t('This workspace demonstrates how harvest timing could inform machine pre-positioning. The figures below are illustrative planning records unless a configured harvest-data provider supplies them.')}
             </p>
           </div>
         </div>
@@ -110,12 +165,12 @@ export const HarvestForecast: React.FC = () => {
       <div className="ui-card flex flex-col gap-4">
         <div className="flex items-center justify-between border-b border-emerald-900/10 pb-3">
           <div>
-            <span className="text-xs text-emerald-950/55 block">Harvest Horizon Slider:</span>
+            <span className="text-xs text-emerald-950/55 block">{t('Harvest Horizon Slider:')}</span>
             <div className="text-xl font-black text-emerald-950 font-semibold">{formattedDate}</div>
           </div>
 
           <div className="bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-900/10 text-xs">
-            <span className="text-emerald-950/55">Paddy Maturity Curve: </span>
+            <span className="text-emerald-950/55">{t('Paddy Maturity Curve:')} </span>
             <span className="font-bold text-emerald-800">
               {selectedDayIndex < 12 ? 'PR-126 Early Wave' : selectedDayIndex < 24 ? 'Peak Pusa-44 Influx' : 'Late Harvest Tail'}
             </span>
@@ -145,15 +200,15 @@ export const HarvestForecast: React.FC = () => {
             <Truck className="w-5 h-5 text-emerald-700 shrink-0 mt-0.5" />
             <div>
               <div className="font-bold text-emerald-950 text-sm">
-                Automated Fleet Pre-Positioning Advisory ({formattedDate})
+                {t('Automated Fleet Pre-Positioning Advisory')} ({formattedDate})
               </div>
               <p className="text-emerald-950/65 mt-0.5 leading-relaxed">
-                NDVI curves indicate <strong>{currentBlock.name}</strong> will see an influx of{' '}
+                {t('In this illustrative scenario,')} <strong>{currentBlock.name}</strong> is assigned a planning volume of{' '}
                 <strong className="text-emerald-800">
                   {Math.round(currentBlock.totalAcres * (selectedDayIndex < 15 ? 0.04 : 0.08))} acres/day
                 </strong>{' '}
-                over the next 72 hours. Recommended to pre-position{' '}
-                <strong className="text-emerald-800">{currentBlock.recommendedBalerCount} Balers</strong> from nearby CHCs to avoid delay penalties.
+                {t('over the next 72 hours')}. The model suggests reviewing capacity for up to{' '}
+                <strong className="text-emerald-800">{currentBlock.recommendedBalerCount} balers</strong>, but this is a static scenario—not a live NDVI signal, measured harvest forecast, or verified machine recommendation.
               </p>
             </div>
           </div>

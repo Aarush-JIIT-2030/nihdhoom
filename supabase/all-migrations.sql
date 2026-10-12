@@ -1,8 +1,8 @@
--- NIRDHOOM: all migrations in release order.
--- Paste into Supabase > SQL Editor and press Run ONCE on a fresh project.
--- If it stops with an error, note the "-- >>> file" line above it, fix the cause,
--- then run only the files from that one onward (see docs/GO-LIVE.md).
--- Generated 2026-10-10 from 29 files.
+-- NIRDHOOM: approved fresh-install migrations in explicit release order.
+-- This bundle is for a NEW project only. Do not paste into an existing production database.
+-- Production history uses legacy server-assigned migration versions; see docs/DATABASE-RELEASE-LEDGER.md.
+-- The buyer-offer/transport workflow proposal is intentionally excluded until its staging authorization matrix passes.
+-- Generated from 37 approved migrations; deterministic output from migration-order.txt.
 
 -- >>> 202609270001_nirdhoom_core.sql
 -- NIRDHOOM core schema. Run in Supabase SQL Editor or as a migration.
@@ -2255,6 +2255,15 @@ alter table public.residue_pool_members
   add constraint residue_pool_members_commitment_finite
   check (committed_tonnes > 0);
 
+-- >>> 202610070001_nirdhoom_private_realtime_live_operations.sql
+-- NIRDHOOM private Realtime authorization for live operational refreshes.
+drop policy if exists "nirdhoom live operations realtime read" on realtime.messages;
+create policy "nirdhoom live operations realtime read"
+on realtime.messages
+for select
+to authenticated
+using (realtime.topic() = 'nirdhoom-live-operations');
+
 -- >>> 202610070001_nirdhoom_consent_withdrawal.sql
 -- NIRDHOOM 2026-10-07 consent withdrawal boundary.
 -- Adds the missing self-service withdrawal path without changing prior migrations.
@@ -2299,15 +2308,6 @@ $$;
 
 revoke all on function public.revoke_farmer_network_consent() from public;
 grant execute on function public.revoke_farmer_network_consent() to authenticated;
-
--- >>> 202610070001_nirdhoom_private_realtime_live_operations.sql
--- NIRDHOOM private Realtime authorization for live operational refreshes.
-drop policy if exists "nirdhoom live operations realtime read" on realtime.messages;
-create policy "nirdhoom live operations realtime read"
-on realtime.messages
-for select
-to authenticated
-using (realtime.topic() = 'nirdhoom-live-operations');
 
 -- >>> 202610080001_nirdhoom_residue_lot_provenance.sql
 -- Provenance-aware residue lot extensions and chronological evidence events.
@@ -2721,3 +2721,859 @@ comment on table public.machine_capacity_windows is 'Dispatch capacity windows u
 comment on table public.residue_matches is 'Proposed or accepted residue-to-demand matches; proposal is not a transaction.';
 comment on table public.residue_transport_jobs is 'Physical movement of a residue lot from field/yard to yard/buyer.';
 comment on table public.residue_exceptions is 'Operational exception queue; resolution requires the responsible workflow actor.';
+
+-- >>> 20261010142704_nirdhoom_farmer_signup_profile_20261010.sql
+-- Farmer signup profile bootstrap.
+-- Keep this migration in source control: it is present in the live database's migration history
+-- and its trigger exists in the live schema, but it was missing from the repository migration folder
+-- and generated fresh-project bundle at the time of the 2026-10-11 audit.
+
+create or replace function public.handle_new_farmer_signup()
+returns trigger
+language plpgsql
+security definer
+set search_path to ''
+as $function$
+declare
+  preferred_lang text;
+begin
+  preferred_lang := case
+    when new.raw_user_meta_data ->> 'preferred_language' in ('en','hi','pa')
+      then new.raw_user_meta_data ->> 'preferred_language'
+    else 'hi'
+  end;
+
+  insert into public.profiles (
+    id,
+    full_name,
+    phone,
+    preferred_language,
+    village,
+    district,
+    role,
+    consent_status
+  )
+  values (
+    new.id,
+    nullif(trim(coalesce(new.raw_user_meta_data ->> 'full_name', new.raw_user_meta_data ->> 'name', '')), ''),
+    new.phone,
+    preferred_lang,
+    nullif(trim(coalesce(new.raw_user_meta_data ->> 'village', '')), ''),
+    nullif(trim(coalesce(new.raw_user_meta_data ->> 'district', '')), ''),
+    'farmer',
+    'PENDING'
+  )
+  on conflict (id) do nothing;
+
+  return new;
+end;
+$function$;
+
+drop trigger if exists on_auth_user_created_nirdhoom_farmer on auth.users;
+create trigger on_auth_user_created_nirdhoom_farmer
+after insert on auth.users
+for each row execute function public.handle_new_farmer_signup();
+
+-- This function is trigger-only; do not expose direct RPC execution to API roles.
+revoke all on function public.handle_new_farmer_signup() from public, anon, authenticated;
+
+comment on function public.handle_new_farmer_signup() is
+  'Creates a pending-consent farmer profile after Supabase Auth signup; trigger-only, not a client RPC.';
+
+-- >>> 202610110001_nirdhoom_security_definer_auth_guards.sql
+-- NIRDHOOM authorization hardening. Reject missing auth and NULL/missing roles in SECURITY DEFINER RPCs.
+-- Operational RPCs remain authenticated-only and retain their existing ownership/business checks.
+
+CREATE OR REPLACE FUNCTION public.accept_buyer_offer(p_offer_id uuid)
+ RETURNS buyer_offers
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare
+  o public.buyer_offers%rowtype;
+  role_name text;
+  claimed integer;
+begin
+  if auth.uid() is null then raise exception 'authentication required'; end if;
+  select role into role_name from public.profiles where id=auth.uid();
+  if coalesce(role_name, '') not in ('buyer','dispatcher','admin') then
+    raise exception 'Buyer/dispatcher role required';
+  end if;
+
+  select * into o from public.buyer_offers where id=p_offer_id and status='OPEN' for update;
+  if not found then raise exception 'Offer is no longer open'; end if;
+
+  if role_name='buyer' and not exists(
+    select 1 from public.buyers b
+    where b.id=o.buyer_id and b.profile_id=auth.uid() and b.active=true
+  ) then
+    raise exception 'Offer does not belong to the authenticated buyer';
+  end if;
+
+  update public.residue_lots
+  set assigned_buyer_id=o.buyer_id,status='ALLOCATED',updated_at=now()
+  where id=o.lot_id and status in ('AVAILABLE','OPEN');
+  get diagnostics claimed = row_count;
+  if claimed <> 1 then
+    raise exception 'Residue lot is no longer available';
+  end if;
+
+  update public.buyer_offers
+  set status='ACCEPTED'
+  where id=p_offer_id and status='OPEN'
+  returning * into o;
+  if not found then raise exception 'Offer changed during acceptance'; end if;
+  return o;
+end;
+$function$;
+
+CREATE OR REPLACE FUNCTION public.cancel_clearance_booking(p_booking_id uuid)
+ RETURNS bookings
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare b public.bookings%rowtype;
+begin
+  if auth.uid() is null then raise exception 'authentication required'; end if;
+  select * into b from public.bookings where id=p_booking_id for update;
+  if not found then raise exception 'Booking not found'; end if;
+  if not exists(select 1 from public.fields f where f.id=b.field_id and f.owner_id=auth.uid()) then raise exception 'Booking is not owned by the current farmer'; end if;
+  if b.status not in ('BOOKED','MACHINE_ASSIGNED') then raise exception 'Booking cannot be cancelled at this stage'; end if;
+  update public.bookings set status='CANCELLED',cancelled_at=now(),updated_at=now() where id=p_booking_id returning * into b;
+  update public.fields set status='CANCELLED',updated_at=now() where id=b.field_id;
+  return b;
+end;
+$function$;
+
+CREATE OR REPLACE FUNCTION public.create_residue_pool(p_name text, p_target_tonnes numeric, p_pickup_deadline date, p_buyer_demand_id uuid DEFAULT NULL::uuid)
+ RETURNS residue_pools
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare
+  actor uuid := (select auth.uid());
+  role_name text;
+  row_out public.residue_pools%rowtype;
+begin
+  if actor is null then raise exception 'authentication required'; end if;
+  if p_target_tonnes <= 0 then raise exception 'target quantity must be positive'; end if;
+
+  select role into role_name from public.profiles where id=actor;
+  if coalesce(role_name, '') not in ('buyer','dispatcher','admin') then
+    raise exception 'only buyers or operations roles can create pools';
+  end if;
+
+  if p_buyer_demand_id is not null and not exists (
+    select 1 from public.buyer_demands d
+    where d.id=p_buyer_demand_id
+      and d.status='OPEN'
+      and (
+        d.buyer_id=actor
+        or role_name in ('dispatcher','admin')
+      )
+  ) then
+    raise exception 'buyer demand is not available to this user';
+  end if;
+
+  insert into public.residue_pools(name,buyer_demand_id,target_tonnes,pickup_deadline,created_by)
+  values(p_name,p_buyer_demand_id,p_target_tonnes,p_pickup_deadline,actor)
+  returning * into row_out;
+
+  return row_out;
+end;
+$function$;
+
+CREATE OR REPLACE FUNCTION public.join_residue_pool(p_pool_id uuid, p_quantity_tonnes numeric)
+ RETURNS residue_pool_members
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare
+  lot_id uuid;
+  member_row public.residue_pool_members%rowtype;
+  remaining numeric;
+  lot_remaining numeric;
+  actor uuid := (select auth.uid());
+begin
+  if actor is null then raise exception 'authentication required'; end if;
+  if p_quantity_tonnes <= 0 then raise exception 'quantity must be positive'; end if;
+
+  select greatest(0, p.target_tonnes - p.current_tonnes)
+    into remaining
+  from public.residue_pools p
+  where p.id=p_pool_id and p.status='FILLING'
+  for update;
+
+  if remaining is null then raise exception 'pool is not accepting commitments'; end if;
+  if p_quantity_tonnes > remaining then raise exception 'commitment exceeds pool remaining capacity'; end if;
+
+  select l.id
+    into lot_id
+  from public.residue_lots l
+  join public.fields f on f.id=l.field_id
+  where f.owner_id=actor
+    and l.status in ('VERIFIED','VERIFIED_NON_BURN')
+    and greatest(
+      0,
+      l.quantity_tonnes - coalesce((
+        select sum(m.committed_tonnes)
+        from public.residue_pool_members m
+        where m.residue_lot_id=l.id and m.status='COMMITTED'
+      ),0)
+    ) >= p_quantity_tonnes
+  order by l.created_at asc
+  for update of l
+  limit 1;
+
+  if lot_id is null then raise exception 'no verified residue lot with sufficient uncommitted quantity'; end if;
+
+  insert into public.residue_pool_members(pool_id,residue_lot_id,farmer_id,committed_tonnes)
+  values(p_pool_id,lot_id,actor,p_quantity_tonnes)
+  returning * into member_row;
+
+  update public.residue_pools
+  set current_tonnes=current_tonnes+p_quantity_tonnes,
+      status=case when current_tonnes+p_quantity_tonnes >= target_tonnes then 'MATCHED' else status end,
+      updated_at=now()
+  where id=p_pool_id;
+
+  return member_row;
+end;
+$function$;
+
+CREATE OR REPLACE FUNCTION public.record_verification_review(p_field_id uuid, p_result text, p_confidence numeric, p_metadata jsonb DEFAULT '{}'::jsonb)
+ RETURNS verification_events
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare
+  v public.verification_events%rowtype;
+  role_name text;
+  completed_job uuid;
+  evidence_count integer;
+  lot_count integer;
+begin
+  if auth.uid() is null then raise exception 'authentication required'; end if;
+  select role into role_name from public.profiles where id=auth.uid();
+  if coalesce(role_name, '') not in ('verifier','dispatcher','admin') then
+    raise exception 'Verifier role required';
+  end if;
+  if p_result not in ('VERIFIED_NON_BURN','REVIEW_REQUIRED','REJECTED') then
+    raise exception 'Invalid verification result';
+  end if;
+  if p_confidence < 0 or p_confidence > 100 then
+    raise exception 'Confidence must be between 0 and 100';
+  end if;
+
+  select j.id into completed_job
+  from public.jobs j
+  join public.bookings b on b.id=j.booking_id
+  where b.field_id=p_field_id and j.status='COMPLETED'
+  order by j.actual_completed_at desc nulls last
+  limit 1;
+
+  select count(*) into evidence_count
+  from public.evidence_assets e
+  where e.field_id=p_field_id
+    and (e.booking_id is null or e.booking_id=(select booking_id from public.jobs where id=completed_job));
+
+  select count(*) into lot_count
+  from public.residue_lots l
+  where l.field_id=p_field_id
+    and (completed_job is null or l.job_id=completed_job or l.booking_id=(select booking_id from public.jobs where id=completed_job));
+
+  if p_result='VERIFIED_NON_BURN' and (completed_job is null or evidence_count < 1 or lot_count < 1) then
+    raise exception 'Verification requires completed job, evidence asset and residue lot';
+  end if;
+
+  insert into public.verification_events(field_id,method,result,confidence,metadata)
+  values(
+    p_field_id,
+    'field_evidence_plus_firms',
+    p_result,
+    p_confidence,
+    coalesce(p_metadata,'{}'::jsonb)
+      || jsonb_build_object(
+        'server_evidence_count', evidence_count,
+        'server_lot_count', lot_count,
+        'completed_job_id', completed_job
+      )
+  ) returning * into v;
+
+  if p_result='VERIFIED_NON_BURN' then
+    update public.fields set status='VERIFIED_NON_BURN',updated_at=now() where id=p_field_id;
+    update public.bookings b
+      set status='VERIFIED',updated_at=now()
+      where b.field_id=p_field_id and b.status='CLEARED_PENDING_AUDIT';
+  end if;
+  return v;
+end;
+$function$;
+
+CREATE OR REPLACE FUNCTION public.reserve_clearance_booking_v2(p_field_id uuid, p_requested_date date)
+ RETURNS bookings
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare
+  f public.fields%rowtype;
+  b public.bookings%rowtype;
+  v_days numeric;
+  v_urgency numeric;
+  v_day_factor numeric;
+  v_rate numeric;
+  v_amount numeric;
+  v_guaranteed date;
+  v_penalty numeric;
+  v_band text;
+begin
+  if auth.uid() is null then raise exception 'authentication required'; end if;
+  select * into f from public.fields where id=p_field_id for update;
+  if not found or f.owner_id <> auth.uid() then
+    raise exception 'Field is not owned by the current farmer';
+  end if;
+  if not exists (
+    select 1 from public.consents c
+    where c.profile_id=auth.uid()
+      and c.consent_type='farmer_network'
+      and c.revoked_at is null
+  ) then
+    raise exception 'Active farmer consent is required before booking';
+  end if;
+  if p_requested_date < current_date then
+    raise exception 'Requested date is in the past';
+  end if;
+  if f.acreage <= 0 or f.acreage > 500 then
+    raise exception 'Field acreage is outside the supported booking range';
+  end if;
+
+  v_days := coalesce(f.expected_harvest_date::date-current_date, 14);
+  v_urgency := case when v_days <= 3 then 1.28 when v_days <= 7 then 1.14 when v_days <= 14 then 1.04 else 0.94 end;
+  v_day_factor := case when extract(isodow from p_requested_date)=7 then 1.08 else 1 end;
+  v_rate := round(greatest(1000, least(3200, 1500*v_urgency*v_day_factor))/10)*10;
+  v_amount := round(v_rate*f.acreage, 2);
+  v_guaranteed := p_requested_date;
+  v_penalty := least(v_amount, greatest(2500, f.acreage*2500));
+  v_band := case when v_urgency >= 1.2 then 'urgent' when v_urgency >= 1 then 'standard' else 'early-booking' end;
+
+  insert into public.bookings(
+    field_id, requested_date, rate_per_acre, quoted_amount,
+    guaranteed_by_date, penalty_amount, pricing_band, quote_metadata,
+    status, accepted_at
+  ) values (
+    p_field_id, p_requested_date, v_rate, v_amount,
+    v_guaranteed, v_penalty, v_band,
+    jsonb_build_object('engine','nirdhoom-pricing-v1','server_authoritative',true,'days_to_harvest',v_days),
+    'BOOKED', now()
+  ) returning * into b;
+
+  update public.fields
+  set status='BOOKED',
+      clearance_deadline=(v_guaranteed::text||'T18:00:00+05:30')::timestamptz,
+      updated_at=now()
+  where id=p_field_id;
+
+  return b;
+exception when unique_violation then
+  raise exception 'This field already has an active booking for that date';
+end;
+$function$;
+
+CREATE OR REPLACE FUNCTION public.transition_job(p_job_id uuid, p_next_status text, p_metadata jsonb DEFAULT '{}'::jsonb)
+ RETURNS jobs
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare j public.jobs%rowtype; role_name text; allowed boolean := false;
+begin
+  if auth.uid() is null then raise exception 'authentication required'; end if;
+  select * into j from public.jobs where id=p_job_id for update;
+  if not found then raise exception 'Job not found'; end if;
+  select role into role_name from public.profiles where id=auth.uid();
+  if (role_name = 'operator' and j.operator_id=auth.uid()) or coalesce(role_name, '') in ('dispatcher','admin') then
+    allowed := (j.status='ASSIGNED' and p_next_status='ARRIVED') or (j.status='ARRIVED' and p_next_status='BALING') or (j.status='BALING' and p_next_status='PROOF_PENDING') or (j.status='PROOF_PENDING' and p_next_status='COMPLETED') or (p_next_status in ('FAILED','CANCELLED') and j.status not in ('COMPLETED','FAILED','CANCELLED'));
+  end if;
+  if not allowed then raise exception 'Invalid job transition'; end if;
+  if p_next_status='COMPLETED' and not exists(
+    select 1 from public.evidence_assets e
+    where e.booking_id=j.booking_id and e.field_id=(select field_id from public.bookings where id=j.booking_id)
+      and e.kind in ('field_photo','bale_photo','weighment')
+      and e.storage_path is not null and length(trim(e.storage_path))>0
+  ) then raise exception 'Field photo, bale photo, or weighment evidence is required before completion'; end if;
+  if p_metadata is not null and jsonb_typeof(p_metadata)<>'object' then raise exception 'Transition metadata must be an object'; end if;
+  update public.jobs set status=p_next_status,actual_arrived_at=case when p_next_status='ARRIVED' then now() else actual_arrived_at end,actual_completed_at=case when p_next_status='COMPLETED' then now() else actual_completed_at end,last_transition_at=now(),route_metadata=coalesce(route_metadata,'{}'::jsonb)||coalesce(p_metadata,'{}'::jsonb),updated_at=now() where id=p_job_id returning * into j;
+  update public.bookings set status=case when p_next_status='COMPLETED' then 'CLEARED_PENDING_AUDIT' when p_next_status='CANCELLED' then 'CANCELLED' else status end,updated_at=now() where id=j.booking_id;
+  update public.fields f set status=case when p_next_status='ARRIVED' then 'ON_THE_WAY' when p_next_status='BALING' then 'BALING_IN_PROGRESS' when p_next_status='COMPLETED' then 'CLEARED_PENDING_AUDIT' when p_next_status='CANCELLED' then 'CANCELLED' else f.status end,updated_at=now() where f.id=(select field_id from public.bookings where id=j.booking_id);
+  return j;
+end;
+$function$;
+
+CREATE OR REPLACE FUNCTION public.verify_field_geometry(p_field_id uuid, p_source text, p_metadata jsonb DEFAULT '{}'::jsonb)
+ RETURNS fields
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare
+  f public.fields%rowtype;
+  role_name text;
+  area_acres numeric;
+  area_delta numeric;
+begin
+  if auth.uid() is null then raise exception 'authentication required'; end if;
+  select role into role_name from public.profiles where id=auth.uid();
+  if coalesce(role_name, '') not in ('verifier','dispatcher','admin') then
+    raise exception 'Verifier role required';
+  end if;
+  if p_source not in ('cadastral','farmer_registry','imported') then
+    raise exception 'Only authoritative or imported boundary sources can be verified';
+  end if;
+  if p_metadata is not null and jsonb_typeof(p_metadata) <> 'object' then
+    raise exception 'Verification metadata must be an object';
+  end if;
+  select * into f from public.fields where id=p_field_id for update;
+  if not found then raise exception 'Field not found'; end if;
+  if f.boundary is null then raise exception 'Field boundary is required'; end if;
+  if not extensions.ST_IsValid(f.boundary::extensions.geometry) then raise exception 'Field boundary is not a valid polygon'; end if;
+  if extensions.ST_IsEmpty(f.boundary::extensions.geometry) then raise exception 'Field boundary is empty'; end if;
+  area_acres := round((extensions.ST_Area(f.boundary) / 4046.8564224)::numeric, 3);
+  if area_acres <= 0 or area_acres > 10000 then raise exception 'Field boundary area is outside the supported range'; end if;
+  if f.acreage <= 0 then raise exception 'Registered acreage must be positive'; end if;
+  area_delta := abs(area_acres - f.acreage) / greatest(f.acreage, 0.001);
+  if area_delta > 0.20 then raise exception 'Boundary area differs from registered acreage by more than 20 percent'; end if;
+  update public.fields
+  set boundary_source=p_source,boundary_verified=true,geometry_verified_at=now(),geometry_verified_by=auth.uid(),geometry_area_acres=area_acres,geometry_type='verified',updated_at=now()
+  where id=p_field_id
+  returning * into f;
+  insert into public.audit_events(entity_type,entity_id,actor_id,action,before_state,after_state)
+  values('field',f.id,auth.uid(),'FIELD_GEOMETRY_VERIFIED',
+    jsonb_build_object('boundary_verified',false),
+    jsonb_build_object('boundary_verified',true,'boundary_source',p_source,'geometry_area_acres',area_acres,'metadata',coalesce(p_metadata,'{}'::jsonb)));
+  return f;
+end;
+$function$;
+
+revoke all on function public.accept_buyer_offer(uuid) from public, anon;
+grant execute on function public.accept_buyer_offer(uuid) to authenticated;
+revoke all on function public.cancel_clearance_booking(uuid) from public, anon;
+grant execute on function public.cancel_clearance_booking(uuid) to authenticated;
+revoke all on function public.create_residue_pool(text,numeric,date,uuid) from public, anon;
+grant execute on function public.create_residue_pool(text,numeric,date,uuid) to authenticated;
+revoke all on function public.join_residue_pool(uuid,numeric) from public, anon;
+grant execute on function public.join_residue_pool(uuid,numeric) to authenticated;
+revoke all on function public.record_verification_review(uuid,text,numeric,jsonb) from public, anon;
+grant execute on function public.record_verification_review(uuid,text,numeric,jsonb) to authenticated;
+revoke all on function public.reserve_clearance_booking_v2(uuid,date) from public, anon;
+grant execute on function public.reserve_clearance_booking_v2(uuid,date) to authenticated;
+revoke all on function public.transition_job(uuid,text,jsonb) from public, anon;
+grant execute on function public.transition_job(uuid,text,jsonb) to authenticated;
+revoke all on function public.verify_field_geometry(uuid,text,jsonb) from public, anon;
+grant execute on function public.verify_field_geometry(uuid,text,jsonb) to authenticated;
+
+-- >>> 202610110003_nirdhoom_booking_consent_and_window.sql
+-- Persist the booking consent checkbox as an auditable, revocable consent.
+CREATE OR REPLACE FUNCTION public.record_farmer_network_consent()
+RETURNS public.consents
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO ''
+AS $function$
+DECLARE
+  actor uuid := auth.uid();
+  role_name text;
+  consent_row public.consents%rowtype;
+BEGIN
+  IF actor IS NULL THEN RAISE EXCEPTION 'authentication required'; END IF;
+  SELECT p.role INTO role_name FROM public.profiles p WHERE p.id = actor;
+  IF COALESCE(role_name, '') <> 'farmer' THEN
+    RAISE EXCEPTION 'Farmer profile is required to record booking consent';
+  END IF;
+  INSERT INTO public.consents(profile_id, consent_type, version, accepted_at, revoked_at, source)
+  VALUES (actor, 'farmer_network', 'booking-clearance-v1', now(), NULL, 'web_booking')
+  ON CONFLICT (profile_id, consent_type, version)
+  DO UPDATE SET accepted_at = EXCLUDED.accepted_at, revoked_at = NULL, source = EXCLUDED.source
+  RETURNING * INTO consent_row;
+  UPDATE public.profiles SET consent_status = 'GRANTED' WHERE id = actor;
+  RETURN consent_row;
+END;
+$function$;
+REVOKE ALL ON FUNCTION public.record_farmer_network_consent() FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.record_farmer_network_consent() TO authenticated;
+
+-- Keep the booking RPC aligned with the current field lifecycle and server pricing.
+CREATE OR REPLACE FUNCTION public.reserve_clearance_booking_v2(p_field_id uuid, p_requested_date date)
+RETURNS public.bookings LANGUAGE plpgsql SECURITY DEFINER SET search_path TO ''
+AS $function$
+DECLARE
+  f public.fields%rowtype; b public.bookings%rowtype;
+  v_days numeric; v_urgency numeric; v_day_factor numeric; v_rate numeric;
+  v_amount numeric; v_guaranteed date; v_penalty numeric; v_band text;
+BEGIN
+  IF auth.uid() IS NULL THEN RAISE EXCEPTION 'authentication required'; END IF;
+  IF p_field_id IS NULL OR p_requested_date IS NULL THEN RAISE EXCEPTION 'Choose a field and pickup date'; END IF;
+  SELECT * INTO f FROM public.fields WHERE id = p_field_id FOR UPDATE;
+  IF NOT FOUND OR f.owner_id <> auth.uid() THEN RAISE EXCEPTION 'Field is not owned by the current farmer'; END IF;
+  IF f.status = 'VERIFIED_NON_BURN' THEN RAISE EXCEPTION 'This field is already verified as cleared and cannot be booked again'; END IF;
+  IF f.status NOT IN ('REGISTERED', 'CANCELLED') THEN RAISE EXCEPTION 'This field already has an active or completed clearance workflow'; END IF;
+  IF NOT EXISTS (SELECT 1 FROM public.consents c WHERE c.profile_id = auth.uid() AND c.consent_type = 'farmer_network' AND c.revoked_at IS NULL) THEN
+    RAISE EXCEPTION 'Active farmer consent is required before booking';
+  END IF;
+  IF p_requested_date < current_date THEN RAISE EXCEPTION 'Requested date is in the past'; END IF;
+  IF p_requested_date > current_date + 90 THEN RAISE EXCEPTION 'Choose a pickup date within the next 90 days'; END IF;
+  IF f.acreage IS NULL OR f.acreage <= 0 OR f.acreage > 500 THEN RAISE EXCEPTION 'Field acreage is outside the supported booking range'; END IF;
+  v_days := COALESCE(f.expected_harvest_date::date - current_date, 14);
+  v_urgency := CASE WHEN v_days <= 3 THEN 1.28 WHEN v_days <= 7 THEN 1.14 WHEN v_days <= 14 THEN 1.04 ELSE 0.94 END;
+  v_day_factor := CASE WHEN extract(isodow FROM p_requested_date) = 7 THEN 1.08 ELSE 1 END;
+  v_rate := round(greatest(1000, least(3200, 1500 * v_urgency * v_day_factor)) / 10) * 10;
+  v_amount := round(v_rate * f.acreage, 2);
+  v_guaranteed := p_requested_date;
+  v_penalty := least(v_amount, greatest(2500, f.acreage * 2500));
+  v_band := CASE WHEN v_urgency >= 1.2 THEN 'urgent' WHEN v_urgency >= 1 THEN 'standard' ELSE 'early-booking' END;
+  INSERT INTO public.bookings(field_id, requested_date, rate_per_acre, quoted_amount, guaranteed_by_date, penalty_amount, pricing_band, quote_metadata, status, accepted_at)
+  VALUES (p_field_id, p_requested_date, v_rate, v_amount, v_guaranteed, v_penalty, v_band,
+    jsonb_build_object('engine','nirdhoom-pricing-v1','server_authoritative',true,'days_to_harvest',v_days), 'BOOKED', now())
+  RETURNING * INTO b;
+  UPDATE public.fields SET status = 'SCHEDULED', clearance_deadline = (v_guaranteed::text || 'T18:00:00+05:30')::timestamptz, updated_at = now() WHERE id = p_field_id;
+  RETURN b;
+EXCEPTION WHEN unique_violation THEN RAISE EXCEPTION 'This field already has an active booking for that date';
+END;
+$function$;
+REVOKE ALL ON FUNCTION public.reserve_clearance_booking_v2(uuid,date) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.reserve_clearance_booking_v2(uuid,date) TO authenticated;
+
+-- >>> 202610120001_nirdhoom_booking_field_status_consistency.sql
+-- NIRDHOOM: keep the field lifecycle status inside its declared constraint.
+-- bookings.status remains BOOKED; fields.status uses SCHEDULED while a booking is active.
+-- The prior RPC wrote fields.status='BOOKED', which violates fields_status_check and
+-- rolls back the entire booking transaction.
+
+CREATE OR REPLACE FUNCTION public.reserve_clearance_booking_v2(
+  p_field_id uuid,
+  p_requested_date date
+)
+RETURNS public.bookings
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO ''
+AS $function$
+DECLARE
+  f public.fields%rowtype;
+  b public.bookings%rowtype;
+  v_days numeric;
+  v_urgency numeric;
+  v_day_factor numeric;
+  v_rate numeric;
+  v_amount numeric;
+  v_guaranteed date;
+  v_penalty numeric;
+  v_band text;
+BEGIN
+  IF auth.uid() IS NULL THEN
+    RAISE EXCEPTION 'authentication required';
+  END IF;
+  IF p_field_id IS NULL OR p_requested_date IS NULL THEN
+    RAISE EXCEPTION 'Choose a field and pickup date';
+  END IF;
+
+  SELECT * INTO f FROM public.fields WHERE id = p_field_id FOR UPDATE;
+  IF NOT FOUND OR f.owner_id <> auth.uid() THEN
+    RAISE EXCEPTION 'Field is not owned by the current farmer';
+  END IF;
+  IF f.status = 'VERIFIED_NON_BURN' THEN
+    RAISE EXCEPTION 'This field is already verified as cleared and cannot be booked again';
+  END IF;
+  IF f.status NOT IN ('REGISTERED', 'CANCELLED') THEN
+    RAISE EXCEPTION 'This field already has an active or completed clearance workflow';
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM public.consents c
+    WHERE c.profile_id = auth.uid()
+      AND c.consent_type = 'farmer_network'
+      AND c.revoked_at IS NULL
+  ) THEN
+    RAISE EXCEPTION 'Active farmer consent is required before booking';
+  END IF;
+  IF p_requested_date < current_date THEN
+    RAISE EXCEPTION 'Requested date is in the past';
+  END IF;
+  IF p_requested_date > current_date + 90 THEN
+    RAISE EXCEPTION 'Choose a pickup date within the next 90 days';
+  END IF;
+  IF f.acreage IS NULL OR f.acreage <= 0 OR f.acreage > 500 THEN
+    RAISE EXCEPTION 'Field acreage is outside the supported booking range';
+  END IF;
+
+  v_days := COALESCE(f.expected_harvest_date::date - current_date, 14);
+  v_urgency := CASE
+    WHEN v_days <= 3 THEN 1.28
+    WHEN v_days <= 7 THEN 1.14
+    WHEN v_days <= 14 THEN 1.04
+    ELSE 0.94
+  END;
+  v_day_factor := CASE WHEN extract(isodow FROM p_requested_date) = 7 THEN 1.08 ELSE 1 END;
+  v_rate := round(greatest(1000, least(3200, 1500 * v_urgency * v_day_factor)) / 10) * 10;
+  v_amount := round(v_rate * f.acreage, 2);
+  v_guaranteed := p_requested_date;
+  v_penalty := least(v_amount, greatest(2500, f.acreage * 2500));
+  v_band := CASE WHEN v_urgency >= 1.2 THEN 'urgent'
+                 WHEN v_urgency >= 1 THEN 'standard'
+                 ELSE 'early-booking' END;
+
+  INSERT INTO public.bookings(
+    field_id, requested_date, rate_per_acre, quoted_amount,
+    guaranteed_by_date, penalty_amount, pricing_band, quote_metadata,
+    status, accepted_at
+  )
+  VALUES (
+    p_field_id, p_requested_date, v_rate, v_amount,
+    v_guaranteed, v_penalty, v_band,
+    jsonb_build_object(
+      'engine', 'nirdhoom-pricing-v1',
+      'server_authoritative', true,
+      'days_to_harvest', v_days
+    ),
+    'BOOKED', now()
+  )
+  RETURNING * INTO b;
+
+  -- 'SCHEDULED' is an allowed field status; 'BOOKED' belongs to bookings.status.
+  UPDATE public.fields
+  SET status = 'SCHEDULED',
+      clearance_deadline = (v_guaranteed::text || 'T18:00:00+05:30')::timestamptz,
+      updated_at = now()
+  WHERE id = p_field_id;
+
+  RETURN b;
+EXCEPTION WHEN unique_violation THEN
+  RAISE EXCEPTION 'This field already has an active booking for that date';
+END;
+$function$;
+
+REVOKE ALL ON FUNCTION public.reserve_clearance_booking_v2(uuid,date) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.reserve_clearance_booking_v2(uuid,date) TO authenticated;
+
+-- >>> 202610120002_nirdhoom_fk_indexes.sql
+-- Add covering indexes for operational foreign keys flagged by the Supabase advisor.
+-- These indexes are additive and do not change data or access policies.
+
+CREATE INDEX IF NOT EXISTS residue_exceptions_field_id_idx
+  ON public.residue_exceptions (field_id);
+CREATE INDEX IF NOT EXISTS residue_exceptions_machine_id_idx
+  ON public.residue_exceptions (machine_id);
+CREATE INDEX IF NOT EXISTS residue_exceptions_residue_lot_id_idx
+  ON public.residue_exceptions (residue_lot_id);
+CREATE INDEX IF NOT EXISTS residue_exceptions_yard_id_idx
+  ON public.residue_exceptions (yard_id);
+CREATE INDEX IF NOT EXISTS residue_lot_events_actor_profile_id_idx
+  ON public.residue_lot_events (actor_profile_id);
+CREATE INDEX IF NOT EXISTS residue_lots_machine_id_idx
+  ON public.residue_lots (machine_id);
+CREATE INDEX IF NOT EXISTS residue_transport_jobs_assigned_machine_id_idx
+  ON public.residue_transport_jobs (assigned_machine_id);
+CREATE INDEX IF NOT EXISTS residue_transport_jobs_residue_lot_id_idx
+  ON public.residue_transport_jobs (residue_lot_id);
+
+-- >>> 202610120003_nirdhoom_storage_yard_policy_consolidation.sql
+-- Consolidate equivalent storage-yard SELECT policies without changing effective access.
+-- Authenticated users may read active yards; operations roles may also read inactive yards.
+
+DROP POLICY IF EXISTS "operations read storage yards" ON public.storage_yards;
+DROP POLICY IF EXISTS "authenticated reads yards" ON public.storage_yards;
+
+CREATE POLICY "authenticated read yards by active status or operations role"
+ON public.storage_yards
+FOR SELECT
+TO authenticated
+USING (
+  active = true
+  OR EXISTS (
+    SELECT 1
+    FROM public.profiles p
+    WHERE p.id = (SELECT auth.uid())
+      AND p.role = ANY (ARRAY['operator', 'dispatcher', 'verifier', 'admin'])
+  )
+);
+
+-- >>> 202610120004_atomic_job_residue_completion.sql
+-- Atomically complete an operator job and create its first-class residue lot.
+-- A single RPC transaction prevents a completed job being committed without its lot.
+create or replace function public.complete_job_with_residue_lot(
+  p_job_id uuid,
+  p_quantity_tonnes numeric,
+  p_moisture_pct numeric,
+  p_bales_count integer,
+  p_metadata jsonb default '{}'::jsonb
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+declare
+  j public.jobs%rowtype;
+  b public.bookings%rowtype;
+  f public.fields%rowtype;
+  role_name text;
+  lot public.residue_lots%rowtype;
+  existing_lot public.residue_lots%rowtype;
+begin
+  if auth.uid() is null then
+    raise exception 'authentication required';
+  end if;
+
+  if p_quantity_tonnes is null or p_quantity_tonnes <= 0 or p_quantity_tonnes > 10000 then
+    raise exception 'Measured residue quantity must be greater than 0 and at most 10000 tonnes';
+  end if;
+  if p_moisture_pct is null or p_moisture_pct < 0 or p_moisture_pct > 100 then
+    raise exception 'Moisture must be between 0 and 100 percent';
+  end if;
+  if p_bales_count is null or p_bales_count < 1 or p_bales_count > 1000000 then
+    raise exception 'Bale count must be a positive integer';
+  end if;
+  if p_metadata is not null and jsonb_typeof(p_metadata) <> 'object' then
+    raise exception 'Transition metadata must be an object';
+  end if;
+
+  select * into j from public.jobs where id = p_job_id for update;
+  if not found then
+    raise exception 'Job not found';
+  end if;
+
+  select role into role_name from public.profiles where id = auth.uid();
+  if not (
+    (role_name = 'operator' and j.operator_id = auth.uid())
+    or coalesce(role_name, '') in ('dispatcher', 'admin')
+  ) then
+    raise exception 'Assigned operator or dispatcher role required';
+  end if;
+
+  select * into b from public.bookings where id = j.booking_id for update;
+  if not found then
+    raise exception 'Booking for this job was not found';
+  end if;
+  select * into f from public.fields where id = b.field_id for update;
+  if not found then
+    raise exception 'Field for this job was not found';
+  end if;
+
+  -- The job lock serializes retries. Reuse an existing lot rather than creating a duplicate.
+  select * into existing_lot
+  from public.residue_lots
+  where job_id = j.id
+  order by created_at asc
+  limit 1
+  for update;
+
+  -- A completed retry is a read of the prior result, not a new completion.
+  -- Return it before rechecking evidence that may have been archived later.
+  if j.status = 'COMPLETED' and found then
+    return jsonb_build_object(
+      'job_id', j.id,
+      'job_status', j.status,
+      'lot_id', existing_lot.id,
+      'created', false,
+      'replayed', true
+    );
+  end if;
+
+  if not exists (
+    select 1 from public.evidence_assets e
+    where e.field_id = b.field_id
+      and e.created_at >= j.created_at
+      and e.kind in ('field_photo', 'bale_photo', 'weighment')
+      and e.storage_path is not null
+      and length(trim(e.storage_path)) > 0
+  ) then
+    raise exception 'Field photo, bale photo, or weighment evidence is required before completion';
+  end if;
+
+  if j.status not in ('PROOF_PENDING', 'COMPLETED') then
+    raise exception 'Job must be in PROOF_PENDING status before completion';
+  end if;
+  if found and j.status <> 'COMPLETED' then
+    raise exception 'A residue lot already exists for this unfinished job; operator review is required';
+  end if;
+
+  insert into public.residue_lots (
+    field_id, booking_id, job_id, farmer_id, crop, residue_type,
+    estimated_quantity_tonnes, quantity_tonnes, harvest_date, ready_from,
+    pickup_deadline, machine_id, geometry_provenance, moisture_pct,
+    quality_notes, quality_grade, status, baled_at, qr_code
+  ) values (
+    b.field_id, b.id, j.id, f.owner_id, f.crop, 'PADDY_STRAW',
+    p_quantity_tonnes, p_quantity_tonnes, f.expected_harvest_date,
+    now(), f.clearance_deadline, coalesce(j.machine_id, b.machine_id),
+    jsonb_build_object(
+      'source', coalesce(f.boundary_source, 'UNKNOWN'),
+      'field_id', f.id,
+      'captured_at', now()
+    ),
+    p_moisture_pct,
+    format('Operator-recorded completion; %s bales; GPS %s', p_bales_count,
+      case when coalesce(p_metadata->>'gps_available', 'false') = 'true' then 'available' else 'not available' end),
+    case when p_moisture_pct <= 16 then 'DRY'
+         when p_moisture_pct <= 20 then 'STANDARD'
+         else 'HIGH_MOISTURE' end,
+    'AVAILABLE', now(), 'NIR-' || upper(substr(j.id::text, 1, 12))
+  ) returning * into lot;
+
+  update public.jobs
+  set status = 'COMPLETED',
+      actual_completed_at = now(),
+      last_transition_at = now(),
+      route_metadata = coalesce(route_metadata, '{}'::jsonb) || coalesce(p_metadata, '{}'::jsonb)
+        || jsonb_build_object('residue_lot_id', lot.id, 'residue_quantity_tonnes', p_quantity_tonnes),
+      updated_at = now()
+  where id = j.id;
+
+  update public.bookings
+  set status = 'CLEARED_PENDING_AUDIT', updated_at = now()
+  where id = b.id;
+
+  update public.fields
+  set status = 'CLEARED_PENDING_AUDIT', updated_at = now()
+  where id = f.id;
+
+  return jsonb_build_object(
+    'job_id', j.id,
+    'job_status', 'COMPLETED',
+    'lot_id', lot.id,
+    'created', true,
+    'replayed', false
+  );
+end;
+$function$;
+
+revoke all on function public.complete_job_with_residue_lot(uuid, numeric, numeric, integer, jsonb) from public, anon;
+grant execute on function public.complete_job_with_residue_lot(uuid, numeric, numeric, integer, jsonb) to authenticated;
+
+comment on function public.complete_job_with_residue_lot(uuid, numeric, numeric, integer, jsonb) is
+  'Atomically completes an authorized operator job and creates its residue lot; retries return the existing lot.';
+
+-- >>> 20261011210907_nirdhoom_consent_audit_immutability_20261012.sql
+-- Keep consent history auditable: authenticated farmers may only set revoked_at
+-- on their own active consent. Acceptance and consent metadata go through guarded RPCs.
+REVOKE INSERT, UPDATE ON TABLE public.consents FROM authenticated;
+REVOKE UPDATE (id, profile_id, consent_type, version, accepted_at, revoked_at, source) ON TABLE public.consents FROM authenticated;
+GRANT UPDATE (revoked_at) ON TABLE public.consents TO authenticated;
+
+DROP POLICY IF EXISTS "profile revokes own consent" ON public.consents;
+CREATE POLICY "profile revokes own consent"
+ON public.consents
+FOR UPDATE
+TO authenticated
+USING (
+  profile_id = (SELECT auth.uid())
+  AND revoked_at IS NULL
+)
+WITH CHECK (
+  profile_id = (SELECT auth.uid())
+  AND revoked_at IS NOT NULL
+);

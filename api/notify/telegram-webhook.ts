@@ -1,4 +1,4 @@
-import { ACTION_VIEW, BOT_LANGS, COPY, detectLang, isLang, routeText, type BotAction, type BotLang } from '../_lib/telegramCopy';
+import { ACTION_VIEW, BOT_LANGS, COPY, detectLang, isLang, routeText, type BotAction, type BotLang } from '../_lib/telegramCopy.js';
 
 declare const process: { env: Record<string, string | undefined> };
 
@@ -9,14 +9,15 @@ const TELEGRAM_API = () => {
 
 async function telegram(method: string, body: Record<string, unknown>) {
   const api = TELEGRAM_API();
-  if (!api) return false;
+  if (!api) throw new Error('Telegram Bot API is not configured');
   const response = await fetch(`${api}/${method}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
     signal: AbortSignal.timeout(9000),
   });
-  return response.ok;
+  if (!response.ok) throw new Error(`Telegram Bot API request failed (${response.status})`);
+  return true;
 }
 
 async function sendMessage(chatId: number, text: string, replyMarkup?: unknown) {
@@ -33,13 +34,27 @@ function claimInMemory(updateId: number) {
   return 'claimed' as const;
 }
 
+async function resolveBotUsername() {
+  const configured = String(process.env.TELEGRAM_BOT_USERNAME || '').replace(/^@/, '').trim();
+  if (configured) return configured;
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  if (!token) return null;
+  try {
+    const response = await fetch(`https://api.telegram.org/bot${encodeURIComponent(token)}/getMe`, { signal: AbortSignal.timeout(5000) });
+    const payload = await response.json();
+    return payload?.ok && typeof payload?.result?.username === 'string' ? payload.result.username : null;
+  } catch {
+    return null;
+  }
+}
+
 function persistenceConfigured() {
-  return Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY && process.env.SUPABASE_URL);
+  return Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY && ((process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL) || process.env.VITE_SUPABASE_URL));
 }
 
 async function claimTelegramUpdate(updateId: number) {
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseUrl = ((process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL) || process.env.VITE_SUPABASE_URL);
   if (!serviceKey || !supabaseUrl) return claimInMemory(updateId);
   const response = await fetch(`${supabaseUrl}/rest/v1/telegram_webhook_updates`, {
     method: 'POST',
@@ -56,9 +71,25 @@ async function claimTelegramUpdate(updateId: number) {
   return response.ok ? 'claimed' as const : 'unavailable' as const;
 }
 
+async function releaseTelegramUpdate(updateId: number) {
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+  if (!serviceKey || !supabaseUrl) {
+    recentUpdates.delete(updateId);
+    return;
+  }
+  // If handling fails, remove the claim so Telegram's retry can be processed.
+  // The unique update_id remains the concurrency guard for successful updates.
+  await fetch(`${supabaseUrl}/rest/v1/telegram_webhook_updates?update_id=eq.${updateId}`, {
+    method: 'DELETE',
+    headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}`, Prefer: 'return=minimal' },
+    signal: AbortSignal.timeout(5000),
+  }).catch(() => {});
+}
+
 async function linkTelegramIdentity(token: string, message: any) {
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseUrl = ((process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL) || process.env.VITE_SUPABASE_URL);
   if (!serviceKey || !supabaseUrl || !token) return null;
   const tokenHash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(token));
   const hash = Array.from(new Uint8Array(tokenHash)).map((b) => b.toString(16).padStart(2, '0')).join('');
@@ -85,7 +116,7 @@ async function linkTelegramIdentity(token: string, message: any) {
 
 async function getLinkedProfile(chatId: number) {
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseUrl = ((process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL) || process.env.VITE_SUPABASE_URL);
   if (!serviceKey || !supabaseUrl) return null;
   const response = await fetch(
     `${supabaseUrl}/rest/v1/telegram_identities?telegram_chat_id=eq.${chatId}&select=profile_id,notification_enabled&limit=1`,
@@ -98,7 +129,7 @@ async function getLinkedProfile(chatId: number) {
 
 async function getFarmerStatus(profileId: string) {
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseUrl = ((process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL) || process.env.VITE_SUPABASE_URL);
   if (!serviceKey || !supabaseUrl) return null;
   const headers = { apikey: serviceKey, Authorization: `Bearer ${serviceKey}` };
   const fieldsResponse = await fetch(
@@ -167,7 +198,7 @@ function menu(lang: BotLang, withOpen = true) {
 function actionMarkup(lang: BotLang, action: keyof typeof ACTION_VIEW) {
   const base = menu(lang, false);
   const label = COPY[lang].open[action as keyof typeof COPY.en.open];
-  const open = label ? actionButton(label, action) : null;
+  const open = label ? actionButton(label, String(action)) : null;
   return open ? { inline_keyboard: [open, ...base.inline_keyboard] } : base;
 }
 
@@ -211,6 +242,7 @@ function parseCallback(data: string, fallback: BotLang): { kind: 'lang' | 'actio
 async function handle(request: Request) {
   const secret = process.env.TELEGRAM_WEBHOOK_SECRET;
   if (!secret) return Response.json({ error: 'Telegram webhook secret is not configured' }, { status: 503 });
+  if (!process.env.TELEGRAM_BOT_TOKEN) return Response.json({ error: 'Telegram bot token is not configured' }, { status: 503 });
   if (request.headers.get('x-telegram-bot-api-secret-token') !== secret) {
     return Response.json({ error: 'Invalid Telegram webhook secret' }, { status: 401 });
   }
@@ -228,6 +260,7 @@ async function handle(request: Request) {
   if (claim === 'unavailable') return Response.json({ error: 'Telegram webhook persistence is unavailable' }, { status: 503 });
   if (claim === 'duplicate') return Response.json({ ok: true, duplicate: true, update_id: updateId });
 
+  try {
   const message = update?.message;
   const callback = update?.callback_query;
   const chatId = Number(message?.chat?.id ?? callback?.message?.chat?.id);
@@ -282,6 +315,10 @@ async function handle(request: Request) {
 
   await sendMessage(chatId, t.unknown, menu(userLang));
   return Response.json({ ok: true, update_id: updateId });
+  } catch {
+    await releaseTelegramUpdate(updateId);
+    return Response.json({ error: 'Telegram update processing failed; retry requested' }, { status: 503 });
+  }
 }
 
 export default async function handler(req: any, res: any) {
@@ -289,17 +326,18 @@ export default async function handler(req: any, res: any) {
     const configured = Boolean(
       process.env.TELEGRAM_BOT_TOKEN
       && process.env.TELEGRAM_WEBHOOK_SECRET
-      && process.env.SUPABASE_URL
+      && ((process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL) || process.env.VITE_SUPABASE_URL)
       && process.env.SUPABASE_SERVICE_ROLE_KEY
     );
     // bot_ready: commands, menus and languages work. account_features: linking and private field status.
     const botReady = Boolean(process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_WEBHOOK_SECRET);
+    const botUsername = await resolveBotUsername();
     return res.status(configured ? 200 : 503).json({
       ok: configured,
       configured,
       bot_ready: botReady,
       account_features: persistenceConfigured(),
-      bot_username: process.env.TELEGRAM_BOT_USERNAME || null,
+      bot_username: botUsername,
       service: 'nirdhoom-telegram-webhook',
     });
   }

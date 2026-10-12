@@ -20,8 +20,18 @@ const tabToSlug = (tab: ActiveTab) => tab.toLowerCase().replace(/_/g, '-');
 
 function tabFromLocation(): ActiveTab {
   if (typeof window === 'undefined') return 'OVERVIEW';
-  const slug = window.location.hash.replace(/^#\/?/, '').toLowerCase();
-  return ROUTABLE_TABS.find((tab) => tabToSlug(tab) === slug) ?? 'OVERVIEW';
+  const hashSlug = window.location.hash.replace(/^#\/?/, '').toLowerCase();
+  const view = new URLSearchParams(window.location.search).get('view')?.toLowerCase() || '';
+  const aliases: Record<string, ActiveTab> = {
+    fields: 'FIELD_JOBS',
+    booking: 'FARMER_ONBOARDING',
+    tracking: 'OPS_CONSOLE',
+    verification: 'SATELLITE_AUDIT',
+    market: 'RESIDUE_POOLS',
+    status: 'OVERVIEW',
+  };
+  if (aliases[view]) return aliases[view];
+  return ROUTABLE_TABS.find((tab) => tabToSlug(tab) === hashSlug) ?? 'OVERVIEW';
 }
 
 export function useAppController() {
@@ -111,7 +121,8 @@ export function useAppController() {
     }
     setLoadingLiveData(true);
     setLiveDataError(null);
-    const client = supabase;
+    try {
+      const client = supabase;
 
     // Operational tables are readable only by signed-in users. Say so plainly
     // instead of surfacing a database "permission denied" to every visitor.
@@ -142,11 +153,22 @@ export function useAppController() {
     }
     setSampleMode(false);
 
-    const [{ data: lotRows }, { data: demandRows }, { data: yardRows }] = await Promise.all([
+    const [lotsResult, demandsResult, yardsResult] = await Promise.all([
       client.from('residue_lots').select('id,field_id,farmer_id,crop,residue_type,estimated_quantity_tonnes,quantity_tonnes,verified_quantity_tonnes,moisture_pct,quality_grade,quality_notes,bale_type,harvest_date,ready_from,pickup_deadline,machine_id,status,geometry_provenance,verification_source,verified_at,assigned_buyer_id,qr_code,baled_at,created_at'),
       client.from('buyer_demands').select('id,buyer_id,buyer_name,residue_type,target_tonnes,pickup_deadline,status'),
       client.from('storage_yards').select('id,external_id,name,latitude,longitude,capacity_tonnes,current_load_tonnes,incoming_tonnes,status,source'),
     ]);
+    const { data: lotRows, error: lotError } = lotsResult;
+    const { data: demandRows, error: demandError } = demandsResult;
+    const { data: yardRows, error: yardError } = yardsResult;
+    const secondaryErrors = [
+      lotError && `residue lots: ${lotError.message}`,
+      demandError && `buyer demand: ${demandError.message}`,
+      yardError && `storage yards: ${yardError.message}`,
+    ].filter(Boolean);
+    if (secondaryErrors.length) {
+      setLiveDataError(`Some live operational records could not be loaded (${secondaryErrors.join('; ')}). Available field and machine records remain visible; missing data is not treated as zero or verified.`);
+    }
 
     const rows = fieldRows || [];
     const normalizedFields: Field[] = rows.map(normalizeField).map((f) => ({
@@ -237,6 +259,14 @@ export function useAppController() {
     setFireEvents([]);
     setSelectedField((current) => normalizedFields.find((f) => f.id === current?.id) || normalizedFields[0] || null);
     setLoadingLiveData(false);
+    } catch {
+      // Unreachable server: keep the screens filled with labelled sample data and say why.
+      setLiveDataError('Live operational data could not be loaded because the server was unreachable. Refresh and try again.');
+      setLiveSignedOut(false);
+      enterSample();
+    } finally {
+      setLoadingLiveData(false);
+    }
   }, [enterSample]);
 
   useEffect(() => {
@@ -281,9 +311,9 @@ export function useAppController() {
               ...field,
               status: newStatus,
               payout_amount: payoutAmt ?? field.payout_amount,
-              is_verified_non_burn:
-                newStatus === 'CLEARED_PENDING_AUDIT' ||
-                newStatus === 'VERIFIED_NON_BURN',
+              // Clearance is an operational milestone, not a verification decision.
+              // Only the explicit verified state may set this flag.
+              is_verified_non_burn: newStatus === 'VERIFIED_NON_BURN',
             }
           : field,
       ),

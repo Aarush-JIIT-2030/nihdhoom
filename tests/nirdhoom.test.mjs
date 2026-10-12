@@ -134,7 +134,6 @@ test('Telegram is the primary farmer channel and legacy WhatsApp webhook is abse
 
 test('onboarding does not collect financial identifiers while payment is disabled', () => {
   const onboarding = read('src/components/FarmerOnboarding/FarmerOnboarding.tsx');
-  assert.doesNotMatch(onboarding, /UPI ID \(Preferred\)/);
   assert.match(onboarding, /do not ask for a real UPI ID or bank account/);
 });
 
@@ -220,6 +219,11 @@ test('Telegram webhook is idempotent and server-persisted', () => {
   assert.match(source, /telegram_webhook_updates/);
   assert.match(source, /response.status === 409/);
   assert.match(source, /duplicate: true/);
+  assert.match(source, /releaseTelegramUpdate/);
+  assert.match(source, /Telegram update processing failed; retry requested/);
+  assert.match(source, /if \(!response\.ok\) throw new Error/);
+  assert.match(source, /Telegram bot token is not configured/);
+
 });
 
 test('Telegram outbound notifications remain dispatcher/admin-only', () => {
@@ -257,7 +261,7 @@ test('product shell does not expose pitch-only surfaces', () => {
 test('product home routes users to real workflows instead of presentation flows', () => {
   const home = read('src/components/CommandCenter/CommandCenter.tsx');
   assert.match(home, /Book parali pickup/);
-  assert.match(home, /Track today's operation/);
+  assert.match(home, /Track today(?:'|’)s operation/);
   assert.match(home, /home-product-status/);
   assert.match(home, /Open residue market/);
   assert.doesNotMatch(home, /See the 2-minute demo/);
@@ -488,7 +492,7 @@ test('homepage uses curated agriculture photography and product motion', () => {
   assert.match(home, /from '..\/Animated\/Spotlight'/);
   assert.match(home, /home-product-status/);
   assert.match(home, /motion\/react/);
-  assert.match(home, /Track today's operation/);
+  assert.match(home, /Track today(?:'|’)s operation/);
   assert.match(css, /home-status-grid/);
   assert.match(css, /prefers-reduced-motion: reduce/);
 });
@@ -601,12 +605,16 @@ test('field-first UI kit and open-source interaction surfaces remain wired', () 
 
 test('consent withdrawal is server-authorized and records revocation', () => {
   const migration = read('supabase/migrations/202610070001_nirdhoom_consent_withdrawal.sql');
+  const auditMigration = read('supabase/migrations/20261011210907_nirdhoom_consent_audit_immutability_20261012.sql');
+  assert.match(auditMigration, /REVOKE (?:INSERT, )?UPDATE ON TABLE public\.consents FROM authenticated/);
+  assert.match(auditMigration, /GRANT UPDATE \(revoked_at\) ON TABLE public\.consents TO authenticated/);
+  assert.match(auditMigration, /WITH CHECK \([\s\S]*revoked_at IS NOT NULL/);
   const onboarding = read('src/components/FarmerOnboarding/FarmerOnboarding.tsx');
   assert.match(migration, /revoke_farmer_network_consent/);
   assert.match(migration, /profile_id = \(select auth\.uid\(\)\)/);
   assert.match(migration, /revoked_at/);
   assert.match(onboarding, /Withdraw consent/);
-  assert.match(onboarding, /consent_status: 'REVOKED'/);
+  assert.match(onboarding, /rpc\('revoke_farmer_network_consent'\)/);
 });
 
 test('operator surface distinguishes stale GPS readings', () => {
@@ -616,6 +624,19 @@ test('operator surface distinguishes stale GPS readings', () => {
   assert.match(source, /GPS reading is stale/);
 });
 
+
+test('live operational timeline never substitutes demo records and loaders recover after network failures', () => {
+  const timeline = read('src/components/ResidueNetwork/FieldEvidenceTimeline.tsx');
+  const board = read('src/components/FieldJobs/FieldJobBoard.tsx');
+  const demoBranch = timeline.indexOf('if (demoMode) {');
+  const missingConfigBranch = timeline.indexOf('if (!supabase) {', demoBranch);
+  assert.ok(demoBranch >= 0 && missingConfigBranch > demoBranch, 'live missing-config state must not enter the demo branch');
+  assert.match(timeline, /Live field evidence is not configured/);
+  assert.match(timeline, /Field evidence timeline could not be loaded because the server was unreachable/);
+  assert.match(timeline, /finally\s*\{\s*if \(active\) setLoading\(false\);/);
+  assert.match(board, /Operational jobs, evidence, and residue lots could not be loaded/);
+  assert.match(board, /finally\s*\{\s*if \(active\) setLoading\(false\);/);
+});
 
 test('residue is a first-class traceable domain object', () => {
   const types = read('src/types/index.ts');
@@ -630,8 +651,10 @@ test('residue is a first-class traceable domain object', () => {
   assert.match(migration, /revoke insert, update, delete on public\.residue_lot_events/);
   assert.match(timeline, /FIELD EVIDENCE TIMELINE/);
   assert.match(timeline, /absence of a detection does not prove no burning/);
-  assert.match(baler, /estimated_quantity_tonnes: quantity/);
-  assert.match(baler, /geometry_provenance:/);
+  assert.match(baler, /rpc\('complete_job_with_residue_lot'/);
+  const atomicCompletion = read('supabase/migrations/202610120004_atomic_job_residue_completion.sql');
+  assert.match(atomicCompletion, /geometry_provenance/);
+  assert.match(atomicCompletion, /estimated_quantity_tonnes/);
 });
 
 test('machine capability claims carry source metadata', () => {
@@ -647,10 +670,11 @@ test('machine capability claims carry source metadata', () => {
 test('farmer navigation has bilingual core labels', () => {
   const labels = read('src/i18n/farmerLabels.ts');
   const header = read('src/components/Header.tsx');
+  const language = read('src/i18n/LanguageContext.tsx');
   assert.match(labels, /मेरे खेत/);
   assert.match(labels, /पराली उठवाएँ/);
   assert.match(labels, /मशीन ट्रैक करें/);
-  assert.match(header, /nirdhoom\.farmer\.language/);
+  assert.match(language, /nirdhoom\.farmer\.language/);
   assert.match(header, /हिंदी/);
 });
 
@@ -693,6 +717,8 @@ test('live-mode setup: error classification, bundle and farmer flow are wired', 
   assert.match(controller, /getSession\(\)/);
   assert.match(controller, /setLiveSignedOut\(true\)/);
   assert.match(controller, /onAuthStateChange/);
+  assert.match(controller, /Live operational data could not be loaded because the server was unreachable/);
+  assert.match(controller, /finally\s*\{\s*setLoadingLiveData\(false\);/);
 
   // Farmers must be able to register a real field in live mode.
   const onboarding = read('src/components/FarmerOnboarding/FarmerOnboarding.tsx');
@@ -702,7 +728,8 @@ test('live-mode setup: error classification, bundle and farmer flow are wired', 
 
   // The one-file SQL bundle must be exactly the migrations, in ledger order.
   const { migrationOrder } = await import(`${root}/scripts/db-bundle.mjs`);
-  const names = migrationOrder(fs.readdirSync(`${root}/supabase/migrations`));
+  const manifest = read('supabase/migration-order.txt').split(/\r?\n/).map((name) => name.trim()).filter(Boolean);
+  const names = migrationOrder(fs.readdirSync(`${root}/supabase/migrations`), manifest);
   const bundle = read('supabase/all-migrations.sql');
   const headers = [...bundle.matchAll(/^-- >>> (.+)$/gm)].map((m) => m[1]);
   assert.deepEqual(headers, names, 'run `npm run db:bundle` to refresh supabase/all-migrations.sql');

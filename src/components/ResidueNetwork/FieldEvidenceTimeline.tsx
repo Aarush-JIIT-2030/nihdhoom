@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useAppLanguage } from '../../i18n/LanguageContext';
 import {
   CheckCircle2,
   CircleDot,
@@ -50,11 +51,13 @@ function eventLabel(eventType: string) {
 }
 
 export function FieldEvidenceTimeline({ field, machine, demoMode }: Props) {
+  const { t } = useAppLanguage();
   const [items, setItems] = useState<TimelineItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState('');
 
   useEffect(() => {
-    if (demoMode || !supabase) {
+    if (demoMode) {
       const now = Date.now();
       const demoItems: TimelineItem[] = [
         {
@@ -113,6 +116,15 @@ export function FieldEvidenceTimeline({ field, machine, demoMode }: Props) {
         },
       ];
       setItems(demoItems.sort((a, b) => new Date(a.at).getTime() - new Date(b.at).getTime()));
+      setLoadError('');
+      setLoading(false);
+      return;
+    }
+
+    if (!supabase) {
+      setItems([]);
+      setLoadError('Live field evidence is not configured. Check the Supabase URL and publishable key for this deployment.');
+      setLoading(false);
       return;
     }
 
@@ -120,18 +132,23 @@ export function FieldEvidenceTimeline({ field, machine, demoMode }: Props) {
     let active = true;
     const load = async () => {
       setLoading(true);
+      setLoadError('');
       const fieldId = field.dbId || field.id;
-      const [fieldEvents, evidence, verification, lots, jobs] = await Promise.all([
+      try {
+        const [fieldEvents, evidence, verification, lots, jobs] = await Promise.all([
         client.from('field_events').select('id,event_type,note,metadata,created_at').eq('field_id', fieldId).order('created_at', { ascending: true }).limit(100),
         client.from('evidence_assets').select('id,kind,source,captured_at,created_at,latitude,longitude,metadata').eq('field_id', fieldId).order('created_at', { ascending: true }).limit(100),
         client.from('verification_events').select('id,method,result,confidence,evidence_url,metadata,created_at').eq('field_id', fieldId).order('created_at', { ascending: true }).limit(50),
         client.from('residue_lots').select('id,quantity_tonnes,verified_quantity_tonnes,status,verification_source,baled_at,created_at').eq('field_id', fieldId).order('created_at', { ascending: true }).limit(20),
         client.from('jobs').select('id,status,slot_start,actual_arrived_at,actual_completed_at,updated_at,booking:bookings!inner(field_id)').eq('booking.field_id', fieldId).order('updated_at', { ascending: true }).limit(20),
-      ]);
+        ]);
 
-      if (!active) return;
+        if (!active) return;
+        if ([fieldEvents, evidence, verification, lots, jobs].some((result) => result.error)) {
+          setLoadError('Some field evidence records could not be loaded. Refresh to try again.');
+        }
 
-      const next: TimelineItem[] = [];
+        const next: TimelineItem[] = [];
       for (const event of fieldEvents.data || []) {
         next.push({
           id: `field-${event.id}`,
@@ -156,7 +173,7 @@ export function FieldEvidenceTimeline({ field, machine, demoMode }: Props) {
               ? `${evidenceItem.latitude.toFixed(5)}, ${evidenceItem.longitude.toFixed(5)}`
               : 'Location coordinates are not available.'
             : isSatellite
-              ? 'Remote sensing is supporting evidence only; absence of a detection does not prove no burning.'
+              ? `${t('Remote sensing')} is supporting evidence only; absence of a detection does not prove no burning.`
               : 'Evidence asset linked to the field record.',
           source: sourceLabel(evidenceItem.source || (isSatellite ? 'NASA_FIRMS' : 'OPERATOR_EVIDENCE')),
           icon: isGps ? MapPin : isSatellite ? Satellite : FileCheck2,
@@ -213,9 +230,16 @@ export function FieldEvidenceTimeline({ field, machine, demoMode }: Props) {
         });
       }
 
-      next.sort((a, b) => new Date(a.at).getTime() - new Date(b.at).getTime());
-      setItems(next);
-      setLoading(false);
+        next.sort((a, b) => new Date(a.at).getTime() - new Date(b.at).getTime());
+        setItems(next);
+      } catch {
+        if (active) {
+          setItems([]);
+          setLoadError('Field evidence timeline could not be loaded because the server was unreachable. Refresh and try again.');
+        }
+      } finally {
+        if (active) setLoading(false);
+      }
     };
 
     void load();
@@ -229,7 +253,7 @@ export function FieldEvidenceTimeline({ field, machine, demoMode }: Props) {
       <div className="residue-journey-header">
         <div>
           <span className="residue-journey-kicker">FIELD EVIDENCE TIMELINE</span>
-          <h2 id="field-evidence-title">One chronological record</h2>
+          <h2 id="field-evidence-title">{t('One chronological record')}</h2>
           <p>
             Harvest, pickup, machine, evidence and verification stay together. Each item names its source instead of implying certainty that the record does not have.
           </p>
@@ -240,10 +264,12 @@ export function FieldEvidenceTimeline({ field, machine, demoMode }: Props) {
         </div>
       </div>
 
+      {loadError && <div className="market-empty mt-3" role="alert"><strong>Timeline status</strong><p>{loadError}</p></div>}
+
       {items.length === 0 ? (
         <div className="market-empty mt-4">
           <Clock3 className="market-empty-icon" />
-          <strong>No field evidence events yet</strong>
+          <strong>{t('No field evidence events yet')}</strong>
           <p>Once a booking, operator event or evidence asset is recorded, the timeline will appear here.</p>
         </div>
       ) : (
@@ -270,8 +296,8 @@ export function FieldEvidenceTimeline({ field, machine, demoMode }: Props) {
       )}
 
       <div className="field-evidence-trust-strip">
-        <div><strong>Field boundary</strong><span>{sourceLabel(field.provenance?.geometry)}</span></div>
-        <div><strong>Remote sensing</strong><span>Supporting evidence only</span></div>
+        <div><strong>{t('Field boundary')}</strong><span>{sourceLabel(field.provenance?.geometry)}</span></div>
+        <div><strong>Remote sensing</strong><span>{t('Supporting evidence only')}</span></div>
         <div><strong>Residue</strong><span>{field.residue_lot_id ? 'Lot linked' : 'Lot not established'}</span></div>
         <div><strong>Latest</strong><span>{latest ? latest.source : 'No source yet'}</span></div>
       </div>

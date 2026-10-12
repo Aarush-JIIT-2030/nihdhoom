@@ -1,4 +1,5 @@
 import { describeLiveError } from './lib/liveStatus';
+import { useAppLanguage } from './i18n/LanguageContext';
 import { lazy, Suspense, useEffect, useCallback, startTransition } from 'react';
 import { Header, ActiveTab } from './components/Header';
 const OpsMap = lazy(() => import('./components/OpsConsole/OpsMap').then((m) => ({ default: m.OpsMap })));
@@ -20,6 +21,7 @@ const FieldJobBoard = lazy(() => import('./components/FieldJobs/FieldJobBoard').
 const FieldEvidenceTimeline = lazy(() => import('./components/ResidueNetwork/FieldEvidenceTimeline').then((m) => ({ default: m.FieldEvidenceTimeline })));
 const ClearanceBooking = lazy(() => import('./components/ClearanceBooking/ClearanceBooking').then((m) => ({ default: m.ClearanceBooking })));
 const ResidueControlTower = lazy(() => import('./components/ResidueNetwork/ResidueControlTower').then((m) => ({ default: m.ResidueControlTower })));
+const DemoScenarioJourney = lazy(() => import('./components/DemoScenarioJourney/DemoScenarioJourney').then((m) => ({ default: m.DemoScenarioJourney })));
 
 
 import { INITIAL_STORAGE_YARDS, INITIAL_BUYERS, INITIAL_RESIDUE_LOTS } from './data/mockData';
@@ -144,6 +146,7 @@ const WORKSPACE_META: Partial<Record<ActiveTab, {
 };
 
 function WorkspaceHeader({ activeTab, demoMode, sampleMode, onNavigate }: WorkspaceHeaderProps) {
+  const { t } = useAppLanguage();
   const meta = WORKSPACE_META[activeTab];
   if (!meta) return null;
   const accentClass = meta.accent === 'amber' ? 'is-amber' : meta.accent === 'sky' ? 'is-sky' : 'is-green';
@@ -162,18 +165,18 @@ function WorkspaceHeader({ activeTab, demoMode, sampleMode, onNavigate }: Worksp
       <div className="workspace-hero-copy">
         <div className="workspace-eyebrow">
           <span className="workspace-eyebrow-dot" />
-          {meta.eyebrow}
-          <span className="workspace-mode">{sampleMode ? 'Sample records' : demoMode ? 'Demo records' : 'Live records'}</span>
+          {t(meta.eyebrow)}
+          <span className="workspace-mode">{sampleMode ? t('Sample records') : demoMode ? t('Demo records') : t('Live records')}</span>
         </div>
-        <h1 id="workspace-title">{meta.title}</h1>
-        <p>{meta.description}</p>
+        <h1 id="workspace-title">{t(meta.title)}</h1>
+        <p>{t(meta.description)}</p>
         {meta.action && (
           <button type="button" onClick={() => onNavigate(meta.action!.tab)} onMouseEnter={() => prefetchWorkspace(meta.action!.tab)} onFocus={() => prefetchWorkspace(meta.action!.tab)} className="workspace-action">
-            {meta.action.label} <span aria-hidden="true">→</span>
+            {t(meta.action.label)} <span aria-hidden="true">→</span>
           </button>
         )}
 
-        <div className="workspace-journey" aria-label="NIRDHOOM journey">
+        <div className="workspace-journey" aria-label={t('NIRDHOOM journey')}>
           {journey.map((item, index) => (
             <button
               key={item.label}
@@ -182,10 +185,10 @@ function WorkspaceHeader({ activeTab, demoMode, sampleMode, onNavigate }: Worksp
               onClick={() => onNavigate(item.tab)}
               onMouseEnter={() => prefetchWorkspace(item.tab)}
               onFocus={() => prefetchWorkspace(item.tab)}
-              title={item.label}
+              title={t(item.label)}
             >
               <span className="workspace-journey-number">{index + 1}</span>
-              <span>{item.label}</span>
+              <span>{t(item.label)}</span>
             </button>
           ))}
         </div>
@@ -199,6 +202,7 @@ function WorkspaceHeader({ activeTab, demoMode, sampleMode, onNavigate }: Worksp
 }
 
 export function App() {
+  const { t } = useAppLanguage();
   const {
     activeTab,
     setActiveTab,
@@ -236,7 +240,7 @@ export function App() {
 
   return (
     <div data-active-tab={activeTab} className="nirdhoom-field-app min-h-screen flex flex-col font-sans relative overflow-x-clip">
-      <a href="#main-content" className="skip-link">Skip to main content</a>
+      <a href="#main-content" className="skip-link">{t('Skip to main content')}</a>
       {/* Top Header */}
       <Header
         activeTab={activeTab}
@@ -246,14 +250,14 @@ export function App() {
 
       {!explicitDemo && !liveConfigured && (
         <div className="live-state-banner live-state-banner-error" role="alert">
-          <strong>This deployment is not connected to a database.</strong>
-          <span>Add VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY in Vercel for the environment that built this page, then redeploy.</span>
+          <strong>{t('This deployment is not connected to a database.')}</strong>
+          <span>{t('Add VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY in Vercel for the environment that built this page, then redeploy.')}</span>
         </div>
       )}
-      {!explicitDemo && liveConfigured && loadingLiveData && <div className="live-state-banner live-state-banner-loading" role="status">Loading live operational records…</div>}
+      {!explicitDemo && liveConfigured && loadingLiveData && <div className="live-state-banner live-state-banner-loading" role="status">{t('Loading live operational records…')}</div>}
       {!explicitDemo && sampleMode && !loadingLiveData && !liveDataError && (
         <div className="live-state-banner live-state-banner-info" role="status">
-          <strong>You are looking at sample data.</strong>
+          <strong>{t('You are looking at sample data.')}</strong>
           <span>
             {liveSignedOut
               ? 'These balers, fires, fields and yards are fictional examples so every screen is filled in. Sign in with your mobile number to see your own records.'
@@ -261,7 +265,7 @@ export function App() {
                 ? 'No live records exist yet, so fictional example balers, fires, fields and yards are shown. Register a field to see your own.'
                 : 'These balers, fires, fields and yards are fictional examples so every screen is filled in.'}
           </span>
-          {liveConfigured && <button type="button" onClick={() => navigate('FARMER_KYC')}>{liveSignedOut ? 'Sign in or create account' : 'Register a field'}</button>}
+          {liveConfigured && <button type="button" onClick={() => navigate('FARMER_KYC')}>{liveSignedOut ? t('Sign in or create account') : 'Register a field'}</button>}
         </div>
       )}
       {!explicitDemo && liveDataError && (() => {
@@ -295,9 +299,14 @@ export function App() {
             demoMode={demoMode}
           />
         )}
+        {activeTab === 'OVERVIEW' && demoMode && (
+          <div className="px-4 pb-6 sm:px-6 lg:px-8">
+            <DemoScenarioJourney onOpenMap={() => navigate('OPS_CONSOLE')} />
+          </div>
+        )}
 
         {activeTab === 'FARMER_ONBOARDING' && (
-          <ClearanceBooking fields={fields} demoMode={demoMode} onBooked={(fieldId, amount) => handleUpdateFieldStatus(fieldId, 'BOOKED', amount)} />
+          <ClearanceBooking fields={fields} demoMode={demoMode} onBooked={(fieldId, amount) => handleUpdateFieldStatus(fieldId, 'BOOKED', amount)} onBookingChanged={() => { void refreshLiveData(); }} />
         )}
 
         {activeTab === 'FARMER_KYC' && (
@@ -359,14 +368,14 @@ export function App() {
                 <div>
                   <h2 id="ops-console-title" className="section-bar-title">
                     <Map className="h-4 w-4" aria-hidden="true" />
-                    Central Ops & VRP Dispatch Console
+                    {t('Central Ops & VRP Dispatch Console')}
                   </h2>
                   <p className="section-bar-sub">
-                    GIS operations prototype for a Sangrur cluster using demo machinery and FIRMS-style event data
+                    {t('GIS operations prototype for a Sangrur cluster using demo machinery and FIRMS-style event data')}
                   </p>
                 </div>
                 <div className="section-bar-meta">
-                  <span className="pill pill-green">{sampleMode ? 'Sample GPS feed' : demoMode ? 'Demo GPS feed' : 'Live operator telemetry'}</span>
+                  <span className="pill pill-green">{sampleMode ? 'Sample GPS feed' : demoMode ? 'Demo GPS feed' : 'Connected machine records'}</span>
                   <span className="pill">{fields.length} Farms • {machines.length} Balers</span>
                 </div>
               </div>
@@ -427,17 +436,17 @@ export function App() {
           ) : (
             <section className="empty-workspace">
               <span className="empty-workspace-icon"><Zap className="h-5 w-5" aria-hidden="true" /></span>
-              <h2>Field Operator PWA</h2>
+              <h2>{t('Field Operator PWA')}</h2>
               <p>
-                No live machine is assigned yet. Connect an operator machine record before starting field operations.
+                {t('No live machine is assigned yet. Connect an operator machine record before starting field operations.')}
               </p>
               <div className="empty-workspace-stats">
                 <div>
-                  <span>Live fields</span>
+                  <span>{t('Live fields')}</span>
                   <strong>{fields.length}</strong>
                 </div>
                 <div>
-                  <span>Assigned machines</span>
+                  <span>{t('Assigned machines')}</span>
                   <strong>{machines.length}</strong>
                 </div>
               </div>
@@ -456,8 +465,8 @@ export function App() {
 
         {activeTab === 'OFFTAKE_AUCTION' && (
           <div className="workspace-stack">
-            <MultiOfftakeAuction />
-            <HarvestForecast />
+            <MultiOfftakeAuction buyers={liveBuyers} demoMode={demoMode} />
+            <HarvestForecast fields={fields} demoMode={demoMode} />
           </div>
         )}
         </Suspense>
@@ -482,10 +491,10 @@ export function App() {
           </div>
 
           <div className="site-footer-links">
-            Field operations • Evidence • Residue • Buyer pathways
+            {t('Field operations • Evidence • Residue • Buyer pathways')}
           </div>
 
-          <span className="site-footer-badge">Evidence-first prototype</span>
+          <span className="site-footer-badge">{t('Evidence-first prototype')}</span>
         </div>
       </footer>
     </div>

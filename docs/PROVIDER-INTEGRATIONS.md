@@ -26,6 +26,8 @@ NIRDHOOM uses Supabase Phone Auth for the real farmer OTP flow. The frontend cal
 
 For production, enable Phone authentication in Supabase and configure Twilio as the SMS provider. Configure India's required sender/template/DLT requirements in the messaging provider. OTP rate limits and CAPTCHA should be enabled before a field pilot.
 
+**Observed production blocker (2026-10-11):** Supabase Auth logs recorded two OTP delivery failures with HTTP 422 / `sms_send_failed`; Twilio returned error 572006, `Invalid template name. Trial accounts can only use predefined SMS templates`. Resolve the configured SMS template/provider mismatch or upgrade the Twilio account to permit the intended custom template. Then verify the sender ID, message template and India's DLT requirements, and retest with a dedicated test phone before the pilot. See [Twilio trial restrictions](https://www.twilio.com/docs/usage/trials) and [Supabase phone sign-in](https://supabase.com/docs/guides/auth/phone-login).
+
 The live flow creates/updates a farmer `profiles` row only after successful OTP verification.
 
 ## 4. Cadastral / Khasra — Punjab official sources

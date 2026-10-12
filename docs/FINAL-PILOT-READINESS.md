@@ -25,7 +25,7 @@ This document is the consolidated implementation checklist for taking the curren
 - [x] The obsolete monolithic HTML bundle and committed ZIP archive were removed.
 
 ### 2. Database and access control
-- [x] Apply the repository migrations to the dedicated NIRDHOOM Supabase project (`igqgtlmnwssjaoxkkzbm`); the repository contains 20 migrations; confirm the two Telegram migrations are applied in the connected project before pilot use.
+- [ ] The repository's current 37-entry fresh-install manifest is **not yet fully reconciled with production**: the consent audit migration is present in the live ledger, but `complete_job_with_residue_lot(uuid,numeric,numeric,integer,jsonb)` is absent from production as of 2026-10-12. The source-to-ledger mapping and clean-install schema-only diff remain open; do not run `supabase db push` until they are reviewed. See `docs/DATABASE-RELEASE-LEDGER.md`.
 - [ ] Repeat migration testing against a disposable fresh project/branch before introducing pilot data.
 - [ ] Verify every foreign key, trigger, index, constraint and RPC executes as intended.
 - [ ] Test row-level security using separate farmer, operator, dispatcher, verifier and admin accounts.
@@ -102,6 +102,7 @@ This document is the consolidated implementation checklist for taking the curren
 - [ ] Test denied GPS permission, poor accuracy, backgrounding, refresh and device restart.
 - [ ] Persist queued actions safely and show pending/syncing/synced/failed states.
 - [ ] Make retries safe and prevent duplicate job completion.
+- [x] Add `complete_job_with_residue_lot` RPC and switch the operator UI to the atomic completion path; it validates the measured quantity and returns the existing lot on safe retries. **Still pending:** apply the new migration to staging, run authenticated role/evidence/retry tests, and verify the workflow before production.
 - [ ] Provide an operator-reported breakdown/delay path.
 - [ ] Test offline evidence capture and later upload with real file sizes.
 

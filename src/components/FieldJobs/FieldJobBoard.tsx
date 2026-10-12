@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useAppLanguage } from '../../i18n/LanguageContext';
 import {
   Activity,
   AlertTriangle,
@@ -94,6 +95,7 @@ export function FieldJobBoard({
   onOpenResidue,
   onOpenImpact,
 }: Props) {
+  const { t } = useAppLanguage();
   const [jobs, setJobs] = useState<JobRecord[]>([]);
   const [evidence, setProof] = useState<ProofRecord[]>([]);
   const [lots, setLots] = useState<LotRecord[]>([]);
@@ -135,24 +137,31 @@ export function FieldJobBoard({
       setLoading(true);
       setError(null);
       const db = supabase;
-      if (!db) return;
-
-      const [jobsResult, evidenceResult, lotsResult] = await Promise.all([
-        db.from('jobs').select('id,booking_id,machine_id,operator_id,status,slot_start,slot_end,actual_arrived_at,actual_completed_at,failure_reason,last_transition_at,booking:bookings(field_id)').order('updated_at', { ascending: false }).limit(250),
-        db.from('evidence_assets').select('id,field_id,booking_id,kind,captured_at,latitude,longitude,created_at').order('created_at', { ascending: false }).limit(500),
-        db.from('residue_lots').select('id,field_id,quantity_tonnes,status,baled_at,assigned_buyer_id,quality_grade').order('created_at', { ascending: false }).limit(250),
-      ]);
-
-      if (!active) return;
-      const firstError = jobsResult.error || evidenceResult.error || lotsResult.error;
-      if (firstError) {
-        setError(firstError.message);
-      } else {
-        setJobs((jobsResult.data || []) as unknown as JobRecord[]);
-        setProof((evidenceResult.data || []) as ProofRecord[]);
-        setLots((lotsResult.data || []) as LotRecord[]);
+      if (!db) {
+        setLoading(false);
+        return;
       }
-      setLoading(false);
+      try {
+        const [jobsResult, evidenceResult, lotsResult] = await Promise.all([
+          db.from('jobs').select('id,booking_id,machine_id,operator_id,status,slot_start,slot_end,actual_arrived_at,actual_completed_at,failure_reason,last_transition_at,booking:bookings(field_id)').order('updated_at', { ascending: false }).limit(250),
+          db.from('evidence_assets').select('id,field_id,booking_id,kind,captured_at,latitude,longitude,created_at').order('created_at', { ascending: false }).limit(500),
+          db.from('residue_lots').select('id,field_id,quantity_tonnes,status,baled_at,assigned_buyer_id,quality_grade').order('created_at', { ascending: false }).limit(250),
+        ]);
+
+        if (!active) return;
+        const firstError = jobsResult.error || evidenceResult.error || lotsResult.error;
+        if (firstError) {
+          setError(firstError.message);
+        } else {
+          setJobs((jobsResult.data || []) as unknown as JobRecord[]);
+          setProof((evidenceResult.data || []) as ProofRecord[]);
+          setLots((lotsResult.data || []) as LotRecord[]);
+        }
+      } catch {
+        if (active) setError('Operational jobs, evidence, and residue lots could not be loaded because the server was unreachable. Refresh and try again.');
+      } finally {
+        if (active) setLoading(false);
+      }
     };
 
     void load();
@@ -255,7 +264,7 @@ export function FieldJobBoard({
             <div className="ui-eyebrow">
               <Activity className="h-4 w-4" /> My fields & pickup status
             </div>
-            <h1 className="ui-title">Your fields, pickup and parali status</h1>
+            <h1 className="ui-title">{t('Your fields, pickup and parali status')}</h1>
             <p className="ui-lede">
               See what is happening to each field, what has been done, and what needs to happen next.
               This view surfaces the next operational action instead of only reporting totals.
@@ -263,13 +272,13 @@ export function FieldJobBoard({
           </div>
           <div className="ui-actions">
             <button onClick={onOpenDispatch} className="ui-btn is-primary">
-              <Route className="h-3.5 w-3.5" /> Find machine
+              <Route className="h-3.5 w-3.5" /> {t('Find machine')}
             </button>
             <button onClick={onOpenResidue} className="ui-btn is-wheat">
               <PackageCheck className="h-3.5 w-3.5" /> Parali
             </button>
             <button onClick={onOpenImpact} className="ui-btn is-ghost">
-              <ShieldCheck className="h-3.5 w-3.5" /> Why it matters
+              <ShieldCheck className="h-3.5 w-3.5" /> {t('Why it matters')}
             </button>
           </div>
         </>
@@ -425,7 +434,7 @@ export function FieldJobBoard({
                       {row.action && <span className="ui-chip is-wheat">Next step</span>}
                       {row.ready && <span className="ui-chip is-green"><CheckCircle2 /> Ready for buyer</span>}
                       <button onClick={() => onSelectField(row.field)} className="ui-btn is-sm">
-                        See field
+                        {t('See field')}
                       </button>
                     </div>
                   </div>

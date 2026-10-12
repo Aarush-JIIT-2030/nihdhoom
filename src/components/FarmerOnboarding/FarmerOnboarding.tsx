@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import CodeSlots from './CodeSlots';
+import LatticeLoader from '../LatticeLoader/LatticeLoader';
 import Stepper, { Step } from './Stepper';
 import { supabase } from '../../lib/supabase';
 import { describeAuthError } from '../../lib/liveStatus';
+import { useAppLanguage } from '../../i18n/LanguageContext';
 import type { ActiveTab } from '../Header';
 import {
   UserCheck,
@@ -59,6 +61,7 @@ type Props = {
 };
 
 export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged }) => {
+  const { t } = useAppLanguage();
   const [currentStep, setCurrentStep] = useState<KYCStep>('PHONE');
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
@@ -73,6 +76,7 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
   const [bankVerified, setBankVerified] = useState(false);
   const [otpError, setOtpError] = useState('');
   const [otpStatus, setOtpStatus] = useState<'idle' | 'error' | 'success'>('idle');
+  const otpVerificationInFlight = useRef(false);
   const [consentAccepted, setConsentAccepted] = useState(false);
   const [resendSeconds, setResendSeconds] = useState(0);
   const [activeConsent, setActiveConsent] = useState(false);
@@ -167,47 +171,51 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
     if (!supabase) { setFieldError('Live database is not configured.'); return; }
     if (!khasra.trim()) { setFieldError('Enter the Khasra or survey number from your land record.'); return; }
     if (!village.trim()) { setFieldError('Enter the village.'); return; }
-    if (!Number.isFinite(acres) || acres <= 0 || acres > 500) { setFieldError('Enter the area in acres, between 0.01 and 500.'); return; }
+    if (!Number.isFinite(acres) || acres < 0.01 || acres > 500) { setFieldError('Enter the area in acres, between 0.01 and 500.'); return; }
     if (!lat || !lng || !Number.isFinite(latitude) || !Number.isFinite(longitude) || latitude < 6 || latitude > 38 || longitude < 68 || longitude > 98) {
       setFieldError('Add the field location with the button, or type a valid latitude and longitude.');
       return;
     }
     setFieldBusy(true);
-    const { data: userData } = await supabase.auth.getUser();
-    if (!userData.user) {
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) {
+        setFieldError('Your session expired. Please verify your phone again.');
+        return;
+      }
+      const { data, error } = await supabase
+        .from('fields')
+        .insert({
+          owner_id: userData.user.id,
+          khasra_no: khasra.trim(),
+          village: village.trim(),
+          block: block || null,
+          district,
+          crop: 'Paddy',
+          variety,
+          acreage: Math.round(acres * 100) / 100,
+          expected_harvest_date: harvestDate || null,
+          center_lat: latitude,
+          center_lng: longitude,
+          status: 'REGISTERED',
+        })
+        .select('id,khasra_no,village,acreage,status')
+        .single();
+      if (error || !data) {
+        setFieldError(error?.message || 'The field could not be saved. Please try again.');
+        return;
+      }
+      const saved = data as OwnedField;
+      setSavedField(saved);
+      setMyFields((list) => [saved, ...list]);
+      setKhasra(''); setAcreage(''); setHarvestDate(''); setLat(''); setLng('');
+      onFieldsChanged?.();
+      setCurrentStep('DONE');
+    } catch {
+      setFieldError('Field registration could not reach the server. Check your connection and try again.');
+    } finally {
       setFieldBusy(false);
-      setFieldError('Your session expired. Please verify your phone again.');
-      return;
     }
-    const { data, error } = await supabase
-      .from('fields')
-      .insert({
-        owner_id: userData.user.id,
-        khasra_no: khasra.trim(),
-        village: village.trim(),
-        block: block || null,
-        district,
-        crop: 'Paddy',
-        variety,
-        acreage: Math.round(acres * 100) / 100,
-        expected_harvest_date: harvestDate || null,
-        center_lat: latitude,
-        center_lng: longitude,
-        status: 'REGISTERED',
-      })
-      .select('id,khasra_no,village,acreage,status')
-      .single();
-    setFieldBusy(false);
-    if (error || !data) {
-      setFieldError(error?.message || 'The field could not be saved. Please try again.');
-      return;
-    }
-    const saved = data as OwnedField;
-    setSavedField(saved);
-    setMyFields((list) => [saved, ...list]);
-    setKhasra(''); setAcreage(''); setHarvestDate(''); setLat(''); setLng('');
-    onFieldsChanged?.();
-    setCurrentStep('DONE');
   };
 
   const withdrawConsent = async () => {
@@ -216,36 +224,26 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
     if (!confirmed) return;
     setWithdrawBusy(true);
     setWithdrawMessage('');
-    const { data } = await supabase.auth.getUser();
-    if (!data.user) {
+    try {
+      const { data } = await supabase.auth.getUser();
+      if (!data.user) {
+        setWithdrawMessage('Your session has expired. Sign in again to manage consent.');
+        return;
+      }
+      // Use the database transaction so consent history and profile status cannot diverge.
+      const { error } = await supabase.rpc('revoke_farmer_network_consent');
+      if (error) {
+        setWithdrawMessage(error.message || 'Consent could not be withdrawn.');
+        return;
+      }
+      setActiveConsent(false);
+      setConsentAccepted(false);
+      setWithdrawMessage('Consent withdrawn. New booking actions will require fresh consent.');
+    } catch {
+      setWithdrawMessage('Consent could not be updated because the server was unreachable. Check your connection and try again.');
+    } finally {
       setWithdrawBusy(false);
-      setWithdrawMessage('Your session has expired. Sign in again to manage consent.');
-      return;
     }
-    const now = new Date().toISOString();
-    const { error: consentError } = await supabase
-      .from('consents')
-      .update({ revoked_at: now })
-      .eq('profile_id', data.user.id)
-      .eq('consent_type', 'farmer_network')
-      .is('revoked_at', null);
-    if (consentError) {
-      setWithdrawBusy(false);
-      setWithdrawMessage(consentError.message || 'Consent could not be withdrawn.');
-      return;
-    }
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .update({ consent_status: 'REVOKED' })
-      .eq('id', data.user.id);
-    setWithdrawBusy(false);
-    if (profileError) {
-      setWithdrawMessage(profileError.message || 'Consent was revoked, but profile status could not be updated.');
-      return;
-    }
-    setActiveConsent(false);
-    setConsentAccepted(false);
-    setWithdrawMessage('Consent withdrawn. New booking actions will require fresh consent.');
   };
 
   useEffect(() => {
@@ -265,9 +263,13 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
     }, 900);
   };
 
-  const normalizedPhone = phone ? `+91${phone}` : '';
+  // Normalize a 10-digit Indian mobile number to E.164. The input strips
+  // punctuation, so this also protects against a pasted country code.
+  const phoneDigits = phone.replace(/\D/g, '').replace(/^91(?=\d{10}$)/, '');
+  const normalizedPhone = phoneDigits ? `+91${phoneDigits}` : '';
 
   const sendLiveOtp = async () => {
+    if (loading) return;
     if (DEMO_MODE) {
       if (currentStep === 'PHONE') {
         advance();
@@ -279,29 +281,43 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
       return;
     }
     if (!supabase) {
-      setOtpError('Live authentication is not configured.');
-      return;
-    }
-    setLoading(true);
-    setOtpError('');
-    setOtpStatus('idle');
-    const { error } = await supabase.auth.signInWithOtp({
-      phone: normalizedPhone,
-      options: { shouldCreateUser: true },
-    });
-    setLoading(false);
-    if (error) {
-      setOtpError(describeAuthError(error.message, 'Unable to send OTP.'));
+      setOtpError(t('Live authentication is not configured. Check the Supabase URL and publishable key for this deployment.'));
       setOtpStatus('error');
       return;
     }
-    setOtp('');
-    setResendSeconds(45);
-    setCurrentStep('OTP');
+    if (phoneDigits.length !== 10 || !name.trim()) {
+      setOtpError(t('Enter your name and a valid 10-digit Indian mobile number.'));
+      setOtpStatus('error');
+      return;
+    }
+
+    setLoading(true);
+    setOtpError('');
+    setOtpStatus('idle');
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        phone: normalizedPhone,
+        options: { shouldCreateUser: true },
+      });
+      if (error) {
+        setOtpError(describeAuthError(error.message, t('Unable to send OTP. Check phone authentication and SMS provider settings.')));
+        setOtpStatus('error');
+        return;
+      }
+      setOtp('');
+      setResendSeconds(45);
+      setCurrentStep('OTP');
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : String(error);
+      setOtpError(t('OTP request failed before Supabase returned a response. Check your connection and try again.') + ` (${detail.slice(0, 180)})`);
+      setOtpStatus('error');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const verifyLiveOtp = async (code: string) => {
-    if (code.length !== 6) return;
+    if (code.length !== 6 || loading || otpVerificationInFlight.current) return;
     if (DEMO_MODE) {
       if (code !== '842613') {
         setOtpError('That demo code is incorrect. Try 842613.');
@@ -313,40 +329,46 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
       return;
     }
     if (!supabase) {
-      setOtpError('Live authentication is not configured.');
+      setOtpError(t('Live authentication is not configured. Check the Supabase URL and publishable key for this deployment.'));
       setOtpStatus('error');
       return;
     }
+    otpVerificationInFlight.current = true;
     setLoading(true);
     setOtpError('');
     setOtpStatus('idle');
-    const { data, error } = await supabase.auth.verifyOtp({
-      phone: normalizedPhone,
-      token: code,
-      type: 'sms',
-    });
-    if (error || !data.user) {
+    try {
+      const { data, error } = await supabase.auth.verifyOtp({
+        phone: normalizedPhone,
+        token: code,
+        type: 'sms',
+      });
+      if (error || !data.user) {
+        setOtpError(describeAuthError(error?.message, t('OTP verification failed. Please try again.')));
+        setOtpStatus('error');
+        return;
+      }
+      const { error: profileError } = await supabase.from('profiles').upsert({
+        id: data.user.id,
+        full_name: name.trim(),
+        phone: normalizedPhone,
+      }, { onConflict: 'id' });
+      if (profileError) {
+        setOtpError(profileError.message || t('Your phone was verified, but your farmer profile could not be saved.'));
+        setOtpStatus('error');
+        return;
+      }
+      setOtpStatus('success');
+      const hasConsent = await loadAccount(data.user.id);
+      window.setTimeout(() => setCurrentStep(hasConsent ? 'LAND_RECORDS' : 'CONSENT'), 650);
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : String(error);
+      setOtpError(t('OTP verification request failed. Check your connection and try again.') + ` (${detail.slice(0, 180)})`);
+      setOtpStatus('error');
+    } finally {
+      otpVerificationInFlight.current = false;
       setLoading(false);
-      setOtpError(describeAuthError(error?.message, 'OTP verification failed. Please try again.'));
-      setOtpStatus('error');
-      return;
     }
-    const { error: profileError } = await supabase.from('profiles').upsert({
-      id: data.user.id,
-      full_name: name,
-      phone: normalizedPhone,
-      village,
-    }, { onConflict: 'id' });
-    setLoading(false);
-    if (profileError) {
-      setOtpError(profileError.message || 'Verified, but farmer profile could not be saved.');
-      setOtpStatus('error');
-      return;
-    }
-    setOtpStatus('success');
-    // Returning farmers already gave consent: take them straight to their fields.
-    const hasConsent = await loadAccount(data.user.id);
-    window.setTimeout(() => setCurrentStep(hasConsent ? 'LAND_RECORDS' : 'CONSENT'), 650);
   };
 
   const reset = () => {
@@ -368,12 +390,12 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
           <div>
             <div className="flex items-center gap-2">
               <h3 className="font-extrabold text-lg text-emerald-950 font-['DM_Sans']">
-                Farmer KYC & Onboarding Flow
+                {t('Create your farmer account')}
               </h3>
               <span className="rounded-full border border-amber-300/25 bg-amber-300/10 px-2.5 py-1 text-[11px] font-black text-amber-800">{DEMO_MODE ? 'SIMULATION' : 'LIVE OTP'}</span>
             </div>
-            <p className="text-sm text-emerald-950/65 mt-2 max-w-2xl leading-6">
-              <span className="font-semibold text-emerald-950">Mobile OTP is live.</span> Identity, biometric, bank and cadastral steps remain explicit demo/adapter states until their authorized providers are connected.
+            <p className="text-sm text-emerald-950/70 mt-2 max-w-2xl leading-6">
+              Verify your mobile number first. We’ll ask for consent and field details only when you need those services. SMS delivery depends on the configured Supabase phone provider.
             </p>
           </div>
         </div>
@@ -387,7 +409,7 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
           </div>
           <button type="button" onClick={() => void withdrawConsent()} disabled={withdrawBusy}
             className="min-h-10 rounded-xl border border-amber-300 bg-white px-3 text-xs font-bold text-amber-900 transition hover:bg-amber-100 disabled:opacity-50">
-            {withdrawBusy ? 'Withdrawing…' : 'Withdraw consent'}
+            {withdrawBusy ? 'Withdrawing…' : t('Withdraw consent')}
           </button>
         </div>
       )}
@@ -415,7 +437,7 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
             >
               {VISIBLE_STEPS.map((step) => (
                 <Step key={step.id}>
-                  <span className="sr-only">{step.label}: {step.sublabel}</span>
+                  <span className="sr-only">{t(step.label)}: {t(step.sublabel)}</span>
                 </Step>
               ))}
             </Stepper>
@@ -427,8 +449,8 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
                   <li key={step.id} className={state}>
                     <span className="kyc-step-icon">{index < stepIndex ? <CheckCircle2 className="h-4 w-4" /> : <StepIcon className="h-4 w-4" />}</span>
                     <span className="min-w-0">
-                      <strong>{step.label}</strong>
-                      <small>{step.sublabel}</small>
+                      <strong>{t(step.label)}</strong>
+                      <small>{t(step.sublabel)}</small>
                     </span>
                   </li>
                 );
@@ -440,71 +462,70 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
         {/* Active Step Form */}
         <div className="lg:col-span-8">
           <div className="ui-card flex min-h-[400px] flex-col gap-4 !p-6">
+            {(loading || fieldBusy) && (
+              <div className="flex justify-center rounded-xl bg-amber-50 px-4 py-3 text-amber-900" role="status" aria-live="polite">
+                <LatticeLoader label={fieldBusy ? 'Saving field' : currentStep === 'OTP' ? 'Verifying phone' : 'Sending secure code'} color="#92400e" doneColor="#16a34a" cellSize={7} gap={2} fontSize={13} step={80} />
+              </div>
+            )}
             {currentStep === 'PHONE' && (
               <>
                 <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
                   <Phone className="w-4 h-4 text-emerald-400" />
-                  <h4 className="font-bold text-sm text-white">Step 1: Mobile Number Verification</h4>
+                  <h4 className="font-bold text-sm text-white">{t('Step 1: Mobile Number Verification')}</h4>
                 </div>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Enter the farmer's mobile number. In live mode, Supabase Auth sends a real SMS OTP; demo mode uses a local test code.
+                <p className="text-sm text-slate-600 leading-relaxed">
+                  Start with just your name and mobile number. We ask for village, district and field location later, when you register a specific field—not during login.
                 </p>
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-4">
                   <div>
-                    <label className="text-xs text-slate-400 block mb-1">Full Name (as per land records)</label>
+                    <label htmlFor="farmer-full-name" className="text-sm font-semibold text-slate-700 block mb-1.5">Full name</label>
                     <input
+                      id="farmer-full-name"
+                      autoComplete="name"
                       className="ui-input"
-                      placeholder="Gurpreet Singh Brar"
+                      placeholder="Enter your name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-slate-400 block mb-1">Mobile Number (+91)</label>
-                    <input
-                      type="tel"
-                      maxLength={10}
-                      className="ui-input font-mono"
-                      placeholder="98765 43210"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="text-xs text-slate-400 block mb-1">Village</label>
+                    <label htmlFor="farmer-mobile-number" className="text-sm font-semibold text-slate-700 block mb-1.5">{t('Mobile Number (+91)')}</label>
+                    <div className="flex items-center rounded-xl border border-slate-200 bg-white focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-100">
+                      <span className="px-3 py-3 text-sm font-bold text-slate-500 border-r border-slate-200">+91</span>
                       <input
-                        className="ui-input"
-                        placeholder="Ubhawal"
-                        value={village}
-                        onChange={(e) => setVillage(e.target.value)}
+                        id="farmer-mobile-number"
+                        type="tel"
+                        inputMode="numeric"
+                        autoComplete="tel-national"
+                        maxLength={10}
+                        className="min-w-0 flex-1 bg-transparent px-3 py-3 text-base text-slate-900 outline-none"
+                        placeholder="98765 43210"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
                       />
                     </div>
-                    <div>
-                      <label className="text-xs text-slate-400 block mb-1">Block</label>
-                      <select
-                        className="ui-select"
-                        value={block}
-                        onChange={(e) => setBlock(e.target.value)}
-                      >
-                        <option value="">Select Block</option>
-                        <option>Sangrur</option>
-                        <option>Sunam</option>
-                        <option>Dhuri</option>
-                        <option>Bhawanigarh</option>
-                        <option>Dirba</option>
-                        <option>Lehragaga</option>
-                      </select>
-                    </div>
+                    <p className="mt-1.5 text-xs text-slate-500">We’ll send a one-time code to verify this number.</p>
+                    {!DEMO_MODE && <p className="mt-1 text-xs text-slate-500">Phone sign-in and an SMS provider must be enabled in Supabase before a real code can be delivered.</p>}
                   </div>
                 </div>
+                {!DEMO_MODE && !supabase && (
+                  <div className="rounded-lg border border-amber-500/30 bg-amber-950/30 p-3 text-sm text-amber-100" role="alert">
+                    {t('Live login is unavailable because this deployment is missing its Supabase URL or publishable key.')}
+                  </div>
+                )}
+                {otpError && (
+                  <div className="rounded-lg border border-red-500/30 bg-red-950/30 p-3 text-sm text-red-200" role="alert" aria-live="assertive">
+                    {otpError}
+                  </div>
+                )}
                 <button
+                  type="button"
                   onClick={sendLiveOtp}
-                  disabled={!phone || phone.length < 10 || !name || loading}
+                  disabled={phoneDigits.length !== 10 || !name.trim() || loading || (!DEMO_MODE && !supabase)}
                   className="ui-btn is-primary is-lg is-block mt-auto"
                 >
-                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                  {DEMO_MODE ? 'Send Demo OTP' : 'Send OTP via SMS'}
+                  {loading ? <LatticeLoader label="Sending OTP" color="#ffffff" cellSize={4} gap={1} fontSize={12} showTimer={false} /> : <Sparkles className="w-4 h-4" />}
+                  {DEMO_MODE ? t('Send Demo OTP') : t('Send OTP via SMS')}
                 </button>
               </>
             )}
@@ -513,11 +534,11 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
               <>
                 <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
                   <Smartphone className="w-4 h-4 text-emerald-400" />
-                  <h4 className="font-bold text-sm text-white">Step 2: OTP Verification</h4>
+                  <h4 className="font-bold text-sm text-white">{t('Step 2: OTP Verification')}</h4>
                 </div>
                 <div className="p-3 bg-slate-900/80 rounded-lg border border-slate-800 text-xs text-slate-400">
                   <div className="flex items-center justify-between gap-3">
-                    <span>OTP sent to <strong className="text-white">+91 {phone}</strong> via SMS.</span>
+                    <span>{t('OTP sent to')} <strong className="text-white">+91 {phone}</strong> SMS के माध्यम से।</span>
                     <button
                       type="button"
                       onClick={() => { setCurrentStep('PHONE'); setOtp(''); setOtpStatus('idle'); setOtpError(''); }}
@@ -536,8 +557,8 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
 
                 <div className="rounded-2xl border border-amber-400/20 bg-amber-400/5 p-4 sm:p-5">
                   <div className="flex items-center justify-between gap-3 mb-3">
-                    <label className="text-sm font-bold text-slate-200">Enter 6-digit OTP</label>
-                    <span className="text-[11px] font-semibold text-slate-500">Secure SMS code</span>
+                    <label className="text-sm font-bold text-slate-200">{t('Enter 6-digit OTP')}</label>
+                    <span className="text-[11px] font-semibold text-slate-500">{t('Secure SMS code')}</span>
                   </div>
                   <div className="flex justify-center overflow-x-auto py-2">
                     <CodeSlots
@@ -574,14 +595,14 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
                     onClick={sendLiveOtp}
                     className="min-h-11 text-sm font-bold text-amber-700 disabled:text-slate-600"
                   >
-                    {resendSeconds > 0 ? `Resend OTP in ${resendSeconds}s` : 'Resend OTP'}
+                    {resendSeconds > 0 ? `${t('Resend OTP')} ${t('in')} ${resendSeconds}s` : t('Resend OTP')}
                   </button>
                   <span className="text-xs text-slate-500">Verification runs automatically when all 6 digits are entered.</span>
                 </div>
 
                 {loading && (
                   <div className="text-xs text-emerald-300 bg-emerald-950/30 border border-emerald-500/30 rounded-lg p-2" role="status">
-                    Verifying your OTP securely…
+                    {t('Verifying your OTP securely…')}
                   </div>
                 )}
                 {otpError && (
@@ -596,7 +617,7 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
               <>
                 <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
                   <Shield className="w-4 h-4 text-emerald-400" />
-                  <h4 className="font-bold text-sm text-white">Step 3: Farmer consent</h4>
+                  <h4 className="font-bold text-sm text-white">{t('Step 3: Farmer consent')}</h4>
                 </div>
                 <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4 text-xs text-slate-400 leading-relaxed">
                   NIRDHOOM may use your field, booking, machine-operation, evidence and residue-lot records to coordinate clearance and produce an auditable operational record. Identity-provider, bank and registry services are separate integrations and are not implied by this consent.
@@ -614,42 +635,38 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
                 </label>
                 <button
                   onClick={async () => {
-                    if (!consentAccepted) return;
+                    if (!consentAccepted || loading) return;
                     if (DEMO_MODE) { advance(); return; }
-                    if (!supabase) { setOtpError('Live authentication is not configured.'); return; }
+                    if (!supabase) {
+                      setOtpError('Live authentication is not configured.');
+                      return;
+                    }
                     setLoading(true);
                     setOtpError('');
-                    const { data: userData } = await supabase.auth.getUser();
-                    if (!userData.user) {
+                    try {
+                      const { data: userData } = await supabase.auth.getUser();
+                      if (!userData.user) {
+                        setOtpError('Your session expired. Please verify your phone again.');
+                        return;
+                      }
+                      const { error: consentError } = await supabase.rpc('record_farmer_network_consent');
+                      if (consentError) {
+                        setOtpError(consentError.message || 'Consent could not be recorded.');
+                        return;
+                      }
+                      setActiveConsent(true);
+                      setCurrentStep('LAND_RECORDS');
+                    } catch {
+                      setOtpError('Consent could not be recorded because the server was unreachable. Check your connection and try again.');
+                    } finally {
                       setLoading(false);
-                      setOtpError('Your session expired. Please verify your phone again.');
-                      return;
                     }
-                    const { error: consentError } = await supabase.from('consents').insert({
-                      profile_id: userData.user.id,
-                      consent_type: 'farmer_network',
-                      version: '2026-10-04',
-                      source: 'WEB_OTP_ONBOARDING',
-                    });
-                    if (consentError) {
-                      setLoading(false);
-                      setOtpError(consentError.message || 'Consent could not be recorded.');
-                      return;
-                    }
-                    const { error: profileError } = await supabase.from('profiles').update({ consent_status: 'GRANTED' }).eq('id', userData.user.id);
-                    setLoading(false);
-                    if (profileError) {
-                      setOtpError(profileError.message || 'Consent was recorded but profile status could not be updated.');
-                      return;
-                    }
-                    setActiveConsent(true);
-                    setCurrentStep(DEMO_MODE ? 'AADHAAR' : 'LAND_RECORDS');
                   }}
                   disabled={!consentAccepted || loading}
                   className="ui-btn is-primary is-lg is-block mt-auto"
                 >
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Shield className="w-4 h-4" />}
-                  {DEMO_MODE ? 'Accept demo consent' : 'Record consent & continue'}
+                  {DEMO_MODE ? t('Accept demo consent') : t('Record consent & continue')}
                 </button>
                 {otpError && <div className="text-xs text-red-300 bg-red-950/30 border border-red-500/30 rounded-lg p-2">{otpError}</div>}
               </>
@@ -782,7 +799,7 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
                   className="ui-btn is-primary is-lg is-block mt-auto"
                 >
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CreditCard className="w-4 h-4" />}
-                  {DEMO_MODE ? 'Continue' : 'Bank verification unavailable'}
+                  {DEMO_MODE ? t('Continue') : t('Bank verification unavailable')}
                 </button>
               </>
             )}
@@ -810,7 +827,7 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
                     </ul>
                     <div className="mt-3 flex flex-wrap gap-2">
                       <button type="button" className="ui-btn is-primary" onClick={() => onNavigate?.('FARMER_ONBOARDING')}>Book a pickup</button>
-                      <button type="button" className="ui-btn" onClick={() => onNavigate?.('FARMER_SURFACE')}>Connect Telegram</button>
+                      <button type="button" className="ui-btn" onClick={() => onNavigate?.('FARMER_SURFACE')}>{t('Connect Telegram')}</button>
                     </div>
                   </div>
                 )}
@@ -825,11 +842,18 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
                     <input id="live-acres" type="number" inputMode="decimal" min={0.01} max={500} step={0.01} className="ui-input font-mono" placeholder="3.5" value={acreage} onChange={(e) => setAcreage(e.target.value)} />
                   </div>
                   <div>
-                    <label className="text-xs text-slate-400 block mb-1" htmlFor="live-village">Village</label>
-                    <input id="live-village" className="ui-input" value={village} onChange={(e) => setVillage(e.target.value)} />
+                    <label className="text-xs text-slate-600 block mb-1.5" htmlFor="live-village">Village</label>
+                    <input id="live-village" className="ui-input" autoComplete="address-level3" placeholder="Enter field village" value={village} onChange={(e) => setVillage(e.target.value)} />
                   </div>
                   <div>
-                    <label className="text-xs text-slate-400 block mb-1" htmlFor="live-district">District</label>
+                    <label className="text-xs text-slate-600 block mb-1.5" htmlFor="live-block">Block / Tehsil (optional)</label>
+                    <select id="live-block" className="ui-select" value={block} onChange={(e) => setBlock(e.target.value)}>
+                      <option value="">Select block / tehsil</option>
+                      <option>Sangrur</option><option>Sunam</option><option>Dhuri</option><option>Bhawanigarh</option><option>Dirba</option><option>Lehragaga</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-xs text-slate-600 block mb-1.5" htmlFor="live-district">District</label>
                     <select id="live-district" className="ui-select" value={district} onChange={(e) => setDistrict(e.target.value)}>
                       {DISTRICTS.map((d) => <option key={d}>{d}</option>)}
                     </select>
@@ -851,7 +875,7 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
                     <span className="text-xs font-bold text-slate-300"><MapPin className="mr-1 inline h-3.5 w-3.5 text-emerald-400" />Field location</span>
                     <button type="button" className="ui-btn" onClick={useMyLocation} disabled={locating}>
                       {locating ? <Loader2 className="h-4 w-4 animate-spin" /> : <MapPin className="h-4 w-4" />}
-                      {locating ? 'Finding location…' : 'Use my current location'}
+                      {locating ? t('Finding location…') : t('Use my current location')}
                     </button>
                   </div>
                   <div className="mt-3 grid grid-cols-2 gap-2">

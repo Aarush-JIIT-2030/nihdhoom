@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useAppLanguage } from '../../i18n/LanguageContext';
 import { Buyer, BuyerType } from '../../types';
 import { INITIAL_BUYERS } from '../../data/mockData';
 import { 
@@ -13,11 +14,67 @@ import {
   Scale
 } from 'lucide-react';
 
-export const MultiOfftakeAuction: React.FC = () => {
-  const [buyers] = useState<Buyer[]>(INITIAL_BUYERS);
+interface MultiOfftakeAuctionProps {
+  buyers: Buyer[];
+  demoMode: boolean;
+}
+
+export const MultiOfftakeAuction: React.FC<MultiOfftakeAuctionProps> = ({ buyers: liveBuyers, demoMode }) => {
+  const { t } = useAppLanguage();
+  const buyers = demoMode ? INITIAL_BUYERS : liveBuyers;
   const [testMoisture, setTestMoisture] = useState<number>(14.0);
   const [testSilica, setTestSilica] = useState<'LOW' | 'MEDIUM' | 'HIGH'>('LOW');
   const [lotTonnage, setLotTonnage] = useState<number>(12); // e.g. 5 acres @ 2.4 t/ac
+
+  // Live buyer_demands do not currently contain validated prices or quality thresholds.
+  // Never run the illustrative optimizer against zero-filled fields or present a demand as an offer.
+  if (!demoMode) {
+    return (
+      <section className="ui-stack" aria-labelledby="live-offtake-title">
+        <div className="ui-card">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h3 id="live-offtake-title" className="text-xl font-bold text-[var(--ink)]">{t('Connected buyer demand')}</h3>
+              <p className="ui-card-sub mt-1">{t('These records come from the connected buyer-demand table. They are demand requests, not verified buyers, price quotes, accepted offers or contracts.')}</p>
+            </div>
+            <span className="badge">{t('LIVE RECORDS')}</span>
+          </div>
+        </div>
+        {liveBuyers.length === 0 ? (
+          <div className="ui-card" role="status">
+            <h4 className="font-semibold text-[var(--ink)]">{t('No buyer demand records available')}</h4>
+            <p className="ui-card-sub mt-1">{t('No connected buyer-demand records were returned for this account. No sample buyers or prices are shown in live mode.')}</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+            {liveBuyers.map((buyer) => (
+              <article key={buyer.id} className="ui-card">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <div>
+                    <h4 className="font-bold text-[var(--ink)]">{buyer.name}</h4>
+                    <p className="text-xs text-[var(--muted)]">{t('Demand record')} · {buyer.id}</p>
+                  </div>
+                  <span className="badge">{t('Demand only')}</span>
+                </div>
+                <div className="mt-4 grid grid-cols-2 gap-3">
+                  <div>
+                    <span className="ui-kv-label block">{t('Target quantity')}</span>
+                    <strong className="text-lg text-[var(--ink)]">{Number.isFinite(buyer.demand_tonnes) ? buyer.demand_tonnes.toLocaleString() : '—'} t</strong>
+                  </div>
+                  <div>
+                    <span className="ui-kv-label block">{t('Price')}</span>
+                    <strong className="text-lg text-[var(--ink)]">{t('Not supplied')}</strong>
+                  </div>
+                </div>
+                <p className="mt-3 text-sm text-[var(--muted)]">{buyer.description}</p>
+              </article>
+            ))}
+          </div>
+        )}
+        <p className="text-xs text-[var(--muted)]">{t('Live price comparison is disabled until buyer identity, quote validity, price, quality limits and pickup terms are persisted and validated. No contract or sale is created here.')}</p>
+      </section>
+    );
+  }
 
   // Auction router logic: finds the highest-paying eligible buyer based on moisture and silica constraints
   const eligibleBuyers = buyers.filter((buyer) => {
@@ -42,14 +99,14 @@ export const MultiOfftakeAuction: React.FC = () => {
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-[family-name:var(--font-display)] text-[24px] font-bold leading-tight text-[var(--ink)]">
-                  Multi-offtake planning simulator
+                  {t('Multi-offtake planning simulator')}
                 </h3>
                 <span className="badge badge-emerald text-xs">
-                  ILLUSTRATIVE SCENARIO
+                  {t('ILLUSTRATIVE SCENARIO')}
                 </span>
               </div>
               <p className="ui-card-sub max-w-2xl !text-[14px]">
-                This simulator demonstrates how residue lots could be compared against buyer requirements using moisture, quality and logistics. Prices below are mock records; no live offer or contract is created.
+                {t('This simulator demonstrates how residue lots could be compared against buyer requirements using moisture, quality and logistics. Prices below are mock records; no live offer or contract is created.')}
               </p>
             </div>
           </div>
@@ -73,8 +130,8 @@ export const MultiOfftakeAuction: React.FC = () => {
               </p>
             </div>
             <div className="text-right hidden sm:block">
-              <span className="text-xs font-mono text-emerald-800 font-bold block">Illustrative price spread</span>
-              <span className="text-[10px] text-emerald-950/55">Demo comparison only</span>
+              <span className="text-xs font-mono text-emerald-800 font-bold block">{t('Illustrative price spread')}</span>
+              <span className="text-[10px] text-emerald-950/55">{t('Demo comparison only')}</span>
             </div>
           </div>
         </div>
@@ -86,11 +143,11 @@ export const MultiOfftakeAuction: React.FC = () => {
           <div className="flex items-center gap-2">
             <Scale className="w-5 h-5 text-amber-700" />
             <h4 className="font-bold text-base text-emerald-950">
-              Interactive Lot Offtake Router
+              {t('Interactive Lot Offtake Router')}
             </h4>
           </div>
           <span className="text-xs text-emerald-950/55">
-            Demo quality-matching simulator
+            {t('Demo quality-matching simulator')}
           </span>
         </div>
 
@@ -98,7 +155,7 @@ export const MultiOfftakeAuction: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-emerald-50/60 p-4 rounded-xl border border-emerald-900/10">
           <div>
             <label className="text-xs text-emerald-950/55 block mb-1">
-              Straw Moisture Level: <strong className="text-emerald-800 font-mono">{testMoisture}%</strong>
+              {t('Straw Moisture Level:')} <strong className="text-emerald-800 font-mono">{testMoisture}%</strong>
             </label>
             <input
               type="range"

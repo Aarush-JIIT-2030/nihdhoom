@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useAppLanguage } from '../../i18n/LanguageContext';
 import { 
   CheckCircle2, 
   MapPin, 
@@ -32,15 +33,40 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
   demoMode,
   onJobCompleted,
 }) => {
+  const { t } = useAppLanguage();
   const [selectedFieldId, setSelectedFieldId] = useState<string>(fields[0]?.id || 'FIELD-101');
-  const [moistureValue, setMoistureValue] = useState<number>(14.2);
-  const [balesCount, setBalesCount] = useState<number>(38);
+  const [moistureValue, setMoistureValue] = useState<number | null>(null);
+  const [balesCount, setBalesCount] = useState<number | null>(null);
   const [residueTonnes, setResidueTonnes] = useState<number>(0);
   const [jobStatus, setJobStatus] = useState<string | null>(null);
   const [jobBusy, setJobBusy] = useState(false);
   const [jobMessage, setJobMessage] = useState('');
   const [offlineSyncActive, setOfflineSyncActive] = useState(typeof navigator !== 'undefined' ? navigator.onLine : true);
   const currentField = fields.find((f) => f.id === selectedFieldId) || fields[0];
+  const displayedMoisture = demoMode ? (moistureValue ?? 14.2) : moistureValue;
+  const displayedBalesCount = demoMode ? (balesCount ?? 38) : balesCount;
+  const completionMeasurementsValid = Number.isFinite(residueTonnes) && residueTonnes > 0
+    && moistureValue !== null && Number.isFinite(moistureValue) && moistureValue >= 0 && moistureValue <= 100
+    && balesCount !== null && Number.isInteger(balesCount) && balesCount >= 1 && balesCount <= 1000000;
+
+  useEffect(() => {
+    // Never carry demo controls into a live session as if they were field measurements.
+    setMoistureValue(null);
+    setBalesCount(null);
+    setResidueTonnes(0);
+  }, [demoMode]);
+
+  // Network state is independent of GPS permission and demo/live mode.
+  useEffect(() => {
+    const updateNetworkState = () => setOfflineSyncActive(navigator.onLine);
+    updateNetworkState();
+    window.addEventListener('online', updateNetworkState);
+    window.addEventListener('offline', updateNetworkState);
+    return () => {
+      window.removeEventListener('online', updateNetworkState);
+      window.removeEventListener('offline', updateNetworkState);
+    };
+  }, []);
 
   useEffect(() => {
     const client = supabase;
@@ -77,16 +103,9 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
       maximumAge: 10000,
       timeout: 15000,
     });
-    const onOnline = () => setOfflineSyncActive(true);
-    const onOffline = () => setOfflineSyncActive(false);
-    window.addEventListener('online', onOnline);
-    window.addEventListener('offline', onOffline);
-
     return () => {
       cancelled = true;
       navigator.geolocation.clearWatch(watchId);
-      window.removeEventListener('online', onOnline);
-      window.removeEventListener('offline', onOffline);
     };
   }, [activeMachine.id, demoMode]);
 
@@ -131,6 +150,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
 
     if (!navigator.onLine) {
       await queueEvidence({
+        ownerUserId: user.id,
         fieldId: currentField.dbId || currentField.id,
         fileName: file.name,
         fileType: file.type,
@@ -150,6 +170,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
     const upload = await client.storage.from('evidence').upload(path, file, { contentType: file.type, upsert: false });
     if (upload.error) {
       await queueEvidence({
+        ownerUserId: user.id,
         fieldId: currentField.dbId || currentField.id,
         fileName: file.name,
         fileType: file.type,
@@ -221,70 +242,85 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
   const advanceLiveJob = async () => {
     const client = supabase;
     if (demoMode || !client || !currentField || jobBusy) return;
-    const nextByStatus: Record<string, string> = { ASSIGNED: 'ARRIVED', ARRIVED: 'BALING', BALING: 'PROOF_PENDING', PROOF_PENDING: 'COMPLETED' };
+    const nextByStatus: Record<string, string> = {
+      ASSIGNED: 'ARRIVED',
+      ARRIVED: 'BALING',
+      BALING: 'PROOF_PENDING',
+      PROOF_PENDING: 'COMPLETED',
+    };
     const next = jobStatus ? nextByStatus[jobStatus] : undefined;
-    if (!next) { setJobMessage('No active server job is assigned to this field yet.'); return; }
+    if (!next) {
+      setJobMessage('No active server job is assigned to this field yet.');
+      return;
+    }
+    if (next === 'COMPLETED' && (!Number.isFinite(residueTonnes) || residueTonnes <= 0)) {
+      setJobMessage('Enter the measured residue quantity in tonnes before completing this job.');
+      return;
+    }
+    if (next === 'COMPLETED' && (moistureValue === null || !Number.isFinite(moistureValue) || moistureValue < 0 || moistureValue > 100)) {
+      setJobMessage('Enter a measured moisture percentage between 0 and 100 before completing this job.');
+      return;
+    }
+    if (next === 'COMPLETED' && (balesCount === null || !Number.isInteger(balesCount) || balesCount < 1 || balesCount > 1000000)) {
+      setJobMessage('Enter the measured bale count before completing this job.');
+      return;
+    }
+
     setJobBusy(true);
     setJobMessage('');
     try {
-      const lookup = await client.from('jobs').select('id,status,booking_id,machine_id').eq('field_id', currentField.dbId || currentField.id)
-        .eq('status', jobStatus).order('created_at', { ascending: false }).limit(1).maybeSingle();
-      if (lookup.error || !lookup.data?.id) throw new Error(lookup.error?.message || 'Active job not found.');
-      const { error } = await client.rpc('transition_job', {
-        p_job_id: lookup.data.id, p_next_status: next,
-        p_metadata: { source: 'operator-pwa', field_id: currentField.dbId || currentField.id },
-      });
-      if (error) throw new Error(error.message);
-      setJobStatus(next);
+      const lookup = await client
+        .from('jobs')
+        .select('id,status,booking_id,machine_id')
+        .eq('field_id', currentField.dbId || currentField.id)
+        .eq('status', jobStatus)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (lookup.error || !lookup.data?.id) {
+        throw new Error(lookup.error?.message || 'Active job not found.');
+      }
+
+      const metadata = {
+        source: 'operator-pwa',
+        field_id: currentField.dbId || currentField.id,
+        gps_available: Boolean(gpsState),
+        bales_count: balesCount,
+      };
+
       if (next === 'COMPLETED') {
-        const quantity = Number(residueTonnes);
-        const { data: existingLot } = await client
-          .from('residue_lots')
-          .select('id')
-          .eq('job_id', lookup.data.id)
-          .maybeSingle();
-        if (!existingLot && quantity > 0) {
-          const { error: lotError } = await client.from('residue_lots').insert({
-            field_id: currentField.dbId || currentField.id,
-            booking_id: lookup.data.booking_id,
-            job_id: lookup.data.id,
-            farmer_id: currentField.farmer_id,
-            crop: currentField.crop,
-            residue_type: 'PADDY_STRAW',
-            estimated_quantity_tonnes: quantity,
-            quantity_tonnes: quantity,
-            harvest_date: currentField.expected_harvest_date || null,
-            ready_from: new Date().toISOString(),
-            pickup_deadline: currentField.clearance_deadline || null,
-            machine_id: lookup.data.machine_id || currentField.assigned_machine_id || null,
-            geometry_provenance: {
-              source: currentField.provenance?.geometry || 'UNKNOWN',
-              field_id: currentField.dbId || currentField.id,
-            },
-            moisture_pct: Number(moistureValue),
-            quality_notes: `Operator-recorded completion • ${balesCount} bales • GPS ${gpsState ? 'available' : 'not available'}`,
-            quality_grade: moistureValue <= 16 ? 'DRY' : moistureValue <= 20 ? 'STANDARD' : 'HIGH_MOISTURE',
-            status: 'AVAILABLE',
-            baled_at: new Date().toISOString(),
-            qr_code: `NIR-${lookup.data.id.slice(0, 12).toUpperCase()}`,
-          });
-          if (lotError) {
-            setJobMessage(`Job completed, but the residue lot could not be recorded: ${lotError.message}`);
-          } else {
-            setJobMessage('Job completed and the measured residue lot was recorded. Verification and buyer matching remain separate steps.');
-          }
-        } else if (existingLot) {
-          setJobMessage('Job completed. The residue lot for this job already exists.');
-        } else {
-          setJobMessage('Job completed, but no measured residue quantity was entered; create the lot after weighment.');
+        const { data, error } = await client.rpc('complete_job_with_residue_lot', {
+          p_job_id: lookup.data.id,
+          p_quantity_tonnes: Number(residueTonnes),
+          p_moisture_pct: moistureValue,
+          p_bales_count: balesCount,
+          p_metadata: metadata,
+        });
+        if (error) throw new Error(error.message);
+        if (!data?.lot_id || data?.job_status !== 'COMPLETED') {
+          throw new Error('The server did not confirm job and residue-lot completion.');
         }
+        setJobStatus('COMPLETED');
+        setJobMessage(data.replayed
+          ? 'Job was already completed; its existing residue lot was confirmed.'
+          : 'Job completed and its measured residue lot was recorded atomically. Verification and buyer matching remain separate steps.');
         onJobCompleted(currentField.id, Number(currentField.payout_amount || 0));
       } else {
+        const { error } = await client.rpc('transition_job', {
+          p_job_id: lookup.data.id,
+          p_next_status: next,
+          p_metadata: metadata,
+        });
+        if (error) throw new Error(error.message);
+        setJobStatus(next);
         setJobMessage(`Job moved to ${next.replace(/_/g, ' ')}.`);
       }
     } catch (error) {
       setJobMessage(error instanceof Error ? error.message : 'Job transition failed.');
-    } finally { setJobBusy(false); }
+    } finally {
+      setJobBusy(false);
+    }
   };
 
   const isJobFinished = currentField?.status === 'CLEARED_PENDING_AUDIT' || currentField?.status === 'VERIFIED_NON_BURN';
@@ -292,7 +328,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
   if (!currentField) {
     return (
       <section className="tone-adapt field-empty mx-auto max-w-3xl" aria-live="polite">
-        <h2>No field is assigned to this operator session.</h2>
+        <h2>{t('No field is assigned to this operator session.')}</h2>
         <p>Live operator actions appear only after a field and job are assigned by the connected dispatch workflow.</p>
       </section>
     );
@@ -306,14 +342,14 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
           <div className="mb-2 flex items-center gap-3">
             <Sparkles className="h-6 w-6 shrink-0 text-[var(--brand)]" />
             <h3 className="ui-title !mt-0">
-              Field operator workspace
+              {t('Field operator workspace')}
             </h3>
           </div>
           <p className="ui-lede">
-            Capture the job state, device location, measured residue and field evidence. 
+            {t('Capture the job state, device location, measured residue and field evidence.')} 
           </p>
           <div className="ui-note mt-4 !bg-[var(--surface)] !text-[var(--ink-2)]">
-            <strong>The field workflow should capture GPS, job state, quantity and evidence. Payment remains intentionally disabled in this release.</strong>
+            <strong>{t('The field workflow should capture GPS, job state, quantity and evidence. Payment remains intentionally disabled in this release.')}</strong>
           </div>
         </div>
 
@@ -334,14 +370,14 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
 
           <div className="ui-kv-grid grid-cols-2">
             <div className="ui-kv">
-              <span className="ui-kv-label">Operator</span>
+              <span className="ui-kv-label">{t('Operator')}</span>
               <strong className="ui-kv-value">{activeMachine.operator_name}</strong>
               <span className="text-[12px] text-[var(--muted)]">{activeMachine.operator_phone}</span>
             </div>
             <div className="ui-kv">
-              <span className="ui-kv-label">Daily Capacity</span>
+              <span className="ui-kv-label">{t('Daily Capacity')}</span>
               <strong className="ui-kv-value !text-[var(--brand-ink)]">{activeMachine.capacity_acres_day} Acres / day</strong>
-              <span className="text-[12px] text-[var(--muted)]">CRM programme reference</span>
+              <span className="text-[12px] text-[var(--muted)]">{t('CRM programme reference')}</span>
             </div>
           </div>
         </div>
@@ -352,11 +388,13 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
         <div className="device-frame">
           {/* Status Bar */}
           <div className="device-header">
-            <span>Operator session</span>
+            <span>{t('Operator session')}</span>
             <div className="device-notch"></div>
             <div className="flex items-center gap-1.5 text-xs">
-              <Wifi className="w-3 h-3 text-emerald-400" />
-              <span>{demoMode ? 'PWA Simulation' : 'PWA / device sync'}</span>
+              {offlineSyncActive
+                ? <Wifi className="w-3 h-3 text-emerald-400" aria-hidden="true" />
+                : <WifiOff className="w-3 h-3 text-amber-300" aria-hidden="true" />}
+              <span>{offlineSyncActive ? t('Online') : t('Offline — queued changes will sync later')}</span>
             </div>
           </div>
 
@@ -367,23 +405,33 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
                 🚜
               </div>
               <div>
-                <h4 className="font-bold text-sm text-white">Nirdhoom Field Dispatch</h4>
+                <h4 className="font-bold text-sm text-white">{t('Nirdhoom Field Dispatch')}</h4>
                 <span className="text-[10px] text-emerald-400 font-mono">
-                  GPS status: {gpsState ? 'Location available' : 'Waiting for device location'}
+                  {t('GPS status')}: {gpsState ? t('Location available') : t('Waiting for device location')}
                 </span>
               </div>
             </div>
 
-            <div className="flex items-center gap-1.5 bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-500/30 text-[10px] text-emerald-300 font-semibold">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-              <span>Sync Active</span>
+            <div
+              role="status"
+              aria-live="polite"
+              className={`flex items-center gap-1.5 px-2 py-1 rounded-full border text-[10px] font-semibold ${
+                offlineSyncActive
+                  ? 'bg-emerald-950/80 border-emerald-500/30 text-emerald-300'
+                  : 'bg-amber-950/80 border-amber-500/40 text-amber-200'
+              }`}
+            >
+              {offlineSyncActive
+                ? <Wifi className="w-3 h-3" aria-hidden="true" />
+                : <WifiOff className="w-3 h-3" aria-hidden="true" />}
+              <span>{offlineSyncActive ? t('Online') : t('Offline — queued changes will sync later')}</span>
             </div>
           </div>
 
           {/* Field Job Selection Queue */}
           <div className="p-3 bg-slate-950 flex flex-col gap-3 min-h-[460px]">
             <div className="text-[11px] font-bold uppercase text-slate-400 tracking-wider">
-              Assigned Field Queue for Today
+              {t('Assigned Field Queue for Today')}
             </div>
 
             <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
@@ -422,7 +470,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
                 </div>
 
                 <div className="text-right">
-                  <span className="text-[10px] text-slate-400 block">{demoMode ? 'Demo quote' : 'Server quote'}</span>
+                  <span className="text-[10px] text-slate-400 block">{demoMode ? t('Demo quote') : t('Server quote')}</span>
                   <span className="text-base font-extrabold text-emerald-400 font-mono">
                     {demoMode ? `₹${Number(currentField.payout_amount || 0).toLocaleString()}` : (currentField.payout_amount ? `₹${Number(currentField.payout_amount).toLocaleString()}` : 'Server quote pending')}
                   </span>
@@ -449,7 +497,7 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
                     </span>
                   </div>
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/80 text-slate-950 font-extrabold">
-                    {demoMode ? 'Demo assignment' : 'Live assignment'}
+                    {demoMode ? t('Demo assignment') : t('Live assignment')}
                   </span>
                 </div>
               </div>
@@ -461,14 +509,14 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
                   className="flex-1 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 border border-slate-700"
                 >
                   <Phone className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>Call Farmer</span>
+                  <span>{t('Call Farmer')}</span>
                 </a>
                 <button
                   onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${currentField.center.lat},${currentField.center.lng}`, '_blank', 'noopener,noreferrer')}
                   className="flex-1 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer shadow"
                 >
                   <Navigation className="w-3.5 h-3.5" />
-                  <span>GPS Navigate</span>
+                  <span>{t('GPS Navigate')}</span>
                 </button>
               </div>
 
@@ -477,30 +525,62 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
                 <div className="flex justify-between items-center">
                   <span className="text-slate-400 flex items-center gap-1">
                     <Droplet className="w-3.5 h-3.5 text-cyan-400" />
-                    <span>{demoMode ? 'Demo moisture control:' : 'Moisture sensor:'}</span>
+                    <span>{demoMode ? t('Demo moisture control:') : t('Measured moisture (%):')}</span>
                   </span>
-                  <strong className={`font-mono ${moistureValue > 20 ? 'text-red-400' : 'text-emerald-400'}`}>
-                    {moistureValue}% {moistureValue <= 20 ? '(Optimal)' : '(High Moisture Alert!)'}
+                  <strong className={`font-mono ${(displayedMoisture ?? 0) > 20 ? 'text-red-400' : 'text-emerald-400'}`}>
+                    {displayedMoisture === null ? t('Not measured') : `${displayedMoisture}% ${displayedMoisture <= 20 ? t('Optimal') : t('High Moisture Alert!')}`}
                   </strong>
                 </div>
-                <input
-                  type="range"
-                  min="10"
-                  max="25"
-                  step="0.5"
-                  value={moistureValue}
-                  onChange={(e) => setMoistureValue(Number(e.target.value))}
-                  disabled={!demoMode}
-                  className="w-full accent-cyan-400 cursor-pointer"
-                />
+                {demoMode ? (
+                  <input
+                    type="range"
+                    min="10"
+                    max="25"
+                    step="0.5"
+                    value={displayedMoisture ?? 14.2}
+                    onChange={(e) => setMoistureValue(Number(e.target.value))}
+                    className="w-full accent-cyan-400 cursor-pointer"
+                    aria-label="Demo moisture percentage"
+                  />
+                ) : (
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="0.1"
+                    value={moistureValue ?? ''}
+                    onChange={(e) => setMoistureValue(e.target.value === '' ? null : Number(e.target.value))}
+                    placeholder="Enter measured %"
+                    className="w-full rounded-md border border-slate-700 bg-slate-900 px-2 py-1 text-right text-xs font-mono text-white"
+                    aria-label="Measured moisture percentage"
+                  />
+                )}
 
                 <div className="flex justify-between items-center pt-1 border-t border-slate-800 text-[11px]">
-                  <span className="text-slate-400">{demoMode ? 'Estimated straw yield:' : 'Straw quantity:'}</span>
-                  <strong className="text-white font-mono">{balesCount} Bales (~{Math.round(currentField.acreage * 2.2 * 10) / 10} Tonnes)</strong>
+                  <span className="text-slate-400">{demoMode ? t('Estimated straw yield:') : t('Measured bale count:')}</span>
+                  {demoMode ? (
+                    <strong className="text-white font-mono">{displayedBalesCount} {t('Bales')} (~{Math.round(currentField.acreage * 2.2 * 10) / 10} Tonnes)</strong>
+                  ) : (
+                    <div className="flex items-center gap-1">
+                      <input
+                        id="measured-bales-count"
+                        type="number"
+                        min="1"
+                        max="1000000"
+                        step="1"
+                        value={balesCount ?? ''}
+                        onChange={(e) => setBalesCount(e.target.value === '' ? null : Number(e.target.value))}
+                        placeholder="Count"
+                        className="w-24 rounded-md border border-slate-700 bg-slate-900 px-2 py-1 text-right text-xs font-mono text-white"
+                        aria-label="Measured bale count"
+                      />
+                      <span className="text-slate-500">{t('Bales')}</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex items-center justify-between gap-2 text-[11px]">
-                  <label className="text-slate-400" htmlFor="residue-tonnes">Measured residue</label>
+                  <label className="text-slate-400" htmlFor="residue-tonnes">{t('Measured residue')}</label>
                   <div className="flex items-center gap-1">
                     <input
                       id="residue-tonnes"
@@ -567,11 +647,11 @@ export const BalerPWA: React.FC<BalerPWAProps> = ({
                   onClick={() => {
                     void advanceLiveJob();
                   }}
-                  disabled={jobBusy || (!demoMode && (!jobStatus || (jobStatus === 'PROOF_PENDING' && residueTonnes <= 0)))}
+                  disabled={jobBusy || (!demoMode && (!jobStatus || (jobStatus === 'PROOF_PENDING' && !completionMeasurementsValid)))}
                   className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 disabled:from-slate-800 disabled:to-slate-800 disabled:text-slate-500 text-white font-extrabold text-xs shadow-lg shadow-emerald-600/30 disabled:shadow-none flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95"
                 >
                   <Zap className="w-4 h-4 fill-current text-amber-300" />
-                  <span>{jobBusy ? 'Updating job…' : demoMode ? 'Complete demo field record' : jobStatus === 'PROOF_PENDING' && residueTonnes <= 0 ? 'Enter measured tonnes to complete' : jobStatus ? `Advance job: ${jobStatus.replace(/_/g, ' ')} →` : 'No active server job'}</span>
+                  <span>{jobBusy ? 'Updating job…' : demoMode ? 'Complete demo field record' : jobStatus === 'PROOF_PENDING' && !completionMeasurementsValid ? 'Enter measured quantity, moisture and bale count' : jobStatus ? `Advance job: ${jobStatus.replace(/_/g, ' ')} →` : 'No active server job'}</span>
                 </button>
               ) : (
                 <div className="p-2.5 rounded-xl bg-emerald-950/70 border border-emerald-500/50 text-emerald-300 text-xs font-bold text-center flex items-center justify-center gap-2">

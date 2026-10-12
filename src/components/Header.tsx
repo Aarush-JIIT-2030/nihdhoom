@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, startTransition } from 'react';
 import { prefetchWorkspace } from '../lib/workspacePrefetch';
-import { farmerLanguageLabels, type FarmerLanguage } from '../i18n/farmerLabels';
+import { farmerLanguageLabels } from '../i18n/farmerLabels';
+import { useAppLanguage } from '../i18n/LanguageContext';
 import {
   Activity, BarChart3, ChevronDown, ClipboardList, Leaf, Map,
   Menu, MessageSquare, ShieldCheck, Smartphone, TrendingUp, UserCheck, Wheat,
@@ -49,10 +50,7 @@ const secondaryNav: NavItem[] = [
 
 export function Header({ activeTab, setActiveTab, demoMode }: HeaderProps) {
   const [moreOpen, setMoreOpen] = useState(false);
-  const [farmerLanguage, setFarmerLanguage] = useState<FarmerLanguage>(() => {
-    if (typeof window === 'undefined') return 'en';
-    return window.localStorage.getItem('nirdhoom.farmer.language') === 'hi' ? 'hi' : 'en';
-  });
+  const { language: farmerLanguage, setLanguage, t } = useAppLanguage();
   const [mobileOpen, setMobileOpen] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
 
@@ -81,10 +79,6 @@ export function Header({ activeTab, setActiveTab, demoMode }: HeaderProps) {
   const activeSecondary = secondaryNav.some((item) => item.id === activeTab);
   const farmerLabels = farmerLanguageLabels[farmerLanguage];
 
-  useEffect(() => {
-    window.localStorage.setItem('nirdhoom.farmer.language', farmerLanguage);
-    document.documentElement.lang = farmerLanguage === 'hi' ? 'hi' : 'en';
-  }, [farmerLanguage]);
 
   return (
     <>
@@ -94,31 +88,31 @@ export function Header({ activeTab, setActiveTab, demoMode }: HeaderProps) {
           <button
             onClick={() => navigate('OVERVIEW')} onMouseEnter={() => prefetchWorkspace('OVERVIEW')}
             className="group flex min-w-0 shrink-0 items-center gap-3 rounded-xl py-1.5 text-left"
-            aria-label="Go to NIRDHOOM Home"
+            aria-label={t('Go to NIRDHOOM Home')}
           >
             <span className="brand-mark" aria-hidden="true">नि</span>
             <span className="hidden min-w-0 sm:block">
               <span className="flex items-center gap-2">
                 <span className="brand-name">NIRDHOOM</span>
                 <span className="brand-chip">
-                  Field network
+                  {t('Field network')}
                 </span>
               </span>
-              <span className="brand-tag">Crop-residue field network</span>
+              <span className="brand-tag">{t('Crop-residue field network')}</span>
             </span>
           </button>
 
           <div className="hidden h-7 w-px bg-[var(--line)] xl:block" />
 
-          <nav className="hidden min-w-0 flex-1 items-center gap-0.5 lg:flex" aria-label="Primary navigation">
+          <nav className="hidden min-w-0 flex-1 items-center gap-0.5 lg:flex" aria-label={t('Primary navigation')}>
             {primaryNav.map((item) => {
               const Icon = item.icon;
               const active = activeTab === item.id;
               return (
-                <button key={item.id} onClick={() => navigate(item.id)} onMouseEnter={() => prefetchWorkspace(item.id)} onFocus={() => prefetchWorkspace(item.id)} title={item.description}
+                <button key={item.id} onClick={() => navigate(item.id)} onMouseEnter={() => prefetchWorkspace(item.id)} onFocus={() => prefetchWorkspace(item.id)} title={t(item.description)}
                   className={`field-nav-item ${active ? 'is-active' : ''}`}>
                   <Icon className="h-4 w-4" />
-                  <span>{item.id === 'OVERVIEW' ? farmerLabels.home : item.id === 'FIELD_JOBS' ? farmerLabels.fields : item.id === 'FARMER_ONBOARDING' ? farmerLabels.book : item.id === 'OPS_CONSOLE' ? farmerLabels.track : item.id === 'RESIDUE_POOLS' ? farmerLabels.market : item.label}</span>
+                  <span>{item.id === 'OVERVIEW' ? farmerLabels.home : item.id === 'FIELD_JOBS' ? farmerLabels.fields : item.id === 'FARMER_ONBOARDING' ? farmerLabels.book : item.id === 'OPS_CONSOLE' ? farmerLabels.track : item.id === 'RESIDUE_POOLS' ? farmerLabels.market : t(item.label)}</span>
                 </button>
               );
             })}
@@ -132,15 +126,15 @@ export function Header({ activeTab, setActiveTab, demoMode }: HeaderProps) {
                 <>
                   <button
                     type="button"
-                    aria-label="Close More menu"
+                    aria-label={t('Close More menu')}
                     className="field-more-backdrop"
                     onClick={() => setMoreOpen(false)}
                   />
-                  <div className="field-more-menu" role="menu" aria-label="More navigation">
+                  <div className="field-more-menu" role="menu" aria-label={t('More navigation')}>
                     <div className="flex items-start justify-between gap-4 px-4 pb-3 pt-1">
                       <div>
-                        <div className="text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--brand)]">Explore NIRDHOOM</div>
-                        <div className="mt-1 text-[13px] text-[var(--muted)]">Machines, proof, buyers and account tools.</div>
+                        <div className="text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--brand)]">{t('Explore NIRDHOOM')}</div>
+                        <div className="mt-1 text-[13px] text-[var(--muted)]">{t('Machines, proof, buyers and account tools.')}</div>
                       </div>
                       <button
                         type="button"
@@ -158,7 +152,7 @@ export function Header({ activeTab, setActiveTab, demoMode }: HeaderProps) {
                         <button key={item.id} role="menuitem" onClick={() => navigate(item.id)} onMouseEnter={() => prefetchWorkspace(item.id)} onFocus={() => prefetchWorkspace(item.id)}
                           className={`field-more-item ${activeTab === item.id ? 'is-active' : ''}`}>
                           <Icon className="mt-0.5 h-4 w-4 shrink-0" />
-                          <span className="min-w-0"><span className="block truncate text-[13px] font-semibold">{item.label}</span><span className="mt-0.5 block text-[11.5px] leading-snug text-[var(--muted)]">{item.description}</span></span>
+                          <span className="min-w-0"><span className="block truncate text-[13px] font-semibold">{t(item.label)}</span><span className="mt-0.5 block text-[11.5px] leading-snug text-[var(--muted)]">{t(item.description)}</span></span>
                         </button>
                       );
                     })}
@@ -172,11 +166,11 @@ export function Header({ activeTab, setActiveTab, demoMode }: HeaderProps) {
           <div className="ml-auto flex shrink-0 items-center gap-2">
             <div className="header-status hidden 2xl:inline-flex">
               <span className={`header-status-dot ${demoMode ? 'is-sample' : ''}`} />
-              <span>{demoMode ? 'Sample records' : 'Connected records'}</span>
+              <span>{demoMode ? t('Sample records') : t('Connected records')}</span>
             </div>
             <button
               type="button"
-              onClick={() => setFarmerLanguage((value) => value === 'en' ? 'hi' : 'en')}
+              onClick={() => setLanguage(farmerLanguage === 'en' ? 'hi' : 'en')}
               className="lang-toggle hidden lg:inline-flex"
               aria-label={farmerLabels.language}
               title={farmerLabels.language}
@@ -187,13 +181,13 @@ export function Header({ activeTab, setActiveTab, demoMode }: HeaderProps) {
             </button>
             <button
               type="button"
-              onClick={() => setFarmerLanguage((value) => value === 'en' ? 'hi' : 'en')}
+              onClick={() => setLanguage(farmerLanguage === 'en' ? 'hi' : 'en')}
               className="icon-button lg:hidden"
               aria-label={farmerLabels.language}
             >
               {farmerLanguage === 'en' ? 'हिंदी' : 'EN'}
             </button>
-            <button onClick={() => setMobileOpen((value) => !value)} className="field-menu-button icon-button lg:hidden" aria-label={mobileOpen ? 'Close navigation' : 'Open navigation'} aria-expanded={mobileOpen}>
+            <button onClick={() => setMobileOpen((value) => !value)} className="field-menu-button icon-button lg:hidden" aria-label={mobileOpen ? t('Close navigation') : t('Open navigation')} aria-expanded={mobileOpen}>
               {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
             </button>
           </div>
@@ -203,11 +197,11 @@ export function Header({ activeTab, setActiveTab, demoMode }: HeaderProps) {
 
         {mobileOpen && (
           <div className="field-mobile-panel lg:hidden">
-            <div className="mb-3 px-1 text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--brand)]">All NIRDHOOM surfaces</div>
+            <div className="mb-3 px-1 text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--brand)]">{t('All NIRDHOOM surfaces')}</div>
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               {secondaryNav.map((item) => {
                 const Icon = item.icon;
-                return <button key={item.id} onClick={() => navigate(item.id)} className={`field-mobile-item ${activeTab === item.id ? 'is-active' : ''}`}><Icon className="h-4 w-4" />{item.label}</button>;
+                return <button key={item.id} onClick={() => navigate(item.id)} className={`field-mobile-item ${activeTab === item.id ? 'is-active' : ''}`}><Icon className="h-4 w-4" />{t(item.label)}</button>;
               })}
             </div>
           </div>
@@ -215,7 +209,7 @@ export function Header({ activeTab, setActiveTab, demoMode }: HeaderProps) {
       </div>
       </header>
 
-      <nav className="field-mobile-bottom-nav lg:hidden" aria-label="Farmer quick navigation">
+      <nav className="field-mobile-bottom-nav lg:hidden" aria-label={t('Farmer quick navigation')}>
       {[
         ['OVERVIEW', farmerLabels.home, Activity],
         ['FIELD_JOBS', farmerLabels.fields, ClipboardList],
