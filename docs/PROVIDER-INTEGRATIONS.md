@@ -20,13 +20,13 @@ Required Vercel variables should be configured in the Vercel dashboard, not comm
 
 NIRDHOOM Sathi supports Groq through the OpenAI-compatible Chat Completions API. Configure `GROQ_API_KEY` and optionally `GROQ_MODEL`; when Groq is unavailable, a configured `OPENAI_API_KEY` is used as a fallback. Both providers are server-only and are never exposed to the browser.
 
-## 3. Farmer OTP — Supabase Auth + Twilio SMS
+## 3. Farmer sign-in code — Supabase Auth email OTP
 
-NIRDHOOM uses Supabase Phone Auth for the real farmer OTP flow. The frontend calls `signInWithOtp({ phone })` and `verifyOtp({ phone, token, type: 'sms' })`.
+NIRDHOOM signs farmers in with a 6-digit code sent by email. The frontend calls `signInWithOtp({ email, options: { shouldCreateUser: true } })` and `verifyOtp({ email, token, type: 'email' })`. No SMS provider, DLT registration or per-message cost is involved. Setup steps (Email provider, `{{ .Token }}` in the Magic Link and Confirm signup templates, Site URL, custom SMTP) are in [GO-LIVE.md](GO-LIVE.md) section 2.
 
-For production, enable Phone authentication in Supabase and configure Twilio as the SMS provider. Configure India's required sender/template/DLT requirements in the messaging provider. OTP rate limits and CAPTCHA should be enabled before a field pilot.
+For production, enable the Email provider and attach a custom SMTP sender, because Supabase's built-in mailer is heavily rate limited and meant for testing only. Enable CAPTCHA and keep the OTP rate limits on before a field pilot. Phone/SMS login was removed from the app; the earlier Twilio trial failure below is kept only as history.
 
-**Observed production blocker (2026-10-11):** Supabase Auth logs recorded two OTP delivery failures with HTTP 422 / `sms_send_failed`; Twilio returned error 572006, `Invalid template name. Trial accounts can only use predefined SMS templates`. Resolve the configured SMS template/provider mismatch or upgrade the Twilio account to permit the intended custom template. Then verify the sender ID, message template and India's DLT requirements, and retest with a dedicated test phone before the pilot. See [Twilio trial restrictions](https://www.twilio.com/docs/usage/trials) and [Supabase phone sign-in](https://supabase.com/docs/guides/auth/phone-login).
+**Historical (SMS, superseded by email login):** Supabase Auth logs recorded two OTP delivery failures with HTTP 422 / `sms_send_failed`; Twilio returned error 572006, `Invalid template name. Trial accounts can only use predefined SMS templates`. Resolve the configured SMS template/provider mismatch or upgrade the Twilio account to permit the intended custom template. Then verify the sender ID, message template and India's DLT requirements, and retest with a dedicated test phone before the pilot. See [Twilio trial restrictions](https://www.twilio.com/docs/usage/trials) and [Supabase phone sign-in](https://supabase.com/docs/guides/auth/phone-login).
 
 The live flow creates/updates a farmer `profiles` row only after successful OTP verification.
 

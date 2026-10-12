@@ -36,11 +36,13 @@ test('OTP requests catch failures and release loading state', () => {
   has(onboarding, 'supabase.auth.verifyOtp');
   has(onboarding, 'catch (error)');
   has(onboarding, 'finally {');
-  has(onboarding, 'phoneDigits.length !== 10');
+  has(onboarding, 'emailValid');
+  has(onboarding, "type: 'email'");
   has(onboarding, 'missing its Supabase URL or publishable key');
   has(onboarding, 'OTP request failed before Supabase returned a response');
   has(onboarding, 'aria-live="assertive"');
-  has(onboarding, 'Phone sign-in and an SMS provider must be enabled in Supabase');
+  has(onboarding, 'describeAuthError');
+  has(read('src/lib/liveStatus.ts'), 'custom email (SMTP) provider');
 });
 
 test('Telegram webhook validates secrets, bounds payloads and deduplicates updates', () => {
@@ -113,20 +115,20 @@ test('React Bits LatticeLoader supports lifecycle states, patterns, timer, and r
   has(booking, 'LatticeLoader');
 });
 
-test('farmer login asks only for name and phone before OTP; field location stays in field registration', () => {
+test('farmer login asks only for name and email before the code; field location stays in field registration', () => {
   const onboarding = read('src/components/FarmerOnboarding/FarmerOnboarding.tsx');
-  const phoneStart = onboarding.lastIndexOf("currentStep === 'PHONE'");
+  const phoneStart = onboarding.lastIndexOf("currentStep === 'EMAIL'");
   const otpStart = onboarding.lastIndexOf("currentStep === 'OTP'");
   const phoneStep = onboarding.slice(phoneStart, otpStart);
   const fieldStep = onboarding.slice(onboarding.indexOf('id="live-block"'));
-  assert.ok(!phoneStep.includes('>Village<'), 'Village must not be part of initial phone login');
-  assert.ok(!phoneStep.includes('Select Block'), 'Block/tehsil must not be part of initial phone login');
+  assert.ok(!phoneStep.includes('>Village<'), 'Village must not be part of initial email login');
+  assert.ok(!phoneStep.includes('Select Block'), 'Block/tehsil must not be part of initial email login');
   has(phoneStep, 'farmer-full-name');
-  has(phoneStep, 'farmer-mobile-number');
+  has(phoneStep, 'farmer-email');
   has(fieldStep, 'live-block');
   has(fieldStep, 'live-district');
-  has(onboarding, 'Phone sign-in and an SMS provider must be enabled in Supabase');
   has(onboarding, 'finally {');
+  assert.ok(!onboarding.includes('farmer-mobile-number'), 'phone field must be gone');
 });
 
 

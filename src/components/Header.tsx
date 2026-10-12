@@ -43,7 +43,7 @@ const secondaryNav: NavItem[] = [
   { id: 'IMPACT_RESEARCH', label: 'Why It Matters', icon: BarChart3, description: 'Evidence and context for crop-residue management' },
   { id: 'BALER_OPERATOR', label: 'Machine Worker', icon: Smartphone, description: 'Tools for the person driving the machine' },
   { id: 'FARMER_SURFACE', label: 'Telegram Help', icon: MessageSquare, description: 'Get updates and help on Telegram' },
-  { id: 'FARMER_KYC', label: 'My Profile', icon: UserCheck, description: 'Phone verification and farmer consent' },
+  { id: 'FARMER_KYC', label: 'My Profile', icon: UserCheck, description: 'Email sign-in and farmer consent' },
   { id: 'OFFTAKE_AUCTION', label: 'Buyers', icon: TrendingUp, description: 'See buyer needs for collected parali' },
 
 ];

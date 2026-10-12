@@ -8,7 +8,7 @@ import { useAppLanguage } from '../../i18n/LanguageContext';
 import type { ActiveTab } from '../Header';
 import {
   UserCheck,
-  Phone,
+  Mail,
   MapPin,
   Shield,
   CreditCard,
@@ -16,17 +16,16 @@ import {
   Sparkles,
   Fingerprint,
   Landmark,
-  Smartphone,
   Camera,
   Wheat,
   Loader2,
 } from 'lucide-react';
 
-type KYCStep = 'PHONE' | 'OTP' | 'CONSENT' | 'AADHAAR' | 'FACE_SCAN' | 'BANK' | 'LAND_RECORDS' | 'DONE';
+type KYCStep = 'EMAIL' | 'OTP' | 'CONSENT' | 'AADHAAR' | 'FACE_SCAN' | 'BANK' | 'LAND_RECORDS' | 'DONE';
 
 const STEPS: { id: KYCStep; label: string; sublabel: string; icon: React.FC<{ className?: string }> }[] = [
-  { id: 'PHONE', label: 'Mobile Verification', sublabel: 'Enter registered mobile', icon: Phone },
-  { id: 'OTP', label: 'OTP Confirm', sublabel: '6-digit SMS code', icon: Smartphone },
+  { id: 'EMAIL', label: 'Email Verification', sublabel: 'Enter your email address', icon: Mail },
+  { id: 'OTP', label: 'Code Confirm', sublabel: '6-digit email code', icon: Mail },
   { id: 'CONSENT', label: 'Farmer consent', sublabel: 'Operational data agreement', icon: Shield },
   { id: 'AADHAAR', label: 'Identity verification (demo)', sublabel: 'Demo only — no external identity API', icon: Fingerprint },
   { id: 'FACE_SCAN', label: 'Selfie match (demo)', sublabel: 'Demo state — no biometric processing', icon: Camera },
@@ -35,12 +34,12 @@ const STEPS: { id: KYCStep; label: string; sublabel: string; icon: React.FC<{ cl
   { id: 'DONE', label: 'Demo profile created', sublabel: 'Not registered in a live system', icon: CheckCircle2 },
 ];
 
-const STEP_ORDER: KYCStep[] = ['PHONE', 'OTP', 'CONSENT', 'AADHAAR', 'FACE_SCAN', 'BANK', 'LAND_RECORDS', 'DONE'];
+const STEP_ORDER: KYCStep[] = ['EMAIL', 'OTP', 'CONSENT', 'AADHAAR', 'FACE_SCAN', 'BANK', 'LAND_RECORDS', 'DONE'];
 const DEMO_MODE = import.meta.env.VITE_NIRDHOOM_DEMO_MODE === 'true';
 
-// Live accounts only use steps that talk to real services: phone, OTP, consent,
+// Live accounts only use steps that talk to real services: email, code, consent,
 // then a real field. The identity, selfie and bank adapters stay demo-only.
-const LIVE_ORDER: KYCStep[] = ['PHONE', 'OTP', 'CONSENT', 'LAND_RECORDS', 'DONE'];
+const LIVE_ORDER: KYCStep[] = ['EMAIL', 'OTP', 'CONSENT', 'LAND_RECORDS', 'DONE'];
 const LIVE_LABELS: Partial<Record<KYCStep, { label: string; sublabel: string }>> = {
   LAND_RECORDS: { label: 'Register your field', sublabel: 'Where the machine should go' },
   DONE: { label: 'Account ready', sublabel: 'Book a pickup or open Telegram' },
@@ -62,8 +61,8 @@ type Props = {
 
 export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged }) => {
   const { t } = useAppLanguage();
-  const [currentStep, setCurrentStep] = useState<KYCStep>('PHONE');
-  const [phone, setPhone] = useState('');
+  const [currentStep, setCurrentStep] = useState<KYCStep>('EMAIL');
+  const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [aadhaarLast4, setAadhaarLast4] = useState('');
   const [name, setName] = useState('');
@@ -101,18 +100,17 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
     const client = supabase;
     const [consentRes, profileRes, fieldsRes] = await Promise.all([
       client.from('consents').select('id').eq('profile_id', uid).eq('consent_type', 'farmer_network').is('revoked_at', null).order('accepted_at', { ascending: false }).limit(1).maybeSingle(),
-      client.from('profiles').select('full_name,phone,village').eq('id', uid).maybeSingle(),
+      client.from('profiles').select('full_name,village').eq('id', uid).maybeSingle(),
       client.from('fields').select('id,khasra_no,village,acreage,status').eq('owner_id', uid).order('created_at', { ascending: false }),
     ]);
     const hasConsent = Boolean(consentRes.data);
     setUserId(uid);
     setActiveConsent(hasConsent);
     setMyFields((fieldsRes.data as OwnedField[] | null) || []);
-    const profile = profileRes.data as { full_name?: string | null; phone?: string | null; village?: string | null } | null;
+    const profile = profileRes.data as { full_name?: string | null; village?: string | null } | null;
     if (profile) {
       setName((value) => value || profile.full_name || '');
       setVillage((value) => value || profile.village || '');
-      setPhone((value) => value || String(profile.phone || '').replace(/^\+?91/, ''));
     }
     return hasConsent;
   };
@@ -123,9 +121,10 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
     let cancelled = false;
     void client.auth.getUser().then(async ({ data }) => {
       if (!data.user || cancelled) return;
+      setEmail((value) => value || data.user?.email || '');
       const hasConsent = await loadAccount(data.user.id);
       if (cancelled) return;
-      setCurrentStep((step) => (step === 'PHONE' ? (hasConsent ? 'LAND_RECORDS' : 'CONSENT') : step));
+      setCurrentStep((step) => (step === 'EMAIL' ? (hasConsent ? 'LAND_RECORDS' : 'CONSENT') : step));
     });
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -180,7 +179,7 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
     try {
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) {
-        setFieldError('Your session expired. Please verify your phone again.');
+        setFieldError('Your session expired. Please sign in again.');
         return;
       }
       const { data, error } = await supabase
@@ -263,15 +262,14 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
     }, 900);
   };
 
-  // Normalize a 10-digit Indian mobile number to E.164. The input strips
-  // punctuation, so this also protects against a pasted country code.
-  const phoneDigits = phone.replace(/\D/g, '').replace(/^91(?=\d{10}$)/, '');
-  const normalizedPhone = phoneDigits ? `+91${phoneDigits}` : '';
+  // Email addresses are compared lower-case with surrounding spaces removed.
+  const emailValue = email.trim().toLowerCase();
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(emailValue);
 
   const sendLiveOtp = async () => {
     if (loading) return;
     if (DEMO_MODE) {
-      if (currentStep === 'PHONE') {
+      if (currentStep === 'EMAIL') {
         advance();
       } else {
         setOtp('');
@@ -285,8 +283,8 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
       setOtpStatus('error');
       return;
     }
-    if (phoneDigits.length !== 10 || !name.trim()) {
-      setOtpError(t('Enter your name and a valid 10-digit Indian mobile number.'));
+    if (!emailValid || !name.trim()) {
+      setOtpError(t('Enter your name and a valid email address.'));
       setOtpStatus('error');
       return;
     }
@@ -295,12 +293,14 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
     setOtpError('');
     setOtpStatus('idle');
     try {
+      // A 6-digit code is emailed (the Supabase email templates must include {{ .Token }}, see docs/GO-LIVE.md).
+      // The name travels as user metadata so the new-account trigger can create the farmer profile.
       const { error } = await supabase.auth.signInWithOtp({
-        phone: normalizedPhone,
-        options: { shouldCreateUser: true },
+        email: emailValue,
+        options: { shouldCreateUser: true, data: { full_name: name.trim() } },
       });
       if (error) {
-        setOtpError(describeAuthError(error.message, t('Unable to send OTP. Check phone authentication and SMS provider settings.')));
+        setOtpError(describeAuthError(error.message, t('Unable to send the code. Check email authentication settings.')));
         setOtpStatus('error');
         return;
       }
@@ -339,9 +339,9 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
     setOtpStatus('idle');
     try {
       const { data, error } = await supabase.auth.verifyOtp({
-        phone: normalizedPhone,
+        email: emailValue,
         token: code,
-        type: 'sms',
+        type: 'email',
       });
       if (error || !data.user) {
         setOtpError(describeAuthError(error?.message, t('OTP verification failed. Please try again.')));
@@ -351,10 +351,9 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
       const { error: profileError } = await supabase.from('profiles').upsert({
         id: data.user.id,
         full_name: name.trim(),
-        phone: normalizedPhone,
       }, { onConflict: 'id' });
       if (profileError) {
-        setOtpError(profileError.message || t('Your phone was verified, but your farmer profile could not be saved.'));
+        setOtpError(profileError.message || t('Your email was verified, but your farmer profile could not be saved.'));
         setOtpStatus('error');
         return;
       }
@@ -372,8 +371,8 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
   };
 
   const reset = () => {
-    setCurrentStep('PHONE');
-    setPhone(''); setOtp(''); setAadhaarLast4(''); setName(''); setVillage('');
+    setCurrentStep('EMAIL');
+    setEmail(''); setOtp(''); setAadhaarLast4(''); setName(''); setVillage('');
     setBlock(''); setKhasra(''); setAcreage('');
     setLat(''); setLng(''); setHarvestDate(''); setFieldError(''); setSavedField(null);
     setFaceScanned(false); setBankVerified(false); setOtpError(''); setOtpStatus('idle'); setConsentAccepted(false);
@@ -395,7 +394,7 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
               <span className="rounded-full border border-amber-300/25 bg-amber-300/10 px-2.5 py-1 text-[11px] font-black text-amber-800">{DEMO_MODE ? 'SIMULATION' : 'LIVE OTP'}</span>
             </div>
             <p className="text-sm text-emerald-950/70 mt-2 max-w-2xl leading-6">
-              Verify your mobile number first. We’ll ask for consent and field details only when you need those services. SMS delivery depends on the configured Supabase phone provider.
+              Verify your email address first. No password needed: we email you a 6-digit code. We’ll ask for consent and field details only when you need those services.
             </p>
           </div>
         </div>
@@ -464,17 +463,17 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
           <div className="ui-card flex min-h-[400px] flex-col gap-4 !p-6">
             {(loading || fieldBusy) && (
               <div className="flex justify-center rounded-xl bg-amber-50 px-4 py-3 text-amber-900" role="status" aria-live="polite">
-                <LatticeLoader label={fieldBusy ? 'Saving field' : currentStep === 'OTP' ? 'Verifying phone' : 'Sending secure code'} color="#92400e" doneColor="#16a34a" cellSize={7} gap={2} fontSize={13} step={80} />
+                <LatticeLoader label={fieldBusy ? 'Saving field' : currentStep === 'OTP' ? 'Verifying email' : 'Sending secure code'} color="#92400e" doneColor="#16a34a" cellSize={7} gap={2} fontSize={13} step={80} />
               </div>
             )}
-            {currentStep === 'PHONE' && (
+            {currentStep === 'EMAIL' && (
               <>
                 <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
-                  <Phone className="w-4 h-4 text-emerald-400" />
-                  <h4 className="font-bold text-sm text-white">{t('Step 1: Mobile Number Verification')}</h4>
+                  <Mail className="w-4 h-4 text-emerald-400" />
+                  <h4 className="font-bold text-sm text-white">{t('Step 1: Email Verification')}</h4>
                 </div>
                 <p className="text-sm text-slate-600 leading-relaxed">
-                  Start with just your name and mobile number. We ask for village, district and field location later, when you register a specific field—not during login.
+                  Start with just your name and email address. We ask for village, district and field location later, when you register a specific field—not during login.
                 </p>
                 <div className="flex flex-col gap-4">
                   <div>
@@ -489,23 +488,21 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
                     />
                   </div>
                   <div>
-                    <label htmlFor="farmer-mobile-number" className="text-sm font-semibold text-slate-700 block mb-1.5">{t('Mobile Number (+91)')}</label>
-                    <div className="flex items-center rounded-xl border border-slate-200 bg-white focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-100">
-                      <span className="px-3 py-3 text-sm font-bold text-slate-500 border-r border-slate-200">+91</span>
-                      <input
-                        id="farmer-mobile-number"
-                        type="tel"
-                        inputMode="numeric"
-                        autoComplete="tel-national"
-                        maxLength={10}
-                        className="min-w-0 flex-1 bg-transparent px-3 py-3 text-base text-slate-900 outline-none"
-                        placeholder="98765 43210"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                      />
-                    </div>
-                    <p className="mt-1.5 text-xs text-slate-500">We’ll send a one-time code to verify this number.</p>
-                    {!DEMO_MODE && <p className="mt-1 text-xs text-slate-500">Phone sign-in and an SMS provider must be enabled in Supabase before a real code can be delivered.</p>}
+                    <label htmlFor="farmer-email" className="text-sm font-semibold text-slate-700 block mb-1.5">{t('Email address')}</label>
+                    <input
+                      id="farmer-email"
+                      type="email"
+                      inputMode="email"
+                      autoComplete="email"
+                      autoCapitalize="none"
+                      spellCheck={false}
+                      className="ui-input"
+                      placeholder="you@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === 'Enter' && emailValid && name.trim()) void sendLiveOtp(); }}
+                    />
+                    <p className="mt-1.5 text-xs text-slate-500">{t('We’ll email you a one-time code. It is free and needs no password.')}</p>
                   </div>
                 </div>
                 {!DEMO_MODE && !supabase && (
@@ -521,11 +518,11 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
                 <button
                   type="button"
                   onClick={sendLiveOtp}
-                  disabled={phoneDigits.length !== 10 || !name.trim() || loading || (!DEMO_MODE && !supabase)}
+                  disabled={!emailValid || !name.trim() || loading || (!DEMO_MODE && !supabase)}
                   className="ui-btn is-primary is-lg is-block mt-auto"
                 >
-                  {loading ? <LatticeLoader label="Sending OTP" color="#ffffff" cellSize={4} gap={1} fontSize={12} showTimer={false} /> : <Sparkles className="w-4 h-4" />}
-                  {DEMO_MODE ? t('Send Demo OTP') : t('Send OTP via SMS')}
+                  {loading ? <LatticeLoader label="Sending code" color="#ffffff" cellSize={4} gap={1} fontSize={12} showTimer={false} /> : <Sparkles className="w-4 h-4" />}
+                  {DEMO_MODE ? t('Send Demo OTP') : t('Email me a code')}
                 </button>
               </>
             )}
@@ -533,15 +530,15 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
             {currentStep === 'OTP' && (
               <>
                 <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
-                  <Smartphone className="w-4 h-4 text-emerald-400" />
-                  <h4 className="font-bold text-sm text-white">{t('Step 2: OTP Verification')}</h4>
+                  <Mail className="w-4 h-4 text-emerald-400" />
+                  <h4 className="font-bold text-sm text-white">{t('Step 2: Enter your code')}</h4>
                 </div>
                 <div className="p-3 bg-slate-900/80 rounded-lg border border-slate-800 text-xs text-slate-400">
                   <div className="flex items-center justify-between gap-3">
-                    <span>{t('OTP sent to')} <strong className="text-white">+91 {phone}</strong> SMS के माध्यम से।</span>
+                    <span>{t('Code sent to')} <strong className="text-white break-all">{emailValue || email}</strong>. {t('Check your inbox and spam folder.')}</span>
                     <button
                       type="button"
-                      onClick={() => { setCurrentStep('PHONE'); setOtp(''); setOtpStatus('idle'); setOtpError(''); }}
+                      onClick={() => { setCurrentStep('EMAIL'); setOtp(''); setOtpStatus('idle'); setOtpError(''); }}
                       className="shrink-0 text-amber-700 font-bold hover:text-amber-300"
                     >
                       Edit
@@ -557,8 +554,8 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
 
                 <div className="rounded-2xl border border-amber-400/20 bg-amber-400/5 p-4 sm:p-5">
                   <div className="flex items-center justify-between gap-3 mb-3">
-                    <label className="text-sm font-bold text-slate-200">{t('Enter 6-digit OTP')}</label>
-                    <span className="text-[11px] font-semibold text-slate-500">{t('Secure SMS code')}</span>
+                    <label className="text-sm font-bold text-slate-200">{t('Enter 6-digit code')}</label>
+                    <span className="text-[11px] font-semibold text-slate-500">{t('Secure email code')}</span>
                   </div>
                   <div className="flex justify-center overflow-x-auto py-2">
                     <CodeSlots
@@ -584,7 +581,7 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
                     />
                   </div>
                   <p className="mt-3 text-xs text-slate-500 text-center">
-                    Enter the code from the SMS. It verifies only this phone number; never share it with anyone.
+                    Enter the code from the email. It verifies only this email address; never share it with anyone.
                   </p>
                 </div>
 
@@ -595,14 +592,14 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
                     onClick={sendLiveOtp}
                     className="min-h-11 text-sm font-bold text-amber-700 disabled:text-slate-600"
                   >
-                    {resendSeconds > 0 ? `${t('Resend OTP')} ${t('in')} ${resendSeconds}s` : t('Resend OTP')}
+                    {resendSeconds > 0 ? `${t('Resend code')} ${t('in')} ${resendSeconds}s` : t('Resend code')}
                   </button>
                   <span className="text-xs text-slate-500">Verification runs automatically when all 6 digits are entered.</span>
                 </div>
 
                 {loading && (
                   <div className="text-xs text-emerald-300 bg-emerald-950/30 border border-emerald-500/30 rounded-lg p-2" role="status">
-                    {t('Verifying your OTP securely…')}
+                    {t('Verifying your code securely…')}
                   </div>
                 )}
                 {otpError && (
@@ -646,7 +643,7 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
                     try {
                       const { data: userData } = await supabase.auth.getUser();
                       if (!userData.user) {
-                        setOtpError('Your session expired. Please verify your phone again.');
+                        setOtpError('Your session expired. Please sign in again.');
                         return;
                       }
                       const { error: consentError } = await supabase.rpc('record_farmer_network_consent');
@@ -907,7 +904,7 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
                 <div>
                   <div className="text-2xl font-black text-emerald-400 font-['Outfit']">Your NIRDHOOM account is ready</div>
                   <p className="mx-auto mt-2 max-w-sm text-xs leading-relaxed text-slate-400">
-                    {name || 'Your'} account is linked to +91 {phone}.{savedField ? ` Field ${savedField.khasra_no} (${Number(savedField.acreage).toFixed(2)} acres, ${savedField.village}) is registered and waiting for a verifier to check its boundary.` : ''}
+                    {name || 'Your'} account is signed in with {emailValue || email || 'your email'}.{savedField ? ` Field ${savedField.khasra_no} (${Number(savedField.acreage).toFixed(2)} acres, ${savedField.village}) is registered and waiting for a verifier to check its boundary.` : ''}
                   </p>
                 </div>
                 <div className="flex w-full max-w-sm flex-col gap-2">
@@ -982,14 +979,14 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
                   <div className="text-2xl font-black text-emerald-400 font-['Outfit']">ਗੁਰਪ੍ਰੀਤ ਸਿੰਘ ਰਜਿਸਟਰ ਹੋ ਗਏ!</div>
                   <p className="text-white font-bold mt-1">{name || 'Gurpreet Singh Brar'} is now registered on Nirdhoom!</p>
                   <p className="text-xs text-slate-400 mt-1 max-w-sm">
-                    Demo profile created · OTP verified · Khasra {khasra || '412/1-2'} ({acreage || '3.5'} ac) Mapped
+                    Demo profile created · Email code verified · Khasra {khasra || '412/1-2'} ({acreage || '3.5'} ac) Mapped
                   </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 w-full max-w-sm text-xs">
                   {[
                     { label: 'Farmer ID', value: `NRD-FMR-${Date.now().toString().slice(-6)}` },
-                    { label: 'Phone verified', value: `+91 ${phone || '••••••••••'}` },
+                    { label: 'Email verified', value: email || 'name@example.com' },
                     { label: 'Khasra', value: khasra || '412/1-2' },
                     { label: 'Acreage', value: `${acreage || '3.5'} acres` },
                   ].map((item) => (
@@ -1011,7 +1008,7 @@ export const FarmerOnboarding: React.FC<Props> = ({ onNavigate, onFieldsChanged 
           </div>
           {!DEMO_MODE && userId && (
             <p className="mt-3 text-center text-xs text-slate-500">
-              Signed in{phone ? ` as +91 ${phone}` : ''}.{' '}
+              Signed in{email ? ` as ${email}` : ''}.{' '}
               <button type="button" className="font-bold underline" onClick={() => void signOut()}>Sign out</button>
             </p>
           )}

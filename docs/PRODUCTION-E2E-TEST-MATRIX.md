@@ -5,7 +5,7 @@
 ## Safe test setup
 
 1. Prefer a separate staging Supabase project with the approved schema and isolated storage.
-2. In Supabase Auth, configure a dedicated test phone number and fixed test OTP, or a verified SMS provider. Never use a real farmer's number as a test fixture.
+2. In Supabase Auth, enable the Email provider with custom SMTP, and use a dedicated test mailbox. Never use a real farmer's email address as a test fixture.
 3. Create dedicated test users for farmer, operator, verifier, dispatcher, and buyer. Assign privileged roles only through an administrator-controlled process; never let the test client update its own role.
 4. Use clearly marked test data and test evidence. Do not create fake verified residue, buyer deliveries, payments, or real operational claims in production.
 5. Record the tested commit SHA, Supabase migration snapshot, device/browser, and outcome. Remove staging fixtures after the run.
@@ -14,7 +14,7 @@
 
 | Flow | Test | Required pass condition | Current status |
 |---|---|---|---|
-| Phone OTP | Request OTP for the configured test phone; verify correct code; retry with invalid/expired code | Valid code signs in; invalid code is rejected; loading/error UI recovers | Not run — test phone/OTP setup required |
+| Email code | Request a code for the test mailbox; verify correct code; retry with invalid/expired code | Valid code signs in; invalid code is rejected; loading/error UI recovers | Not run — test mailbox and custom SMTP required |
 | Farmer profile | Complete onboarding with the test farmer | Auth user gets one farmer profile; repeated onboarding does not create duplicates or elevate role | Not run — authorized test account required |
 | Consent | Accept and withdraw farmer-network consent | Consent is auditable; booking refuses missing/revoked consent | Not run — authenticated test required |
 | Field registration | Register a test field with valid coordinates and acreage; attempt invalid acreage and out-of-range coordinates | Valid field belongs to signed-in farmer; invalid data rejected; other farmer cannot read or modify it | Not run — authenticated test required |

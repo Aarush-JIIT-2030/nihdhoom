@@ -31,11 +31,12 @@ test('live assistant requests require authentication unless demo mode is explici
   assert.match(assistant, /const authRequired=!demoMode\|\|process\.env\.REQUIRE_AUTH_FOR_AI==='true'\|\|aiConfigured\|\|Boolean\(field\?\.dbId\)/);
 });
 
-test('production auth still requires actual Supabase phone OTP and never fakes live OTP', () => {
+test('production auth uses a real Supabase email code and never fakes live OTP', () => {
   const onboarding = read('src/components/FarmerOnboarding/FarmerOnboarding.tsx');
   assert.match(onboarding, /signInWithOtp/);
   assert.match(onboarding, /verifyOtp/);
-  assert.match(onboarding, /type: 'sms'/);
+  assert.match(onboarding, /type: 'email'/);
+  assert.doesNotMatch(onboarding, /type: 'sms'/);
   assert.match(onboarding, /if \(DEMO_MODE\)/);
   assert.match(onboarding, /Live authentication is not configured/);
 });
@@ -107,4 +108,19 @@ test('field registration rejects acreage that would round to zero', () => {
   const onboarding = read('src/components/FarmerOnboarding/FarmerOnboarding.tsx');
   assert.match(onboarding, /acres < 0\.01 \|\| acres > 500/);
   assert.match(onboarding, /Math\.round\(acres \* 100\) \/ 100/);
+});
+
+test('email login: free OTP path, no phone SMS dependency, errors explain SMTP and template setup', () => {
+  const onboarding = read('src/components/FarmerOnboarding/FarmerOnboarding.tsx');
+  const status = read('src/lib/liveStatus.ts');
+  const doctor = read('scripts/doctor.mjs');
+  const guide = read('docs/GO-LIVE.md');
+  assert.match(onboarding, /signInWithOtp\(\{\s*email:/);
+  assert.match(onboarding, /shouldCreateUser: true/);
+  assert.match(onboarding, /verifyOtp\(\{\s*email:/);
+  assert.doesNotMatch(onboarding, /phone:\s*e\.164|phoneDigits|Send OTP via SMS/);
+  assert.match(onboarding, /id="farmer-email"/);
+  assert.match(status, /over_email_send_rate_limit/);
+  assert.match(doctor, /external\.email/);
+  assert.match(guide, /\{\{ \.Token \}\}/);
 });

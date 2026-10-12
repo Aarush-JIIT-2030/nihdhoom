@@ -68,7 +68,8 @@
   position: relative;
   width: var(--cs-size);
   height: var(--cs-height);
-  flex: 0 0 var(--cs-size);
+  flex: 0 1 var(--cs-size);
+  min-width: 0;
   border-radius: var(--cs-radius);
   overflow: hidden;
   background: var(--cs-slot);
