@@ -66,7 +66,7 @@ const WORKSPACE_META: Partial<Record<ActiveTab, {
   FARMER_KYC: {
     eyebrow: 'FARMER ACCESS',
     title: 'Farmer onboarding',
-    description: 'Set up your profile with phone OTP and consent before connecting field records or farmer communications.',
+    description: 'Set up your profile with an email code and consent before connecting field records or farmer communications.',
     image: '/images/farmer_manpreet.jpg',
     accent: 'green',
     action: { label: 'Open Telegram', tab: 'FARMER_SURFACE' },
@@ -260,7 +260,7 @@ export function App() {
           <strong>{t('You are looking at sample data.')}</strong>
           <span>
             {liveSignedOut
-              ? 'These balers, fires, fields and yards are fictional examples so every screen is filled in. Sign in with your mobile number to see your own records.'
+              ? 'These balers, fires, fields and yards are fictional examples so every screen is filled in. Sign in with your email to see your own records.'
               : liveConfigured
                 ? 'No live records exist yet, so fictional example balers, fires, fields and yards are shown. Register a field to see your own.'
                 : 'These balers, fires, fields and yards are fictional examples so every screen is filled in.'}

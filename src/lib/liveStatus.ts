@@ -62,17 +62,32 @@ export function describeAuthError(message: string | null | undefined, fallback: 
   const text = String(message || '').trim();
   const lower = text.toLowerCase();
   if (!text) return fallback;
+  if (/email.*rate limit|rate limit.*email|over_email_send_rate_limit/.test(lower)) {
+    return 'This site has sent too many sign-in emails for now. Wait a while and try again. The site owner can lift this limit by adding a custom email (SMTP) provider in Supabase.';
+  }
+  if (/error sending (confirmation|magic link|recovery|otp)? ?e?-?mail|error sending.*email|smtp|sending.*email/.test(lower)) {
+    return 'The site could not send the email. The site owner needs to check the email (SMTP) settings in Supabase.';
+  }
+  if (/email (logins?|sign-?ins?|provider)? ?(are|is) (disabled|not enabled)|email.*(disabled|not enabled)|provider is not enabled/.test(lower)) {
+    return 'Email sign-in is turned off in Supabase. The site owner needs to enable the Email provider under Authentication.';
+  }
   if (/unsupported phone provider|sms provider|phone provider|twilio|messagebird|vonage|textlocal/.test(lower)) {
     return 'SMS sign-in is not switched on for this site yet. The site owner needs to enable Phone sign-in and an SMS provider in Supabase.';
   }
-  if (/signups? (are|is) disabled|phone logins? (are|is) disabled|phone.*disabled/.test(lower)) {
+  if (/signups? (not allowed|(are|is) disabled)|signups? not allowed for otp/.test(lower)) {
+    return 'New accounts are turned off in Supabase. The site owner needs to allow new sign-ups under Authentication.';
+  }
+  if (/phone logins? (are|is) disabled|phone.*disabled/.test(lower)) {
     return 'Phone sign-in is turned off in Supabase. The site owner needs to enable the Phone provider.';
   }
   if (/rate limit|too many|security purposes|only request this after/.test(lower)) {
     return 'Too many attempts. Please wait a minute and try again.';
   }
   if (/token has expired|invalid.*(otp|token|code)|otp.*(expired|invalid)/.test(lower)) {
-    return 'That code is wrong or has expired. Check the SMS or ask for a new code.';
+    return 'That code is wrong or has expired. Check the latest message or ask for a new code.';
+  }
+  if (/invalid.*email|email.*invalid|unable to validate email/.test(lower)) {
+    return 'That email address does not look right. Check it and try again.';
   }
   if (/invalid.*phone|phone.*invalid|unable to validate phone/.test(lower)) {
     return 'That mobile number does not look right. Enter the 10 digits without +91.';

@@ -111,8 +111,9 @@ if (url && key) {
     reachable = true;
     ok('Supabase is reachable and accepts the key.');
     const external = settings.body && settings.body.external ? settings.body.external : {};
-    if (external.phone === true) ok('Phone sign-in is enabled (farmers can use an SMS OTP).');
-    else bad('Phone sign-in is OFF, so farmers cannot create accounts.', 'Supabase > Authentication > Sign In / Providers > Phone > enable, and pick an SMS provider (or add a test number, see docs/GO-LIVE.md).');
+    if (external.email === true) ok('Email sign-in is enabled (farmers get a 6-digit code by email, no password).');
+    else bad('Email sign-in is OFF, so farmers cannot create accounts.', 'Supabase > Authentication > Sign In / Providers > Email > enable it (it is free). See docs/GO-LIVE.md section 2.');
+    if (external.phone === true) console.log('  - Phone sign-in is also enabled. The site uses email; phone is not needed.');
     if (settings.body && settings.body.disable_signup === true) warn('New sign-ups are disabled in Supabase.', 'Authentication > Sign In / Providers > turn on "Allow new users to sign up".');
   }
 

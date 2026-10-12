@@ -39,7 +39,7 @@ Demo mode is explicit via `VITE_NIRDHOOM_DEMO_MODE=true` and persists demo state
 
 These are intentionally not faked by the application:
 
-- Supabase SMS provider and real farmer OTP delivery
+- Supabase custom SMTP and real farmer email-code delivery
 - Authoritative cadastral/Khasra source and import workflow
 - Real verifier/operator accounts for end-to-end RLS/RPC testing
 - Real machine/operator records and device GPS

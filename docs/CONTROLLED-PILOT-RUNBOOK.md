@@ -34,7 +34,7 @@ Use separate real test accounts for farmer, operator, dispatcher, verifier, buye
 
 Verify:
 
-- phone OTP delivery and expiry;
+- email code delivery (inbox and spam) and expiry;
 - farmer profile creation;
 - operational consent creates a timestamped versioned record;
 - consent withdrawal sets the consent record's `revoked_at` and profile state to `REVOKED`;

@@ -126,7 +126,7 @@ export function ClearanceBooking({ fields, demoMode, onBooked, onBookingChanged 
       if (!supabase) throw new Error('Live Supabase is not configured.');
       const { data: authData, error: authError } = await supabase.auth.getUser();
       if (authError || !authData.user) {
-        throw new Error('Your session has expired. Please verify your phone again.');
+        throw new Error('Your session has expired. Please sign in again.');
       }
 
       const { error: consentError } = await supabase.rpc('record_farmer_network_consent');

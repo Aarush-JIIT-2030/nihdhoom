@@ -2,7 +2,7 @@
 
 This is the shortest path from "site loads" to "a farmer can create an account, register a field and book a pickup". Payments are not part of this release.
 
-You need three free accounts: GitHub (you have it), Vercel (hosts the site) and Supabase (database and phone login).
+You need three free accounts: GitHub (you have it), Vercel (hosts the site) and Supabase (database and email login).
 
 ## 0. Check where you are (30 seconds)
 
@@ -24,17 +24,34 @@ It reads `.env.local` (copy `.env.example` to `.env.local` and fill in the two S
    - If it fails, the line starting `-- >>> ` just above the error names the migration. Fix the cause, then run only the files from that one onward from `supabase/migrations/`.
 4. Regenerate the file after any approved migration change: `npm run db:bundle`. The explicit order is in `supabase/migration-order.txt`. The buyer-offer/transport workflow is a staging-only proposal and is intentionally excluded until its authorization matrix passes.
 
-## 2. Turn on phone login (Supabase)
+## 2. Turn on email login (Supabase, free)
 
-**Authentication > Sign In / Providers > Phone** must be enabled, and an SMS provider chosen.
+Farmers sign in with their email address and a 6-digit code. There is no password and no SMS bill.
 
-| Option | When to use it |
-| --- | --- |
-| **Test numbers and OTPs** (set on the Phone provider page) | Demos and judging. You list a few phone numbers with fixed codes. No SMS is sent and nothing is billed. Look for "Test Phone Numbers and OTPs" under the Phone provider settings. |
-| **Twilio / Twilio Verify, MessageBird, Vonage** | Real SMS to real farmers. SMS to India needs a registered sender and message template (TRAI DLT), which takes days. |
-| **MSG91** | Not wired up. Supabase has no built-in MSG91 option; it would need a "Send SMS" auth hook. The `MSG91_*` values in `.env.example` are unused for now. |
+1. **Authentication > Sign In / Providers > Email**: make sure it is **enabled** (it is by default) and **Confirm email** is on.
+2. **Authentication > Emails > Templates**: open **Magic Link** and **Confirm signup** and make both show the code. Supabase's default templates only contain a link; the site asks for the code, so each template must include `{{ .Token }}`. Paste this as the message body of both:
 
-Farmers type 10 digits; the site adds `+91`. So a test number is entered in Supabase as `919876543210`.
+```html
+<h2>Your NIRDHOOM code</h2>
+<p>Enter this 6-digit code on the NIRDHOOM sign-in page:</p>
+<p style="font-size:28px;font-weight:700;letter-spacing:6px">{{ .Token }}</p>
+<p>It expires in one hour. If you did not ask for it, ignore this email.</p>
+```
+
+   Set the subject to `Your NIRDHOOM sign-in code`. (If you leave the link version, clicking the link also signs the farmer in, but the typed code is the path the site is built around.)
+3. **Authentication > URL Configuration**: set **Site URL** to `https://YOUR-SITE.vercel.app`.
+4. **Email limits (important).** Supabase's built-in mailer is free but only meant for trying things out: it sends a handful of emails per hour for the whole project and only to your team's own addresses. To let real farmers in, add a free custom SMTP sender under **Project Settings > Authentication > SMTP Settings**:
+
+| Provider | Free allowance | Notes |
+| --- | --- | --- |
+| **Resend** | about 3,000 emails/month | Verify a domain you own, then use the SMTP credentials |
+| **Brevo** | about 300 emails/day | Verify a sender address; easiest if you have no domain |
+| **Gmail** | about 500 emails/day | Turn on 2-step verification, create an App Password, use `smtp.gmail.com` port 587 |
+
+   After adding SMTP, raise **Rate Limits > Emails sent per hour** to match.
+5. A farmer enters name and email, receives the code, types it, and is signed in. New emails create the account automatically. The farmer profile is created by a database trigger from the name sent with the first sign-in.
+
+Phone login is not used any more. The old Phone provider settings and the `MSG91_*` values in `.env.example` can be ignored.
 
 ## 3. Put the values in Vercel
 
@@ -63,7 +80,7 @@ Then **Deployments > the latest > ... > Redeploy**. Values that start with `VITE
 
 ## 4. Walk through it once
 
-1. Open the site > **Farmer onboarding** (`#/farmer-kyc`). Enter name, village and mobile number, send the OTP, enter the code.
+1. Open the site > **Farmer onboarding** (`#/farmer-kyc`). Enter your name and email address, press **Email me a code**, then type the 6-digit code from the email (check spam).
 2. Accept consent. Register a field: Khasra number, acres, and press **Use my current location** while standing at the field (or type latitude and longitude).
 3. **Book a pickup** (`#/farmer-onboarding`): choose the field and a date. The server decides the price; no payment is taken.
 4. **Connect Telegram** (`#/farmer-surface`) to link the same account to the bot.

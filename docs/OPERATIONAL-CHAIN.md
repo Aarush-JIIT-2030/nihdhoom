@@ -10,7 +10,7 @@ The Field Jobs surface is the control plane for this chain. It reads authorized 
 
 ## Live today
 
-- Supabase Auth phone OTP in live mode.
+- Supabase Auth email OTP in live mode.
 - Explicit farmer operational consent is recorded in `public.consents` and reflected in `profiles.consent_status`.
 - Field provenance/trust surface.
 - Live field and machine records when demo mode is disabled.
