@@ -25,7 +25,7 @@ This document is the consolidated implementation checklist for taking the curren
 - [x] The obsolete monolithic HTML bundle and committed ZIP archive were removed.
 
 ### 2. Database and access control
-- [x] The current 35-entry repository migration manifest is applied to the dedicated NIRDHOOM Supabase project (`igqgtlmnwssjaoxkkzbm`) according to the observed live ledger; do not run `supabase db push` until the source-to-ledger mapping and clean-install schema diff are reviewed. See `docs/DATABASE-RELEASE-LEDGER.md`.
+- [ ] The repository's current 37-entry fresh-install manifest is **not yet fully reconciled with production**: the consent audit migration is present in the live ledger, but `complete_job_with_residue_lot(uuid,numeric,numeric,integer,jsonb)` is absent from production as of 2026-10-12. The source-to-ledger mapping and clean-install schema-only diff remain open; do not run `supabase db push` until they are reviewed. See `docs/DATABASE-RELEASE-LEDGER.md`.
 - [ ] Repeat migration testing against a disposable fresh project/branch before introducing pilot data.
 - [ ] Verify every foreign key, trigger, index, constraint and RPC executes as intended.
 - [ ] Test row-level security using separate farmer, operator, dispatcher, verifier and admin accounts.
