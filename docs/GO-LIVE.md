@@ -79,6 +79,8 @@ Then **Deployments > the latest > ... > Redeploy**. Values that start with `VITE
 | "Live data unavailable: ... key is not accepted" | Wrong or service key in `VITE_SUPABASE_PUBLISHABLE_KEY` | Copy the anon key again |
 | "Live data unavailable: ... could not be reached" | Wrong URL or the Supabase project is paused | Check `VITE_SUPABASE_URL`; resume the project |
 
+**Why the map is not empty before you have real data.** When the site has no real fields to show (not connected, signed out, or nothing registered yet), it fills the map and every page with a clearly labelled **sample network**: fictional fields, balers, satellite fire detections, yards, buyers, jobs and photos around Sangrur, Barnala, Patiala, Bathinda, Moga and Ludhiana. The blue "You are looking at sample data" banner and "Sample records" tags say so. The moment a signed-in user has at least one real field, the sample network disappears and only real records are shown. Sample dates are always relative to today. Carbon value is never estimated, and the CO2e / PM2.5 figures on the audit page are labelled illustrative.
+
 The grey "Technical detail" line under the banner is the exact message from Supabase.
 
 ## 6. Why environment variables seem to disappear after a redeploy

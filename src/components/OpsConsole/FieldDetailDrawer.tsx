@@ -1,5 +1,6 @@
 import React from 'react';
-import { Field } from '../../types';
+import { BurnEvent, Field } from '../../types';
+import { isPointInPolygon } from '../../utils/spatialVerification';
 import { 
   X, 
   MapPin, 
@@ -16,6 +17,8 @@ import {
 
 interface FieldDetailDrawerProps {
   demoMode: boolean;
+  /** Satellite detections to count against this field (sample records in demo mode). */
+  fireEvents?: BurnEvent[];
   field: Field | null;
   onClose: () => void;
   onTriggerUpiPayout: (field: Field) => void;
@@ -24,6 +27,7 @@ interface FieldDetailDrawerProps {
 
 export const FieldDetailDrawer: React.FC<FieldDetailDrawerProps> = ({
   demoMode,
+  fireEvents = [],
   field,
   onClose,
   onTriggerUpiPayout,
@@ -31,6 +35,12 @@ export const FieldDetailDrawer: React.FC<FieldDetailDrawerProps> = ({
 }) => {
   if (!field) return null;
 
+  const firesInside = demoMode && Array.isArray(field.geometry) && field.geometry.length >= 3
+    ? fireEvents.filter((fire) => isPointInPolygon(fire.firms_point, field.geometry)).length
+    : 0;
+  const firesNear = demoMode
+    ? fireEvents.filter((fire) => Math.hypot((fire.firms_point.lat - field.center.lat) * 111.32, (fire.firms_point.lng - field.center.lng) * 111.32 * Math.cos((field.center.lat * Math.PI) / 180)) <= 5).length
+    : 0;
   const isCleared = field.status === 'CLEARED_PENDING_AUDIT' || field.status === 'VERIFIED_NON_BURN';
 
   return (
@@ -112,10 +122,10 @@ export const FieldDetailDrawer: React.FC<FieldDetailDrawerProps> = ({
           <div>
             <div className="flex flex-wrap items-center gap-1.5 font-semibold text-[var(--ink)]">
               <span>Remote-sensing audit:</span>
-              <span className="text-[var(--brand-ink)]">{demoMode ? '0 synthetic fires' : 'Awaiting provider observations'}</span>
+              <span className="text-[var(--brand-ink)]">{demoMode ? `${firesInside} sample fire point${firesInside === 1 ? '' : 's'} inside · ${firesNear} within 5 km` : 'Awaiting provider observations'}</span>
             </div>
             <div className="text-[12px] text-[var(--muted)]">
-              {demoMode ? 'Illustrative FIRMS / NDVI values shown for the prototype' : 'No remote-sensing conclusion is shown until verified observations are attached'}
+              {demoMode ? 'Sample thermal detections (fictional) shown for the prototype; not proof of what burned' : 'No remote-sensing conclusion is shown until verified observations are attached'}
             </div>
           </div>
         </div>

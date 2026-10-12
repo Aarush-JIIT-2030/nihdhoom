@@ -8,6 +8,12 @@ NIRDHOOM is a field-first product prototype. A polished screen is not evidence t
 - Keep demo fixtures separate from production configuration and never copy real personal data into committed seeds or screenshots.
 - Preserve source, timestamp, and verification state for any future real-world record.
 
+## Sample network (fills empty screens)
+- `src/data/sampleNetwork.ts` generates the fictional network (fields, balers, fires, yards, buyers, lots, jobs, photos). It is deterministic, dated relative to today, and every record is tagged sample (`SAMPLE-FIRE-*`, `Demo Operator`, "SAMPLE RECORD" in popups).
+- It is shown only when there are no real records (not connected, signed out, or zero fields) or when `VITE_NIRDHOOM_DEMO_MODE=true`. Real fields always replace it entirely.
+- Emission figures on sample screens use rounded published factors and are labelled illustrative. Carbon-credit value, weather and registry data are never invented.
+- Sample photos are drawn illustrations stamped "SAMPLE IMAGE", not field images.
+
 ## Service boundaries
 - A disabled or unconfigured payment path must fail closed; do not imply that money was transferred.
 - A heuristic dispatch result is a proposal until validated against live fleet, field, and route constraints.

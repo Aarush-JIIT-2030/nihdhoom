@@ -7,6 +7,7 @@ import type { BurnEvent, Field } from '../../types';
 import { supabase } from '../../lib/supabase';
 import { validateEvidenceFile } from '../../lib/evidenceValidation';
 import { STAGE_META, fieldStage } from '../../lib/fieldStatus';
+import { buildSampleEvidence, samplePhotoDataUri } from '../../data/sampleNetwork';
 import {
   distanceToRingM, formatDistance, m2ToAcres, m2ToHectares, offsetM, pointInRing,
   polygonAreaM2, polygonPerimeterM, projectRing, ringCentroid, validRing,
@@ -39,6 +40,26 @@ type Decision = { action: 'review-submitted' | 'more-evidence' | 'rejected'; not
 
 const AREA_OK = 0.10;
 const AREA_WARN = 0.25;
+
+/** Sample records only: drawn photos for the fields that have field/bale photo evidence in the sample network. */
+function seedSamplePhotos(fields: Field[]): Record<string, ReviewPhoto[]> {
+  const out: Record<string, ReviewPhoto[]> = {};
+  buildSampleEvidence(fields)
+    .filter((asset) => asset.kind === 'field_photo' || asset.kind === 'bale_photo')
+    .forEach((asset, index) => {
+      const kind = asset.kind as 'field_photo' | 'bale_photo';
+      const caption = kind === 'bale_photo' ? 'bales' : 'field';
+      (out[asset.field_id] ??= []).push({
+        id: asset.id,
+        url: samplePhotoDataUri(kind, index + 1, caption),
+        name: `${kind === 'bale_photo' ? 'Bale' : 'Field'} photo (sample)`,
+        takenAt: asset.captured_at ? Date.parse(asset.captured_at) : null,
+        sizeKb: 640 + ((index * 97) % 900),
+        origin: 'record',
+      });
+    });
+  return out;
+}
 
 function analyseField(field: Field, fireEvents: BurnEvent[]) {
   const ring = validRing(field.geometry);
@@ -90,7 +111,7 @@ function buildChecks(field: Field, analysis: ReturnType<typeof analyseField>, ph
     {
       id: 'area',
       label: 'Area matches the declaration',
-      detail: diffPct === null ? 'Cannot compare without a boundary and declared acreage' : `Mapped area is ${diffPct}% ${areaDiff! >= 0 ? 'above' : 'below'} the declared acreage`,
+      detail: diffPct === null ? 'Cannot compare without a boundary and declared acreage' : (Math.abs(areaDiff!) < 0.005 ? 'Mapped area equals the declared acreage' : `Mapped area is ${Math.abs(areaDiff!) * 100 < 1 ? '<1' : diffPct}% ${areaDiff! >= 0 ? 'above' : 'below'} the declared acreage`),
       state: diffPct === null ? 'fail' : diffPct <= AREA_OK * 100 ? 'pass' : diffPct <= AREA_WARN * 100 ? 'warn' : 'fail',
       anchor: 'review-geometry',
     },
@@ -128,13 +149,19 @@ const STATE_ICON = { pass: CheckCircle2, warn: AlertTriangle, fail: XCircle } as
 
 export function EvidenceReview({ fields, fireEvents, demoMode, focusFieldId, focusNonce, reviewingFieldId, onApprove }: Props) {
   const [selectedId, setSelectedId] = useState<string>(() => fields.find((f) => f.status === 'CLEARED_PENDING_AUDIT')?.id ?? fields[0]?.id ?? '');
-  const [photos, setPhotos] = useState<Record<string, ReviewPhoto[]>>({});
+  const [photos, setPhotos] = useState<Record<string, ReviewPhoto[]>>(() => (demoMode ? seedSamplePhotos(fields) : {}));
   const [photoMessage, setPhotoMessage] = useState('');
   const [busyPhoto, setBusyPhoto] = useState(false);
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [decisions, setDecisions] = useState<Record<string, Decision[]>>({});
   const fileInput = useRef<HTMLInputElement>(null);
   const rootRef = useRef<HTMLElement>(null);
+
+  // The sample network can switch on after mount; add its drawn photos without touching anything already attached.
+  useEffect(() => {
+    if (!demoMode) return;
+    setPhotos((current) => ({ ...seedSamplePhotos(fields), ...current }));
+  }, [demoMode, fields.length]);
 
   useEffect(() => {
     if (!focusFieldId) return;
@@ -352,7 +379,7 @@ export function EvidenceReview({ fields, fireEvents, demoMode, focusFieldId, foc
                   {photo.url ? <img src={photo.url} alt={`Evidence photo ${photo.name}`} loading="lazy" decoding="async" /> : <div className="review-photo-missing"><Camera /></div>}
                   <figcaption>
                     <span>{photo.takenAt ? new Date(photo.takenAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Time not recorded'}</span>
-                    <span className="review-photo-origin">{photo.origin === 'local' ? 'Local preview' : photo.origin === 'uploaded' ? 'Uploaded' : 'On record'}</span>
+                    <span className="review-photo-origin">{photo.origin === 'local' ? 'Local preview' : photo.origin === 'uploaded' ? 'Uploaded' : demoMode ? 'Sample record' : 'On record'}</span>
                   </figcaption>
                   {photo.origin === 'local' && (
                     <button type="button" className="review-photo-remove" aria-label={`Remove ${photo.name}`} onClick={() => removePhoto(photo)}><Trash2 className="h-3.5 w-3.5" /></button>

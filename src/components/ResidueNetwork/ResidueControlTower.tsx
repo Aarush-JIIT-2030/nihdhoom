@@ -59,9 +59,9 @@ export function ResidueControlTower({
 
         <div className="ui-stats">
           {[
-            { label: 'Ready / planned residue', value: `${summary.ready_tonnes} t`, icon: Gauge, note: 'planning estimate' },
-            { label: 'Verified residue', value: `${summary.verified_tonnes} t`, icon: CheckCircle2, note: 'weighed records' },
-            { label: 'Buyer demand', value: `${summary.demand_tonnes} t`, icon: Store, note: 'declared demand' },
+            { label: 'Ready / planned residue', value: `${summary.ready_tonnes.toLocaleString('en-IN')} t`, icon: Gauge, note: 'planning estimate' },
+            { label: 'Verified residue', value: `${summary.verified_tonnes.toLocaleString('en-IN')} t`, icon: CheckCircle2, note: 'weighed records' },
+            { label: 'Buyer demand', value: `${summary.demand_tonnes.toLocaleString('en-IN')} t`, icon: Store, note: 'declared demand' },
             { label: 'Demand covered', value: `${summary.demand_coverage_pct}%`, icon: Route, note: 'verified ÷ demand' },
             { label: 'Fields at risk', value: String(summary.fields_at_risk), icon: ShieldAlert, note: 'next 48h / deadline' },
           ].map(({ label, value, icon: Icon, note }) => (

@@ -15,6 +15,8 @@ import {
 } from 'lucide-react';
 import { Field, Machine } from '../../types';
 import { supabase } from '../../lib/supabase';
+import { buildSampleEvidence, buildSampleJobs } from '../../data/sampleNetwork';
+import { INITIAL_RESIDUE_LOTS } from '../../data/mockData';
 
 type JobRecord = {
   id: string;
@@ -103,7 +105,26 @@ export function FieldJobBoard({
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    if (demoMode || !supabase) {
+    if (!demoMode) return;
+    // Sample records derived from the same sample fields, so every count agrees with the map.
+    setJobs(buildSampleJobs(fields) as JobRecord[]);
+    setProof(buildSampleEvidence(fields));
+    setLots(INITIAL_RESIDUE_LOTS.map((lot) => ({
+      id: lot.id,
+      field_id: lot.field_id,
+      quantity_tonnes: lot.verified_quantity_tonnes ?? lot.quantity_tonnes ?? null,
+      status: lot.status,
+      baled_at: lot.baled_at ?? null,
+      assigned_buyer_id: lot.assigned_buyer_id ?? null,
+      quality_grade: lot.quality_grade ?? null,
+    })));
+    setError(null);
+    setLoading(false);
+  }, [demoMode, fields]);
+
+  useEffect(() => {
+    if (demoMode) return;
+    if (!supabase) {
       setJobs([]);
       setProof([]);
       setLots([]);
@@ -391,13 +412,13 @@ export function FieldJobBoard({
                         <div className="ui-kv-label">Proof</div>
                         <div className="ui-kv-value">
                           {row.hasCompletionProof ? <CheckCircle2 /> : <FileCheck2 className="!text-[var(--faint)]" />}
-                          {row.fieldProof.length} assets {row.hasLocationProof ? '· GPS' : ''}
+                          {row.fieldProof.length > 0 ? `${row.fieldProof.length} assets` : row.job ? 'None yet' : 'Awaiting visit'} {row.hasLocationProof ? '· GPS' : ''}
                         </div>
                       </div>
                       <div className="ui-kv">
                         <div className="ui-kv-label">Parali</div>
                         <div className="ui-kv-value">
-                          {row.lot ? `${Number(row.lot.quantity_tonnes || 0).toFixed(1)} t · ${row.lot.status}` : 'No lot'}
+                          {row.lot ? `${Number(row.lot.quantity_tonnes || 0).toFixed(1)} t · ${row.lot.status}` : row.job ? 'Not baled yet' : 'No lot yet'}
                         </div>
                       </div>
                     </div>

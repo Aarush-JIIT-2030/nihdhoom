@@ -6,7 +6,7 @@ import { supabase, supabaseConfigured } from '../lib/supabase';
 import { normalizeField } from '../lib/domain';
 
 const DEMO_MODE = import.meta.env.VITE_NIRDHOOM_DEMO_MODE === 'true';
-const DEMO_STATE_KEY = 'nirdhoom.demo.state.v3';
+const DEMO_STATE_KEY = 'nirdhoom.demo.state.v4';
 
 type DemoState = { fields: Field[]; machines: Machine[]; fireEvents: BurnEvent[] };
 
@@ -71,13 +71,16 @@ export function useAppController() {
     return fallback;
   });
 
-  const [fields, setFields] = useState<Field[]>(DEMO_MODE ? demoSeed.fields : []);
-  const [machines, setMachines] = useState<Machine[]>(DEMO_MODE ? demoSeed.machines : []);
-  const [fireEvents, setFireEvents] = useState<BurnEvent[]>(DEMO_MODE ? demoSeed.fireEvents : []);
+  // With no live database configured there is nothing to wait for: start on the sample network.
+  const startsOnSample = DEMO_MODE || !supabase;
+  const [sampleMode, setSampleMode] = useState(!DEMO_MODE && !supabase);
+  const [fields, setFields] = useState<Field[]>(startsOnSample ? demoSeed.fields : []);
+  const [machines, setMachines] = useState<Machine[]>(startsOnSample ? demoSeed.machines : []);
+  const [fireEvents, setFireEvents] = useState<BurnEvent[]>(startsOnSample ? demoSeed.fireEvents : []);
   const [residueLots, setResidueLots] = useState<ResidueLot[]>([]);
   const [buyers, setBuyers] = useState<Buyer[]>([]);
   const [storageYards, setStorageYards] = useState<StorageYard[]>([]);
-  const [selectedField, setSelectedField] = useState<Field | null>(DEMO_MODE ? demoSeed.fields[0] || null : null);
+  const [selectedField, setSelectedField] = useState<Field | null>(startsOnSample ? demoSeed.fields[0] || null : null);
   const [loadingLiveData, setLoadingLiveData] = useState(!DEMO_MODE && Boolean(supabase));
   const [liveDataError, setLiveDataError] = useState<string | null>(null);
   const [liveSignedOut, setLiveSignedOut] = useState(false);
@@ -93,9 +96,27 @@ export function useAppController() {
     }
   }, [fields, machines, fireEvents]);
 
+  // Fill the app with the labelled sample network when there are no live records
+  // to show (signed out, empty database, or a setup problem), so no screen is blank.
+  const enterSample = useCallback(() => {
+    setSampleMode(true);
+    setFields(demoSeed.fields);
+    setMachines(demoSeed.machines);
+    setFireEvents(demoSeed.fireEvents);
+    setResidueLots([]);
+    setBuyers([]);
+    setStorageYards([]);
+    setSelectedField((current) => demoSeed.fields.find((f) => f.id === current?.id) || demoSeed.fields[0] || null);
+    setLoadingLiveData(false);
+  }, [demoSeed]);
+
   const refreshLiveData = useCallback(async () => {
-    if (DEMO_MODE || !supabase) {
+    if (DEMO_MODE) {
       setLoadingLiveData(false);
+      return;
+    }
+    if (!supabase) {
+      enterSample();
       return;
     }
     setLoadingLiveData(true);
@@ -108,13 +129,7 @@ export function useAppController() {
     const { data: sessionData } = await client.auth.getSession();
     if (!sessionData.session) {
       setLiveSignedOut(true);
-      setFields([]);
-      setMachines([]);
-      setResidueLots([]);
-      setBuyers([]);
-      setStorageYards([]);
-      setSelectedField(null);
-      setLoadingLiveData(false);
+      enterSample();
       return;
     }
     setLiveSignedOut(false);
@@ -127,14 +142,16 @@ export function useAppController() {
 
     if (fieldError || machineError) {
       setLiveDataError(fieldError?.message || machineError?.message || 'Unable to load live operational data');
-      setFields([]);
-      setMachines([]);
-      setResidueLots([]);
-      setBuyers([]);
-      setStorageYards([]);
-      setLoadingLiveData(false);
+      enterSample();
       return;
     }
+
+    // A signed-in account with no fields yet (new database or new farmer) sees the sample network.
+    if (!(fieldRows || []).length) {
+      enterSample();
+      return;
+    }
+    setSampleMode(false);
 
     const [lotsResult, demandsResult, yardsResult] = await Promise.all([
       client.from('residue_lots').select('id,field_id,farmer_id,crop,residue_type,estimated_quantity_tonnes,quantity_tonnes,verified_quantity_tonnes,moisture_pct,quality_grade,quality_notes,bale_type,harvest_date,ready_from,pickup_deadline,machine_id,status,geometry_provenance,verification_source,verified_at,assigned_buyer_id,qr_code,baled_at,created_at'),
@@ -243,18 +260,14 @@ export function useAppController() {
     setSelectedField((current) => normalizedFields.find((f) => f.id === current?.id) || normalizedFields[0] || null);
     setLoadingLiveData(false);
     } catch {
+      // Unreachable server: keep the screens filled with labelled sample data and say why.
       setLiveDataError('Live operational data could not be loaded because the server was unreachable. Refresh and try again.');
       setLiveSignedOut(false);
-      setFields([]);
-      setMachines([]);
-      setResidueLots([]);
-      setBuyers([]);
-      setStorageYards([]);
-      setSelectedField(null);
+      enterSample();
     } finally {
       setLoadingLiveData(false);
     }
-  }, []);
+  }, [enterSample]);
 
   useEffect(() => {
     if (DEMO_MODE || !supabase) {
@@ -311,7 +324,9 @@ export function useAppController() {
     residueLots,
     buyers,
     storageYards,
-    demoMode: DEMO_MODE,
+    demoMode: DEMO_MODE || sampleMode,
+    explicitDemo: DEMO_MODE,
+    sampleMode,
     loadingLiveData,
     liveDataError,
     liveSignedOut,

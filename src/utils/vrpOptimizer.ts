@@ -41,73 +41,102 @@ export function calculateDistanceKm(a: LatLng, b: LatLng): number {
   return Math.round(R * c * 10) / 10;
 }
 
+/** A machine further than this from a field is not offered the work (one operating day's travel). */
+const MAX_DEADHEAD_KM = 120;
+
 /**
- * VRPTW Dispatch Optimizer
- * Solves constrained scheduling across idle CRM balers under hard 48h clearance deadlines.
+ * Local dispatch heuristic (planning estimate only; the server solver is used when connected).
+ * Fields are taken in order of clearance deadline and given to the nearest machine that still has
+ * capacity for them. Each machine then visits its fields nearest-first. Machines that are baling,
+ * in maintenance, or have no spare capacity are not offered new work.
  */
 export function runVRPOptimizer(fields: Field[], machines: Machine[]): VRPDispatchResult {
   const startTime = performance.now();
 
-  // Pending fields that require baler allocation
-  const eligibleFields = fields.filter(
-    (f) => f.status === 'SCHEDULED' || f.status === 'REGISTERED' || f.status === 'BALING_IN_PROGRESS'
-  );
+  // Pending fields that still need a machine
+  const eligibleFields = fields
+    .filter((f) => f.status === 'SCHEDULED' || f.status === 'REGISTERED' || f.status === 'BOOKED')
+    .sort((a, b) => String(a.clearance_deadline).localeCompare(String(b.clearance_deadline)) || b.acreage - a.acreage);
+
+  const fieldById = new Map(fields.map((f) => [f.id, f]));
+  const dispatchable = machines.filter((m) => m.status === 'IDLE' || m.status === 'EN_ROUTE');
+
+  type Plan = { machine: Machine; remaining: number; stops: Field[]; end: LatLng };
+  const plans: Plan[] = dispatchable.map((machine) => {
+    // A machine already heading to a field has that field's acres committed first.
+    const committed = (machine.assigned_field_ids || []).reduce((sum, id) => {
+      const f = fieldById.get(id);
+      return f && f.status !== 'SCHEDULED' ? sum + f.acreage : sum;
+    }, 0);
+    return { machine, remaining: Math.max(0, machine.capacity_acres_day - committed), stops: [], end: machine.current_location };
+  });
+
+  const unassigned: Field[] = [];
+  eligibleFields.forEach((field) => {
+    let best: Plan | null = null;
+    let bestDist = Infinity;
+    plans.forEach((plan) => {
+      if (plan.remaining < field.acreage) return;
+      const dist = calculateDistanceKm(plan.end, field.center);
+      if (dist <= MAX_DEADHEAD_KM && dist < bestDist) { best = plan; bestDist = dist; }
+    });
+    if (best) {
+      const chosen = best as Plan;
+      chosen.stops.push(field);
+      chosen.remaining -= field.acreage;
+      chosen.end = field.center;
+    } else {
+      unassigned.push(field);
+    }
+  });
 
   const assignments: VRPDispatchResult['assignments'] = [];
   let totalScheduledAcres = 0;
   let totalDeadhead = 0;
-  const unassignedFields = [...eligibleFields];
+  let totalBaseline = 0;
+  let totalPenaltyPrevented = 0;
 
-  machines.forEach((machine) => {
-    let currentCapacity = machine.capacity_acres_day;
-    let currentPos = machine.current_location;
-    const assignedIds: string[] = [];
-    const routeCoords: LatLng[] = [currentPos];
+  plans.filter((plan) => plan.stops.length > 0).forEach(({ machine, stops }) => {
+    // Visit the nearest field first, then keep going to the nearest remaining one.
+    const ordered: Field[] = [];
+    const pool = [...stops];
+    let pos = machine.current_location;
+    while (pool.length) {
+      pool.sort((a, b) => calculateDistanceKm(pos, a.center) - calculateDistanceKm(pos, b.center));
+      const next = pool.shift() as Field;
+      ordered.push(next);
+      pos = next.center;
+    }
+
+    const routeCoords: LatLng[] = [machine.current_location];
     const seqDesc: string[] = [`Start at ${machine.home_chc}`];
+    let cursor = machine.current_location;
     let machineDeadhead = 0;
     let machineAcres = 0;
     let penaltyBefore = 0;
-
-    // Sort unassigned fields by nearest distance + urgency
-    unassignedFields.sort((a, b) => {
-      const distA = calculateDistanceKm(currentPos, a.center);
-      const distB = calculateDistanceKm(currentPos, b.center);
-      return distA - distB;
+    ordered.forEach((field) => {
+      const dist = calculateDistanceKm(cursor, field.center);
+      machineDeadhead += dist;
+      machineAcres += field.acreage;
+      penaltyBefore += Math.max(2500, field.acreage * 1250);
+      totalBaseline += calculateDistanceKm(machine.current_location, field.center);
+      routeCoords.push(field.center);
+      seqDesc.push(`Clear ${field.khasra_no} (${field.village}) — ${field.acreage} ac [${dist} km travel]`);
+      cursor = field.center;
     });
-
-    for (let i = 0; i < unassignedFields.length; i++) {
-      const field = unassignedFields[i];
-      if (field.acreage <= currentCapacity) {
-        const dist = calculateDistanceKm(currentPos, field.center);
-        machineDeadhead += dist;
-        currentCapacity -= field.acreage;
-        machineAcres += field.acreage;
-        penaltyBefore += Math.max(2500, field.acreage * 1250);
-
-        assignedIds.push(field.id);
-        routeCoords.push(field.center);
-        seqDesc.push(`Clear ${field.khasra_no} (${field.village}) — ${field.acreage} ac [${dist} km travel]`);
-
-        currentPos = field.center;
-        unassignedFields.splice(i, 1);
-        i--;
-      }
-    }
-
-    // Add return route or drop off at nearest storage yard
     seqDesc.push('Route complete • residue handoff requires verified storage/offtake workflow');
 
-    const capacityPct = Math.min(100, Math.round((machineAcres / machine.capacity_acres_day) * 100));
     totalScheduledAcres += machineAcres;
     totalDeadhead += machineDeadhead;
+    totalPenaltyPrevented += penaltyBefore;
 
     assignments.push({
       machineId: machine.id,
       machineName: machine.name,
       operatorName: machine.operator_name,
-      fieldIds: assignedIds,
+      fieldIds: ordered.map((f) => f.id),
       totalAcres: Math.round(machineAcres * 10) / 10,
-      capacityPct,
+      capacityPct: machine.capacity_acres_day > 0 ? Math.min(100, Math.round((machineAcres / machine.capacity_acres_day) * 100)) : 0,
       deadheadKm: Math.round(machineDeadhead * 10) / 10,
       penaltyRiskBefore: penaltyBefore,
       penaltyRiskAfter: 0,
@@ -116,20 +145,21 @@ export function runVRPOptimizer(fields: Field[], machines: Machine[]): VRPDispat
     });
   });
 
-  const totalMachineCapacity = machines.reduce((acc, m) => acc + m.capacity_acres_day, 0);
-  const fleetUtilizationPct = Math.round((totalScheduledAcres / totalMachineCapacity) * 100);
-  const executionTime = Math.round(performance.now() - startTime);
+  const totalMachineCapacity = dispatchable.reduce((acc, m) => acc + m.capacity_acres_day, 0);
+  const fleetUtilizationPct = totalMachineCapacity > 0 ? Math.round((totalScheduledAcres / totalMachineCapacity) * 100) : 0;
+  const executionTime = Math.max(1, Math.round(performance.now() - startTime));
 
   return {
     assignments,
     totalAcresScheduled: Math.round(totalScheduledAcres * 10) / 10,
     totalDeadheadKm: Math.round(totalDeadhead * 10) / 10,
-    deadheadSavedKm: 0,
-    totalPenaltyPrevented: 0,
+    // Compared with sending a machine out to each field separately from where it starts.
+    deadheadSavedKm: Math.round(Math.max(0, totalBaseline - totalDeadhead) * 10) / 10,
+    totalPenaltyPrevented,
     fleetUtilizationPct,
     solverExecutionTimeMs: executionTime,
     source: 'local-heuristic',
-    unassignedFieldIds: unassignedFields.map((f) => f.id),
+    unassignedFieldIds: unassigned.map((f) => f.id),
   };
 }
 

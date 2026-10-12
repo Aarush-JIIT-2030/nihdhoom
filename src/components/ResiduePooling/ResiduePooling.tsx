@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { ArrowRight, CheckCircle2, Clock3, Layers3, Plus, Users, Leaf as LeafIcon } from 'lucide-react';
 import { Field } from '../../types';
 import { supabase } from '../../lib/supabase';
+import { INITIAL_RESIDUE_LOTS } from '../../data/mockData';
+import { SAMPLE_DEMANDS, SAMPLE_POOLS, buildSampleOffers } from '../../data/sampleNetwork';
 import { useAppLanguage } from '../../i18n/LanguageContext';
 
 type Pool = { id: string; name: string; target_tonnes: number; current_tonnes: number; status: string; buyer_demand_id?: string | null };
@@ -27,12 +29,14 @@ interface Props { fields: Field[]; demoMode: boolean; }
 
 export function ResiduePooling({ fields, demoMode }: Props) {
   const [pools, setPools] = useState<Pool[]>(() => {
-    if (!demoMode || typeof window === 'undefined') return [];
-    try { const raw = window.localStorage.getItem('nirdhoom.demo.pools.v1'); return raw ? (JSON.parse(raw) as Pool[]) : []; } catch { return []; }
+    if (!demoMode) return [];
+    if (typeof window === 'undefined') return SAMPLE_POOLS;
+    try { const raw = window.localStorage.getItem('nirdhoom.demo.pools.v2'); return raw ? (JSON.parse(raw) as Pool[]) : SAMPLE_POOLS; } catch { return SAMPLE_POOLS; }
   });
-  const [demands, setDemands] = useState<Demand[]>([]);
-  const [lots, setLots] = useState<SupplyLot[]>([]);
-  const [offers, setOffers] = useState<BuyerOffer[]>([]);
+  // Sample market: demand, supply and offers that agree with the sample fields on the map.
+  const [demands, setDemands] = useState<Demand[]>(() => (demoMode ? SAMPLE_DEMANDS : []));
+  const [lots, setLots] = useState<SupplyLot[]>(() => (demoMode ? (INITIAL_RESIDUE_LOTS as unknown as SupplyLot[]) : []));
+  const [offers, setOffers] = useState<BuyerOffer[]>(() => (demoMode ? buildSampleOffers(INITIAL_RESIDUE_LOTS) : []));
   const [notice, setNotice] = useState('');
   const { t } = useAppLanguage();
   const [poolQuantities, setPoolQuantities] = useState<Record<string, string>>({});
@@ -46,11 +50,11 @@ export function ResiduePooling({ fields, demoMode }: Props) {
 
   useEffect(() => {
     if (!demoMode || typeof window === 'undefined') return;
-    try { window.localStorage.setItem('nirdhoom.demo.pools.v1', JSON.stringify(pools)); } catch { /* optional demo persistence */ }
+    try { window.localStorage.setItem('nirdhoom.demo.pools.v2', JSON.stringify(pools)); } catch { /* optional demo persistence */ }
   }, [demoMode, pools]);
 
   const localSupply = useMemo(() => {
-    if (!demoMode && lots.length > 0) {
+    if (lots.length > 0) {
       return lots.map((lot) => {
         const field = fields.find((f) => (f.dbId || f.id) === lot.field_id);
         const lotOffer = offers
@@ -143,7 +147,18 @@ export function ResiduePooling({ fields, demoMode }: Props) {
     }
   }
 
-  useEffect(() => { void load(); }, [demoMode]);
+  useEffect(() => {
+    // The sample network can switch on after mount (live mode with no records of its own yet); real records replace it.
+    if (demoMode) {
+      setDemands(SAMPLE_DEMANDS);
+      setLots(INITIAL_RESIDUE_LOTS as unknown as SupplyLot[]);
+      setOffers(buildSampleOffers(INITIAL_RESIDUE_LOTS));
+      setPools((prev) => (prev.length ? prev : SAMPLE_POOLS));
+      return;
+    }
+    setDemands([]); setLots([]); setOffers([]); setPools([]);
+    void load();
+  }, [demoMode]);
 
   function createDemoPool() {
     const total = localSupply.slice(0, 3).reduce((s, x) => s + x.tonnes, 0);

@@ -90,13 +90,19 @@ test('V7.5 blocks direct booking writes and farmer field tampering', () => {
 });
 
 
-test('demo operational data is opt-in and production starts empty', () => {
+test('sample data is opt-in or shown only when there are no real records, and never replaces real ones', () => {
   const controller = read('src/state/useAppController.ts');
   assert.match(controller, /VITE_NIRDHOOM_DEMO_MODE === 'true'/);
-  assert.match(controller, /useState<Field\[\]>\(DEMO_MODE \? demoSeed\.fields : \[\]\)/);
-  assert.match(controller, /useState<Machine\[\]>\(DEMO_MODE \? demoSeed\.machines : \[\]\)/);
-  assert.match(controller, /useState<BurnEvent\[\]>\(DEMO_MODE \? demoSeed\.fireEvents : \[\]\)/);
+  // A connected deployment starts with no fields; the sample network is used only when not connected or when live data is empty.
+  assert.match(controller, /const startsOnSample = DEMO_MODE \|\| !supabase/);
+  assert.match(controller, /useState<Field\[\]>\(startsOnSample \? demoSeed\.fields : \[\]\)/);
+  assert.match(controller, /useState<Machine\[\]>\(startsOnSample \? demoSeed\.machines : \[\]\)/);
+  assert.match(controller, /useState<BurnEvent\[\]>\(startsOnSample \? demoSeed\.fireEvents : \[\]\)/);
+  assert.match(controller, /setSampleMode\(false\)/);
+  assert.match(controller, /explicitDemo: DEMO_MODE/);
   assert.match(read('.env.example'), /VITE_NIRDHOOM_DEMO_MODE=false/);
+  // The app tells the person when they are looking at sample data.
+  assert.match(read('src/App.tsx'), /You are looking at sample data/);
 });
 
 
