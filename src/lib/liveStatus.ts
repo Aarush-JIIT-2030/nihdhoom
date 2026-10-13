@@ -47,7 +47,7 @@ export function describeLiveError(message: string | null | undefined): LiveProbl
     return {
       kind: 'permission',
       summary: 'This account is not allowed to read these records.',
-      hint: 'Sign in with your mobile number. If you are already signed in, the profile role may be missing.',
+      hint: 'Sign in with your email code. If you are already signed in, the profile role may be missing.',
     };
   }
   return {
@@ -84,13 +84,10 @@ export function describeAuthError(message: string | null | undefined, fallback: 
     return 'Too many attempts. Please wait a minute and try again.';
   }
   if (/token has expired|invalid.*(otp|token|code)|otp.*(expired|invalid)/.test(lower)) {
-    return 'That code is wrong or has expired. Check the latest message or ask for a new code.';
+    return 'That code is wrong or has expired. Check the latest email or ask for a new code.';
   }
   if (/invalid.*email|email.*invalid|unable to validate email/.test(lower)) {
     return 'That email address does not look right. Check it and try again.';
-  }
-  if (/invalid.*phone|phone.*invalid|unable to validate phone/.test(lower)) {
-    return 'That mobile number does not look right. Enter the 10 digits without +91.';
   }
   return text;
 }

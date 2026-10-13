@@ -169,7 +169,6 @@ const translations: Record<string, string> = {
   'Step 3: Farmer consent': 'चरण 3: किसान की सहमति',
   'Record consent & continue': 'सहमति दर्ज करें और आगे बढ़ें',
   'Accept demo consent': 'डेमो सहमति स्वीकार करें',
-  'Enter registered mobile': 'पंजीकृत मोबाइल नंबर दर्ज करें',
   '6-digit email code': '6 अंकों का ईमेल कोड',
   'Email Verification': 'ईमेल सत्यापन',
   'Code Confirm': 'कोड की पुष्टि',
